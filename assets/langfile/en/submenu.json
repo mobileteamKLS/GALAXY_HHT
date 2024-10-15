@@ -1,0 +1,17 @@
+{
+  "en": {
+    "loading" : "Loading...",
+
+    "HHT004" : "ULD Acceptance",
+    "HHT005" : "Flight Check",
+    "HHT006" : "Segregation",
+
+    "HHT007" : "Vehicle Tracking",
+    "HHT008" : "TDG Acceptance",
+    "HHT009" : "VCT Check",
+    "HHT010" : "Document Upload",
+
+    "HHT011" : "Flight Check-In",
+    "HHT012" : "AWB Remarks"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "en": {
+    "userId" : "User ID",
+    "password" : "Password",
+    "mPin" : "M-Pin",
+    "login" : "Sign In",
+    "loading" : "Loading...",
+    "validatorUserId" : "Please enter your user ID",
+    "validatorMpin" : "Please enter your M - Pin",
+    "validationBoundry" : "M-Pin must be between 6 and 10 digits",
+    "validatorPassword" : "Please enter your password",
+    "correctionMsgUserCredential" : "User credential is incorrect!!",
+    "lockUserMsg" : "User is locked!!",
+    "signInUserId" : "SIGN IN WITH USER ID",
+    "signInMPIN" : "SIGN IN WITH M-PIN",
+    "or" : "Or",
+    "dontHaveAnAccount" : "Don't Have an Account ?",
+    "createOne" : "Sign Up Now",
+    "headingMessage1" : "Sign In to GALAXY",
+    "headingMessage2" : "Registered Account",
+    "readThe" : "Read the",
+    "privacyPolicy" : "Privacy Policy",
+    "and" : "and",
+    "termsOfUse" : "Terms of Use",
+    "recoverForgotPassword" : "Recover Forgot Password"
+  }
+}

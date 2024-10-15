@@ -1,0 +1,28 @@
+{
+  "hi": {
+    "userId" : "यूजर पहचान",
+    "password" : "पासवर्ड",
+    "mPin" : "एम - पिन",
+    "login" : "साइन इन",
+    "loading" : "लोडिंग...",
+
+    "validatorUserId" : "कृपया अपना उपयोगकर्ता आईडी दर्ज करें",
+    "validatorMpin" : "कृपया अपना एम-पिन दर्ज करें",
+    "validatorPassword" : "कृपया अपना पासवर्ड दर्ज करें",
+    "validationBoundry" : "एम-पिन 6 से 10 अंकों के बीच होना चाहिए",
+    "correctionMsgUserCredential" : "उपयोगकर्ता क्रेडेंशियल ग़लत है!!",
+    "lockUserMsg" : "उपयोगकर्ता लॉक है!!",
+    "signInUserId" : "यूजर आईडी से साइन इन करें",
+    "signInMPIN" : "एम-पिन से साइन इन करें",
+    "or" : "अथवा",
+    "dontHaveAnAccount" : "क्या आपके पास अभी तक खाता नहीं है ?",
+    "createOne" : "अभी साइनअप करें",
+    "headingMessage1" : "गैलेक्सी में साइन इन करें",
+    "headingMessage2" : "पंजीकृत खाता",
+    "readThe" : "पढ़िए",
+    "privacyPolicy" : "गोपनीयता नीति",
+    "and" : "तथा",
+    "termsOfUse" : "उपयोग की शर्तें",
+    "recoverForgotPassword" : "भूल गए पासवर्ड को पुनः प्राप्त करें"
+  }
+}

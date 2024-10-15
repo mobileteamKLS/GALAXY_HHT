@@ -1,0 +1,29 @@
+{
+  "ar": {
+    "userId" : "معرف المستخدم",
+    "password" : "كلمة المرور",
+    "mPin" : "م - دبوس",
+    "login" : "سجل الدخول",
+    "loading" : "التحميل...",
+    "validatorUserId" : "يرجى إدخال معرف المستخدم الخاص بك",
+    "validatorMpin" : "الرجاء إدخال رقم التعريف الشخصي الخاص بك",
+    "validatorPassword" : "الرجاء إدخال كلمة المرور الخاصة بك",
+    "validationBoundry" : "يجب أن يكون رقم م - دبوس بين 6 و10 أرقام",
+    "correctionMsgUserCredential" : "بيانات اعتماد المستخدم غير صحيحة!!",
+    "lockUserMsg" : "وتخوض المستخدم!!",
+
+    "signInUserId" : "تسجيل الدخول باستخدام معرف المستخدم",
+    "signInMPIN" : "قم بتسجيل الدخول باستخدام م - دبوس",
+    "or" : "أو",
+    "dontHaveAnAccount" : "ليس لديك حساب بعد؟ دعنا",
+    "createOne" : "سجل الآن",
+    "headingMessage1" : "تسجيل الدخول إلى غالاكسي",
+    "headingMessage2" : "حساب مسجل",
+    "readThe" : "اقرأ",
+    "privacyPolicy" : "سياسة الخصوصية",
+    "and" : "و",
+    "termsOfUse" : "شروط الاستخدام",
+    "recoverForgotPassword" : "استعادة كلمة المرور المنسية"
+
+  }
+}

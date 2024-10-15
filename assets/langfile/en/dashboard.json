@@ -1,0 +1,20 @@
+{
+  "en": {
+    "welcome" : "Welcome",
+    "dashBoard" : "DashBoard",
+    "lastUpdate": "Last update",
+    "profile" : "Profile",
+    "feedback" : "Feedback",
+    "helpCenter" : "Help Center",
+    "logout" : "Logout",
+    "cancel" : "Cancel",
+    "ok" : "Ok",
+    "logoutMsg" : "Are you sure you want to logout?",
+    "exit" : "Exit",
+    "exitMsg" : "Are you sure you want to exit?",
+    "loading" : "Loading...",
+    "HHT001" : "Import",
+    "HHT002" : "Export",
+    "HHT003" : "Courier"
+  }
+}
