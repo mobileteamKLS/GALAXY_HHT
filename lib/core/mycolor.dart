@@ -48,6 +48,7 @@ class MyColor {
   static const Color colorWhite = Color(0xffFFFFFF);
   static const Color colorBlack = Color(0xff262626);
   static const Color colorRed = Color(0xFFD50000);
+  static const Color colorRedLight = Color(0xFFF81818);
   static const Color colorGreen = Color(0xFF019805);
   static const Color colorOrangeProgress = Color(0xFFfd8d00);
   static const Color colorgreenProgress = Color(0xFF43a047);

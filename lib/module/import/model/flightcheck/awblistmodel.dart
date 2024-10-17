@@ -1,103 +1,129 @@
 class AWBModel {
-  List<AWBItem>? awbItemList;
+  List<FlightCheckInAWBBDList>? flightCheckInAWBBDList;
   String? status;
   String? statusMessage;
+  int? ULDProgress;
 
-  AWBModel(
-      {
-        this.awbItemList,
-        this.status,
-        this.statusMessage});
+  AWBModel({this.flightCheckInAWBBDList, this.status, this.statusMessage});
 
   AWBModel.fromJson(Map<String, dynamic> json) {
-    if (json['AWBItem'] != null) {
-      awbItemList = <AWBItem>[];
-      json['AWBItem'].forEach((v) {
-        awbItemList!.add(new AWBItem.fromJson(v));
+    if (json['FlightCheckInAWBBDList'] != null) {
+      flightCheckInAWBBDList = <FlightCheckInAWBBDList>[];
+      json['FlightCheckInAWBBDList'].forEach((v) {
+        flightCheckInAWBBDList!.add(new FlightCheckInAWBBDList.fromJson(v));
       });
     }
+    ULDProgress = json['ULDProgress'];
     status = json['Status'];
     statusMessage = json['StatusMessage'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.awbItemList != null) {
-      data['AWBItem'] = this.awbItemList!.map((v) => v.toJson()).toList();
+    if (this.flightCheckInAWBBDList != null) {
+      data['FlightCheckInAWBBDList'] =
+          this.flightCheckInAWBBDList!.map((v) => v.toJson()).toList();
     }
+    data['ULDProgress'] = this.ULDProgress;
     data['Status'] = this.status;
     data['StatusMessage'] = this.statusMessage;
     return data;
   }
 }
 
-class AWBItem {
-  int? id;
-  String? awbNo;
-  String? SHCCode;
-  String? agentName;
+class FlightCheckInAWBBDList {
+  int? iMPAWBRowId;
+  int? iMPShipRowId;
+  int? uSeqNo;
+  String? aWBNo;
+  int? nPX;
+  int? nPR;
+  double? weightExp;
+  double? weightRec;
+  int? shortLanded;
+  int? excessLanded;
+  int? damageNOP;
+  double? damageWeight;
   String? remark;
-  int? manifestedPices;
-  int? receivedPices;
-  int? weightManifest;
-  int? weightReceived;
-  int? damge;
-  int? short;
-  int? excess;
+  String? agentName;
+  String? mAWBInd;
+  String? sHCCode;
+  int? bDPriority;
+  String? isIntact;
+  String? transit;
+  String? commodity;
   int? progress;
-  String? HAWB;
 
-
-  AWBItem(
-      {this.id,
-        this.awbNo,
-        this.SHCCode,
-        this.agentName,
+  FlightCheckInAWBBDList(
+      {this.iMPAWBRowId,
+        this.iMPShipRowId,
+        this.uSeqNo,
+        this.aWBNo,
+        this.nPX,
+        this.nPR,
+        this.weightExp,
+        this.weightRec,
+        this.shortLanded,
+        this.excessLanded,
+        this.damageNOP,
+        this.damageWeight,
         this.remark,
-        this.manifestedPices,
-        this.receivedPices,
-        this.weightManifest,
-        this.weightReceived,
-        this.damge,
-        this.short,
-        this.excess,
-        this.progress,
-        this.HAWB});
+        this.agentName,
+        this.mAWBInd,
+        this.sHCCode,
+        this.bDPriority,
+        this.isIntact,
+        this.transit,
+        this.commodity,
+        this.progress});
 
-  AWBItem.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    awbNo = json['awbNo'];
-    SHCCode = json['SHCCode'];
-    agentName = json['agentName'];
-    remark = json['remark'];
-    manifestedPices = json['manifestedPices'];
-    receivedPices = json['receivedPices'];
-    weightManifest = json['weightManifest'];
-    weightReceived = json['weightReceived'];
-    damge = json['damge'];
-    short = json['short'];
-    excess = json['excess'];
-    progress = json['progress'];
-    HAWB = json['HAWB'];
+  FlightCheckInAWBBDList.fromJson(Map<String, dynamic> json) {
+    iMPAWBRowId = json['IMPAWBRowId'];
+    iMPShipRowId = json['IMPShipRowId'];
+    uSeqNo = json['USeqNo'];
+    aWBNo = json['AWBNo'];
+    nPX = json['NPX'];
+    nPR = json['NPR'];
+    weightExp = json['WeightExp'];
+    weightRec = json['WeightRec'];
+    shortLanded = json['ShortLanded'];
+    excessLanded = json['ExcessLanded'];
+    damageNOP = json['DamageNOP'];
+    damageWeight = json['DamageWeight'];
+    remark = json['Remark'];
+    agentName = json['AgentName'];
+    mAWBInd = json['MAWBInd'];
+    sHCCode = json['SHCCode'];
+    bDPriority = json['BDPriority'];
+    isIntact = json['IsIntact'];
+    transit = json['Transit'];
+    commodity = json['Commodity'];
+    progress = json['Progress'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['awbNo'] = this.awbNo;
-    data['SHCCode'] = this.SHCCode;
-    data['agentName'] = this.agentName;
-    data['remark'] = this.remark;
-    data['manifestedPices'] = this.manifestedPices;
-    data['receivedPices'] = this.receivedPices;
-    data['weightManifest'] = this.weightManifest;
-    data['weightReceived'] = this.weightReceived;
-    data['damge'] = this.damge;
-    data['short'] = this.short;
-    data['excess'] = this.excess;
-    data['progress'] = this.progress;
-    data['HAWB'] = this.HAWB;
+    data['IMPAWBRowId'] = this.iMPAWBRowId;
+    data['IMPShipRowId'] = this.iMPShipRowId;
+    data['USeqNo'] = this.uSeqNo;
+    data['AWBNo'] = this.aWBNo;
+    data['NPX'] = this.nPX;
+    data['NPR'] = this.nPR;
+    data['WeightExp'] = this.weightExp;
+    data['WeightRec'] = this.weightRec;
+    data['ShortLanded'] = this.shortLanded;
+    data['ExcessLanded'] = this.excessLanded;
+    data['DamageNOP'] = this.damageNOP;
+    data['DamageWeight'] = this.damageWeight;
+    data['Remark'] = this.remark;
+    data['AgentName'] = this.agentName;
+    data['MAWBInd'] = this.mAWBInd;
+    data['SHCCode'] = this.sHCCode;
+    data['BDPriority'] = this.bDPriority;
+    data['IsIntact'] = this.isIntact;
+    data['Transit'] = this.transit;
+    data['Commodity'] = this.commodity;
+    data['Progress'] = this.progress;
     return data;
   }
 }
-

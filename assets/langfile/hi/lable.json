@@ -162,6 +162,15 @@
     "flightArrivedTime" : "उड़ान आ गई है, आगमन समय नहीं बदला जा सकता",
 
     "entervalidULDNo" : "कृपया वैध यूएलडी नम्बर दर्ज करें।",
+
+    "awbListing" : "AWB लिस्टिंग",
+    "detailsForUldNo" : "विवरण के लिए यूएलडी नम्बर.",
+    "scanAWB" : "AWB स्कैन करें",
+    "showAllShipments" : "सभी शिपमेंट दिखाएं",
+    "showMoreDetails" : "अधिक विवरण दिखाएं",
+    "showLessDetails" : "कम विवरण दिखाएं",
+
+
     "2539" : "बैंड ढीला",
     "654" : "टूटा हुआ",
     "655" : "कुचला हुआ",

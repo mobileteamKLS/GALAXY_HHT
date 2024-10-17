@@ -335,13 +335,14 @@ class FlightCheckRepository{
   }
 
   // call Bd Priority api call
-  Future<AWBModel> getListOfAwb(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
+  Future<AWBModel> getListOfAwb(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId, int showAll) async {
 
     try {
 
       var payload = {
         "FlightSeqNo": flightSeqNo,
         "ULDSeqNo": uldSeqNo,
+        "ShowAll": showAll,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

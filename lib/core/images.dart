@@ -94,3 +94,7 @@ const arrowDown = 'assets/svgImages/arrowdown.svg';
 
 const loginBg = 'assets/images/loginBg.webp';
 const loginbg = 'assets/images/loginbg.jpg';
+
+
+
+

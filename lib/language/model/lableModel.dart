@@ -154,6 +154,13 @@ class LableModel {
   String? flightArrivedTime;
   String? entervalidULDNo;
 
+  String? awbListing;
+  String? detailsForUldNo;
+  String? scanAWB;
+  String? showAllShipments;
+  String? showMoreDetails;
+  String? showLessDetails;
+
   String? s654;
   String? s655;
   String? s656;
@@ -307,6 +314,12 @@ class LableModel {
         this.flightArrivedDate,
         this.flightArrivedTime,
         this.entervalidULDNo,
+        this.awbListing,
+        this.detailsForUldNo,
+        this.scanAWB,
+        this.showAllShipments,
+        this.showMoreDetails,
+        this.showLessDetails,
 
         this.save,
         this.s654,
@@ -476,6 +489,13 @@ class LableModel {
     flightArrivedTime = json['flightArrivedTime'];
     entervalidULDNo = json['entervalidULDNo'];
 
+    awbListing = json['awbListing'];
+    detailsForUldNo = json['detailsForUldNo'];
+    scanAWB = json['scanAWB'];
+    showAllShipments = json['showAllShipments'];
+    showMoreDetails = json['showMoreDetails'];
+    showLessDetails = json['showLessDetails'];
+
     s654 = json['654'];
     s655 = json['655'];
     s656 = json['656'];
@@ -643,6 +663,13 @@ class LableModel {
     data['flightArrivedDate'] = this.flightArrivedDate;
     data['flightArrivedTime'] = this.flightArrivedTime;
     data['entervalidULDNo'] = this.entervalidULDNo;
+
+    data['awbListing'] = this.awbListing;
+    data['detailsForUldNo'] = this.detailsForUldNo;
+    data['scanAWB'] = this.scanAWB;
+    data['showAllShipments'] = this.showAllShipments;
+    data['showMoreDetails'] = this.showMoreDetails;
+    data['showLessDetails'] = this.showLessDetails;
 
     data['654'] = this.s654;
     data['655'] = this.s655;

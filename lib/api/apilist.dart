@@ -33,5 +33,5 @@ class Apilist{
   static String recordAtaApi = "/FlightCheckIn/RecordATA";
   static String finalizeFlightApi = "/FlightCheckIn/FlightFinalized";
 
-  static String awbListApi = "/FlightCheckIn/AWBList";
+  static String awbListApi = "/FlightCheckIn/GetAWBDetails";
 }

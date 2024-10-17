@@ -167,6 +167,14 @@
     "flightArrivedDate" : "Flight is arrived can't change arrival date",
     "flightArrivedTime" : "Flight is arrived can't change arrival time",
 
+    "awbListing" : "AWB Listing",
+    "detailsForUldNo" : "Details for ULD No.",
+    "scanAWB" : "Scan AWB",
+    "showAllShipments" : "Show All Shipments",
+    "showMoreDetails" : "Show More Details",
+    "showLessDetails" : "Show Less Details",
+
+
 
     "2539" : "Bands Loose",
     "654" : "Broken",

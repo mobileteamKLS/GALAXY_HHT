@@ -92,10 +92,10 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
-  Future<void> getAWBList(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
+  Future<void> getAWBList(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId, int showAll) async {
     emit(MainLoadingState());
     try {
-      final awbModelData = await flightCheckRepository.getListOfAwb(flightSeqNo, uldSeqNo, userId, companyCode, menuId);
+      final awbModelData = await flightCheckRepository.getListOfAwb(flightSeqNo, uldSeqNo, userId, companyCode, menuId, showAll);
 
       emit(AWBListSuccessState(awbModelData));
     } catch (e) {

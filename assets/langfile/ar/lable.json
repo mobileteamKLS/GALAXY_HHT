@@ -166,6 +166,14 @@
 
     "entervalidULDNo" : "الرجاء إدخال رقم يو إل دي صالحًا.",
 
+    "awbListing" : "قائمة AWB",
+    "detailsForUldNo" : "تفاصيل رقم ULD.",
+    "scanAWB" : "مسح AWB",
+    "showAllShipments" : "عرض جميع الشحنات",
+    "showMoreDetails" : "عرض المزيد من التفاصيل",
+    "showLessDetails" : "إظهار تفاصيل أقل",
+
+
     "2539" : "العصابات فضفاضة",
     "654" : "مكسورة",
     "655" : "سحق",

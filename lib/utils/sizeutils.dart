@@ -45,6 +45,7 @@ class SizeUtils{
   static double HEIGHT4 = 4;
   static double HEIGHT5 = 5;
   static double HEIGHT6 = 6;
+  static double HEIGHT6_5 = 6.5;
   static double HEIGHT7 = 7;
   static double HEIGHT8 = 8;
 
