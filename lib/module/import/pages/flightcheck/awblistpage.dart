@@ -502,7 +502,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         if(aWBItem.remark == "Y"){
                                                                          // bool? value = await openDialog(context, aWBItem, widget.mainMenuName);
 
-                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: []),));
+                                                                          List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+
+                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList),));
 
                                                                           if(value == "true"){
                                                                             gotoCheckAWBScreen(aWBItem);
@@ -995,7 +997,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                                             if(widget.awbRemarkRequires == "Y"){
                                                                                               if(aWBItem.remark == "Y"){
-                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: []),));
+
+                                                                                                List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList),));
                                                                                                 if(value == "true"){
                                                                                                   gotoCheckAWBScreen(aWBItem);
                                                                                                 }else if(value == "Done"){
@@ -1216,6 +1220,11 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       }
     });
   }
+
+  List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int iMPAWBRowId) {
+    return awbRemarkList.where((remark) => remark.iMPAWBRowId == iMPAWBRowId).toList();
+  }
+
 
   Future<void> scanQR() async {
     String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(

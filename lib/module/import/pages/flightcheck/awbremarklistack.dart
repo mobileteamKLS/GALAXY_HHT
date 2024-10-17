@@ -1,20 +1,7 @@
-import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
-import 'package:dotted_border/dotted_border.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
-import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
-import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:galaxy/widget/customdivider.dart';
-import 'package:vibration/vibration.dart';
-
-import '../../../../core/images.dart';
 import '../../../../core/mycolor.dart';
 import '../../../../language/appLocalizations.dart';
 import '../../../../language/model/lableModel.dart';
@@ -27,9 +14,7 @@ import '../../../../utils/sizeutils.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
-import '../../../../widget/roundbutton.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -37,13 +22,12 @@ import 'dart:ui' as ui;
 
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
-import '../../model/flightcheck/flightcheckuldlistmodel.dart';
-import 'checkawb.dart';
+
 
 class AWBRemarkListAckPage extends StatefulWidget {
 
   String mainMenuName;
-  List<AWBRemarkList>? aWBRemarkList = [];
+  List<AWBRemarksList>? aWBRemarkList = [];
 
   AWBRemarkListAckPage({super.key, required this.mainMenuName, required this.aWBRemarkList});
 
@@ -245,7 +229,7 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage>{
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                  text: AwbFormateNumberUtils.formatAWBNumber(widget.aWBRemarkList![index].AWBNo!),
+                                                                  text: AwbFormateNumberUtils.formatAWBNumber(widget.aWBRemarkList![index].aWBNo!),
                                                                   fontColor: MyColor.textColorGrey3,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                   fontWeight: FontWeight.w700,
@@ -316,36 +300,55 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage>{
                               ),
                             ),
 
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
+                              child: Container(
+                                padding: const EdgeInsets.only(left: 8, right: 8, top: 12, bottom: 12),
+                                decoration: BoxDecoration(
+                                  color: MyColor.colorWhite,
+                                  borderRadius:
+                                  BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: MyColor.colorBlack.withOpacity(0.09),
+                                      spreadRadius: 2,
+                                      blurRadius: 15,
+                                      offset: Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
 
-                                Expanded(
-                                  flex: 1,
-                                  child: RoundedButtonBlue(
-                                    text: "Close",
-                                    isborderButton: true,
-                                    color:  MyColor.primaryColorblue,
-                                    press: () async {
-                                      Navigator.pop(context, "Done");
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: RoundedButtonBlue(
-                                    text: "Acknowledge",
-                                    color: MyColor.primaryColorblue,
-                                    press: () async {
-                                      Navigator.pop(context, "true");
-                                    },
-                                  ),
-                                ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RoundedButtonBlue(
+                                        text: "Back",
+                                        isborderButton: true,
+                                        color:  MyColor.primaryColorblue,
+                                        press: () async {
+                                          Navigator.pop(context, "Done");
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: RoundedButtonBlue(
+                                        text: "Acknowledge",
+                                        color: MyColor.primaryColorblue,
+                                        press: () async {
+                                          Navigator.pop(context, "true");
+                                        },
+                                      ),
+                                    ),
 
-                              ],
+                                  ],
+                                ),
+                              ),
                             )
 
                           ],

@@ -1,10 +1,11 @@
 class AWBModel {
   List<FlightCheckInAWBBDList>? flightCheckInAWBBDList;
+  List<AWBRemarksList>? aWBRemarksList;
   String? status;
   String? statusMessage;
   int? ULDProgress;
 
-  AWBModel({this.flightCheckInAWBBDList, this.status, this.statusMessage});
+  AWBModel({this.flightCheckInAWBBDList, this.aWBRemarksList, this.status, this.statusMessage});
 
   AWBModel.fromJson(Map<String, dynamic> json) {
     if (json['FlightCheckInAWBBDList'] != null) {
@@ -13,6 +14,14 @@ class AWBModel {
         flightCheckInAWBBDList!.add(new FlightCheckInAWBBDList.fromJson(v));
       });
     }
+
+    if (json['AWBRemarksList'] != null) {
+      aWBRemarksList = <AWBRemarksList>[];
+      json['AWBRemarksList'].forEach((v) {
+        aWBRemarksList!.add(new AWBRemarksList.fromJson(v));
+      });
+    }
+
     ULDProgress = json['ULDProgress'];
     status = json['Status'];
     statusMessage = json['StatusMessage'];
@@ -23,6 +32,10 @@ class AWBModel {
     if (this.flightCheckInAWBBDList != null) {
       data['FlightCheckInAWBBDList'] =
           this.flightCheckInAWBBDList!.map((v) => v.toJson()).toList();
+    }
+    if (this.aWBRemarksList != null) {
+      data['AWBRemarksList'] =
+          this.aWBRemarksList!.map((v) => v.toJson()).toList();
     }
     data['ULDProgress'] = this.ULDProgress;
     data['Status'] = this.status;
@@ -90,7 +103,7 @@ class FlightCheckInAWBBDList {
     excessLanded = json['ExcessLanded'];
     damageNOP = json['DamageNOP'];
     damageWeight = json['DamageWeight'];
-    remark = json['Remark'];
+    remark = json['AWBRemarksInd'];
     agentName = json['AgentName'];
     mAWBInd = json['MAWBInd'];
     sHCCode = json['SHCCode'];
@@ -115,7 +128,7 @@ class FlightCheckInAWBBDList {
     data['ExcessLanded'] = this.excessLanded;
     data['DamageNOP'] = this.damageNOP;
     data['DamageWeight'] = this.damageWeight;
-    data['Remark'] = this.remark;
+    data['AWBRemarksInd'] = this.remark;
     data['AgentName'] = this.agentName;
     data['MAWBInd'] = this.mAWBInd;
     data['SHCCode'] = this.sHCCode;
@@ -124,6 +137,36 @@ class FlightCheckInAWBBDList {
     data['Transit'] = this.transit;
     data['Commodity'] = this.commodity;
     data['Progress'] = this.progress;
+    return data;
+  }
+
+
+
+}
+
+
+class AWBRemarksList {
+  bool? isHighPriority;
+  String? remark;
+  String? aWBNo;
+  int? iMPAWBRowId;
+
+  AWBRemarksList(
+      {this.isHighPriority, this.remark, this.aWBNo, this.iMPAWBRowId});
+
+  AWBRemarksList.fromJson(Map<String, dynamic> json) {
+    isHighPriority = json['IsHighPriority'];
+    remark = json['Remark'];
+    aWBNo = json['AWBNo'];
+    iMPAWBRowId = json['IMPAWBRowId'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['IsHighPriority'] = this.isHighPriority;
+    data['Remark'] = this.remark;
+    data['AWBNo'] = this.aWBNo;
+    data['IMPAWBRowId'] = this.iMPAWBRowId;
     return data;
   }
 }
