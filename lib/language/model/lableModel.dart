@@ -161,6 +161,15 @@ class LableModel {
   String? showMoreDetails;
   String? showLessDetails;
 
+  String? allShipment;
+  String? priorityAWbMsg;
+
+  String? remarkList;
+  String? remarkfor;
+  String? back;
+  String? acknowledge;
+
+
   String? s654;
   String? s655;
   String? s656;
@@ -320,6 +329,13 @@ class LableModel {
         this.showAllShipments,
         this.showMoreDetails,
         this.showLessDetails,
+        this.allShipment,
+        this.priorityAWbMsg,
+
+        this.remarkList,
+        this.remarkfor,
+        this.back,
+        this.acknowledge,
 
         this.save,
         this.s654,
@@ -495,6 +511,12 @@ class LableModel {
     showAllShipments = json['showAllShipments'];
     showMoreDetails = json['showMoreDetails'];
     showLessDetails = json['showLessDetails'];
+    allShipment = json['allShipment'];
+    priorityAWbMsg = json['priorityAWbMsg'];
+    remarkList = json['remarkList'];
+    remarkfor = json['remarkfor'];
+    back = json['back'];
+    acknowledge = json['acknowledge'];
 
     s654 = json['654'];
     s655 = json['655'];
@@ -670,6 +692,12 @@ class LableModel {
     data['showAllShipments'] = this.showAllShipments;
     data['showMoreDetails'] = this.showMoreDetails;
     data['showLessDetails'] = this.showLessDetails;
+    data['allShipment'] = this.allShipment;
+    data['priorityAWbMsg'] = this.priorityAWbMsg;
+    data['remarkList'] = this.remarkList;
+    data['remarkfor'] = this.remarkfor;
+    data['back'] = this.back;
+    data['acknowledge'] = this.acknowledge;
 
     data['654'] = this.s654;
     data['655'] = this.s655;

@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/custometext.dart';
 
+import '../../../../core/images.dart';
 import '../../../../core/mycolor.dart';
 import '../../../../language/appLocalizations.dart';
 import '../../../../language/model/lableModel.dart';
@@ -64,13 +67,6 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
 
   bool _isFoundCargoChecked = false;
 
-  TextEditingController flightNoEditingController = TextEditingController();
-  TextEditingController dateEditingController = TextEditingController();
-  TextEditingController scanULDNoController = TextEditingController();
-  TextEditingController scanMAWBNoController = TextEditingController();
-  TextEditingController scanHAWBNoController = TextEditingController();
-  TextEditingController mAWBNoController = TextEditingController();
-  TextEditingController hAWBNoController = TextEditingController();
 
   TextEditingController manifestedNopController = TextEditingController();
   TextEditingController receivedNopController = TextEditingController();
@@ -83,13 +79,6 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
   TextEditingController damageWeight1Controller = TextEditingController();
 
 
-  FocusNode flightNoFocusNode = FocusNode();
-  FocusNode dateFocusNode = FocusNode();
-  FocusNode scanULDNoFocusNode = FocusNode();
-  FocusNode scanMAWBNoFocusNode = FocusNode();
-  FocusNode mAWBNoFocusNode = FocusNode();
-  FocusNode hAWBNoFocusNode = FocusNode();
-  FocusNode scanHAWBNoFocusNode = FocusNode();
   FocusNode manifestedNopFocusNode = FocusNode();
   FocusNode receivedNopFocusNode = FocusNode();
   FocusNode remainingNopFocusNode = FocusNode();
@@ -207,6 +196,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
                         Padding(
                           padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                           child: HeaderWidget(
+                            titleTextColor: MyColor.colorBlack,
                             title: "Check AWB",
                             onBack: () {
                               Navigator.pop(context, "Done");
@@ -218,825 +208,626 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
 
                         Expanded(
                             child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
+                              child: Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 10,
+                                    right: 10,
+                                    top: 0,
+                                    bottom: 0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
 
-                                  Container(
-                                    padding : EdgeInsets.all(10),
-                                    margin: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-                                    decoration: BoxDecoration(
-                                      color: MyColor.colorWhite,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                          spreadRadius: 2,
-                                          blurRadius: 15,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Directionality(
-                                          textDirection: uiDirection,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              CustomeText(text: "AWB No.", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.BUTTONHORIZONTALSIZE,),
-                                              CustomeText(text: widget.aWBItem.aWBNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                            ],
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: MyColor.colorWhite,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                            spreadRadius: 2,
+                                            blurRadius: 15,
+                                            offset: Offset(0, 3), // changes position of shadow
                                           ),
-                                        ),
-                                      /*  SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            Expanded(
-                                              flex : 1,
-                                              child: Row(
-                                                children: [
-                                                  Checkbox(
-                                                    side: BorderSide(width: 1, color: MyColor.primaryColorblue),
-                                                    value: _isFoundCargoChecked,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        _isFoundCargoChecked = value!;
-                                                      });
-                                                    },
-                                                    checkColor: Colors.white,
-                                                    activeColor: MyColor.primaryColorblue,
-                                                  ),
-                                                  CustomeText(text: "Found Cargo", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                ],
-                                              ),
-                                            ),
-                                            Expanded(
-                                              flex: 1,
-                                              child: RoundedButtonBlue(
-                                                text: "BULK/ULD Complete",
-                                                press: () {
-
-                                                },),
-                                            ),
-                                          ],
-                                        ),
-                                        _isFoundCargoChecked ? Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            CustomeText(text: "* MLM for master label missing", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * 1.2, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                            SizedBox(height: 5,),
-                                            CustomeText(text: "* MLH for house label missing", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * 1.2, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                          ],
-                                        ) : Container()*/
-                                      ],
-                                    ),
-                                  ),
-
-                                 /* !_isFoundCargoChecked ? Column(
-                                    children: [
-                                      Container(
-                                        padding : EdgeInsets.all(10),
-                                        margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
-                                        decoration: BoxDecoration(
-                                          color: MyColor.colorWhite,
-                                          borderRadius: BorderRadius.circular(8),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: MyColor.colorBlack.withOpacity(0.09),
-                                              spreadRadius: 2,
-                                              blurRadius: 15,
-                                              offset: Offset(0, 3), // changes position of shadow
-                                            ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Directionality(
-                                              textDirection: uiDirection,
-                                              child: CustomTextField(
-                                                controller: scanMAWBNoController,
-                                                focusNode: scanMAWBNoFocusNode,
-                                                onPress: () {},
-                                                hasIcon: false,
-                                                hastextcolor: true,
-                                                animatedLabel: true,
-                                                needOutlineBorder: true,
-                                                labelText: "Scan MAWB No.",
-                                                readOnly: false,
-                                                onChanged: (value) {},
-                                                fillColor:  Colors.grey.shade100,
-                                                textInputType:
-                                                TextInputType.text,
-                                                inputAction:
-                                                TextInputAction.next,
-                                                hintTextcolor:
-                                                Colors.black45,
-                                                verticalPadding: 0,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return "Please fill out this field";
-                                                  } else {
-                                                    return null;
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                            Directionality(
-                                              textDirection: uiDirection,
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  CustomeText(text: "MAWB No.", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.BUTTONHORIZONTALSIZE,),
-                                                  Expanded(
-                                                    flex : 2,
-                                                    child: Container(
-                                                      height: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                      padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical * 0.2, horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
-                                                      decoration: BoxDecoration(
-                                                        color: MyColor.colorWhite,
-                                                        borderRadius: BorderRadius.circular(8),
-                                                        border: Border.all(color: MyColor.colorBlack, width: 0.1),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                                            spreadRadius: 2,
-                                                            blurRadius: 15,
-                                                            offset: Offset(0, 3), // changes position of shadow
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: DropdownButton<String>(
-                                                        value: selectedMawbItem,
-                                                        hint:  CustomeText(text: "Select", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                        items: listOfmawbNo().map((String item) {
-                                                          return DropdownMenuItem<String>(
-                                                            value: item,
-                                                            child:  CustomeText(text: item, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                          );
-                                                        }).toList(),
-                                                        onChanged: (String? value) {
-                                                          setState(() {
-                                                            selectedMawbItem = value;
-                                                          });
-                                                        },
-                                                        underline: SizedBox(), // Removes the default underline
-                                                        isExpanded: true,
-                                                        dropdownColor: Colors.white,
-                                                        icon: Icon(Icons.arrow_drop_down, color: Colors.black45),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                        ],
                                       ),
-                                      Container(
-                                        padding : EdgeInsets.all(10),
-                                        margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
-                                        decoration: BoxDecoration(
-                                          color: MyColor.colorWhite,
-                                          borderRadius: BorderRadius.circular(8),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: MyColor.colorBlack.withOpacity(0.09),
-                                              spreadRadius: 2,
-                                              blurRadius: 15,
-                                              offset: Offset(0, 3), // changes position of shadow
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Directionality(
+                                            textDirection: uiDirection,
+                                            child: Row(
+                                              children: [
+                                                SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                CustomeText(
+                                                    text: "Details for AWB No. ${AwbFormateNumberUtils.formatAWBNumber(widget.aWBItem.aWBNo!)}",
+                                                    fontColor: MyColor.textColorGrey2,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w500,
+                                                    textAlign: TextAlign.start)
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          children: [
-                                            Directionality(
-                                              textDirection: uiDirection,
-                                              child: CustomTextField(
-                                                controller: scanHAWBNoController,
-                                                focusNode: scanHAWBNoFocusNode,
-                                                onPress: () {},
-                                                hasIcon: false,
-                                                hastextcolor: true,
-                                                animatedLabel: true,
-                                                needOutlineBorder: true,
-                                                labelText: "Scan HAWB No.",
-                                                readOnly: false,
-                                                onChanged: (value) {},
-                                                fillColor:  Colors.grey.shade100,
-                                                textInputType: TextInputType.text,
-                                                inputAction: TextInputAction.next,
-                                                hintTextcolor: Colors.black45,
-                                                verticalPadding: 0,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                validator: (value) {
-                                                  if (value!.isEmpty) {
-                                                    return "Please fill out this field";
-                                                  } else {
-                                                    return null;
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                            Directionality(
-                                              textDirection: uiDirection,
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  CustomeText(text: "HAWB No.", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.BUTTONHORIZONTALSIZE,),
-                                                  Expanded(
-                                                    flex : 2,
-                                                    child: Container(
-                                                      height: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                      padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical * 0.2, horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
-                                                      decoration: BoxDecoration(
-                                                        color: MyColor.colorWhite,
-                                                        borderRadius: BorderRadius.circular(8),
-                                                        border: Border.all(color: MyColor.colorBlack, width: 0.1),
-                                                        boxShadow: [
-                                                          BoxShadow(
-                                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                                            spreadRadius: 2,
-                                                            blurRadius: 15,
-                                                            offset: Offset(0, 3), // changes position of shadow
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      child: DropdownButton<String>(
-                                                        value: selectedHawbItem,
-                                                        hint:  CustomeText(text: "Select", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                        items: listOfhawbNo().map((String item) {
-                                                          return DropdownMenuItem<String>(
-                                                            value: item,
-                                                            child:  CustomeText(text: item, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                          );
-                                                        }).toList(),
-                                                        onChanged: (String? value) {
-                                                          setState(() {
-                                                            selectedHawbItem = value;
-                                                          });
-                                                        },
-                                                        underline: SizedBox(), // Removes the default underline
-                                                        isExpanded: true,
-                                                        dropdownColor: Colors.white,
-                                                        icon: Icon(Icons.arrow_drop_down, color: Colors.black45),
-                                                      ),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ) : SizedBox(),*/
-
-                                /*  _isFoundCargoChecked ? Container(
-                                    padding : EdgeInsets.all(10),
-                                    margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
-                                    decoration: BoxDecoration(
-                                      color: MyColor.colorWhite,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                          spreadRadius: 2,
-                                          blurRadius: 15,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Directionality(
-                                          textDirection: uiDirection,
-                                          child: CustomTextField(
-                                            controller: mAWBNoController,
-                                            focusNode: mAWBNoFocusNode,
-                                            onPress: () {},
-                                            hasIcon: false,
-                                            hastextcolor: true,
-                                            animatedLabel: true,
-                                            needOutlineBorder: true,
-                                            labelText: "MAWB No.",
-
-                                            readOnly: false,
-                                            onChanged: (value) {},
-                                            fillColor:  Colors.grey.shade100,
-                                            textInputType:
-                                            TextInputType.text,
-                                            inputAction:
-                                            TextInputAction.next,
-                                            hintTextcolor:
-                                            Colors.black45,
-                                            verticalPadding: 0,
-                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return "Please fill out this field";
-                                              } else {
-                                                return null;
-                                              }
-                                            },
                                           ),
-                                        ),
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        Directionality(
-                                          textDirection: uiDirection,
-                                          child: CustomTextField(
-                                            controller: hAWBNoController,
-                                            focusNode: hAWBNoFocusNode,
-                                            onPress: () {},
-                                            hasIcon: false,
-                                            hastextcolor: true,
-                                            animatedLabel: true,
-                                            needOutlineBorder: true,
-                                            labelText: "HAWB No.",
-                                            readOnly: false,
-                                            onChanged: (value) {},
-                                            fillColor:  Colors.grey.shade100,
-                                            textInputType:
-                                            TextInputType.text,
-                                            inputAction:
-                                            TextInputAction.next,
-                                            hintTextcolor: Colors.black45,
-                                            verticalPadding: 0,
-                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                            validator: (value) {
-                                              if (value!.isEmpty) {
-                                                return "Please fill out this field";
-                                              } else {
-                                                return null;
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ) : SizedBox(),*/
+                                          SizedBox(height: SizeConfig.blockSizeVertical,),
 
-                                  Container(
-                                    padding: const EdgeInsets.all(10),
-                                    margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
-                                    decoration: BoxDecoration(
-                                      color: MyColor.colorWhite,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                          spreadRadius: 2,
-                                          blurRadius: 15,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        CustomeText(
-                                            text: "${lableModel.pieces}",
-                                            fontColor: MyColor.colorBlack,
-                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                            fontWeight: FontWeight.w600,
-                                            textAlign: TextAlign.start),
+                                          CustomeText(
+                                              text: "PIECES INFO",
+                                              fontColor: MyColor.colorBlack,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                              fontWeight: FontWeight.w600,
+                                              textAlign: TextAlign.start),
 
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        // text manifest and recived in pices text counter
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: manifestedNopController,
-                                                  focusNode: manifestedNopFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: "Manifested",
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade100,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),),
-                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: receivedNopController,
-                                                  focusNode: receivedNopFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: "Received",
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade100,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),),
-                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: remainingNopController,
-                                                  focusNode: remainingNopFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: "Remaining",
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade100,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-
-
-                                  Container(
-                                    padding: EdgeInsets.all(10),
-                                    margin: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 0),
-                                    decoration: BoxDecoration(
-                                      color: MyColor.colorWhite,
-                                      borderRadius: BorderRadius.circular(8),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                          spreadRadius: 2,
-                                          blurRadius: 15,
-                                          offset: Offset(0, 3), // changes position of shadow
-                                        ),
-                                      ],
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex:1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: groupIdController,
-                                                  focusNode: groupIdFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: "Group Id",
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor: Colors.grey.shade100,
-                                                  textInputType:
-                                                  TextInputType.text,
-                                                  inputAction:
-                                                  TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.5,),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: arrivedNoPController,
-                                                  focusNode: arrivedNoPFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: "Arrived NoP",
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade100,
-                                                  textInputType:
-                                                  TextInputType.text,
-                                                  inputAction:
-                                                  TextInputAction.next,
-                                                  hintTextcolor:
-                                                  Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                                flex:2,
-                                                child: CustomeText(text: "Damage NoP", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: damageNoPController,
-                                                  focusNode: damageNoPFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: false,
-                                                  needOutlineBorder: true,
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade100,
-                                                  textInputType:
-                                                  TextInputType.text,
-                                                  inputAction:
-                                                  TextInputAction.next,
-                                                  hintTextcolor:
-                                                  Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.5,),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: damageNoP1Controller,
-                                                  focusNode: damage1NoPFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: false,
-                                                  needOutlineBorder: true,
-                                                  readOnly: true,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade300,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-
-                                          ],
-                                        ),
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                                flex:2,
-                                                child: CustomeText(text: "Damage Weight", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: damageWeightController,
-                                                  focusNode: damageWeightFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: false,
-                                                  needOutlineBorder: true,
-                                                  readOnly: false,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade100,
-                                                  textInputType:
-                                                  TextInputType.text,
-                                                  inputAction:
-                                                  TextInputAction.next,
-                                                  hintTextcolor:
-                                                  Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.5,),
-                                            Expanded(
-                                              flex: 1,
-                                              child: Directionality(
-                                                textDirection: uiDirection,
-                                                child: CustomTextField(
-                                                  controller: damageWeight1Controller,
-                                                  focusNode: damageWeight1FocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: false,
-                                                  needOutlineBorder: true,
-                                                  readOnly: true,
-                                                  onChanged: (value) {},
-                                                  fillColor:  Colors.grey.shade300,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-
-                                          ],
-                                        ),
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        Directionality(
-                                          textDirection: uiDirection,
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                          // text manifest and recived in pices text counter
+                                          Row(
                                             children: [
-                                              CustomeText(text: "Damage Type", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.BUTTONHORIZONTALSIZE,),
                                               Expanded(
-                                                flex : 1,
-                                                child: Container(
-                                                  height: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  padding: EdgeInsets.symmetric(vertical: SizeConfig.blockSizeVertical * 0.2, horizontal: SizeConfig.blockSizeHorizontal *2),
-                                                  decoration: BoxDecoration(
-                                                    color: MyColor.colorWhite,
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    border: Border.all(color: MyColor.colorBlack, width: 0.1),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: MyColor.colorBlack.withOpacity(0.09),
-                                                        spreadRadius: 2,
-                                                        blurRadius: 15,
-                                                        offset: Offset(0, 3), // changes position of shadow
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: DropdownButton<String>(
-                                                    value: selectedHawbItem,
-                                                    hint:  CustomeText(text: "Select", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                    items: listOfhawbNo().map((String item) {
-                                                      return DropdownMenuItem<String>(
-                                                        value: item,
-                                                        child:  CustomeText(text: item, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (String? value) {
-                                                      setState(() {
-                                                        selectedHawbItem = value;
-                                                      });
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: manifestedNopController,
+                                                    focusNode: manifestedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Manifested",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
                                                     },
-                                                    underline: SizedBox(), // Removes the default underline
-                                                    isExpanded: true,
-                                                    dropdownColor: Colors.white,
-                                                    icon: Icon(Icons.arrow_drop_down, color: Colors.black45),
+                                                  ),
+                                                ),),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: receivedNopController,
+                                                    focusNode: receivedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Received",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: remainingNopController,
+                                                    focusNode: remainingNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Remaining",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
                                                   ),
                                                 ),
-                                              )
+                                              ),
                                             ],
                                           ),
-                                        ),
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                        RoundedButtonBlue(
-                                          text: "Submit",verticalPadding : SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE ,
-                                          press: () {
-
-                                          },)
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  )
+                                    SizedBox(
+                                      height: SizeConfig.blockSizeVertical,
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+
+                                      decoration: BoxDecoration(
+                                        color: MyColor.colorWhite,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                            spreadRadius: 2,
+                                            blurRadius: 15,
+                                            offset: Offset(0, 3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: manifestedNopController,
+                                                    focusNode: manifestedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "NPX",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: receivedNopController,
+                                                    focusNode: receivedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "NPR",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                            ],
+                                          ),
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: manifestedNopController,
+                                                    focusNode: manifestedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Wt. Exp.",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: receivedNopController,
+                                                    focusNode: receivedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Wt. Rec.",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                            ],
+                                          ),
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: manifestedNopController,
+                                                    focusNode: manifestedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Short",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: receivedNopController,
+                                                    focusNode: receivedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Excess",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                            ],
+                                          ),
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: manifestedNopController,
+                                                    focusNode: manifestedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Dmg. Pcs.",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: receivedNopController,
+                                                    focusNode: receivedNopFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Dmg. Wt.",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.text,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: SizeConfig.blockSizeVertical,
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+
+                                      decoration: BoxDecoration(
+                                        color: MyColor.colorWhite,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                            spreadRadius: 2,
+                                            blurRadius: 15,
+                                            offset: Offset(0, 3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
 
 
-                                ],
+                                          CustomeText(
+                                              text: "OTHER DETAIL",
+                                              fontColor: MyColor.colorBlack,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                              fontWeight: FontWeight.w600,
+                                              textAlign: TextAlign.start),
+
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                          // text manifest and recived in pices text counter
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex:1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: groupIdController,
+                                                    focusNode: groupIdFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Group Id",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor: Colors.grey.shade100,
+                                                    textInputType:
+                                                    TextInputType.text,
+                                                    inputAction:
+                                                    TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: arrivedNoPController,
+                                                    focusNode: arrivedNoPFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Arrived NoP",
+                                                    readOnly: false,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType:
+                                                    TextInputType.text,
+                                                    inputAction:
+                                                    TextInputAction.next,
+                                                    hintTextcolor:
+                                                    Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: SizeConfig.blockSizeVertical,
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.all(10),
+                                      decoration: BoxDecoration(
+                                        color: MyColor.colorWhite,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                            spreadRadius: 2,
+                                            blurRadius: 15,
+                                            offset: Offset(0, 3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            flex: 1,
+                                            child: RoundedButtonBlue(
+                                              text: "Damage & Save",
+                                              press: () async {
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
+                                          ),
+                                          Expanded(
+                                            flex: 1,
+                                            child: RoundedButtonBlue(
+                                              text: "Save",
+
+                                              press: () async {
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+
+
+                                  ],
+                                ),
                               ),
                             ))
                       ],

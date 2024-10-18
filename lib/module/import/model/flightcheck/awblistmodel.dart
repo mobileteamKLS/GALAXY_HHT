@@ -64,6 +64,7 @@ class FlightCheckInAWBBDList {
   int? bDPriority;
   String? isIntact;
   String? transit;
+  String? destination;
   String? commodity;
   int? progress;
 
@@ -87,6 +88,7 @@ class FlightCheckInAWBBDList {
         this.bDPriority,
         this.isIntact,
         this.transit,
+        this.destination,
         this.commodity,
         this.progress});
 
@@ -110,6 +112,7 @@ class FlightCheckInAWBBDList {
     bDPriority = json['BDPriority'];
     isIntact = json['IsIntact'];
     transit = json['Transit'];
+    destination = json['Destination'];
     commodity = json['Commodity'];
     progress = json['Progress'];
   }
@@ -135,6 +138,7 @@ class FlightCheckInAWBBDList {
     data['BDPriority'] = this.bDPriority;
     data['IsIntact'] = this.isIntact;
     data['Transit'] = this.transit;
+    data['Destination'] = this.destination;
     data['Commodity'] = this.commodity;
     data['Progress'] = this.progress;
     return data;

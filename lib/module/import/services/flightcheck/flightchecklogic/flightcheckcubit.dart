@@ -103,6 +103,17 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
+  Future<void> bdPriorityAWB(int iMPShipRowId, int bdPriority, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final bdPriorityAWBModelData = await flightCheckRepository.bdPriorityAWB(iMPShipRowId, bdPriority, userId, companyCode, menuId);
+
+      emit(BDPriorityAWBSuccessState(bdPriorityAWBModelData));
+    } catch (e) {
+      emit(BDPriorityAWBFailureState(e.toString()));
+    }
+  }
+
 
 
   void resetState() {

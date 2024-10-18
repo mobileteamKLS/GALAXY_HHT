@@ -34,4 +34,5 @@ class Apilist{
   static String finalizeFlightApi = "/FlightCheckIn/FlightFinalized";
 
   static String awbListApi = "/FlightCheckIn/GetAWBDetails";
+  static String updateBDPriorityAWB = "/FlightCheckIn/UpdateAWBBDPriority";
 }

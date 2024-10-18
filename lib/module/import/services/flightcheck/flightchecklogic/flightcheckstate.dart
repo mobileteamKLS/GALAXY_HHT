@@ -104,3 +104,13 @@ class AWBListFailureState extends FlightCheckState {
   AWBListFailureState(this.error);
 }
 
+class BDPriorityAWBSuccessState extends FlightCheckState {
+  final BdPriorityModel bdPriorityModel;
+  BDPriorityAWBSuccessState(this.bdPriorityModel);
+}
+
+class BDPriorityAWBFailureState extends FlightCheckState {
+  final String error;
+  BDPriorityAWBFailureState(this.error);
+}
+

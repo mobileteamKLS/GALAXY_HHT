@@ -170,6 +170,14 @@
     "showMoreDetails" : "अधिक विवरण दिखाएं",
     "showLessDetails" : "कम विवरण दिखाएं",
 
+    "allShipment" : "सभी शिपमेंट स्वीकृत",
+    "priorityAWbMsg" : "प्राथमिकता परिवर्तित AWB नम्बर.",
+
+    "remarkList" : "टिप्पणी सूची",
+    "remarkfor" : "टिप्पणियाँ के लिए",
+    "back" : "पीछे",
+    "acknowledge" : "पावती",
+
 
     "2539" : "बैंड ढीला",
     "654" : "टूटा हुआ",

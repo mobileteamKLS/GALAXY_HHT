@@ -7,6 +7,7 @@ import 'package:galaxy/language/model/dashboardModel.dart';
 import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/module/onboarding/sizeconfig.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/commonutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
@@ -641,7 +642,7 @@ class DialogUtils {
                         },
                       ),
                     ) ,
-                    const SizedBox(width: 10,),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                     Expanded(
                       flex: 1,
                       child: RoundedButton(
@@ -659,6 +660,34 @@ class DialogUtils {
                     ),
                   ],
                 ),
+                SizedBox(height: SizeConfig.blockSizeVertical,),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonBlue(
+                        isborderButton: true,
+                        text: "Cancel",
+                        color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonBlue(
+                        isborderButton: true,
+                        text: "Add Mail",
+                        color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
+                        press: () {
+
+                        },
+                      ),
+                    ),
+                  ],
+                )
               ],
             ),
           ),
@@ -816,6 +845,159 @@ class DialogUtils {
       },
     );
   }
+
+
+  static Future<String?> showPriorityChangeBottomAWBDialog(BuildContext context, String awbNo, String priority, LableModel lableModel, ui.TextDirection textDirection) {
+    TextEditingController priorityController = TextEditingController();
+    FocusNode priorityFocusNode = FocusNode();
+    priorityController.text = priority;
+
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,  // Ensures the bottom sheet adjusts when the keyboard is opened
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(priorityFocusNode);
+        });
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,  // Adjust for keyboard
+          ),
+          child: FractionallySizedBox(
+            widthFactor: 1,  // Adjust the width to 90% of the screen width
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomeText(text: "${lableModel.changePriority}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                            },
+                            child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                      ],
+                    ),
+                  ),
+                  CustomDivider(
+                    space: 0,
+                    color: MyColor.textColorGrey,
+                    hascolor: true,
+                    thickness: 1,
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 6),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal,
+                        ),
+                        Flexible(
+                          child: CustomeText(
+                              text: "${lableModel.priorityAWbMsg} ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
+                              fontColor: MyColor.textColorGrey2,
+                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                              fontWeight: FontWeight.w400,
+                              textAlign: TextAlign.start),
+                        )
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                    child: CustomTextField(
+                      focusNode: priorityFocusNode,
+                      textDirection: textDirection,
+                      hasIcon: false,
+                      hastextcolor: true,
+                      animatedLabel: true,
+                      needOutlineBorder: true,
+                      labelText: "${lableModel.priority}",
+                      readOnly: false,
+                      controller: priorityController,
+                      maxLength: 2,
+                      onChanged: (value, validate) {},
+                      fillColor: Colors.grey.shade100,
+                      textInputType: TextInputType.number,
+                      inputAction: TextInputAction.next,
+                      hintTextcolor: Colors.black,
+                      verticalPadding: 0,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                      digitsOnly: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please fill out this field";
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+
+                  CustomDivider(
+                    space: 0,
+                    color: MyColor.textColorGrey,
+                    hascolor: true,
+                    thickness: 1,
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: RoundedButtonBlue(
+                            text: "${lableModel.cancel}",
+                            isborderButton: true,
+                            press: () {
+                              Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 1,
+                          child: RoundedButtonBlue(
+                            text: "${lableModel.save}",
+                            press: () {
+                              Navigator.pop(context, priorityController.text);  // Return the text when "Save" is pressed
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
 
 
 

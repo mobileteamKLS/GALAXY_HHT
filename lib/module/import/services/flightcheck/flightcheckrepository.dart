@@ -334,7 +334,7 @@ class FlightCheckRepository{
     }
   }
 
-  // call Bd Priority api call
+  // list AWB api call
   Future<AWBModel> getListOfAwb(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId, int showAll) async {
 
     try {
@@ -361,6 +361,50 @@ class FlightCheckRepository{
       if (response.statusCode == 200) {
         AWBModel aWBModel = AWBModel.fromJson(response.data);
         return aWBModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+  // call AWB Bd Priority api call
+  Future<BdPriorityModel> bdPriorityAWB(int iMPShipRowId, int bdPriority, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "IMPShipRowId": iMPShipRowId,
+        "BDPriority": bdPriority,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('locationValidationModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.updateBDPriorityAWB,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        BdPriorityModel bdPriorityModel = BdPriorityModel.fromJson(response.data);
+        return bdPriorityModel;
       } else {
         // Handle non-200 response
         throw DioException(

@@ -37,6 +37,7 @@ import 'dart:ui' as ui;
 
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
+import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import 'checkawb.dart';
 
 class AWBListPage extends StatefulWidget {
@@ -45,11 +46,11 @@ class AWBListPage extends StatefulWidget {
   String awbRemarkRequires;
   String mainMenuName;
   String uldNo;
-  int flightSeqNo;
+  FlightDetailSummary flightDetailSummary;
   int uldSeqNo;
   int menuId;
 
-  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightSeqNo, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires});
+  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires});
 
   @override
   State<AWBListPage> createState() => _AWBListPageState();
@@ -113,16 +114,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       });
 
 
-      context.read<FlightCheckCubit>().getAWBList(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+
 
     }
 
-    inactivityTimerManager = InactivityTimerManager(
-      context: context,
-      timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
-      onTimeout: _handleInactivityTimeout,  // Define what happens when timeout occurs
-    );
-    inactivityTimerManager?.startTimer();
+
 
   }
 
@@ -155,6 +153,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     return false; // Prevents the default back button action
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    inactivityTimerManager!.stopTimer();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -173,6 +178,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
         ? ui.TextDirection.rtl
         : ui.TextDirection.ltr;
+
+    final flightParts = widget.flightDetailSummary.flightNo!.split(' ');
 
     // ui direction change arabic language
     return WillPopScope(
@@ -237,6 +244,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                   print("CHECK_AWB_PAGE______SUCCESS");
                                   DialogUtils.hideLoadingDialog(context);
 
+                                  inactivityTimerManager = InactivityTimerManager(
+                                    context: context,
+                                    timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
+                                    onTimeout: _handleInactivityTimeout,  // Define what happens when timeout occurs
+                                  );
+                                  inactivityTimerManager?.startTimer();
+
                                   if(state.aWBModel.status == "E"){
                                     SnackbarUtil.showSnackbar(context, state.aWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
@@ -263,6 +277,31 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                   DialogUtils.hideLoadingDialog(context);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
+                                }
+                                else if (state is BDPriorityAWBSuccessState) {
+                                  // responce bdpriority success
+
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if (state.bdPriorityModel.status == "E") {
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.bdPriorityModel.statusMessage!,
+                                        MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  } else {
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.bdPriorityModel.statusMessage!,
+                                        MyColor.colorGreen, icon: Icons.done);
+                                    setState(() {});
+                                    //callFlightCheckApi(context, locationController.text, igmNoEditingController.text, flightNoEditingController.text, dateEditingController.text, _user!.userProfile!.userIdentity!, _company!.companyCode!);
+                                  }
+                                }
+                                else if (state is BDPriorityFailureState) {
+                                  // bd priority fail responce
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
                               },
                               child: Expanded(
@@ -405,7 +444,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                       _isOpenULDFlagEnable = value;
                                                                     });
 
-                                                                    context.read<FlightCheckCubit>().getAWBList(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (value == true) ? 1 : 0);
+                                                                    context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (value == true) ? 1 : 0);
 
 
                                                                   },
@@ -504,7 +543,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                           List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
 
-                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList),));
+                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem,),));
 
                                                                           if(value == "true"){
                                                                             gotoCheckAWBScreen(aWBItem);
@@ -903,7 +942,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               text: "${aWBItem.commodity}",
                                                                                               fontColor: MyColor.colorBlack,
                                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w600,
+                                                                                              fontWeight: FontWeight.w500,
                                                                                               textAlign: TextAlign.start,
                                                                                             ),
                                                                                           ],
@@ -945,6 +984,14 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                     setState(() {
                                                                                                       _selectedIndex = index; // Update the selected index
                                                                                                     });
+                                                                                                    openEditPriorityBottomDialog(
+                                                                                                        context,
+                                                                                                        aWBItem.aWBNo!,
+                                                                                                        "${aWBItem.bDPriority}",
+                                                                                                        index,
+                                                                                                        aWBItem,
+                                                                                                        lableModel,
+                                                                                                        textDirection);
 
                                                                                                   },
                                                                                                 ),
@@ -955,7 +1002,33 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                                         Expanded(
                                                                                             flex: 2,
-                                                                                            child: CustomeText(text: aWBItem.agentName!, fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
+                                                                                            child: (aWBItem.mAWBInd == "M") ? CustomeText(text: "House", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start) : (aWBItem.transit!.isNotEmpty)
+                                                                                                ? Row(
+                                                                                              children: [
+                                                                                                CustomeText(
+                                                                                                  text: "Transit :",
+                                                                                                  fontColor: MyColor.textColorGrey2,
+                                                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                  fontWeight: FontWeight.w400,
+                                                                                                  textAlign: TextAlign.start,
+                                                                                                ),
+                                                                                                SizedBox(width: 5),
+                                                                                                CustomeText(text: "${flightParts[0]} - ${aWBItem.destination}", fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
+                                                                                              ],
+                                                                                            )
+                                                                                                : Row(
+                                                                                              children: [
+                                                                                                CustomeText(
+                                                                                                  text: "Agent :",
+                                                                                                  fontColor: MyColor.textColorGrey2,
+                                                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                  fontWeight: FontWeight.w400,
+                                                                                                  textAlign: TextAlign.start,
+                                                                                                ),
+                                                                                                SizedBox(width: 5),
+                                                                                                CustomeText(text: aWBItem.agentName!, fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
+                                                                                              ],
+                                                                                            )),
                                                                                         Expanded(
                                                                                             flex: 1,
                                                                                             child: Container())
@@ -999,7 +1072,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               if(aWBItem.remark == "Y"){
 
                                                                                                 List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
-                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList),));
+                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem,),));
                                                                                                 if(value == "true"){
                                                                                                   gotoCheckAWBScreen(aWBItem);
                                                                                                 }else if(value == "Done"){
@@ -1072,7 +1145,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                           ],
                                                         )
                                                             : Center(
-                                                          child: CustomeText(text: "${lableModel.infonotfound}", fontColor: MyColor.textColor,
+                                                          child: CustomeText(text: "${lableModel.allShipment}", fontColor: MyColor.textColor,
                                                               fontSize: SizeConfig.textMultiplier * 2.1,
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.center),)
@@ -1109,67 +1182,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     );
   }
 
-  static Future<bool?> openDialog(BuildContext context, FlightCheckInAWBBDList aWBItem, String mainMenuName){
-
-    return showDialog<bool>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return PopScope(
-          canPop: false,
-          child: AlertDialog(
-              backgroundColor: MyColor.colorWhite,
-              shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.all(Radius.circular(20)),
-              ),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Your dialog UI components, such as CustomTextField, buttons, etc.
-                  CustomeText(
-                    text: "AWB Remark",
-                    fontColor: MyColor.colorRed,
-                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                    fontWeight: FontWeight.w600,
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-
-                  CustomeText(text: aWBItem.remark!, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-
-                  SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: RoundedButton(
-                          text: "Cancel",
-                          color: MyColor.primaryColorblue,
-                          isOutlined: true,
-                          press: () {
-                            Navigator.of(context).pop(false);
-                          },
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: RoundedButton(
-                          text: "Acknowledge",
-                          color: MyColor.primaryColorblue,
-                          press: () {
-                            Navigator.of(context).pop(true);
-
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              )
-          )
-        );
-      },
-    );
-  }
 
   Future<void> gotoCheckAWBScreen(FlightCheckInAWBBDList aWBItem) async {
     inactivityTimerManager!.stopTimer();
@@ -1243,7 +1255,57 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
       });
     }
+  }
 
+
+  // open dialog for chnage bdpriority
+  Future<void> openEditPriorityBottomDialog(
+      BuildContext context,
+      String awbNo,
+      String priority,
+      int index,
+      FlightCheckInAWBBDList awbItm,
+      LableModel lableModel,
+      ui.TextDirection textDirection) async {
+    FocusScope.of(context).unfocus();
+    String? updatedPriority = await DialogUtils.showPriorityChangeBottomAWBDialog(context, awbNo, priority, lableModel, textDirection);
+    if (updatedPriority != null) {
+      int newPriority = int.parse(updatedPriority);
+
+      if (newPriority != 0) {
+        // Call your API to update the priority in the backend
+        await callbdPriorityApi(
+            context,
+            awbItm.iMPShipRowId!,
+            newPriority,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);
+
+        setState(() {
+          // Update the BDPriority for the selected item
+          filterAWBDetailsList[index].bDPriority = newPriority;
+
+          // Sort the list based on BDPriority
+          filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+        });
+      } else {
+        Vibration.vibrate(duration: 500);
+        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      }
+    } else {
+      print("Priority update was canceled");
+    }
+  }
+
+  Future<void> callbdPriorityApi(
+      BuildContext context,
+      int iMPShipRowId,
+      int bdPriority,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    await context.read<FlightCheckCubit>().bdPriorityAWB(iMPShipRowId, bdPriority, userId, companyCode, menuId);
   }
 
 }

@@ -173,6 +173,14 @@
     "showMoreDetails" : "عرض المزيد من التفاصيل",
     "showLessDetails" : "إظهار تفاصيل أقل",
 
+    "allShipment" : "جميع الشحنات مقبولة",
+    "priorityAWbMsg" : "تغيير أولوية AWB No.",
+
+    "remarkList" : "قائمة الملاحظات",
+    "remarkfor" : "ملاحظات ل",
+    "back" : "العودة",
+    "acknowledge" : "أقر",
+
 
     "2539" : "العصابات فضفاضة",
     "654" : "مكسورة",

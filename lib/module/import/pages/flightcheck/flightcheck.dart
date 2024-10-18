@@ -630,7 +630,8 @@ class _FlightCheckState extends State<FlightCheck>
                                   }
                                 } else if (state
                                     is GetFlightDetailsSummaryFailureState) {
-                                } else if (state is BDPrioritySuccessState) {
+                                }
+                                else if (state is BDPrioritySuccessState) {
                                   // responce bdpriority success
 
                                   DialogUtils.hideLoadingDialog(context);
@@ -648,13 +649,14 @@ class _FlightCheckState extends State<FlightCheck>
                                     setState(() {});
                                     //callFlightCheckApi(context, locationController.text, igmNoEditingController.text, flightNoEditingController.text, dateEditingController.text, _user!.userProfile!.userIdentity!, _company!.companyCode!);
                                   }
-                                } else if (state is BDPriorityFailureState) {
+                                }
+                                else if (state is BDPriorityFailureState) {
                                   // bd priority fail responce
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(
-                                      context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                } else if (state is RecordATASuccessState) {
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is RecordATASuccessState) {
                                   // record ata responce success
 
                                   DialogUtils.hideLoadingDialog(context);
@@ -2739,14 +2741,6 @@ class _FlightCheckState extends State<FlightCheck>
 
     if (checkNextOrNot == 2) {
       if (flightDetails.uldAcceptStatus == "D") {
-       /* Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) => CheckAWBPage(
-                      uldNo: uldNo,
-                  mainMenuName: mainMenuName,
-                    )));*/
-
         inactivityTimerManager!.stopTimer();
        var value = await Navigator.push(
             context,
@@ -2754,7 +2748,7 @@ class _FlightCheckState extends State<FlightCheck>
                 builder: (context) => AWBListPage(
                   mainMenuName: mainMenuName,
                   uldNo: uldNo,
-                  flightSeqNo: flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
+                  flightDetailSummary: flightCheckULDListModel!.flightDetailSummary!,
                   uldSeqNo: flightDetails.uLDId!,
                   menuId: widget.menuId,
                   location: locationController.text,
@@ -2765,7 +2759,8 @@ class _FlightCheckState extends State<FlightCheck>
         }
 
       } else {}
-    } else if (checkNextOrNot == 1) {
+    }
+    else if (checkNextOrNot == 1) {
       if (flightDetails.uldAcceptStatus == "D") {
         inactivityTimerManager!.stopTimer();
         String damageOrNot = await Navigator.push(
@@ -2829,9 +2824,7 @@ class _FlightCheckState extends State<FlightCheck>
       LableModel lableModel,
       ui.TextDirection textDirection) async {
     FocusScope.of(context).unfocus();
-    String? updatedPriority =
-        await DialogUtils.showPriorityChangeBottomULDDialog(
-            context, uldNo, priority, lableModel, textDirection);
+    String? updatedPriority = await DialogUtils.showPriorityChangeBottomULDDialog(context, uldNo, priority, lableModel, textDirection);
     if (updatedPriority != null) {
       int newPriority = int.parse(updatedPriority);
 
@@ -2851,13 +2844,11 @@ class _FlightCheckState extends State<FlightCheck>
           flightDetailsList[index].bDPriority = newPriority;
 
           // Sort the list based on BDPriority
-          flightDetailsList
-              .sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+          flightDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
         });
       } else {
         Vibration.vibrate(duration: 500);
-        SnackbarUtil.showSnackbar(
-            context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
       }
     } else {
       print("Priority update was canceled");
