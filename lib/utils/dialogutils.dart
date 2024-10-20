@@ -677,12 +677,11 @@ class DialogUtils {
                     SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                     Expanded(
                       flex: 1,
-                      child: RoundedButtonBlue(
-                        isborderButton: true,
+                      child: RoundedButton(
                         text: "Add Mail",
                         color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                         press: () {
-
+                          Navigator.pop(context, 3); // Return true when "Ok" is pressed
                         },
                       ),
                     ),

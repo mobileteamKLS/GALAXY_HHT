@@ -62,6 +62,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
 
+  late FlightCheckInAWBBDList aWBItem;
+
   bool _isOpenULDFlagEnable = false;
 
   List<FlightCheckInAWBBDList> awbItemList = [];
@@ -237,10 +239,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                               listener: (context, state) {
 
                                 if (state is MainInitialState) {
-                                } else if (state is MainLoadingState) {
+                                }
+                                else if (state is MainLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
-                                }else if(state is AWBListSuccessState){
+                                }
+                                else if(state is AWBListSuccessState){
                                   print("CHECK_AWB_PAGE______SUCCESS");
                                   DialogUtils.hideLoadingDialog(context);
 
@@ -272,7 +276,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                   }
 
 
-                                }else if(state is AWBListFailureState){
+                                }
+                                else if(state is AWBListFailureState){
                                   print("CHECK_AWB_PAGE______FAILURE");
                                   DialogUtils.hideLoadingDialog(context);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -514,13 +519,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                             SizedBox(height: SizeConfig.blockSizeVertical,),
                                                             ListView.builder(
                                                               itemCount: (awbModel != null)
-                                                                  ? filterAWBDetailsList!.length
+                                                                  ? filterAWBDetailsList.length
                                                                   : 0,
                                                               physics: NeverScrollableScrollPhysics(),
                                                               shrinkWrap: true,
                                                               controller: scrollController,
                                                               itemBuilder: (context, index) {
-                                                                FlightCheckInAWBBDList aWBItem = filterAWBDetailsList![index];
+                                                                aWBItem = filterAWBDetailsList![index];
                                                                 bool isSelected = _selectedIndex == index;
                                                                 bool isExpand = _isExpandedDetails == index;
                                                                 List<String> shcCodes = aWBItem.sHCCode!.split(',');
@@ -543,10 +548,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                           List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
 
-                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem,),));
+                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
 
                                                                           if(value == "true"){
+
                                                                             gotoCheckAWBScreen(aWBItem);
+
                                                                           }else if(value == "Done"){
                                                                             _resumeTimerOnInteraction();
                                                                           }
@@ -1072,7 +1079,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               if(aWBItem.remark == "Y"){
 
                                                                                                 List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
-                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem,),));
+                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
                                                                                                 if(value == "true"){
                                                                                                   gotoCheckAWBScreen(aWBItem);
                                                                                                 }else if(value == "Done"){
@@ -1191,6 +1198,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
             builder: (context) => CheckAWBPage(
               aWBItem: aWBItem,
               mainMenuName: widget.mainMenuName,
+              flightDetailSummary: widget.flightDetailSummary,
+              location: widget.location,
             )));
 
     if(value == "Done"){

@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/import/pages/flightcheck/addmailpage.dart';
 import 'package:galaxy/module/import/pages/flightcheck/awblistpage.dart';
 import 'package:galaxy/module/import/pages/flightcheck/awbremarklistpage.dart';
 import 'package:galaxy/module/import/pages/flightcheck/checkawb.dart';
@@ -475,10 +476,12 @@ class _FlightCheckState extends State<FlightCheck>
                               listener: (context, state) {
 
                                 if (state is MainInitialState) {
-                                } else if (state is MainLoadingState) {
+                                }
+                                else if (state is MainLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
-                                } else if(state is ButtonRolesAndRightsSuccessState){
+                                }
+                                else if(state is ButtonRolesAndRightsSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if (state.buttonRolesRightsModel.status == "E") {
                                     Vibration.vibrate(duration: 500);
@@ -494,7 +497,8 @@ class _FlightCheckState extends State<FlightCheck>
                                     print("ListOfButton===== ${buttonRightsList.length}");
 
                                   }
-                                }else if(state is ButtonRolesAndRightsFailureState){
+                                }
+                                else if(state is ButtonRolesAndRightsFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -524,14 +528,16 @@ class _FlightCheckState extends State<FlightCheck>
                                       },
                                     );
                                   }
-                                } else if (state is ValidateLocationFailureState) {
+                                }
+                                else if (state is ValidateLocationFailureState) {
                                   // validate location failure
                                   DialogUtils.hideLoadingDialog(context);
                                   _isvalidateLocation = false;
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(
                                       context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                } else if (state is FlightGetDetailsSuccessState) {
+                                }
+                                else if (state is FlightGetDetailsSuccessState) {
                                   // getting responce for flight details
                                   DialogUtils.hideLoadingDialog(context);
                                   setState(() {
@@ -593,7 +599,8 @@ class _FlightCheckState extends State<FlightCheck>
                                       ataTimeEditingController.clear();
                                     }
                                   }
-                                } else if (state is FlightGetDetailsFailureState) {
+                                }
+                                else if (state is FlightGetDetailsFailureState) {
                                   // flight failure responce state
                                   flightCheckULDListModel = null;
                                   flightCheckSummaryModel = null;
@@ -610,8 +617,8 @@ class _FlightCheckState extends State<FlightCheck>
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(
                                       context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                } else if (state
-                                    is GetFlightDetailsSummarySuccessState) {
+                                }
+                                else if (state is GetFlightDetailsSummarySuccessState) {
                                   DialogUtils.hideLoadingDialog(context);
                                   setState(() {
                                     _pageIndex = 1;
@@ -628,9 +635,8 @@ class _FlightCheckState extends State<FlightCheck>
                                         state.flightCheckSummaryModel;
                                     setState(() {});
                                   }
-                                } else if (state
-                                    is GetFlightDetailsSummaryFailureState) {
                                 }
+                                else if (state is GetFlightDetailsSummaryFailureState) {}
                                 else if (state is BDPrioritySuccessState) {
                                   // responce bdpriority success
 
@@ -691,13 +697,15 @@ class _FlightCheckState extends State<FlightCheck>
                                         state.recordATAModel.statusMessage!,
                                         MyColor.colorGreen, icon: Icons.done);
                                   }
-                                } else if (state is RecordATAFailureState) {
+                                }
+                                else if (state is RecordATAFailureState) {
                                   // record ata responce failure
 
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                } else if (state is FinalizeFlightSuccessState) {
+                                }
+                                else if (state is FinalizeFlightSuccessState) {
                                   // finalize flight responce success
 
                                   DialogUtils.hideLoadingDialog(context);
@@ -725,7 +733,8 @@ class _FlightCheckState extends State<FlightCheck>
                                         state.finalizeFlightModel.statusMessage!,
                                         MyColor.colorGreen, icon: Icons.done);
                                   }
-                                } else if (state is FinalizeFlightFailureState) {
+                                }
+                                else if (state is FinalizeFlightFailureState) {
                                   // finalize flight responce failure
 
                                   DialogUtils.hideLoadingDialog(context);
@@ -2812,6 +2821,26 @@ class _FlightCheckState extends State<FlightCheck>
         print("message==== Damage Screen call");
       } else {}
     }
+    else if (checkNextOrNot == 3) {
+      if (flightDetails.uldAcceptStatus == "D") {
+        inactivityTimerManager!.stopTimer();
+        var value = await Navigator.push(
+            context,
+            CupertinoPageRoute(
+                builder: (context) => AddMailPage(
+                  uldNo: flightDetails.uLDNo!,
+                  mainMenuName: mainMenuName,
+                  uldSeqNo: flightDetails.uLDId!,
+                  flightSeqNo: flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
+                  menuId: widget.menuId,
+                  lableModel: lableModel,
+                )));
+        if(value == "Done"){
+          _resumeTimerOnInteraction();
+        }
+
+      } else {}
+    }
   }
 
   // open dialog for chnage bdpriority
@@ -2975,8 +3004,7 @@ class _FlightCheckState extends State<FlightCheck>
   }
 
   // validation dialog
-  Future<void> openValidationDialog(
-      String message, FocusNode focuseNode) async {
+  Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
         context, "${message}", widget.lableModel!);
 

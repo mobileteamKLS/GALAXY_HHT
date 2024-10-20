@@ -3,7 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
+import 'package:vibration/vibration.dart';
 import '../../../../core/images.dart';
 import '../../../../core/mycolor.dart';
 import '../../../../language/appLocalizations.dart';
@@ -14,6 +19,7 @@ import '../../../../utils/awbformatenumberutils.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
+import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
@@ -32,8 +38,9 @@ class AWBRemarkListAckPage extends StatefulWidget {
   String mainMenuName;
   List<AWBRemarksList>? aWBRemarkList = [];
   FlightCheckInAWBBDList aWBItem;
+  int menuId;
 
-  AWBRemarkListAckPage({super.key, required this.mainMenuName, required this.aWBRemarkList, required this.aWBItem});
+  AWBRemarkListAckPage({super.key, required this.mainMenuName, required this.aWBRemarkList, required this.aWBItem, required this.menuId});
 
   @override
   State<AWBRemarkListAckPage> createState() => _AWBRemarkListAckPageState();
@@ -174,6 +181,26 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                         _resumeTimerOnInteraction(); // Reset the timer on scroll event
                         return true;
                       },
+                      child: BlocListener<FlightCheckCubit, FlightCheckState>(
+                        listener: (context, state) {
+                          if(state is MainLoadingState){
+                            DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                          }
+                          else if(state is AWBAcknoledgeSuccessState){
+
+                            DialogUtils.hideLoadingDialog(context);
+                            if(state.awbRemarkAcknoledgeModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.awbRemarkAcknoledgeModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else{
+                              Navigator.pop(context, "true");
+                            }
+
+                          }else if(state is AWBAcknoledgeFailureState){
+                            Vibration.vibrate(duration: 500);
+                            SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                          }
+                      },
                       child: Container(
                         decoration: BoxDecoration(
                             color: MyColor.bgColorGrey,
@@ -247,9 +274,9 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                           ),
                                           (widget.aWBRemarkList!.isNotEmpty)
                                               ? Expanded(
-                                                child: ListView.builder(
-                                                  itemCount: widget.aWBRemarkList!.length,
-                                                  itemBuilder: (context, index) {
+                                            child: ListView.builder(
+                                              itemCount: widget.aWBRemarkList!.length,
+                                              itemBuilder: (context, index) {
 
                                                 bool isTextMoreThanTwoLines = _isTextMoreThanTwoLines(
                                                   widget.aWBRemarkList![index].remark!,
@@ -317,8 +344,8 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                                 );
 
 
-                                                                                            },),
-                                              )
+                                              },),
+                                          )
                                               : Center(child: CustomeText(text: "${lableModel!.infonotfound}", fontColor: MyColor.textColor,
                                               fontSize: SizeConfig.textMultiplier * 2.1,
                                               fontWeight: FontWeight.w500,
@@ -499,7 +526,12 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                         text: "${lableModel.acknowledge}",
                                         color: MyColor.primaryColorblue,
                                         press: () async {
-                                          Navigator.pop(context, "true");
+                                          context.read<FlightCheckCubit>().aWBRemarkUpdateAcknoledge(
+                                              widget.aWBItem.iMPAWBRowId!,
+                                              widget.aWBItem.iMPShipRowId!,
+                                              _user!.userProfile!.userIdentity!,
+                                              _splashDefaultData!.companyCode!,
+                                              widget.menuId);
                                         },
                                       ),
                                     ),
@@ -512,6 +544,7 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                           ],
                         ),
                       ),
+                      )
                     ),
                   ),
                 ],

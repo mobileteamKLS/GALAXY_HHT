@@ -35,4 +35,7 @@ class Apilist{
 
   static String awbListApi = "/FlightCheckIn/GetAWBDetails";
   static String updateBDPriorityAWB = "/FlightCheckIn/UpdateAWBBDPriority";
+  static String updateAWBRemarksAcknowledge = "/FlightCheckIn/UpdateAWBRemarksAcknowledge";
+  static String getAddMailDetailsApi = "/FlightCheckIn/GetAddMailDetails";
+  static String addMailApi = "/FlightCheckIn/AddMail";
 }

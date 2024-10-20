@@ -7,12 +7,15 @@ import 'package:galaxy/prefrence/savedprefrence.dart';
 import 'package:galaxy/utils/commonutils.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../model/flightcheck/addMailModel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/bdprioritymodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../model/flightcheck/maildetailmodel.dart';
 import '../../model/flightcheck/recordatamodel.dart';
+import '../../model/flightcheck/updateawbremarkacknoledge.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../model/uldacceptance/defaultuldacceptance.dart';
 import '../../model/uldacceptance/flightfromuldmodel.dart';
@@ -405,6 +408,144 @@ class FlightCheckRepository{
       if (response.statusCode == 200) {
         BdPriorityModel bdPriorityModel = BdPriorityModel.fromJson(response.data);
         return bdPriorityModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+  Future<AWBRemarkAcknoledgeModel> getAWBAcknoledge(int iMPAWBRowId, int iMPShipRowId, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "IMPAWBRowId": iMPAWBRowId,
+        "IMPShipRowId": iMPShipRowId,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('aWBRemarkAcknoledgeModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.updateAWBRemarksAcknowledge,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        AWBRemarkAcknoledgeModel aWBRemarkAcknoledgeModel = AWBRemarkAcknoledgeModel.fromJson(response.data);
+        return aWBRemarkAcknoledgeModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+  Future<MailDetailModel> getMailDetail(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo": flightSeqNo,
+        "ULDSeqNo": uldSeqNo,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('addMailModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.getAddMailDetailsApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        MailDetailModel mailDetailModel = MailDetailModel.fromJson(response.data);
+        return mailDetailModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+
+
+  Future<AddMailModel> addMail(int flightSeqNo, int uldSeqNo, String av7No, String mailType, String origin, String destination, int nOP, double weight, String description, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo": flightSeqNo,
+        "ULDSeqNo": uldSeqNo,
+        "AV7No": av7No,
+        "MailType": mailType,
+        "Origin": origin,
+        "Destination": destination,
+        "NOP": nOP,
+        "WeightKg": weight,
+        "Description": description,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('addMailModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.addMailApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        AddMailModel addMailModel = AddMailModel.fromJson(response.data);
+        return addMailModel;
       } else {
         // Handle non-200 response
         throw DioException(

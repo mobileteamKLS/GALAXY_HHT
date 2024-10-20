@@ -1,11 +1,14 @@
 
+import 'package:galaxy/module/import/model/flightcheck/addMailModel.dart';
 import 'package:galaxy/module/import/model/flightcheck/bdprioritymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/finalizeflightmodel.dart';
+import 'package:galaxy/module/import/model/flightcheck/maildetailmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/recordatamodel.dart';
 
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../model/flightcheck/updateawbremarkacknoledge.dart';
 import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../../model/uldacceptance/locationvalidationmodel.dart';
 
@@ -114,3 +117,33 @@ class BDPriorityAWBFailureState extends FlightCheckState {
   BDPriorityAWBFailureState(this.error);
 }
 
+class AWBAcknoledgeSuccessState extends FlightCheckState {
+  final AWBRemarkAcknoledgeModel awbRemarkAcknoledgeModel;
+  AWBAcknoledgeSuccessState(this.awbRemarkAcknoledgeModel);
+}
+
+class AWBAcknoledgeFailureState extends FlightCheckState {
+  final String error;
+  AWBAcknoledgeFailureState(this.error);
+}
+
+class GetMailDetailSuccessState extends FlightCheckState {
+  final MailDetailModel mailDetailModel;
+  GetMailDetailSuccessState(this.mailDetailModel);
+}
+
+class GetMailDetailFailureState extends FlightCheckState {
+  final String error;
+  GetMailDetailFailureState(this.error);
+}
+
+
+class AddMailSuccessState extends FlightCheckState {
+  final AddMailModel addMailModel;
+  AddMailSuccessState(this.addMailModel);
+}
+
+class AddMAilFailureState extends FlightCheckState {
+  final String error;
+  AddMAilFailureState(this.error);
+}

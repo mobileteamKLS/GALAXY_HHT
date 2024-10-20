@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
@@ -28,18 +29,22 @@ import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
+import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 
 class CheckAWBPage extends StatefulWidget {
 
   FlightCheckInAWBBDList aWBItem;
   String mainMenuName;
-  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName});
+  FlightDetailSummary flightDetailSummary;
+  String location;
+
+  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location});
 
   @override
   State<CheckAWBPage> createState() => _CheckAWBPageState();
 }
 
-class _CheckAWBPageState extends State<CheckAWBPage> {
+class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderStateMixin{
 
   InactivityTimerManager? inactivityTimerManager;
 
@@ -47,47 +52,20 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
 
-  static List<String> listOfULDNo() {
-    return ["Select", "BULK", "AKE 14066 BA", "AJO 12433 BA"];
-  }
-
-  static List<String> listOfmawbNo() {
-    return ["Select", "MAWB1", "MAWB2", "MAWB3", "MAWB4"];
-  }
-
-  static List<String> listOfhawbNo() {
-    return ["Select", "HAWB1", "HAWB2", "HAWB3", "HAWB4"];
-  }
 
 
 
-  String? selecteduldNo;
-  String? selectedMawbItem;
-  String? selectedHawbItem;
-
-  bool _isFoundCargoChecked = false;
-
-
-  TextEditingController manifestedNopController = TextEditingController();
-  TextEditingController receivedNopController = TextEditingController();
-  TextEditingController remainingNopController = TextEditingController();
+  TextEditingController piecesController = TextEditingController();
   TextEditingController groupIdController = TextEditingController();
-  TextEditingController arrivedNoPController = TextEditingController();
-  TextEditingController damageNoPController = TextEditingController();
-  TextEditingController damageNoP1Controller = TextEditingController();
-  TextEditingController damageWeightController = TextEditingController();
-  TextEditingController damageWeight1Controller = TextEditingController();
 
 
-  FocusNode manifestedNopFocusNode = FocusNode();
-  FocusNode receivedNopFocusNode = FocusNode();
-  FocusNode remainingNopFocusNode = FocusNode();
+
+  FocusNode piecesFocusNode = FocusNode();
   FocusNode groupIdFocusNode = FocusNode();
-  FocusNode arrivedNoPFocusNode = FocusNode();
-  FocusNode damageNoPFocusNode = FocusNode();
-  FocusNode damage1NoPFocusNode = FocusNode();
-  FocusNode damageWeightFocusNode = FocusNode();
-  FocusNode damageWeight1FocusNode = FocusNode();
+
+
+  late AnimationController _blinkController;
+  late Animation<Color?> _colorAnimation;
 
 
   @override
@@ -95,6 +73,18 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
     // TODO: implement initState
     super.initState();
     _loadUser();
+
+    _blinkController = AnimationController(
+      duration: const Duration(seconds: 1),
+      vsync: TickerProviders(), // Manually providing Ticker
+    )..repeat(reverse: true); // Loop the animation
+
+    _colorAnimation = ColorTween(
+      begin: MyColor.shcColorList[0],
+      end: Colors.transparent,
+    ).animate(_blinkController); // color animation
+
+
   }
 
   Future<void> _loadUser() async {
@@ -161,6 +151,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
         localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
             ? ui.TextDirection.rtl
             : ui.TextDirection.ltr;
+
+
+    List<String> shcCodes = widget.aWBItem.sHCCode!.split(',');
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -250,427 +243,43 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
                                               ],
                                             ),
                                           ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical,),
-
-                                          CustomeText(
-                                              text: "PIECES INFO",
-                                              fontColor: MyColor.colorBlack,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                              fontWeight: FontWeight.w600,
-                                              textAlign: TextAlign.start),
-
                                           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                           // text manifest and recived in pices text counter
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: manifestedNopController,
-                                                    focusNode: manifestedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Manifested",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: receivedNopController,
-                                                    focusNode: receivedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Received",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: remainingNopController,
-                                                    focusNode: remainingNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Remaining",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
+                                          Directionality(
+                                            textDirection: uiDirection,
+                                            child: CustomTextField(
+                                              controller: piecesController,
+                                              focusNode: piecesFocusNode,
+                                              onPress: () {},
+                                              hasIcon: false,
+                                              hastextcolor: true,
+                                              animatedLabel: true,
+                                              needOutlineBorder: true,
+                                              labelText: "Pieces",
+                                              readOnly: false,
+                                              onChanged: (value) {},
+                                              fillColor:  Colors.grey.shade100,
+                                              textInputType: TextInputType.number,
+                                              inputAction: TextInputAction.next,
+                                              hintTextcolor: Colors.black45,
+                                              verticalPadding: 0,
+                                              digitsOnly: true,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "Please fill out this field";
+                                                } else {
+                                                  return null;
+                                                }
+                                              },
+                                            ),
+                                          )
                                         ],
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: SizeConfig.blockSizeVertical,
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
 
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: manifestedNopController,
-                                                    focusNode: manifestedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "NPX",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: receivedNopController,
-                                                    focusNode: receivedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "NPR",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: manifestedNopController,
-                                                    focusNode: manifestedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Wt. Exp.",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: receivedNopController,
-                                                    focusNode: receivedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Wt. Rec.",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: manifestedNopController,
-                                                    focusNode: manifestedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Short",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: receivedNopController,
-                                                    focusNode: receivedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Excess",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: manifestedNopController,
-                                                    focusNode: manifestedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Dmg. Pcs.",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: receivedNopController,
-                                                    focusNode: receivedNopFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Dmg. Wt.",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.text,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                     SizedBox(
                                       height: SizeConfig.blockSizeVertical,
                                     ),
@@ -703,85 +312,194 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
 
                                           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                           // text manifest and recived in pices text counter
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex:1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: groupIdController,
-                                                    focusNode: groupIdFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Group Id",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor: Colors.grey.shade100,
-                                                    textInputType:
-                                                    TextInputType.text,
-                                                    inputAction:
-                                                    TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: arrivedNoPController,
-                                                    focusNode: arrivedNoPFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Arrived NoP",
-                                                    readOnly: false,
-                                                    onChanged: (value) {},
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType:
-                                                    TextInputType.text,
-                                                    inputAction:
-                                                    TextInputAction.next,
-                                                    hintTextcolor:
-                                                    Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                          Directionality(
+                                            textDirection: uiDirection,
+                                            child: CustomTextField(
+                                              controller: groupIdController,
+                                              focusNode: groupIdFocusNode,
+                                              onPress: () {},
+                                              hasIcon: false,
+                                              hastextcolor: true,
+                                              animatedLabel: true,
+                                              needOutlineBorder: true,
+                                              labelText: "Group Id",
+                                              readOnly: false,
+                                              onChanged: (value) {},
+                                              fillColor: Colors.grey.shade100,
+                                              textInputType:
+                                              TextInputType.text,
+                                              inputAction:
+                                              TextInputAction.next,
+                                              hintTextcolor: Colors.black45,
+                                              verticalPadding: 0,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "Please fill out this field";
+                                                } else {
+                                                  return null;
+                                                }
+                                              },
+                                            ),
                                           ),
+
+
+
                                         ],
                                       ),
                                     ),
+                                    SizedBox(
+                                      height: SizeConfig.blockSizeVertical,
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.all(10),
+
+                                      decoration: BoxDecoration(
+                                        color: MyColor.colorWhite,
+                                        borderRadius: BorderRadius.circular(8),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                            spreadRadius: 2,
+                                            blurRadius: 15,
+                                            offset: Offset(0, 3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "Flight : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: 5),
+                                              CustomeText(
+                                                text: "${widget.flightDetailSummary.flightNo!} - ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",
+                                                fontColor: MyColor.colorBlack,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w600,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          ),
+                                          (shcCodes.isNotEmpty) ? SizedBox(height: SizeConfig.blockSizeVertical,) : SizedBox(),
+
+                                          Row(
+                                            children: [
+                                              widget.aWBItem.sHCCode!.isNotEmpty
+                                                  ? Row(
+                                                children:shcCodes.asMap().entries.take(3).map((entry) {
+                                                  int index = entry.key; // Get the index for colorList assignment
+                                                  String code = entry.value.trim(); // Get the code value and trim it
+
+                                                  return Padding(
+                                                    padding: EdgeInsets.only(right: 5.0),
+                                                    child: AnimatedBuilder(
+                                                      animation: _colorAnimation,
+                                                      builder: (context, child) {
+                                                        return Container(
+                                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                                          decoration : BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(5),
+                                                            color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                                          child: CustomeText(
+                                                            text: code.trim(),
+                                                            fontColor: MyColor.textColorGrey3,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                            fontWeight: FontWeight.w500,
+                                                            textAlign: TextAlign.center,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  );
+                                                }).toList(),
+                                              )
+                                                  : SizedBox(),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "NOG : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: 5),
+                                              CustomeText(
+                                                text: "NATURE OF GOODS",
+                                                fontColor: MyColor.colorBlack,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w600,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "Location : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: 5),
+                                              CustomeText(
+                                                text: widget.location,
+                                                fontColor: MyColor.colorBlack,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w600,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "Suggestive Location : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: 5),
+                                              CustomeText(
+                                                text: "-",
+                                                fontColor: MyColor.colorBlack,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w600,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          ),
+
+
+
+                                        ],
+                                      ),
+                                    ),
+
                                     SizedBox(
                                       height: SizeConfig.blockSizeVertical,
                                     ),
@@ -843,3 +561,10 @@ class _CheckAWBPageState extends State<CheckAWBPage> {
     );
   }
 }
+
+// ticker animation for DGR code blink animation
+class TickerProviders extends TickerProvider {
+  @override
+  Ticker createTicker(onTick) => Ticker(onTick);
+}
+

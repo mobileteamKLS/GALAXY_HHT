@@ -114,6 +114,40 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
+  Future<void> aWBRemarkUpdateAcknoledge(int iMPAWBRowId, int iMPShipRowId, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final aWBAcknoledgeModel = await flightCheckRepository.getAWBAcknoledge(iMPAWBRowId, iMPShipRowId, userId, companyCode, menuId);
+
+      emit(AWBAcknoledgeSuccessState(aWBAcknoledgeModel));
+    } catch (e) {
+      emit(AWBAcknoledgeFailureState(e.toString()));
+    }
+  }
+
+
+  Future<void> getMailDetail(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final getMailDetailModel = await flightCheckRepository.getMailDetail(flightSeqNo, uldSeqNo, userId, companyCode, menuId);
+
+      emit(GetMailDetailSuccessState(getMailDetailModel));
+    } catch (e) {
+      emit(GetMailDetailFailureState(e.toString()));
+    }
+  }
+
+  Future<void> addMail(int flightSeqNo, int uldSeqNo, String av7No, String mailType, String origin, String destination, int nOP, double weight, String description, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final addMailModel = await flightCheckRepository.addMail(flightSeqNo, uldSeqNo, av7No, mailType, origin, destination, nOP, weight, description, userId, companyCode, menuId);
+
+      emit(AddMailSuccessState(addMailModel));
+    } catch (e) {
+      emit(AddMAilFailureState(e.toString()));
+    }
+  }
+
 
 
   void resetState() {
