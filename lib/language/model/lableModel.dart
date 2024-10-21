@@ -169,6 +169,31 @@ class LableModel {
   String? back;
   String? acknowledge;
 
+  String? addMail;
+  String? addMailForThis;
+  String? av7No;
+  String? mailType;
+  String? origin;
+  String? destination;
+  String? nop;
+  String? description;
+  String? mailTotalList;
+  String? type;
+  String? av7NoMsg;
+  String? originMsg;
+  String? destinationMsg;
+  String? nopMsg;
+  String? weightMsg;
+  String? originDestinationSameMsg;
+  String? mailTypeMsg;
+  String? checkAWb;
+  String? detailsForAWBNo;
+  String? otherDetail;
+  String? flight;
+  String? natureOfGoods;
+  String? damageAndSave;
+  String? piecesMsg;
+  String? nogMsg;
 
   String? s654;
   String? s655;
@@ -336,6 +361,32 @@ class LableModel {
         this.remarkfor,
         this.back,
         this.acknowledge,
+
+        this.addMail,
+        this.addMailForThis,
+        this.av7No,
+        this.mailType,
+        this.origin,
+        this.destination,
+        this.nop,
+        this.description,
+        this.mailTotalList,
+        this.type,
+        this.av7NoMsg,
+        this.originMsg,
+        this.destinationMsg,
+        this.nopMsg,
+        this.weightMsg,
+        this.originDestinationSameMsg,
+        this.mailTypeMsg,
+        this.checkAWb,
+        this.detailsForAWBNo,
+        this.otherDetail,
+        this.flight,
+        this.natureOfGoods,
+        this.damageAndSave,
+        this.piecesMsg,
+        this.nogMsg,
 
         this.save,
         this.s654,
@@ -518,6 +569,33 @@ class LableModel {
     back = json['back'];
     acknowledge = json['acknowledge'];
 
+    addMail = json['addMail'];
+    addMailForThis = json['addMailForThis'];
+    av7No = json['av7No'];
+    mailType = json['mailType'];
+    origin = json['origin'];
+    destination = json['destination'];
+    nop = json['nop'];
+    description = json['description'];
+    mailTotalList = json['mailTotalList'];
+    type = json['type'];
+    av7NoMsg = json['av7NoMsg'];
+    originMsg = json['originMsg'];
+    destinationMsg = json['destinationMsg'];
+    nopMsg = json['nopMsg'];
+    weightMsg = json['weightMsg'];
+    originDestinationSameMsg = json['originDestinationSameMsg'];
+    mailTypeMsg = json['mailTypeMsg'];
+
+    checkAWb = json['checkAWb'];
+    detailsForAWBNo = json['detailsForAWBNo'];
+    otherDetail = json['otherDetail'];
+    flight = json['flight'];
+    natureOfGoods = json['natureOfGoods'];
+    damageAndSave = json['damageAndSave'];
+    piecesMsg = json['piecesMsg'];
+    nogMsg = json['nogMsg'];
+
     s654 = json['654'];
     s655 = json['655'];
     s656 = json['656'];
@@ -698,6 +776,33 @@ class LableModel {
     data['remarkfor'] = this.remarkfor;
     data['back'] = this.back;
     data['acknowledge'] = this.acknowledge;
+
+    data['addMail'] = this.addMail;
+    data['addMailForThis'] = this.addMailForThis;
+    data['av7No'] = this.av7No;
+    data['mailType'] = this.mailType;
+    data['origin'] = this.origin;
+    data['destination'] = this.destination;
+    data['nop'] = this.nop;
+    data['description'] = this.description;
+    data['mailTotalList'] = this.mailTotalList;
+    data['type'] = this.type;
+    data['av7NoMsg'] = this.av7NoMsg;
+    data['originMsg'] = this.originMsg;
+    data['destinationMsg'] = this.destinationMsg;
+    data['nopMsg'] = this.nopMsg;
+    data['weightMsg'] = this.weightMsg;
+    data['originDestinationSameMsg'] = this.originDestinationSameMsg;
+    data['mailTypeMsg'] = this.mailTypeMsg;
+
+    data['checkAWb'] = this.checkAWb;
+    data['detailsForAWBNo'] = this.detailsForAWBNo;
+    data['otherDetail'] = this.otherDetail;
+    data['flight'] = this.flight;
+    data['natureOfGoods'] = this.natureOfGoods;
+    data['damageAndSave'] = this.damageAndSave;
+    data['piecesMsg'] = this.piecesMsg;
+    data['nogMsg'] = this.nogMsg;
 
     data['654'] = this.s654;
     data['655'] = this.s655;

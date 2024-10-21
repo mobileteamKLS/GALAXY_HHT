@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../core/mycolor.dart';
+import '../utils/decimaldigitparam.dart';
 
 
 class CustomTextField extends StatefulWidget {
@@ -42,6 +43,7 @@ class CustomTextField extends StatefulWidget {
   final double boxHeight;
   final int? maxLength;
   final bool? digitsOnly;
+  final bool? doubleDigitOnly;
   final TextDirection textDirection;
 
   const CustomTextField(
@@ -83,6 +85,7 @@ class CustomTextField extends StatefulWidget {
       this.maxLength,
       this.textDirection = TextDirection.ltr,
       this.digitsOnly = false,
+      this.doubleDigitOnly = false,
       this.boxHeight = 30})
       : super(key: key);
 
@@ -134,7 +137,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                         : MyColor.colorBlack, fontSize: widget.fontSize)),
                 inputFormatters: widget.digitsOnly! ? <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp("[0-9]")),
-                ] : [],
+                ] : widget.doubleDigitOnly! ? <TextInputFormatter>[
+                  DecimalTextInputFormatter(maxDigitsBeforeDecimal: 7, maxDigitsAfterDecimal: 2),
+                ] :[],
                 //textAlign: TextAlign.left,
                 cursorColor: MyColor.primaryColorblue,
                 controller: widget.controller,

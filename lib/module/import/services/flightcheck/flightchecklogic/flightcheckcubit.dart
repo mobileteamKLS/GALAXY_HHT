@@ -126,6 +126,18 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
   }
 
 
+  Future<void> getMailType(int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final getMailTypeModel = await flightCheckRepository.getMailTypeList(userId, companyCode, menuId);
+
+      emit(GetMailTypeSuccessState(getMailTypeModel));
+    } catch (e) {
+      emit(GetMailTypeFailureState(e.toString()));
+    }
+  }
+
+
   Future<void> getMailDetail(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
@@ -147,6 +159,30 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       emit(AddMAilFailureState(e.toString()));
     }
   }
+
+
+  Future<void> checkOAirportCity(String airportCity, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final airportCityModel = await flightCheckRepository.checkAirportCity(airportCity, userId, companyCode, menuId);
+
+      emit(CheckOAirportCitySuccessState(airportCityModel));
+    } catch (e) {
+      emit(CheckOAirportCityFailureState(e.toString()));
+    }
+  }
+
+  Future<void> checkDAirportCity(String airportCity, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final airportCityModel = await flightCheckRepository.checkAirportCity(airportCity, userId, companyCode, menuId);
+
+      emit(CheckDAirportCitySuccessState(airportCityModel));
+    } catch (e) {
+      emit(CheckDAirportCityFailureState(e.toString()));
+    }
+  }
+
 
 
 

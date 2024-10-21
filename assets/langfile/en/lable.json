@@ -182,6 +182,33 @@
     "back" : "Back",
     "acknowledge" : "Acknowledge",
 
+    "addMail" : "Add Mail",
+    "addMailForThis" : "Add mail for this",
+    "av7No" : "AV7 No.",
+    "mailType":"Mail Type",
+    "origin" : "Origin",
+    "destination" : "Destination",
+    "nop" : "NoP",
+    "description" : "Description",
+    "mailTotalList" : "Mail Total List",
+    "type" : "Type",
+    "av7NoMsg" : "Please enter AV7 No.",
+    "originMsg" : "Please enter origin",
+    "destinationMsg" : "Please enter destination",
+    "nopMsg" : "Please enter NoP",
+    "weightMsg" : "Please enter weight",
+    "originDestinationSameMsg" : "Origin & destination can't the same",
+    "mailTypeMsg" : "Please select mailtype",
+
+    "checkAWb" : "Check AWB",
+    "detailsForAWBNo" : "Details for AWB No.",
+    "otherDetail" : "Other Detail",
+    "flight": "Flight",
+    "natureOfGoods" : "Nature of goods",
+    "damageAndSave" : "Damage & Save",
+    "piecesMsg" : "Please enter pieces",
+    "nogMsg" : "Please enter nature of goods",
+
 
 
     "2539" : "Bands Loose",

@@ -8,12 +8,14 @@ import 'package:galaxy/utils/commonutils.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../model/flightcheck/addMailModel.dart';
+import '../../model/flightcheck/airportcitymodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/bdprioritymodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
+import '../../model/flightcheck/mailtypemodel.dart';
 import '../../model/flightcheck/recordatamodel.dart';
 import '../../model/flightcheck/updateawbremarkacknoledge.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
@@ -469,6 +471,48 @@ class FlightCheckRepository{
   }
 
 
+
+  Future<MailTypeModel> getMailTypeList(int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('addMailModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.getMailTypeApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        MailTypeModel mailTypeModel = MailTypeModel.fromJson(response.data);
+        return mailTypeModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
   Future<MailDetailModel> getMailDetail(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
@@ -562,6 +606,49 @@ class FlightCheckRepository{
       }
     }
   }
+
+  Future<AirportCityModel> checkAirportCity(String airportcity, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+
+        "AirportCodeInput": airportcity,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('checkAirportCity: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.checkAirportApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        AirportCityModel airportCityModel = AirportCityModel.fromJson(response.data);
+        return airportCityModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
 
 }

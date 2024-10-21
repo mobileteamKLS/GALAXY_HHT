@@ -180,6 +180,40 @@ class DialogUtils {
     }
   }
 
+  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: "Breakdown Completed",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          content: CustomeText(text: "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
+
+
+
   static Future<bool?> showingActivateTimerDialog(BuildContext context, String userId, int companyCode){
     TextEditingController mPinController = TextEditingController();
     String errorText = "";
@@ -667,7 +701,7 @@ class DialogUtils {
                       flex: 1,
                       child: RoundedButtonBlue(
                         isborderButton: true,
-                        text: "Cancel",
+                        text: "${lableModel.cancel}",
                         color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                         press: () {
                           Navigator.pop(context);
@@ -678,7 +712,7 @@ class DialogUtils {
                     Expanded(
                       flex: 1,
                       child: RoundedButton(
-                        text: "Add Mail",
+                        text: "${lableModel.addMail}",
                         color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                         press: () {
                           Navigator.pop(context, 3); // Return true when "Ok" is pressed

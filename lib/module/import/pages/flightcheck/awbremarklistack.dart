@@ -137,6 +137,12 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
     return false; // Prevents the default back button action
   }
 
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    inactivityTimerManager!.stopTimer();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -416,7 +422,7 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                         child: Row(
                                           children: [
                                             CustomeText(
-                                              text: "NPX",
+                                              text: "NPX :",
                                               fontColor: MyColor.textColorGrey2,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                               fontWeight: FontWeight.w400,
@@ -438,7 +444,7 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                         child: Row(
                                           children: [
                                             CustomeText(
-                                              text: "NPR",
+                                              text: "NPR :",
                                               fontColor: MyColor.textColorGrey2,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                               fontWeight: FontWeight.w400,
@@ -464,7 +470,7 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                   Row(
                                     children: [
                                       CustomeText(
-                                        text: "Commodity ",
+                                        text: "Commodity :",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                         fontWeight: FontWeight.w400,

@@ -33,12 +33,13 @@ import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 
 class CheckAWBPage extends StatefulWidget {
 
+  int uldSeqNo;
   FlightCheckInAWBBDList aWBItem;
   String mainMenuName;
   FlightDetailSummary flightDetailSummary;
   String location;
 
-  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location});
+  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo});
 
   @override
   State<CheckAWBPage> createState() => _CheckAWBPageState();
@@ -56,12 +57,16 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
 
   TextEditingController piecesController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
   TextEditingController groupIdController = TextEditingController();
+  TextEditingController nogController = TextEditingController();
 
 
 
   FocusNode piecesFocusNode = FocusNode();
+  FocusNode weightFocusNode = FocusNode();
   FocusNode groupIdFocusNode = FocusNode();
+  FocusNode nogFocusNode = FocusNode();
 
 
   late AnimationController _blinkController;
@@ -136,6 +141,14 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    inactivityTimerManager!.stopTimer();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     AppLocalizations? localizations = AppLocalizations.of(context);
     LableModel? lableModel = localizations!.lableModel;
@@ -190,11 +203,11 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                           padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                           child: HeaderWidget(
                             titleTextColor: MyColor.colorBlack,
-                            title: "Check AWB",
+                            title: "${lableModel!.checkAWb}",
                             onBack: () {
-                              Navigator.pop(context, "Done");
+                              _onWillPop();
                             },
-                            clearText: lableModel!.clear,
+                            clearText: lableModel.clear,
                             onClear: () {},
                           ),
                         ),
@@ -235,7 +248,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                 SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                 CustomeText(
-                                                    text: "Details for AWB No. ${AwbFormateNumberUtils.formatAWBNumber(widget.aWBItem.aWBNo!)}",
+                                                    text: "${lableModel.detailsForAWBNo} ${AwbFormateNumberUtils.formatAWBNumber(widget.aWBItem.aWBNo!)}",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -245,36 +258,79 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                           ),
                                           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                           // text manifest and recived in pices text counter
-                                          Directionality(
-                                            textDirection: uiDirection,
-                                            child: CustomTextField(
-                                              controller: piecesController,
-                                              focusNode: piecesFocusNode,
-                                              onPress: () {},
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "Pieces",
-                                              readOnly: false,
-                                              onChanged: (value) {},
-                                              fillColor:  Colors.grey.shade100,
-                                              textInputType: TextInputType.number,
-                                              inputAction: TextInputAction.next,
-                                              hintTextcolor: Colors.black45,
-                                              verticalPadding: 0,
-                                              digitsOnly: true,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                              validator: (value) {
-                                                if (value!.isEmpty) {
-                                                  return "Please fill out this field";
-                                                } else {
-                                                  return null;
-                                                }
-                                              },
-                                            ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                flex:1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: piecesController,
+                                                    focusNode: piecesFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "${lableModel.pieces}",
+                                                    readOnly: false,
+                                                    maxLength: 3,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.number,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    digitsOnly: true,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                              Expanded(
+                                                flex:1,
+                                                child: Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: CustomTextField(
+                                                    controller: weightController,
+                                                    focusNode: weightFocusNode,
+                                                    onPress: () {},
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "${lableModel.weight}",
+                                                    readOnly: false,
+                                                    maxLength: 15,
+                                                    onChanged: (value) {},
+                                                    fillColor:  Colors.grey.shade100,
+                                                    textInputType: TextInputType.number,
+                                                    inputAction: TextInputAction.next,
+                                                    hintTextcolor: Colors.black45,
+                                                    verticalPadding: 0,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                    validator: (value) {
+                                                      if (value!.isEmpty) {
+                                                        return "Please fill out this field";
+                                                      } else {
+                                                        return null;
+                                                      }
+                                                    },
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           )
                                         ],
                                       ),
@@ -304,7 +360,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
 
                                           CustomeText(
-                                              text: "OTHER DETAIL",
+                                              text: lableModel.otherDetail!.toUpperCase(),
                                               fontColor: MyColor.colorBlack,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                               fontWeight: FontWeight.w600,
@@ -322,7 +378,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                               hastextcolor: true,
                                               animatedLabel: true,
                                               needOutlineBorder: true,
-                                              labelText: "Group Id",
+                                              labelText: "${lableModel.groupId}",
                                               readOnly: false,
                                               onChanged: (value) {},
                                               fillColor: Colors.grey.shade100,
@@ -345,7 +401,40 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             ),
                                           ),
 
-
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                          // text manifest and recived in pices text counter
+                                          Directionality(
+                                            textDirection: uiDirection,
+                                            child: CustomTextField(
+                                              controller: nogController,
+                                              focusNode: nogFocusNode,
+                                              onPress: () {},
+                                              hasIcon: false,
+                                              hastextcolor: true,
+                                              animatedLabel: true,
+                                              needOutlineBorder: true,
+                                              labelText: "${lableModel.natureOfGoods}",
+                                              readOnly: false,
+                                              onChanged: (value) {},
+                                              fillColor: Colors.grey.shade100,
+                                              textInputType:
+                                              TextInputType.text,
+                                              inputAction:
+                                              TextInputAction.next,
+                                              hintTextcolor: Colors.black45,
+                                              verticalPadding: 0,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                              validator: (value) {
+                                                if (value!.isEmpty) {
+                                                  return "Please fill out this field";
+                                                } else {
+                                                  return null;
+                                                }
+                                              },
+                                            ),
+                                          ),
 
                                         ],
                                       ),
@@ -375,7 +464,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                           Row(
                                             children: [
                                               CustomeText(
-                                                text: "Flight : ",
+                                                text: "${lableModel.flight} : ",
                                                 fontColor: MyColor.textColorGrey2,
                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                 fontWeight: FontWeight.w400,
@@ -428,34 +517,65 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             ],
                                           ),
 
-                                          SizedBox(height: SizeConfig.blockSizeVertical,),
-
+                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                                           Row(
                                             children: [
-                                              CustomeText(
-                                                text: "NOG : ",
-                                                fontColor: MyColor.textColorGrey2,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w400,
-                                                textAlign: TextAlign.start,
+                                              Expanded(
+                                                flex: 2,
+                                                child: Row(
+                                                  children: [
+                                                    CustomeText(
+                                                      text: "NPX",
+                                                      fontColor: MyColor.textColorGrey2,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w400,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    CustomeText(
+                                                      text: "${widget.aWBItem.nPX}",
+                                                      fontColor: MyColor.colorBlack,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w600,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                              SizedBox(width: 5),
-                                              CustomeText(
-                                                text: "NATURE OF GOODS",
-                                                fontColor: MyColor.colorBlack,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w600,
-                                                textAlign: TextAlign.start,
+                                              Expanded(
+                                                flex: 2,
+                                                child: Row(
+                                                  children: [
+                                                    CustomeText(
+                                                      text: "NPR",
+                                                      fontColor: MyColor.textColorGrey2,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w400,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    CustomeText(
+                                                      text: "${widget.aWBItem.nPR}",
+                                                      fontColor: MyColor.colorBlack,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w600,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Container())
                                             ],
                                           ),
-
                                           SizedBox(height: SizeConfig.blockSizeVertical,),
+
 
                                           Row(
                                             children: [
                                               CustomeText(
-                                                text: "Location : ",
+                                                text: "${lableModel.location} : ",
                                                 fontColor: MyColor.textColorGrey2,
                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                 fontWeight: FontWeight.w400,
@@ -522,7 +642,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                           Expanded(
                                             flex: 1,
                                             child: RoundedButtonBlue(
-                                              text: "Damage & Save",
+                                              text: "${lableModel.damageAndSave}",
                                               press: () async {
                                               },
                                             ),
@@ -533,9 +653,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                           Expanded(
                                             flex: 1,
                                             child: RoundedButtonBlue(
-                                              text: "Save",
-
+                                              text: "${lableModel.save}",
                                               press: () async {
+                                                Navigator.pop(context, "true");
                                               },
                                             ),
                                           ),
@@ -549,9 +669,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                               ),
                             ))
                       ],
-                    ),
-                                    ),
-                                  ),
+                    ),),),
                   )),
 
             ],

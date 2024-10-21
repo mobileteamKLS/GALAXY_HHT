@@ -6,9 +6,9 @@ class MailDetailModel {
   MailDetailModel({this.addMailDetailsList, this.status, this.statusMessage});
 
   MailDetailModel.fromJson(Map<String, dynamic> json) {
-    if (json['AddMailDetailsList'] != null) {
+    if (json['AddMailViewList'] != null) {
       addMailDetailsList = <AddMailDetailsList>[];
-      json['AddMailDetailsList'].forEach((v) {
+      json['AddMailViewList'].forEach((v) {
         addMailDetailsList!.add(new AddMailDetailsList.fromJson(v));
       });
     }
@@ -19,7 +19,7 @@ class MailDetailModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.addMailDetailsList != null) {
-      data['AddMailDetailsList'] =
+      data['AddMailViewList'] =
           this.addMailDetailsList!.map((v) => v.toJson()).toList();
     }
     data['Status'] = this.status;

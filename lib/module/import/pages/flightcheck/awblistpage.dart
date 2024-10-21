@@ -27,6 +27,7 @@ import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
+import '../../../../widget/customtextfield.dart';
 import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../../widget/roundbutton.dart';
@@ -49,8 +50,9 @@ class AWBListPage extends StatefulWidget {
   FlightDetailSummary flightDetailSummary;
   int uldSeqNo;
   int menuId;
+  LableModel lableModel;
 
-  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires});
+  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel});
 
   @override
   State<AWBListPage> createState() => _AWBListPageState();
@@ -64,7 +66,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
   late FlightCheckInAWBBDList aWBItem;
 
-  bool _isOpenULDFlagEnable = false;
+  bool _isOpenULDFlagEnable = true;
 
   List<FlightCheckInAWBBDList> awbItemList = [];
   List<FlightCheckInAWBBDList> filterAWBDetailsList = [];
@@ -118,7 +120,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
-
+      inactivityTimerManager = InactivityTimerManager(
+        context: context,
+        timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
+        onTimeout: _handleInactivityTimeout,  // Define what happens when timeout occurs
+      );
+      inactivityTimerManager?.startTimer();
 
     }
 
@@ -151,8 +158,17 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
-    Navigator.pop(context, "Done");
-    return false; // Prevents the default back button action
+
+    bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo);
+    if (exitConfirmed == true) {
+      Navigator.pop(context, "true");
+     // return true; // Exit the app
+    }else{
+      Navigator.pop(context, "Done");
+    }
+    return false; // Stay in the app (Cancel was clicked)
+
+
   }
 
   @override
@@ -224,7 +240,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                 titleTextColor: MyColor.colorBlack,
                                 title: "${lableModel!.awbListing}",
                                 onBack: () {
-                                  Navigator.pop(context, "Done");
+                                  _onWillPop();
                                 },
                                 clearText: "",
                                 //add clear text to clear all feild
@@ -248,12 +264,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                   print("CHECK_AWB_PAGE______SUCCESS");
                                   DialogUtils.hideLoadingDialog(context);
 
-                                  inactivityTimerManager = InactivityTimerManager(
-                                    context: context,
-                                    timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
-                                    onTimeout: _handleInactivityTimeout,  // Define what happens when timeout occurs
-                                  );
-                                  inactivityTimerManager?.startTimer();
+                                  _resumeTimerOnInteraction();
 
                                   if(state.aWBModel.status == "E"){
                                     SnackbarUtil.showSnackbar(context, state.aWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -374,13 +385,15 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                     updateSearchList(value);
                                                                   },
                                                                   fillColor: MyColor.colorWhite,
-                                                                  textInputType: TextInputType.text,
+                                                                  textInputType: TextInputType.number,
                                                                   inputAction: TextInputAction.next,
                                                                   hintTextcolor: MyColor.colorBlack.withOpacity(0.7),
                                                                   verticalPadding: 0,
+                                                                  maxLength: 11,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                                   circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
                                                                   boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                                                                  isDigitsOnly: true,
                                                                   validator: (value) {
                                                                     if (value!.isEmpty) {
                                                                       return "Please fill out this field";
@@ -392,7 +405,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                               ),
                                                               InkWell(
                                                                 onTap: () {
-                                                                  scanQR();
+                                                                  scanQR(lableModel);
                                                                 },
                                                                 child: Padding(padding: const EdgeInsets.all(8.0),
                                                                   child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
@@ -729,7 +742,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                           child: Row(
                                                                                             children: [
                                                                                               CustomeText(
-                                                                                                text: "NPX",
+                                                                                                text: "NPX :",
                                                                                                 fontColor: MyColor.textColorGrey2,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w400,
@@ -751,7 +764,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                           child: Row(
                                                                                             children: [
                                                                                               CustomeText(
-                                                                                                text: "NPR",
+                                                                                                text: "NPR :",
                                                                                                 fontColor: MyColor.textColorGrey2,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w400,
@@ -785,7 +798,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Wt. Exp",
+                                                                                                    text: "Wt. Exp :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w400,
@@ -807,7 +820,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Wt. Rec.",
+                                                                                                    text: "Wt. Rec. :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w400,
@@ -837,7 +850,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Short",
+                                                                                                    text: "Short :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w400,
@@ -859,7 +872,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Excess",
+                                                                                                    text: "Excess :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w400,
@@ -890,7 +903,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Dmg. Pcs.",
+                                                                                                    text: "Dmg. Pcs. :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w400,
@@ -912,7 +925,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Dmg. Wt.",
+                                                                                                    text: "Dmg. Wt. :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w400,
@@ -938,7 +951,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                         Row(
                                                                                           children: [
                                                                                             CustomeText(
-                                                                                              text: "Commodity ",
+                                                                                              text: "Commodity :",
                                                                                               fontColor: MyColor.textColorGrey2,
                                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                               fontWeight: FontWeight.w400,
@@ -1152,12 +1165,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                           ],
                                                         )
                                                             : Center(
-                                                          child: CustomeText(text: "${lableModel.allShipment}", fontColor: MyColor.textColor,
+                                                          child: CustomeText(text: "${lableModel.recordNotFound}", fontColor: MyColor.textColor,
                                                               fontSize: SizeConfig.textMultiplier * 2.1,
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.center),)
                                                             : Center(
-                                                          child: CustomeText(text: "${lableModel.infonotfound}", fontColor: MyColor.textColor,
+                                                          child: CustomeText(text: "${lableModel.recordNotFound}", fontColor: MyColor.textColor,
                                                               fontSize: SizeConfig.textMultiplier * 2.1,
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.center),)
@@ -1200,25 +1213,26 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
               mainMenuName: widget.mainMenuName,
               flightDetailSummary: widget.flightDetailSummary,
               location: widget.location,
+              uldSeqNo: widget.uldSeqNo,
             )));
 
     if(value == "Done"){
       _resumeTimerOnInteraction();
+    }else if(value == "true"){
+      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
     }
 
   }
 
 
   // update serch list function
-  void updateSearchList(String searchText) {
+ /* void updateSearchList(String searchText, LableModel lableModel) {
     setState(() {
       _selectedIndex = -1;
       if (searchText.isEmpty) {
-        // If search text is cleared, revert to original list
         filterAWBDetailsList = List.from(awbItemList);
         filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
       } else {
-        // Filter and sort the list based on search text
         filterAWBDetailsList = List.from(awbItemList);
         filterAWBDetailsList.sort((a, b) {
           final aContains = a.aWBNo!
@@ -1238,16 +1252,49 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
             return 0;
           }
         });
+
+
+        
       }
     });
+
+    if (filterAWBDetailsList.isEmpty || !filterAWBDetailsList.any((awb) =>
+        awb.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchText.toLowerCase()))) {
+
+
+      SnackbarUtil.showSnackbar(context, "${lableModel.recordNotFound} $searchText", MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+    }
+  }*/
+
+  //update search
+  void updateSearchList(String searchString) {
+    setState(() {
+      filterAWBDetailsList = _applyFiltersAndSorting(
+        awbItemList,
+        searchString
+      );
+    });
   }
+
+  //appliying filter for sorting
+  List<FlightCheckInAWBBDList> _applyFiltersAndSorting(List<FlightCheckInAWBBDList> list, String searchString) {
+    // Filter by search string
+    List<FlightCheckInAWBBDList> filteredList = list.where((item) {
+      return item.aWBNo!.toLowerCase().contains(searchString.toLowerCase());
+    }).toList();
+
+    return filteredList;
+  }
+
+
 
   List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int iMPAWBRowId) {
     return awbRemarkList.where((remark) => remark.iMPAWBRowId == iMPAWBRowId).toList();
   }
 
 
-  Future<void> scanQR() async {
+  Future<void> scanQR(LableModel lableModel) async {
     String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scanner overlay
       'Cancel', // Text for the cancel button
@@ -1258,7 +1305,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     print("barcode scann ==== ${barcodeScanResult}");
     if(barcodeScanResult == "-1"){
     }else{
-      scanNoEditingController.text = barcodeScanResult.toString();
+      scanNoEditingController.text = barcodeScanResult.toString().replaceAll(" ", "");
       updateSearchList(scanNoEditingController.text);
       setState(() {
 

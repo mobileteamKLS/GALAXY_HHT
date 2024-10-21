@@ -21,6 +21,7 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customdivider.dart';
+import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/customeuiwidgets/footer.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
@@ -33,6 +34,7 @@ import '../../../onboarding/sizeconfig.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
+import '../../model/flightcheck/mailtypemodel.dart';
 import '../../services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import '../../services/flightcheck/flightchecklogic/flightcheckstate.dart';
 
@@ -60,8 +62,9 @@ class _AddMailPageState extends State<AddMailPage> {
 
 
   List<AddMailDetailsList>? addMailDetailsList = [];
-  List<String> jobTypeModelList = [ "A", "B", "C", "D"];
-  String? selectedJobType;
+  List<MailTypeList>? mailTypeList = [];
+  //List<String> jobTypeModelList = [ "A", "B", "C", "D"];
+  MailTypeList? selectedMailType;
 
 
 
@@ -75,6 +78,7 @@ class _AddMailPageState extends State<AddMailPage> {
 
 
   FocusNode av7NoFocusNode = FocusNode();
+  FocusNode mailTypeFocusNode = FocusNode();
   FocusNode originFocusNode = FocusNode();
   FocusNode destinationFocusNode = FocusNode();
 
@@ -82,6 +86,8 @@ class _AddMailPageState extends State<AddMailPage> {
   FocusNode weightFocusNode = FocusNode();
   FocusNode descriptionFocusNode = FocusNode();
 
+  bool _isvalidateOrigin = false;
+  bool _isvalidateDestination = false;
 
 
   @override
@@ -90,8 +96,38 @@ class _AddMailPageState extends State<AddMailPage> {
     super.initState();
     _loadUser();
 
+    originFocusNode.addListener(() {
+      if (!originFocusNode.hasFocus) {
+        leaveOriginFocus();
+      }
+    });
 
+    destinationFocusNode.addListener(() {
+      if (!destinationFocusNode.hasFocus) {
+        leaveDestinationFocus();
+      }
+    },);
 
+  }
+
+  Future<void> leaveOriginFocus() async {
+    if (originController.text.isNotEmpty) {
+      // call check airport api
+      context.read<FlightCheckCubit>().checkOAirportCity(originController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+    }
+  }
+
+  Future<void> leaveDestinationFocus() async {
+    if (destinationController.text.isNotEmpty) {
+
+      if (originController.text == destinationController.text) {
+        openValidationDialog("${widget.lableModel!.originDestinationSameMsg}", destinationFocusNode);
+        return;
+      }
+
+      // call check airport api
+      context.read<FlightCheckCubit>().checkDAirportCity(destinationController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+    }
   }
 
 
@@ -112,7 +148,8 @@ class _AddMailPageState extends State<AddMailPage> {
         _splashDefaultData = splashDefaultData;
       });
 
-      context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+    //  context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+      context.read<FlightCheckCubit>().getMailType(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
 
 
@@ -152,6 +189,10 @@ class _AddMailPageState extends State<AddMailPage> {
 
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
+    originController.clear();
+    destinationController.clear();
+    _isvalidateOrigin = false;
+    _isvalidateDestination = false;
     Navigator.pop(context, "Done");
     return false; // Prevents the default back button action
   }
@@ -208,22 +249,29 @@ class _AddMailPageState extends State<AddMailPage> {
                           padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                           child: HeaderWidget(
                             titleTextColor: MyColor.colorBlack,
-                            title: "Add Mail",
+                            title: "${lableModel!.addMail}",
                             onBack: () {
+                              FocusScope.of(context).unfocus();
+                              originController.clear();
+                              destinationController.clear();
+                              _isvalidateOrigin = false;
+                              _isvalidateDestination = false;
                               Navigator.pop(context, "Done");
                             },
-                            clearText: lableModel!.clear,
+                            clearText: lableModel.clear,
                             onClear: () {
                               setState(() {
 
                               });
                               av7NoController.clear();
-                              selectedJobType = null;
+                              selectedMailType = null;
                               originController.clear();
-                              descriptionController.clear();
+                              destinationController.clear();
                               nopController.clear();
                               weightController.clear();
                               descriptionController.clear();
+                              _isvalidateOrigin = false;
+                              _isvalidateDestination = false;
 
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 FocusScope.of(context).requestFocus(av7NoFocusNode);
@@ -240,6 +288,25 @@ class _AddMailPageState extends State<AddMailPage> {
                             // showing loading dialog in this state
                             DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                           }
+                          else if(state is GetMailTypeSuccessState){
+
+                            DialogUtils.hideLoadingDialog(context);
+                            if(state.mailTypeModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.mailTypeModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else{
+
+                              mailTypeList = List.from(state.mailTypeModel.mailTypeList!);
+                              context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                              setState(() {});
+
+                            }
+
+                          }else if(state is GetMailTypeFailureState){
+                            DialogUtils.hideLoadingDialog(context);
+                            Vibration.vibrate(duration: 500);
+                            SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                          }
                           else if (state is GetMailDetailSuccessState){
 
                             if(state.mailDetailModel.status == "E"){
@@ -251,7 +318,7 @@ class _AddMailPageState extends State<AddMailPage> {
                               addMailDetailsList = List.from(state.mailDetailModel.addMailDetailsList!);
 
                               av7NoController.clear();
-                              selectedJobType = null;
+                              selectedMailType = null;
                               originController.clear();
                               descriptionController.clear();
                               nopController.clear();
@@ -270,6 +337,78 @@ class _AddMailPageState extends State<AddMailPage> {
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                           }
+                          else if (state is CheckOAirportCitySuccessState){
+                            DialogUtils.hideLoadingDialog(context);
+                            if(state.airportCityModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              setState(() {
+                                _isvalidateOrigin = false;
+                              });
+
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(originFocusNode);
+                              },
+                              );
+
+                            }else{
+                              _isvalidateOrigin = true;
+                              setState(() {});
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(destinationFocusNode);
+                              },
+                              );
+                            }
+                          }
+                          else if(state is CheckOAirportCityFailureState){
+                            DialogUtils.hideLoadingDialog(context);
+                            Vibration.vibrate(duration: 500);
+                            SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            setState(() {
+                              _isvalidateOrigin = false;
+                            });
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              FocusScope.of(context).requestFocus(originFocusNode);
+                            },
+                            );
+                          }
+                          else if (state is CheckDAirportCitySuccessState){
+                            DialogUtils.hideLoadingDialog(context);
+                            if(state.airportCityModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              setState(() {
+                                _isvalidateDestination = false;
+                              });
+
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(destinationFocusNode);
+                              },
+                              );
+
+                            }else{
+                              _isvalidateDestination = true;
+                              setState(() {});
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(nopFocusNode);
+                              },
+                              );
+                            }
+                          }
+                          else if(state is CheckDAirportCityFailureState){
+                            DialogUtils.hideLoadingDialog(context);
+                            Vibration.vibrate(duration: 500);
+                            SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            setState(() {
+                              _isvalidateDestination = false;
+                            });
+
+                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                              FocusScope.of(context).requestFocus(destinationFocusNode);
+                            },
+                            );
+                          }
                           else if (state is AddMailSuccessState){
                             DialogUtils.hideLoadingDialog(context);
                             if(state.addMailModel.status == "E"){
@@ -283,7 +422,8 @@ class _AddMailPageState extends State<AddMailPage> {
 
 
                             }
-                          }else if(state is AddMAilFailureState){
+                          }
+                          else if(state is AddMAilFailureState){
                             DialogUtils.hideLoadingDialog(context);
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -325,7 +465,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                 SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                 SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                 CustomeText(
-                                                    text: "Add Mail for this ${widget.uldNo}",
+                                                    text: "${lableModel.addMailForThis}  ${widget.uldNo}",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -348,7 +488,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                               hastextcolor: true,
                                               animatedLabel: true,
                                               needOutlineBorder: true,
-                                              labelText: "AV7 No *",
+                                              labelText: "${lableModel.av7No} *",
                                               readOnly: false,
                                               onChanged: (value) {},
                                               fillColor:  Colors.grey.shade100,
@@ -378,8 +518,8 @@ class _AddMailPageState extends State<AddMailPage> {
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                CustomeText(text: "Mail Type", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.BUTTONHORIZONTALSIZE,),
+                                                CustomeText(text: "${lableModel.mailType}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                 Expanded(
                                                   flex : 2,
                                                   child: Container(
@@ -394,8 +534,9 @@ class _AddMailPageState extends State<AddMailPage> {
                                                         SizeConfig.blockSizeHorizontal * SizeUtils.ICONSIZE2,
                                                       ),
                                                     ),
-                                                    child: DropdownButton<String>(
-                                                      value: selectedJobType,
+                                                    child: DropdownButton<MailTypeList>(
+                                                      focusNode: mailTypeFocusNode,
+                                                      value: selectedMailType,
                                                       hint: CustomeText(
                                                         text: "Select",
                                                         fontColor: MyColor.colorBlack,
@@ -403,11 +544,11 @@ class _AddMailPageState extends State<AddMailPage> {
                                                         fontWeight: FontWeight.w500,
                                                         textAlign: TextAlign.start,
                                                       ),
-                                                      items: jobTypeModelList.map((String item) {
-                                                        return DropdownMenuItem<String>(
+                                                      items: mailTypeList!.map((MailTypeList item) {
+                                                        return DropdownMenuItem<MailTypeList>(
                                                           value: item,
                                                           child: CustomeText(
-                                                            text: item,
+                                                            text: item.referenceDescription!,
                                                             fontColor: MyColor.colorBlack,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -415,9 +556,9 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           ),
                                                         );
                                                       }).toList(),
-                                                      onChanged: (String? value) {
+                                                      onChanged: (MailTypeList? value) {
                                                         setState(() {
-                                                          selectedJobType = value!;
+                                                          selectedMailType = value!;
                                                         });
                                                       },
                                                       underline: SizedBox(),
@@ -439,7 +580,8 @@ class _AddMailPageState extends State<AddMailPage> {
                                                 flex:1,
                                                 child: Directionality(
                                                   textDirection: uiDirection,
-                                                  child: CustomTextField(
+                                                  child: CustomeEditTextWithBorder(
+                                                    lablekey: "AIRPORT",
                                                     controller: originController,
                                                     focusNode: originFocusNode,
                                                     onPress: () {},
@@ -447,16 +589,27 @@ class _AddMailPageState extends State<AddMailPage> {
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "Origin *",
+                                                    labelText: "${lableModel.origin} *",
                                                     readOnly: false,
-                                                    onChanged: (value) {},
+                                                    maxLength: 3,
+                                                    isShowSuffixIcon: _isvalidateOrigin,
+                                                    onChanged: (value, validate) {
+                                                      destinationController.clear();
+                                                      _isvalidateDestination = false;
+                                                      setState(() {
+                                                        _isvalidateOrigin = false;
+                                                      });
+                                                      if (value.toString().isEmpty) {
+                                                        destinationController.clear();
+                                                        _isvalidateDestination = false;
+                                                        _isvalidateOrigin = false;
+                                                      }
+                                                    },
                                                     fillColor:  Colors.grey.shade100,
                                                     textInputType: TextInputType.text,
                                                     inputAction: TextInputAction.next,
                                                     hintTextcolor: Colors.black45,
                                                     verticalPadding: 0,
-                                                    maxLength: 3,
-                                                    digitsOnly: false,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                     boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
@@ -475,7 +628,8 @@ class _AddMailPageState extends State<AddMailPage> {
                                                 flex: 1,
                                                 child: Directionality(
                                                   textDirection: uiDirection,
-                                                  child: CustomTextField(
+                                                  child: CustomeEditTextWithBorder(
+                                                    lablekey: "AIRPORT",
                                                     controller: destinationController,
                                                     focusNode: destinationFocusNode,
                                                     onPress: () {},
@@ -483,16 +637,24 @@ class _AddMailPageState extends State<AddMailPage> {
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "Destination *",
+                                                    labelText: "${lableModel.destination} *",
                                                     readOnly: false,
-                                                    onChanged: (value) {},
+                                                    maxLength: 3,
+                                                    isShowSuffixIcon: _isvalidateDestination,
+                                                    onChanged: (value, validate) {
+
+                                                      setState(() {
+                                                        _isvalidateDestination = false;
+                                                      });
+                                                      if (value.toString().isEmpty) {
+                                                        _isvalidateDestination = false;
+                                                      }
+                                                    },
                                                     fillColor:  Colors.grey.shade100,
                                                     textInputType: TextInputType.text,
                                                     inputAction: TextInputAction.next,
                                                     hintTextcolor: Colors.black45,
                                                     verticalPadding: 0,
-                                                    maxLength: 3,
-                                                    digitsOnly: false,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                     boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
@@ -521,10 +683,11 @@ class _AddMailPageState extends State<AddMailPage> {
                                                     focusNode: nopFocusNode,
                                                     onPress: () {},
                                                     hasIcon: false,
+                                                    maxLength: 4,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "NoP *",
+                                                    labelText: "${lableModel.nop} *",
                                                     readOnly: false,
                                                     onChanged: (value) {},
                                                     fillColor:  Colors.grey.shade100,
@@ -533,6 +696,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                     hintTextcolor: Colors.black45,
                                                     verticalPadding: 0,
                                                     digitsOnly: true,
+
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                     boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
@@ -559,7 +723,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "Weight *",
+                                                    labelText: "${lableModel.weight} *",
                                                     readOnly: false,
                                                     onChanged: (value) {},
                                                     fillColor:  Colors.grey.shade100,
@@ -567,7 +731,9 @@ class _AddMailPageState extends State<AddMailPage> {
                                                     inputAction: TextInputAction.next,
                                                     hintTextcolor: Colors.black45,
                                                     verticalPadding: 0,
-                                                    digitsOnly: true,
+                                                    maxLength: 10,
+                                                    digitsOnly: false,
+                                                    doubleDigitOnly: true,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                     boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
@@ -595,18 +761,16 @@ class _AddMailPageState extends State<AddMailPage> {
                                               hastextcolor: true,
                                               animatedLabel: true,
                                               needOutlineBorder: true,
-                                              labelText: "Description",
+                                              labelText: "${lableModel.description}",
                                               readOnly: false,
                                               onChanged: (value) {},
                                               fillColor:  Colors.grey.shade100,
                                               textInputType: TextInputType.text,
                                               inputAction: TextInputAction.next,
                                               hintTextcolor: Colors.black45,
-                                              maxLines: 2,
-                                              verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                               circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
                                               validator: (value) {
                                                 if (value!.isEmpty) {
                                                   return "Please fill out this field";
@@ -660,7 +824,7 @@ class _AddMailPageState extends State<AddMailPage> {
 
                                               press: () async {
 
-                                                print("MAILTYPE === ${selectedJobType}");
+                                                print("MAILTYPE === ${selectedMailType}");
 
                                                /* if(av7NoController.text.isNotEmpty){
                                                   if(originController.text.isNotEmpty){
@@ -669,7 +833,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                         if(nopController.text.isNotEmpty){
                                                           if(weightController.text.isNotEmpty){
 
-                                                            if(selectedJobType == null){
+                                                            if(selectedMailType == null){
                                                               SnackbarUtil.showSnackbar(context, "Please select mil type", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                             }else{
 
@@ -696,39 +860,39 @@ class _AddMailPageState extends State<AddMailPage> {
 
 
                                                 if (av7NoController.text.isEmpty) {
-                                                  openValidationDialog("Please enter Av7 No.", av7NoFocusNode);
+                                                  openValidationDialog("${lableModel.av7NoMsg}", av7NoFocusNode);
                                                   return;
                                                 }
 
                                                 if (originController.text.isEmpty) {
-                                                  openValidationDialog("Please enter origin.", originFocusNode);
+                                                  openValidationDialog("${lableModel.originMsg}", originFocusNode);
                                                   return;
                                                 }
 
                                                 if (destinationController.text.isEmpty) {
-                                                  openValidationDialog("Please enter destination", destinationFocusNode);
+                                                  openValidationDialog("${lableModel.destinationMsg}", destinationFocusNode);
                                                   return;
                                                 }
 
                                                 if (originController.text == destinationController.text) {
-                                                  openValidationDialog("Origin & Destination are the same", destinationFocusNode);
+                                                  openValidationDialog("${lableModel.originDestinationSameMsg}", destinationFocusNode);
                                                   return;
                                                 }
 
                                                 if (nopController.text.isEmpty) {
-                                                  openValidationDialog("Please enter NoP", nopFocusNode);
+                                                  openValidationDialog("${lableModel.nopMsg}", nopFocusNode);
                                                   return;
                                                 }
 
                                                 if (weightController.text.isEmpty) {
-                                                  openValidationDialog("Please enter weight", weightFocusNode);
+                                                  openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
                                                   return;
                                                 }
 
-                                                if (selectedJobType == null) {
+                                                if (selectedMailType == null) {
                                                   SnackbarUtil.showSnackbar(
                                                     context,
-                                                    "Please select mail type",
+                                                    "${lableModel.mailTypeMsg}",
                                                     MyColor.colorRed,
                                                     icon: FontAwesomeIcons.times,
                                                   );
@@ -738,7 +902,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                 // If all validations pass, proceed with further actions here
                                                 // Your further logic goes here...
 
-                                                context.read<FlightCheckCubit>().addMail(widget.flightSeqNo, widget.uldSeqNo, av7NoController.text, selectedJobType!, originController.text, destinationController.text, int.parse(nopController.text), double.parse(weightController.text), descriptionController.text,_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                context.read<FlightCheckCubit>().addMail(widget.flightSeqNo, widget.uldSeqNo, av7NoController.text, selectedMailType!.referenceDataIdentifier!, originController.text, destinationController.text, int.parse(nopController.text), double.parse(weightController.text), descriptionController.text,_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
 
                                               },
@@ -758,7 +922,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                         children: [
                                           Padding(
                                             padding: const EdgeInsets.only(left: 12, right: 12,),
-                                            child: CustomeText(text: "Mail Total List (${addMailDetailsList!.length})", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                            child: CustomeText(text: "${lableModel.mailTotalList} (${addMailDetailsList!.length})", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
                                           ),
                                           (addMailDetailsList!.isNotEmpty)
                                               ? ListView.builder(
@@ -831,7 +995,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: "NoP",
+                                                                text: "${lableModel.nop}",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w400,
@@ -850,7 +1014,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: "Weight",
+                                                                text: "${lableModel.weight}",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w400,
@@ -869,7 +1033,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: "Type",
+                                                                text: "${lableModel.type}",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w400,

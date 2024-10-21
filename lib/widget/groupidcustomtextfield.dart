@@ -45,6 +45,7 @@ class GroupIdCustomTextField extends StatefulWidget {
   final double boxHeight;
   final int? maxLength;
   final double iconSize;
+  final bool? isDigitsOnly;
   final TextDirection textDirection;
 
   const GroupIdCustomTextField(
@@ -86,7 +87,8 @@ class GroupIdCustomTextField extends StatefulWidget {
         this.iconSize = 30,
         this.maxLength = 13,
         this.textDirection = TextDirection.ltr,
-        this.boxHeight = 30})
+        this.boxHeight = 30,
+        this.isDigitsOnly = false})
       : super(key: key);
 
   @override
@@ -198,6 +200,7 @@ class _CustomTextFieldState extends State<GroupIdCustomTextField> {
               onTap: () {
                 widget.onPress!();
               },
+              maxLength: widget.maxLength,
               maxLines: widget.maxLines,
               readOnly: widget.readOnly,
               style: GoogleFonts.poppins(textStyle: TextStyle(
@@ -206,7 +209,7 @@ class _CustomTextFieldState extends State<GroupIdCustomTextField> {
                       : MyColor.colorBlack, fontSize: widget.fontSize)),
               //textAlign: TextAlign.left,
               inputFormatters: <TextInputFormatter>[
-                FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
+                widget.isDigitsOnly == true ? FilteringTextInputFormatter.allow(RegExp("[0-9]")) : FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
               ],
               cursorColor: MyColor.colorBlack,
               controller: widget.controller,
@@ -216,11 +219,13 @@ class _CustomTextFieldState extends State<GroupIdCustomTextField> {
               focusNode: widget.focusNode,
               validator: widget.validator,
               keyboardType: widget.textInputType,
+
               obscureText: widget.isPassword ? obscureText : false,
               decoration: InputDecoration(
+                counterText: "",
                /* prefixIcon: widget.hasIcon ? Icon(widget.prefixicon, color: widget.prefixIconcolor,) : null,*/
-                constraints: BoxConstraints.loose(Size.fromHeight(widget.boxHeight)),
-                contentPadding: EdgeInsets.symmetric(vertical: widget.verticalPadding, horizontal: 10),
+               /* constraints: BoxConstraints.loose(Size.fromHeight(widget.boxHeight)),*/
+                contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 10),
                 hintText: widget.hintText != null ? widget.hintText : '',
                 hintStyle: GoogleFonts.poppins(textStyle: TextStyle(fontSize: widget.fontSize, color: widget.hintTextcolor, fontWeight: FontWeight.w400)),
                 fillColor: widget.fillColor,

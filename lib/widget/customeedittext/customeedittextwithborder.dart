@@ -244,6 +244,11 @@ class _ULDCustomTextFieldState extends State<CustomeEditTextWithBorder> {
           suffixIconColor = MyColor.colorGreen;
           widget.onChanged!(text, true);
         }
+        else if(widget.lablekey == "AIRPORT"){
+          suffixIcon = donecircle;
+          suffixIconColor = MyColor.colorGreen;
+          widget.onChanged!(text, true);
+        }
 
 
       },

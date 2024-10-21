@@ -2762,8 +2762,22 @@ class _FlightCheckState extends State<FlightCheck>
                   menuId: widget.menuId,
                   location: locationController.text,
                   awbRemarkRequires: awbRemarkRequires,
+                  lableModel: lableModel,
                 )));
-        if(value == "Done"){
+        if(value == "true"){
+          _resumeTimerOnInteraction();
+          callFlightCheckULDListApi(
+              context,
+              locationController.text,
+              igmNoEditingController.text,
+              flightNoEditingController.text,
+              dateEditingController.text,
+              _user!.userProfile!.userIdentity!,
+              _splashDefaultData!.companyCode!,
+              widget.menuId,
+              (_isOpenULDFlagEnable == true) ? 1 : 0);
+        }
+        else if(value == "Done"){
           _resumeTimerOnInteraction();
         }
 

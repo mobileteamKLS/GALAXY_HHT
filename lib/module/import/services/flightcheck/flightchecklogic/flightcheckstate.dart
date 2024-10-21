@@ -1,5 +1,6 @@
 
 import 'package:galaxy/module/import/model/flightcheck/addMailModel.dart';
+import 'package:galaxy/module/import/model/flightcheck/airportcitymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/bdprioritymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/finalizeflightmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/maildetailmodel.dart';
@@ -8,6 +9,7 @@ import 'package:galaxy/module/import/model/flightcheck/recordatamodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../model/flightcheck/mailtypemodel.dart';
 import '../../../model/flightcheck/updateawbremarkacknoledge.dart';
 import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../../model/uldacceptance/locationvalidationmodel.dart';
@@ -127,6 +129,18 @@ class AWBAcknoledgeFailureState extends FlightCheckState {
   AWBAcknoledgeFailureState(this.error);
 }
 
+class GetMailTypeSuccessState extends FlightCheckState {
+  final MailTypeModel mailTypeModel;
+  GetMailTypeSuccessState(this.mailTypeModel);
+}
+
+class GetMailTypeFailureState extends FlightCheckState {
+  final String error;
+  GetMailTypeFailureState(this.error);
+}
+
+
+
 class GetMailDetailSuccessState extends FlightCheckState {
   final MailDetailModel mailDetailModel;
   GetMailDetailSuccessState(this.mailDetailModel);
@@ -146,4 +160,25 @@ class AddMailSuccessState extends FlightCheckState {
 class AddMAilFailureState extends FlightCheckState {
   final String error;
   AddMAilFailureState(this.error);
+}
+
+
+class CheckOAirportCitySuccessState extends FlightCheckState {
+  final AirportCityModel airportCityModel;
+  CheckOAirportCitySuccessState(this.airportCityModel);
+}
+
+class CheckOAirportCityFailureState extends FlightCheckState {
+  final String error;
+  CheckOAirportCityFailureState(this.error);
+}
+
+class CheckDAirportCitySuccessState extends FlightCheckState {
+  final AirportCityModel airportCityModel;
+  CheckDAirportCitySuccessState(this.airportCityModel);
+}
+
+class CheckDAirportCityFailureState extends FlightCheckState {
+  final String error;
+  CheckDAirportCityFailureState(this.error);
 }
