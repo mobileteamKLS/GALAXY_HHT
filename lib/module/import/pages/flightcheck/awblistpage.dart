@@ -64,8 +64,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
 
-  late FlightCheckInAWBBDList aWBItem;
-
   bool _isOpenULDFlagEnable = true;
 
   List<FlightCheckInAWBBDList> awbItemList = [];
@@ -538,7 +536,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                               shrinkWrap: true,
                                                               controller: scrollController,
                                                               itemBuilder: (context, index) {
-                                                                aWBItem = filterAWBDetailsList![index];
+                                                                FlightCheckInAWBBDList aWBItem = filterAWBDetailsList![index];
                                                                 bool isSelected = _selectedIndex == index;
                                                                 bool isExpand = _isExpandedDetails == index;
                                                                 List<String> shcCodes = aWBItem.sHCCode!.split(',');
