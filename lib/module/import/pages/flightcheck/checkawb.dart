@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
+import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/custometext.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../../../core/images.dart';
 import '../../../../core/mycolor.dart';
@@ -38,8 +44,10 @@ class CheckAWBPage extends StatefulWidget {
   String mainMenuName;
   FlightDetailSummary flightDetailSummary;
   String location;
+  int menuId;
+  LableModel lableModel;
 
-  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo});
+  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo, required this.menuId, required this.lableModel});
 
   @override
   State<CheckAWBPage> createState() => _CheckAWBPageState();
@@ -89,6 +97,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
       end: Colors.transparent,
     ).animate(_blinkController); // color animation
 
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(piecesFocusNode);
+    });
 
   }
 
@@ -190,7 +201,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                       return true;
                     },
                     child: Container(
-                                    decoration: BoxDecoration(
+                      decoration: BoxDecoration(
                       color: MyColor.bgColorGrey,
                       borderRadius: BorderRadius.only(
                           topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
@@ -208,11 +219,39 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                               _onWillPop();
                             },
                             clearText: lableModel.clear,
-                            onClear: () {},
+                            onClear: () {
+                              piecesController.clear();
+                              weightController.clear();
+                              groupIdController.clear();
+                              nogController.clear();
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(piecesFocusNode);
+                              });
+                            },
                           ),
                         ),
 
-                        Expanded(
+                        BlocListener<FlightCheckCubit, FlightCheckState>(
+                          listener: (context, state) {
+                            if(state is MainLoadingState){
+                              DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                            }
+                            else if(state is ImportShipmentSaveSuccessState){
+                              DialogUtils.hideLoadingDialog(context);
+
+                              if(state.importShipmentModel.status == "E"){
+                                Vibration.vibrate(duration: 500);
+                                SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              }else{
+                                Navigator.pop(context, "true");
+                              }
+
+                            }else if(state is ImportShipmentSaveFailureState){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }
+                        },
+                        child: Expanded(
                             child: SingleChildScrollView(
                               child: Padding(
                                 padding: const EdgeInsets.only(
@@ -272,9 +311,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "${lableModel.pieces}",
+                                                    labelText: "${lableModel.pieces} *",
                                                     readOnly: false,
-                                                    maxLength: 3,
+                                                    maxLength: 4,
                                                     onChanged: (value) {},
                                                     fillColor:  Colors.grey.shade100,
                                                     textInputType: TextInputType.number,
@@ -308,9 +347,11 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "${lableModel.weight}",
+                                                    labelText: "${lableModel.weight} *",
                                                     readOnly: false,
-                                                    maxLength: 15,
+                                                    maxLength: 10,
+                                                    digitsOnly: false,
+                                                    doubleDigitOnly: true,
                                                     onChanged: (value) {},
                                                     fillColor:  Colors.grey.shade100,
                                                     textInputType: TextInputType.number,
@@ -378,7 +419,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                               hastextcolor: true,
                                               animatedLabel: true,
                                               needOutlineBorder: true,
-                                              labelText: "${lableModel.groupId}",
+                                              labelText: "${lableModel.groupId} *",
                                               readOnly: false,
                                               onChanged: (value) {},
                                               fillColor: Colors.grey.shade100,
@@ -413,7 +454,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                               hastextcolor: true,
                                               animatedLabel: true,
                                               needOutlineBorder: true,
-                                              labelText: "${lableModel.natureOfGoods}",
+                                              labelText: "${lableModel.natureOfGoods} *",
                                               readOnly: false,
                                               onChanged: (value) {},
                                               fillColor: Colors.grey.shade100,
@@ -655,7 +696,32 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             child: RoundedButtonBlue(
                                               text: "${lableModel.save}",
                                               press: () async {
-                                                Navigator.pop(context, "true");
+
+                                                String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
+
+                                                if (piecesController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
+                                                  return;
+                                                }
+
+                                                if (weightController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
+                                                  return;
+                                                }
+
+                                                if (groupIdController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                  return;
+                                                }
+
+
+                                                if (nogController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.nogMsg}", nogFocusNode);
+                                                  return;
+                                                }
+
+                                                context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), double.parse(weightController.text), nogController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
                                               },
                                             ),
                                           ),
@@ -667,7 +733,10 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                   ],
                                 ),
                               ),
-                            ))
+                            )),
+                        )
+
+
                       ],
                     ),),),
                   )),
@@ -677,6 +746,19 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
         )),
       ),
     );
+  }
+
+
+  // validation dialog
+  Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
+    bool? empty = await DialogUtils.showDataNotFoundDialogbot(
+        context, "${message}", widget.lableModel!);
+
+    if (empty == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(focuseNode);
+      });
+    }
   }
 }
 

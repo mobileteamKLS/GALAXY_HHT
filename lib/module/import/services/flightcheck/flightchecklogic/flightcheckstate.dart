@@ -3,6 +3,7 @@ import 'package:galaxy/module/import/model/flightcheck/addMailModel.dart';
 import 'package:galaxy/module/import/model/flightcheck/airportcitymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/bdprioritymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/finalizeflightmodel.dart';
+import 'package:galaxy/module/import/model/flightcheck/importshipmentmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/maildetailmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/recordatamodel.dart';
 
@@ -181,4 +182,15 @@ class CheckDAirportCitySuccessState extends FlightCheckState {
 class CheckDAirportCityFailureState extends FlightCheckState {
   final String error;
   CheckDAirportCityFailureState(this.error);
+}
+
+
+class ImportShipmentSaveSuccessState extends FlightCheckState {
+  final ImportShipmentModel importShipmentModel;
+  ImportShipmentSaveSuccessState(this.importShipmentModel);
+}
+
+class ImportShipmentSaveFailureState extends FlightCheckState {
+  final String error;
+  ImportShipmentSaveFailureState(this.error);
 }

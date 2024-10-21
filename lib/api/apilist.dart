@@ -40,5 +40,6 @@ class Apilist{
   static String getAddMailDetailsApi = "/FlightCheckIn/GetAddMailView";
   static String addMailApi = "/FlightCheckIn/AddMail";
   static String getMailTypeApi = "/FlightCheckIn/GetMailTypeList";
+  static String importManifestSaveApi = "/FlightCheckIn/ImportManifestSave";
   static String checkAirportApi = "/AirportCode/AirportCodeValidate";
 }

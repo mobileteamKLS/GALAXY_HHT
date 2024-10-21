@@ -1214,6 +1214,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
               flightDetailSummary: widget.flightDetailSummary,
               location: widget.location,
               uldSeqNo: widget.uldSeqNo,
+              menuId: widget.menuId,
+              lableModel: widget.lableModel,
             )));
 
     if(value == "Done"){
