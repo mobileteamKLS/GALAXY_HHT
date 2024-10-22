@@ -1790,8 +1790,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                                         const EdgeInsets.symmetric(vertical: 20),
                                                                         child: CustomeText(
                                                                             text: "${lableModel.recordNotFound}",
-                                                                            fontColor: MyColor.textColorGrey2,
-                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                            fontColor: MyColor.textColorGrey,
+                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                                             fontWeight: FontWeight.w500,
                                                                             textAlign: TextAlign.center),
                                                                       ),
@@ -1898,12 +1898,11 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                                 )
                                                                     : Center(
                                                                   child: Padding(
-                                                                    padding:
-                                                                    const EdgeInsets.symmetric(vertical: 20),
+                                                                    padding: const EdgeInsets.symmetric(vertical: 20),
                                                                     child: CustomeText(
                                                                         text: "${lableModel.recordNotFound}",
-                                                                        fontColor: MyColor.textColor,
-                                                                        fontSize: SizeConfig.textMultiplier * 2.1,
+                                                                        fontColor: MyColor.textColorGrey,
+                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                                         fontWeight: FontWeight.w500,
                                                                         textAlign: TextAlign.center),
                                                                   ),

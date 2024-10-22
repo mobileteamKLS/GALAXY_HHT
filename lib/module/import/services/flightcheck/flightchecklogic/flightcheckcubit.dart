@@ -23,6 +23,16 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
+  // getButtonsRoles & Rights api call repo
+  Future<void> getPageLoadDefault(int menuId, int userId, int companyCode) async {
+    emit(MainLoadingState());
+    try {
+      final pageLoadDefaultModelData = await flightCheckRepository.getPageLoadDefault(menuId, userId, companyCode);
+      emit(PageLoadDefaultSuccessState(pageLoadDefaultModelData));
+    } catch (e) {
+      emit(PageLoadDefaultFailureState(e.toString()));
+    }
+  }
 
   // getButtonsRoles & Rights api call repo
   Future<void> getButtonRolesAndRights(int menuId, int userId, int companyCode) async {
@@ -184,10 +194,10 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
   }
 
 
-  Future<void> importShipmentSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, double nopWeightInput, String nog, int userId, int companyCode, int menuId) async {
+  Future<void> importShipmentSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
-      final importManifestModel = await flightCheckRepository.importManifestSave(flightSeqNo,uLDSeqNo, groupId, awbId, hawbid, nopInput, nopWeightInput, nog, userId, companyCode, menuId);
+      final importManifestModel = await flightCheckRepository.importManifestSave(flightSeqNo,uLDSeqNo, groupId, awbId, hawbid, nopInput, userId, companyCode, menuId);
 
       emit(ImportShipmentSaveSuccessState(importManifestModel));
     } catch (e) {
@@ -195,7 +205,16 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
+  Future<void> breakDownEnd(int flightSeqNo, int uLDSeqNo, String isConfirm, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final breakDownEndModel = await flightCheckRepository.breakDownEnd(flightSeqNo,uLDSeqNo, isConfirm, userId, companyCode, menuId);
 
+      emit(BreakDownEndSaveSuccessState(breakDownEndModel));
+    } catch (e) {
+      emit(BreakDownEndFailureState(e.toString()));
+    }
+  }
 
 
   void resetState() {

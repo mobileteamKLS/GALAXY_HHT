@@ -89,6 +89,7 @@ const pen = 'assets/svgImages/pen.svg';
 const right = 'assets/svgImages/right.svg';
 const arrowUp = 'assets/svgImages/arrowup.svg';
 const arrowDown = 'assets/svgImages/arrowdown.svg';
+const map = 'assets/svgImages/map.svg';
 
 
 

@@ -69,6 +69,8 @@ class _FlightCheckState extends State<FlightCheck>
     with SingleTickerProviderStateMixin {
 
   String awbRemarkRequires = "Y";
+  String groupIDRequires = "Y";
+  int groupIDCharSize = 14;
 
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
@@ -122,7 +124,7 @@ class _FlightCheckState extends State<FlightCheck>
   late AnimationController _blinkController;
   late Animation<Color?> _colorAnimation;
 
-  bool _isOpenULDFlagEnable = true;
+  bool _isOpenULDFlagEnable = false;
 
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
@@ -258,8 +260,8 @@ class _FlightCheckState extends State<FlightCheck>
         _splashDefaultData = splashDefaultData;
       });
 
-
-      context.read<FlightCheckCubit>().getButtonRolesAndRights(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
+    //  context.read<FlightCheckCubit>().getButtonRolesAndRights(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
+      context.read<FlightCheckCubit>().getPageLoadDefault(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
 
     }
 
@@ -343,7 +345,7 @@ class _FlightCheckState extends State<FlightCheck>
           FocusScope.of(context).requestFocus(locationFocusNode);
         },
       );
-      _isOpenULDFlagEnable = true;
+      _isOpenULDFlagEnable = false;
       Navigator.pop(context, "Done");
     }
 
@@ -439,7 +441,7 @@ class _FlightCheckState extends State<FlightCheck>
                                         FocusScope.of(context).requestFocus(locationFocusNode);
                                       },
                                     );
-                                    _isOpenULDFlagEnable = true;
+                                    _isOpenULDFlagEnable = false;
                                     Navigator.pop(context, "Done");
                                   }
 
@@ -465,7 +467,7 @@ class _FlightCheckState extends State<FlightCheck>
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                   );
-                                  _isOpenULDFlagEnable = true;
+                                  _isOpenULDFlagEnable = false;
                                   setState(() {});
                                 },
                               ),
@@ -480,6 +482,25 @@ class _FlightCheckState extends State<FlightCheck>
                                 else if (state is MainLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                }else if(state is PageLoadDefaultSuccessState){
+
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.pageLoadDefaultModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.pageLoadDefaultModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    awbRemarkRequires = state.pageLoadDefaultModel.IsAWBRemarksAcknowledge!;
+                                    groupIDRequires = state.pageLoadDefaultModel.IsGroupBasedAcceptChar!;
+                                    groupIDCharSize = state.pageLoadDefaultModel.IsGroupBasedAcceptNumber!;
+                                    context.read<FlightCheckCubit>().getButtonRolesAndRights(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
+                                    setState(() {
+
+                                    });
+                                  }
+
+                                }else if(state is PageLoadDefaultFailureState){
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
                                 else if(state is ButtonRolesAndRightsSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
@@ -558,7 +579,7 @@ class _FlightCheckState extends State<FlightCheck>
                                     igmNoEditingController.clear();
                                     flightCheckULDListModel = null;
                                     flightCheckSummaryModel = null;
-                                    _isOpenULDFlagEnable = true;
+                                    _isOpenULDFlagEnable = false;
                                     originalFlightDetails.clear();
                                     flightDetailsList.clear();
                                     _tabController.animateTo(0);
@@ -901,7 +922,7 @@ class _FlightCheckState extends State<FlightCheck>
                                                                 ataTimeEditingController.clear();
                                                                 flightCheckULDListModel = null;
                                                                 flightCheckSummaryModel = null;
-                                                                _isOpenULDFlagEnable = true;
+                                                                _isOpenULDFlagEnable = false;
                                                                 originalFlightDetails.clear();
                                                                 flightDetailsList.clear();
                                                                 _tabController.animateTo(0);
@@ -984,7 +1005,7 @@ class _FlightCheckState extends State<FlightCheck>
                                                                   igmNoEditingController.clear();
                                                                   flightCheckULDListModel = null;
                                                                   flightCheckSummaryModel = null;
-                                                                  _isOpenULDFlagEnable = true;
+                                                                  _isOpenULDFlagEnable = false;
                                                                   originalFlightDetails.clear();
                                                                   flightDetailsList.clear();
                                                                   _tabController.animateTo(0);
@@ -1196,7 +1217,7 @@ class _FlightCheckState extends State<FlightCheck>
                                                               if (flightNoEditingController.text.isNotEmpty) {
                                                                 if (dateEditingController.text.isNotEmpty) {
                                                                   // CALL API OF Flight Number and Date
-                                                                  _isOpenULDFlagEnable = true;
+                                                                  _isOpenULDFlagEnable = false;
                                                                   callFlightCheckULDListApi(
                                                                       context,
                                                                       locationController.text,
@@ -1314,8 +1335,8 @@ class _FlightCheckState extends State<FlightCheck>
                                                                         corners: StrokeCap.butt,
                                                                         foregroundColor: (flightCheckULDListModel!.flightDetailSummary!.progress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
                                                                         backgroundColor: const Color(0xffF2F4F8),
-                                                                        foregroundStrokeWidth: 6,
-                                                                        backgroundStrokeWidth: 6,
+                                                                        foregroundStrokeWidth: 5,
+                                                                        backgroundStrokeWidth: 5,
                                                                         animation: true,
                                                                         child: Center(
                                                                           child: ValueListenableBuilder(
@@ -1600,7 +1621,7 @@ class _FlightCheckState extends State<FlightCheck>
             igmNoEditingController.clear();
             flightCheckULDListModel = null;
             flightCheckSummaryModel = null;
-            _isOpenULDFlagEnable = true;
+            _isOpenULDFlagEnable = false;
             originalFlightDetails.clear();
             flightDetailsList.clear();
 
@@ -1891,6 +1912,529 @@ class _FlightCheckState extends State<FlightCheck>
     // page index = 2 -- SLA
 
     if (pageIndex == 0) {
+      return  Column(
+        children: [
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          Directionality(
+            textDirection: textDirection,
+            child: GroupIdCustomTextField(
+              textDirection: textDirection,
+              hasIcon: true,
+              hastextcolor: true,
+              animatedLabel: false,
+              needOutlineBorder: true,
+              isIcon: true,
+              isSearch: true,
+              prefixIconcolor: MyColor.colorBlack,
+              hintText: "${lableModel.searchULD}",
+              readOnly: false,
+              onChanged: (value) {
+                updateSearchList(value);
+              },
+              fillColor: MyColor.colorWhite,
+              textInputType: TextInputType.text,
+              inputAction: TextInputAction.next,
+              hintTextcolor: MyColor.colorBlack.withOpacity(0.7),
+              verticalPadding: 0,
+              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
+              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+              validator: (value) {
+                if (value!.isEmpty) {
+                  return "Please fill out this field";
+                } else {
+                  return null;
+                }
+              },
+            ),
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+
+                children: [
+                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal,
+                  ),
+                  CustomeText(
+                      text: "${lableModel.showCompletionMsg}",
+                      fontColor: MyColor.textColorGrey2,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.start)
+                ],
+              ),
+              Switch(
+                value: _isOpenULDFlagEnable,
+                materialTapTargetSize:
+                MaterialTapTargetSize.shrinkWrap,
+                activeColor: MyColor.primaryColorblue,
+                inactiveThumbColor: MyColor.thumbColor,
+                inactiveTrackColor: MyColor.textColorGrey2,
+                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                onChanged: (value) {
+                  setState(() {
+                    _isOpenULDFlagEnable = value;
+                  });
+
+                  callFlightCheckULDListApi(
+                      context,
+                      locationController.text,
+                      "",
+                      flightNoEditingController.text,
+                      dateEditingController.text,
+                      _user!.userProfile!.userIdentity!,
+                      _splashDefaultData!.companyCode!,
+                      widget.menuId,
+                      (value == true) ? 1 : 0);
+                },
+              )
+            ],
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          (flightCheckULDListModel != null)
+              ? (flightCheckULDListModel!.flightDetailList!.isNotEmpty)
+              ? ListView.builder(
+            itemCount: (flightCheckULDListModel != null)
+                ? flightDetailsList.length
+                : 0,
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: scrollController,
+            itemBuilder: (context, index) {
+              FlightDetailList flightDetails = flightDetailsList[index];
+              bool isSelected = _selectedIndex == index;
+
+              List<String> shcCodes = flightDetails.sHCCode!.split(',');
+
+              List<String> uldParts = "${flightDetails.uLDNo}".split(' ');
+
+              // Assign the parts to meaningful variables
+              String uldType = uldParts[0]; // Third part (ULD owner)
+              String uldNo = " ${uldParts[1]} "; // Third part (ULD owner)
+              String uldOwner = uldParts[2]; // Third part (ULD owner)
+
+              final ValueNotifier<double> _valueNotifier1 = ValueNotifier(0);
+              // Color backgroundColor = MyColor.colorList[index %  MyColor.colorList.length];
+
+              return InkWell(
+                focusNode: uldListFocusNode,
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                  setState(() {
+                    _selectedIndex = index; // Update the selected index
+                  });
+                },
+                onDoubleTap: () {
+
+                  setState(() {
+                    _selectedIndex = index; // Update the selected index
+                  });
+                  openBottomDialog(
+                      context,
+                      flightDetails.uLDNo!,
+                      flightDetails.damageNOP!,
+                      flightDetails,
+                      lableModel,
+                      widget.mainMenuName);
+                },
+                child: Container(
+                  margin: EdgeInsets.symmetric(vertical: 4),
+                  decoration: BoxDecoration(
+                    color: MyColor.colorWhite,
+                    borderRadius: BorderRadius.circular(8),
+
+                    boxShadow: [
+                      BoxShadow(
+                        color: MyColor.colorBlack.withOpacity(0.09),
+                        spreadRadius: 2,
+                        blurRadius: 15,
+                        offset: Offset(0, 3), // changes position of shadow
+                      ),
+                    ],
+                    /*image: flightDetails.sHCCode!.contains("DGR")
+                                  ? DecorationImage(
+                                image: AssetImage(dangerBorder), // your image path
+                                fit: BoxFit.cover, // Ensures the image covers the entire container
+                              )
+                                  : null, // No image if the condition is false*/
+                  ),
+                  child: DottedBorder(
+                    dashPattern: [7, 7, 7, 7],
+                    strokeWidth: 1,
+                    borderType: BorderType.RRect,
+                    color: flightDetails.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                    radius: Radius.circular(8),
+                    child: Container(
+                      // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
+                      padding: EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        /* border: Border.all(
+                                      color: isSelected
+                                          ? MyColor.primaryColorblue
+                                          : MyColor.primaryColorblue
+                                          .withOpacity(0.3),
+                                      width: isSelected ? 1 : 0),*/
+                        color: MyColor.colorWhite,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Stack(
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  CustomeText(text: "${flightDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                  /* (flightDetails.sHCCode!.contains("DGR")
+                                                ? SvgPicture.asset(dgrIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,)
+                                                : SizedBox()),*/
+
+
+
+                                  (/*flightDetails.damageNOP != 0 || */flightDetails.damageConditionCode!.isNotEmpty)
+                                      ? Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                                    child: Row(
+                                      children: [
+                                        SvgPicture.asset(
+                                          damageIcon,
+                                          height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+                                        ),
+                                        SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                        CustomeText(
+                                          text: "DMG",
+                                          fontColor: MyColor.colorRed,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w400,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                      : SizedBox(),
+
+                                  /*(flightDetails.damageNOP == 0)
+                                                ? (flightDetails.damageConditionCode!.isNotEmpty)
+                                                ? Padding(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                                                  child: Row(
+                                                    children: [
+                                                  SvgPicture.asset(damageIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                  CustomeText(text: "DMG", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w400, textAlign: TextAlign.start)],),
+                                                ) : SizedBox() : SizedBox(),*/
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      (flightDetails.isIntact!.replaceAll(" ", "").isNotEmpty)
+                                          ? (flightDetails.isIntact! == "Y")
+                                          ? Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                                        child:
+                                        Container(
+                                          width: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,  // Set width and height for the circle
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(  // Add border
+                                              color: MyColor.primaryColorblue,  // Border color
+                                              width: 1.3,  // Border width
+                                            ),
+                                          ),
+                                          child: Center(
+                                            child: CustomeText(
+                                                text: "I",
+                                                fontColor: MyColor.primaryColorblue,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                fontWeight: FontWeight.w500,
+                                                textAlign: TextAlign.center),
+                                          ),
+                                        ),
+                                      )
+                                          : SizedBox()
+                                          : SizedBox(),
+                                      (flightDetails.transit!.isNotEmpty) ? Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 2),
+                                        child: Container(
+                                          width: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,  // Set width and height for the circle
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(  // Add border
+                                              color: MyColor.primaryColorblue,  // Border color
+                                              width: 1.3,  // Border width
+                                            ),
+                                          ),
+                                          child: CustomeText(
+                                              text: "${flightDetails.transit}",
+                                              fontColor: MyColor.primaryColorblue,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                              fontWeight: FontWeight.w500,
+                                              textAlign: TextAlign.center),
+                                        ),
+                                      )
+                                          : SizedBox(),
+                                    ],
+                                  )
+
+
+                                ],
+                              ),
+                              flightDetails.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(),
+                              flightDetails.sHCCode!.isNotEmpty
+                                  ? Row(
+                                children:shcCodes.asMap().entries.map((entry) {
+                                  int index = entry.key; // Get the index for colorList assignment
+                                  String code = entry.value.trim(); // Get the code value and trim it
+
+                                  return Padding(
+                                    padding: EdgeInsets.only(right: 5.0),
+                                    child: AnimatedBuilder(
+                                      animation: _colorAnimation,
+                                      builder: (context, child) {
+                                        return Container(
+                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                          decoration : BoxDecoration(
+                                            borderRadius: BorderRadius.circular(5),
+                                            color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                          child: CustomeText(
+                                            text: code.trim(),
+                                            fontColor: MyColor.textColorGrey3,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  );
+                                }).toList(),
+                              )
+                                  : SizedBox(),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              Row(
+                                children: [
+                                  Row(
+                                    children: [
+                                      CustomeText(
+                                        text: "${lableModel.shipment}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      SizedBox(width: 5),
+                                      CustomeText(
+                                        text: "${flightDetails.shipment}",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                  Row(
+                                    children: [
+                                      CustomeText(
+                                        text: "${lableModel.scanned}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      SizedBox(width: 5),
+                                      CustomeText(
+                                        text: "${flightDetails.scanned}",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                  Row(
+                                    children: [
+                                      CustomeText(
+                                        text: "${lableModel.damagedPCS}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      SizedBox(width: 5),
+                                      CustomeText(
+                                        text: "${flightDetails.damageNOP}",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical,),
+                              Container(
+
+                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                                decoration: BoxDecoration(
+                                    color: MyColor.dropdownColor,
+                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                ),
+                                child: InkWell(
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "P - ${flightDetails.bDPriority}",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w700,
+                                          textAlign: TextAlign.center),
+                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                      SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                    ],
+                                    mainAxisSize: MainAxisSize.min,
+                                  ),
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = index; // Update the selected index
+                                    });
+                                    openEditPriorityBottomDialog(
+                                        context,
+                                        flightDetails.uLDNo!,
+                                        "${flightDetails.bDPriority}",
+                                        index,
+                                        flightDetails,
+                                        lableModel,
+                                        textDirection);
+                                  },
+                                ),
+                              )
+
+                            ],
+                          ),
+                          Positioned(
+                            right: 0,
+                            top: 0,
+                            child: Container(
+                              height : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                              width : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                              child: DashedCircularProgressBar.aspectRatio(
+                                aspectRatio: 2.1, // width ÷ height
+                                valueNotifier: _valueNotifier1,
+                                progress: flightDetails.progress!.toDouble(),
+                                maxProgress: 100,
+                                corners: StrokeCap.butt,
+                                foregroundColor: (flightDetails.progress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
+                                backgroundColor: const Color(0xffF2F4F8),
+                                foregroundStrokeWidth: 5,
+                                backgroundStrokeWidth: 5,
+                                animation: true,
+                                child: Center(
+                                  child: ValueListenableBuilder(
+                                    valueListenable: _valueNotifier1,
+                                    builder: (_, double value, __) {
+                                      return CustomeText(text: '${value.toInt()}%', fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w500, textAlign: TextAlign.center);
+                                    },
+                                  ),
+                                ),
+
+
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            right: 0,
+                            bottom: 0,
+                            child: Row(
+                              children: [
+
+                                Container(
+                                  padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                  decoration : BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: flightDetails.uldAcceptStatus == "A" ? MyColor.flightNotArrived : MyColor.flightFinalize
+                                  ),
+                                  child: CustomeText(
+                                    text: flightDetails.uldAcceptStatus == "A" ? lableModel.notaccepted!.toUpperCase() : lableModel.accepted!.toUpperCase(),
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                    fontWeight: FontWeight.w400,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ) ,
+                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      _selectedIndex = index; // Update the selected index
+                                    });
+                                    openBottomDialog(
+                                        context,
+                                        flightDetails.uLDNo!,
+                                        flightDetails.damageNOP!,
+                                        flightDetails,
+                                        lableModel,
+                                        widget.mainMenuName);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                    decoration: BoxDecoration(
+                                        color: MyColor.dropdownColor,
+                                        borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                    ),
+                                    child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+           : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: "${lableModel.recordNotFound}",
+                  // if record not found
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          ) : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: "${lableModel.recordNotFound}",
+                  // if record not found
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          )
+
+        ],
+      );
+
+    }
+
+
+/*    if (pageIndex == 0) {
       return (flightCheckULDListModel != null)
           ? (flightCheckULDListModel!.flightDetailList!.isNotEmpty)
               ? Column(
@@ -2034,12 +2578,12 @@ class _FlightCheckState extends State<FlightCheck>
                                   offset: Offset(0, 3), // changes position of shadow
                                 ),
                               ],
-                              /*image: flightDetails.sHCCode!.contains("DGR")
+                              *//*image: flightDetails.sHCCode!.contains("DGR")
                                   ? DecorationImage(
                                 image: AssetImage(dangerBorder), // your image path
                                 fit: BoxFit.cover, // Ensures the image covers the entire container
                               )
-                                  : null, // No image if the condition is false*/
+                                  : null, // No image if the condition is false*//*
                             ),
                             child: DottedBorder(
                               dashPattern: [7, 7, 7, 7],
@@ -2051,12 +2595,12 @@ class _FlightCheckState extends State<FlightCheck>
                                // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                 /* border: Border.all(
+                                 *//* border: Border.all(
                                       color: isSelected
                                           ? MyColor.primaryColorblue
                                           : MyColor.primaryColorblue
                                           .withOpacity(0.3),
-                                      width: isSelected ? 1 : 0),*/
+                                      width: isSelected ? 1 : 0),*//*
                                   color: MyColor.colorWhite,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2070,13 +2614,13 @@ class _FlightCheckState extends State<FlightCheck>
                                           children: [
                                             CustomeText(text: "${flightDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
                                             SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                           /* (flightDetails.sHCCode!.contains("DGR")
+                                           *//* (flightDetails.sHCCode!.contains("DGR")
                                                 ? SvgPicture.asset(dgrIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,)
-                                                : SizedBox()),*/
+                                                : SizedBox()),*//*
 
 
 
-                                            (/*flightDetails.damageNOP != 0 || */flightDetails.damageConditionCode!.isNotEmpty)
+                                            (*//*flightDetails.damageNOP != 0 || *//*flightDetails.damageConditionCode!.isNotEmpty)
                                                 ? Padding(
                                               padding: const EdgeInsets.symmetric(horizontal: 5),
                                               child: Row(
@@ -2098,7 +2642,7 @@ class _FlightCheckState extends State<FlightCheck>
                                             )
                                                 : SizedBox(),
 
-                                            /*(flightDetails.damageNOP == 0)
+                                            *//*(flightDetails.damageNOP == 0)
                                                 ? (flightDetails.damageConditionCode!.isNotEmpty)
                                                 ? Padding(
                                                   padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -2107,7 +2651,7 @@ class _FlightCheckState extends State<FlightCheck>
                                                   SvgPicture.asset(damageIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                   CustomeText(text: "DMG", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w400, textAlign: TextAlign.start)],),
-                                                ) : SizedBox() : SizedBox(),*/
+                                                ) : SizedBox() : SizedBox(),*//*
 
                                              Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -2168,25 +2712,9 @@ class _FlightCheckState extends State<FlightCheck>
                                          Row(
                                            children: [
 
-                                             Container(
-                                               padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                               decoration : BoxDecoration(
-                                                 borderRadius: BorderRadius.circular(20),
-                                                 color: flightDetails.uldAcceptStatus == "A" ? MyColor.flightNotArrived : MyColor.flightFinalize
-                                               ),
-                                               child: CustomeText(
-                                                 text: flightDetails.uldAcceptStatus == "A" ? lableModel.notaccepted!.toUpperCase() : lableModel.accepted!.toUpperCase(),
-                                                 fontColor: MyColor.textColorGrey3,
-                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                                 fontWeight: FontWeight.w400,
-                                                 textAlign: TextAlign.center,
-                                               ),
-                                             ) ,
-                                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-
                                              flightDetails.sHCCode!.isNotEmpty
                                               ? Row(
-                                                children:shcCodes.asMap().entries.take(3).map((entry) {
+                                                children:shcCodes.asMap().entries.map((entry) {
                                                   int index = entry.key; // Get the index for colorList assignment
                                                   String code = entry.value.trim(); // Get the code value and trim it
 
@@ -2281,41 +2809,61 @@ class _FlightCheckState extends State<FlightCheck>
                                           ],
                                         ),
                                         SizedBox(height: SizeConfig.blockSizeVertical,),
-                                        Container(
+                                        Row(
+                                          children: [
+                                            Container(
 
-                                          padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                                          decoration: BoxDecoration(
-                                              color: MyColor.dropdownColor,
-                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                          ),
-                                          child: InkWell(
-                                            child: Row(
-                                              children: [
-                                                CustomeText(
-                                                    text: "P - ${flightDetails.bDPriority}",
-                                                    fontColor: MyColor.textColorGrey3,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w700,
-                                                    textAlign: TextAlign.center),
-                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                              ],
-                                              mainAxisSize: MainAxisSize.min,
+                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                                              decoration: BoxDecoration(
+                                                  color: MyColor.dropdownColor,
+                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                              ),
+                                              child: InkWell(
+                                                child: Row(
+                                                  children: [
+                                                    CustomeText(
+                                                        text: "P - ${flightDetails.bDPriority}",
+                                                        fontColor: MyColor.textColorGrey3,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w700,
+                                                        textAlign: TextAlign.center),
+                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                    SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                                  ],
+                                                  mainAxisSize: MainAxisSize.min,
+                                                ),
+                                                onTap: () {
+                                                  setState(() {
+                                                    _selectedIndex = index; // Update the selected index
+                                                  });
+                                                  openEditPriorityBottomDialog(
+                                                      context,
+                                                      flightDetails.uLDNo!,
+                                                      "${flightDetails.bDPriority}",
+                                                      index,
+                                                      flightDetails,
+                                                      lableModel,
+                                                      textDirection);
+                                                },
+                                              ),
                                             ),
-                                            onTap: () {
-                                              setState(() {
-                                                _selectedIndex = index; // Update the selected index
-                                              });
-                                              openEditPriorityBottomDialog(
-                                                  context,
-                                                  flightDetails.uLDNo!,
-                                                  "${flightDetails.bDPriority}",
-                                                  index,
-                                                  flightDetails,
-                                                  lableModel,
-                                                  textDirection);
-                                            },
-                                          ),
+                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                            Container(
+                                              padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                              decoration : BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(20),
+                                                  color: flightDetails.uldAcceptStatus == "A" ? MyColor.flightNotArrived : MyColor.flightFinalize
+                                              ),
+                                              child: CustomeText(
+                                                text: flightDetails.uldAcceptStatus == "A" ? lableModel.notaccepted!.toUpperCase() : lableModel.accepted!.toUpperCase(),
+                                                fontColor: MyColor.textColorGrey3,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ) ,
+
+                                          ],
                                         )
 
                                       ],
@@ -2354,8 +2902,7 @@ class _FlightCheckState extends State<FlightCheck>
                                         InkWell(
                                           onTap: () {
                                             setState(() {
-                                              _selectedIndex =
-                                                  index; // Update the selected index
+                                              _selectedIndex = index; // Update the selected index
                                             });
                                             openBottomDialog(
                                                 context,
@@ -2408,7 +2955,7 @@ class _FlightCheckState extends State<FlightCheck>
                   fontWeight: FontWeight.w500,
                   textAlign: TextAlign.center),
             ));
-    }
+    }*/
     if (pageIndex == 1) {
       // design of a summary
       return Column(
@@ -2436,9 +2983,9 @@ class _FlightCheckState extends State<FlightCheck>
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: CustomeText(
-                      text: "${lableModel.pieces}".toUpperCase(),
+                      text: "PIECES BREAKUP".toUpperCase(),
                       fontColor: MyColor.colorBlack,
-                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                       fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start),
                 ),
@@ -2447,51 +2994,116 @@ class _FlightCheckState extends State<FlightCheck>
                 Row(
                   children: [
                     Expanded(
-                        flex: 1,
+                      flex: 3,
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: MyColor.cardBgColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Column(
                           children: [
                             CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.nPX!}"
-                                    : "0",
+                                text: "${lableModel.cargo}".toUpperCase(),
                                 fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                 fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                                textAlign: TextAlign.start),
+                            SizedBox(height: SizeConfig.blockSizeVertical,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    CustomeText(
+                                        text: (flightCheckSummaryModel != null)
+                                            ? "${flightCheckSummaryModel!.flightSummary!.nPX!}"
+                                            : "0",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.manifest}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
+                                    CustomeText(
+                                        text: "${lableModel.manifest}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.center)
 
 
 
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    CustomeText(
+                                        text: (flightCheckSummaryModel != null)
+                                            ? "${flightCheckSummaryModel!.flightSummary!.nPR!}"
+                                            : "0",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.center),
+
+                                    CustomeText(
+                                        text: "${lableModel.recived}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.center)
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
-                        )),
-
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                     Expanded(
-                        flex: 1,
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: MyColor.cardBgColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Column(
                           children: [
                             CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.nPR!}"
-                                    : "0",
+                                text: "${lableModel.mail}".toUpperCase(),
                                 fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                 fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                                textAlign: TextAlign.start),
+                            SizedBox(height: SizeConfig.blockSizeVertical,),
+                            Column(
+                              children: [
+                                CustomeText(
+                                    text: (flightCheckSummaryModel != null)
+                                        ? "0"
+                                        : "0",
+                                    fontColor: MyColor.colorBlack,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.recived}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
+                                CustomeText(
+                                    text: "${lableModel.recived}",
+                                    fontColor: MyColor.textColorGrey2,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                    fontWeight: FontWeight.w400,
+                                    textAlign: TextAlign.center)
+
+
+
+                              ],
+                            ),
                           ],
-                        )),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -2499,6 +3111,7 @@ class _FlightCheckState extends State<FlightCheck>
           ),
           SizedBox(height: SizeConfig.blockSizeVertical,),
           // text pieces of ULD
+
           Container(
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -2519,9 +3132,9 @@ class _FlightCheckState extends State<FlightCheck>
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: CustomeText(
-                      text: "${lableModel.weight}".toUpperCase(),
+                      text: "WEIGHT BREAKUP".toUpperCase(),
                       fontColor: MyColor.colorBlack,
-                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                       fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start),
                 ),
@@ -2530,56 +3143,122 @@ class _FlightCheckState extends State<FlightCheck>
                 Row(
                   children: [
                     Expanded(
-                        flex: 1,
+                      flex: 3,
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: MyColor.cardBgColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Column(
                           children: [
                             CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.weightExp!}"
-                                    : "0",
+                                text: "${lableModel.cargo}".toUpperCase(),
                                 fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                 fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                                textAlign: TextAlign.start),
+                            SizedBox(height: SizeConfig.blockSizeVertical,),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    CustomeText(
+                                        text: (flightCheckSummaryModel != null)
+                                            ? "${flightCheckSummaryModel!.flightSummary!.weightExp!}"
+                                            : "0",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.manifest}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
+                                    CustomeText(
+                                        text: "${lableModel.manifest}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.center)
 
 
 
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    CustomeText(
+                                        text: (flightCheckSummaryModel != null)
+                                            ? "${flightCheckSummaryModel!.flightSummary!.weightRec!}"
+                                            : "0",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.center),
+
+                                    CustomeText(
+                                        text: "${lableModel.recived}",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                        fontWeight: FontWeight.w400,
+                                        textAlign: TextAlign.center)
+                                  ],
+                                ),
+                              ],
+                            ),
                           ],
-                        )),
-
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                     Expanded(
-                        flex: 1,
+                      flex: 2,
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: MyColor.cardBgColor,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         child: Column(
                           children: [
                             CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.weightRec!}"
-                                    : "0",
+                                text: "${lableModel.mail}".toUpperCase(),
                                 fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                 fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                                textAlign: TextAlign.start),
+                            SizedBox(height: SizeConfig.blockSizeVertical,),
+                            Column(
+                              children: [
+                                CustomeText(
+                                    text: (flightCheckSummaryModel != null)
+                                        ? "0"
+                                        : "0",
+                                    fontColor: MyColor.colorBlack,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.recived}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
+                                CustomeText(
+                                    text: "${lableModel.recived}",
+                                    fontColor: MyColor.textColorGrey2,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                    fontWeight: FontWeight.w400,
+                                    textAlign: TextAlign.center)
+
+
+
+                              ],
+                            ),
                           ],
-                        )),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ],
             ),
           ),
+
 
           SizedBox(height: SizeConfig.blockSizeVertical,),
 
@@ -2603,85 +3282,92 @@ class _FlightCheckState extends State<FlightCheck>
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: CustomeText(
-                      text: "${lableModel.discripencies}".toUpperCase(),
+                      text: "Discrepancy".toUpperCase(),
                       fontColor: MyColor.colorBlack,
-                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                       fontWeight: FontWeight.w600,
                       textAlign: TextAlign.start),
                 ),
 
 
-                Row(
-                  children: [
-                    Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.shortLanded!}"
-                                    : "0",
-                                fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MyColor.cardBgColor,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              CustomeText(
+                                  text: (flightCheckSummaryModel != null)
+                                      ? "${flightCheckSummaryModel!.flightSummary!.shortLanded!}"
+                                      : "0",
+                                  fontColor: MyColor.colorBlack,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                  fontWeight: FontWeight.w600,
+                                  textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.short}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
+                              CustomeText(
+                                  text: "${lableModel.short}",
+                                  fontColor: MyColor.textColorGrey2,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                  fontWeight: FontWeight.w400,
+                                  textAlign: TextAlign.center)
 
 
 
-                          ],
-                        )),
+                            ],
+                          )),
 
-                    Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.excessLanded!}"
-                                    : "0",
-                                fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                      Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              CustomeText(
+                                  text: (flightCheckSummaryModel != null)
+                                      ? "${flightCheckSummaryModel!.flightSummary!.excessLanded!}"
+                                      : "0",
+                                  fontColor: MyColor.colorBlack,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                  fontWeight: FontWeight.w600,
+                                  textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.excess}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
-                          ],
-                        )),
+                              CustomeText(
+                                  text: "${lableModel.excess}",
+                                  fontColor: MyColor.textColorGrey2,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                  fontWeight: FontWeight.w400,
+                                  textAlign: TextAlign.center)
+                            ],
+                          )),
 
-                    Expanded(
-                        flex: 1,
-                        child: Column(
-                          children: [
-                            CustomeText(
-                                text: (flightCheckSummaryModel != null)
-                                    ? "${flightCheckSummaryModel!.flightSummary!.damagePkgs!}"
-                                    : "0",
-                                fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.center),
+                      Expanded(
+                          flex: 1,
+                          child: Column(
+                            children: [
+                              CustomeText(
+                                  text: (flightCheckSummaryModel != null)
+                                      ? "${flightCheckSummaryModel!.flightSummary!.damagePkgs!}"
+                                      : "0",
+                                  fontColor: MyColor.colorBlack,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                  fontWeight: FontWeight.w600,
+                                  textAlign: TextAlign.center),
 
-                            CustomeText(
-                                text: "${lableModel.damaged}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.center)
-                          ],
-                        )),
-                  ],
+                              CustomeText(
+                                  text: "${lableModel.damaged}",
+                                  fontColor: MyColor.textColorGrey2,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                  fontWeight: FontWeight.w400,
+                                  textAlign: TextAlign.center)
+                            ],
+                          )),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -2763,6 +3449,8 @@ class _FlightCheckState extends State<FlightCheck>
                   location: locationController.text,
                   awbRemarkRequires: awbRemarkRequires,
                   lableModel: lableModel,
+                  groupIDRequires: groupIDRequires,
+                  groupIDCharSize: groupIDCharSize,
                 )));
         if(value == "true"){
           _resumeTimerOnInteraction();

@@ -166,7 +166,7 @@
     "awbListing" : "AWB लिस्टिंग",
     "detailsForUldNo" : "विवरण के लिए यूएलडी नम्बर.",
     "scanAWB" : "AWB स्कैन करें",
-    "showAllShipments" : "सभी शिपमेंट दिखाएं",
+    "showAllShipments" : "केवल लंबित AWB को पूरा दिखाएं",
     "showMoreDetails" : "अधिक विवरण दिखाएं",
     "showLessDetails" : "कम विवरण दिखाएं",
 
@@ -196,7 +196,7 @@
     "originDestinationSameMsg" : "मूल स्थान और मंज़िल एक नहीं हो सकते",
     "mailTypeMsg" : "कृपया मेल प्रकार चुनें",
 
-    "checkAWb" : "एडब्ल्यूबी की जाँच",
+    "checkAWb" : "AWB में जाँच करें",
     "detailsForAWBNo" : "AWB संख्या का विवरण",
     "otherDetail" : "अन्य विवरण",
     "flight": "उड़ान",
@@ -204,6 +204,14 @@
     "damageAndSave" : "क्षति और संचय",
     "piecesMsg" : "कृपया टुकड़े दर्ज करें",
     "nogMsg" : "कृपया माल की प्रकृति दर्ज करें",
+
+
+    "cargo" : "कार्गो",
+    "mail" : "मेल",
+
+    "breakdownCompleted" : "ब्रेकडाउन पूरा हुआ",
+    "groupIdCharSizeMsg" : "ग्रुप आईडी ठीक {0} अक्षरों की होनी चाहिए",
+
 
     "2539" : "बैंड ढीला",
     "654" : "टूटा हुआ",

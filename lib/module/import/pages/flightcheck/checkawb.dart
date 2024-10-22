@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageshipment.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
@@ -46,8 +47,10 @@ class CheckAWBPage extends StatefulWidget {
   String location;
   int menuId;
   LableModel lableModel;
+  String groupIDRequires;
+  int groupIDCharSize;
 
-  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo, required this.menuId, required this.lableModel});
+  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo, required this.menuId, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize});
 
   @override
   State<CheckAWBPage> createState() => _CheckAWBPageState();
@@ -67,14 +70,14 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
   TextEditingController piecesController = TextEditingController();
   TextEditingController weightController = TextEditingController();
   TextEditingController groupIdController = TextEditingController();
-  TextEditingController nogController = TextEditingController();
+
 
 
 
   FocusNode piecesFocusNode = FocusNode();
   FocusNode weightFocusNode = FocusNode();
   FocusNode groupIdFocusNode = FocusNode();
-  FocusNode nogFocusNode = FocusNode();
+
 
 
   late AnimationController _blinkController;
@@ -223,7 +226,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                               piecesController.clear();
                               weightController.clear();
                               groupIdController.clear();
-                              nogController.clear();
+
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 FocusScope.of(context).requestFocus(piecesFocusNode);
                               });
@@ -306,6 +309,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                   child: CustomTextField(
                                                     controller: piecesController,
                                                     focusNode: piecesFocusNode,
+                                                    nextFocus: groupIdFocusNode,
                                                     onPress: () {},
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -347,8 +351,8 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "${lableModel.weight} *",
-                                                    readOnly: false,
+                                                    labelText: "${lableModel.weight}",
+                                                    readOnly: true,
                                                     maxLength: 10,
                                                     digitsOnly: false,
                                                     doubleDigitOnly: true,
@@ -372,41 +376,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 ),
                                               ),
                                             ],
-                                          )
-                                        ],
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      height: SizeConfig.blockSizeVertical,
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
                                           ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-
-
-                                          CustomeText(
-                                              text: lableModel.otherDetail!.toUpperCase(),
-                                              fontColor: MyColor.colorBlack,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                              fontWeight: FontWeight.w600,
-                                              textAlign: TextAlign.start),
-
                                           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                           // text manifest and recived in pices text counter
                                           Directionality(
@@ -419,14 +389,13 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                               hastextcolor: true,
                                               animatedLabel: true,
                                               needOutlineBorder: true,
-                                              labelText: "${lableModel.groupId} *",
+                                              labelText: widget.groupIDRequires == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
                                               readOnly: false,
+                                              maxLength: widget.groupIDCharSize,
                                               onChanged: (value) {},
                                               fillColor: Colors.grey.shade100,
-                                              textInputType:
-                                              TextInputType.text,
-                                              inputAction:
-                                              TextInputAction.next,
+                                              textInputType: TextInputType.text,
+                                              inputAction: TextInputAction.next,
                                               hintTextcolor: Colors.black45,
                                               verticalPadding: 0,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
@@ -441,48 +410,14 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                               },
                                             ),
                                           ),
-
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                                          // text manifest and recived in pices text counter
-                                          Directionality(
-                                            textDirection: uiDirection,
-                                            child: CustomTextField(
-                                              controller: nogController,
-                                              focusNode: nogFocusNode,
-                                              onPress: () {},
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "${lableModel.natureOfGoods} *",
-                                              readOnly: false,
-                                              onChanged: (value) {},
-                                              fillColor: Colors.grey.shade100,
-                                              textInputType:
-                                              TextInputType.text,
-                                              inputAction:
-                                              TextInputAction.next,
-                                              hintTextcolor: Colors.black45,
-                                              verticalPadding: 0,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                              validator: (value) {
-                                                if (value!.isEmpty) {
-                                                  return "Please fill out this field";
-                                                } else {
-                                                  return null;
-                                                }
-                                              },
-                                            ),
-                                          ),
-
                                         ],
                                       ),
                                     ),
+
                                     SizedBox(
                                       height: SizeConfig.blockSizeVertical,
                                     ),
+
                                     Container(
                                       padding: const EdgeInsets.all(10),
 
@@ -503,24 +438,43 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                         children: [
 
                                           Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              CustomeText(
-                                                text: "${lableModel.flight} : ",
-                                                fontColor: MyColor.textColorGrey2,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w400,
-                                                textAlign: TextAlign.start,
+                                              Row(
+                                                children: [
+                                                  CustomeText(
+                                                    text: "${widget.flightDetailSummary.flightNo!}",
+                                                    fontColor: MyColor.colorBlack,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w600,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                  SizedBox(width: 5),
+                                                  CustomeText(
+                                                    text: " ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",
+                                                    fontColor: MyColor.textColorGrey2,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w600,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                ],
                                               ),
-                                              SizedBox(width: 5),
-                                              CustomeText(
-                                                text: "${widget.flightDetailSummary.flightNo!} - ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",
-                                                fontColor: MyColor.colorBlack,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w600,
-                                                textAlign: TextAlign.start,
+                                              Row(
+                                                children: [
+                                                  SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                  CustomeText(
+                                                    text: widget.location,
+                                                    fontColor: MyColor.colorBlack,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w600,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
+
                                           (shcCodes.isNotEmpty) ? SizedBox(height: SizeConfig.blockSizeVertical,) : SizedBox(),
 
                                           Row(
@@ -557,16 +511,56 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                   : SizedBox(),
                                             ],
                                           ),
+                                          SizedBox(height: SizeConfig.blockSizeVertical,),
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "NoG : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: 5),
+                                              CustomeText(
+                                                text: "${widget.aWBItem.NOG}",
+                                                fontColor: MyColor.colorBlack,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w600,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          ),
 
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                                          SizedBox(height: SizeConfig.blockSizeVertical),
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "Commodity : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: 5),
+                                              CustomeText(
+                                                text: widget.aWBItem.commodity!,
+                                                fontColor: MyColor.colorBlack,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w600,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(height: SizeConfig.blockSizeVertical),
                                           Row(
                                             children: [
                                               Expanded(
-                                                flex: 2,
+                                                flex: 1,
                                                 child: Row(
                                                   children: [
                                                     CustomeText(
-                                                      text: "NPX",
+                                                      text: "NPX :",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w400,
@@ -584,11 +578,11 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 ),
                                               ),
                                               Expanded(
-                                                flex: 2,
+                                                flex: 1,
                                                 child: Row(
                                                   children: [
                                                     CustomeText(
-                                                      text: "NPR",
+                                                      text: "NPR :",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w400,
@@ -605,31 +599,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                   ],
                                                 ),
                                               ),
-                                              Expanded(
-                                                  flex: 1,
-                                                  child: Container())
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical,),
 
-
-                                          Row(
-                                            children: [
-                                              CustomeText(
-                                                text: "${lableModel.location} : ",
-                                                fontColor: MyColor.textColorGrey2,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w400,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              SizedBox(width: 5),
-                                              CustomeText(
-                                                text: widget.location,
-                                                fontColor: MyColor.colorBlack,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w600,
-                                                textAlign: TextAlign.start,
-                                              ),
                                             ],
                                           ),
 
@@ -685,6 +655,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             child: RoundedButtonBlue(
                                               text: "${lableModel.damageAndSave}",
                                               press: () async {
+                                                Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(aWBItem: widget.aWBItem, mainMenuName: widget.mainMenuName,),));
                                               },
                                             ),
                                           ),
@@ -704,23 +675,24 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                   return;
                                                 }
 
-                                                if (weightController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
+
+                                                if(widget.groupIDRequires == "Y"){
+                                                  if (groupIdController.text.isEmpty) {
+                                                    openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                    return;
+                                                  }
+                                                }
+
+
+
+                                                // Check if the groupId length is between 14 (min and max 14 characters)
+                                                if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                  openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long", groupIdFocusNode);
                                                   return;
                                                 }
 
-                                                if (groupIdController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                  return;
-                                                }
 
-
-                                                if (nogController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.nogMsg}", nogFocusNode);
-                                                  return;
-                                                }
-
-                                                context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), double.parse(weightController.text), nogController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
                                               },
                                             ),

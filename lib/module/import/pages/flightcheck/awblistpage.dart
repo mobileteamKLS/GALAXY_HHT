@@ -44,7 +44,6 @@ import 'checkawb.dart';
 class AWBListPage extends StatefulWidget {
 
   String location;
-  String awbRemarkRequires;
   String mainMenuName;
   String uldNo;
   FlightDetailSummary flightDetailSummary;
@@ -52,7 +51,11 @@ class AWBListPage extends StatefulWidget {
   int menuId;
   LableModel lableModel;
 
-  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel});
+  String awbRemarkRequires;
+  String groupIDRequires;
+  int groupIDCharSize;
+
+  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize});
 
   @override
   State<AWBListPage> createState() => _AWBListPageState();
@@ -64,12 +67,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
 
-  bool _isOpenULDFlagEnable = true;
+  bool _isOpenULDFlagEnable = false;
 
   List<FlightCheckInAWBBDList> awbItemList = [];
   List<FlightCheckInAWBBDList> filterAWBDetailsList = [];
 
   AWBModel? awbModel;
+  int uldProgress = 0;
   final ScrollController scrollController = ScrollController();
   FocusNode awbFocusNode = FocusNode();
 
@@ -157,9 +161,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
 
+    print("ULD_PROGRSS == ${uldProgress}");
+
     bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo);
     if (exitConfirmed == true) {
-      Navigator.pop(context, "true");
+
+      context.read<FlightCheckCubit>().breakDownEnd(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, uldProgress < 100 ? "N" : "Y", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
      // return true; // Exit the app
     }else{
       Navigator.pop(context, "Done");
@@ -270,14 +278,16 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                   }else{
 
                                     awbModel = state.aWBModel;
+                                    uldProgress = awbModel!.ULDProgress!;
 
-                                    awbItemList = List.from(awbModel!.flightCheckInAWBBDList!);
+
+                                    awbItemList = List.from(awbModel!.flightCheckInAWBBDList != null ? awbModel!.flightCheckInAWBBDList! : []);
 
                                     filterAWBDetailsList = List.from(awbItemList);
                                     filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
 
 
-                                    print("CHECK_LIST====== ${awbItemList!.length}");
+                                    print("CHECK_LIST====== ${awbItemList.length}");
                                     setState(() {
 
                                     });
@@ -317,6 +327,19 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is BreakDownEndSaveSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.breakDownEndModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.breakDownEndModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    Navigator.pop(context, "true");
+                                  }
+                                }
+                                else if(state is BreakDownEndFailureState){
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -349,15 +372,50 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                         Directionality(
                                                           textDirection: uiDirection,
                                                           child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             children: [
-                                                              SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                              CustomeText(
-                                                                  text: "${lableModel.detailsForUldNo} ${widget.uldNo}",
-                                                                  fontColor: MyColor.textColorGrey2,
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                  fontWeight: FontWeight.w500,
-                                                                  textAlign: TextAlign.start)
+                                                              Row(
+                                                                children: [
+                                                                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                  CustomeText(
+                                                                      text: "${lableModel.detailsForUldNo} ${widget.uldNo}",
+                                                                      fontColor: MyColor.textColorGrey2,
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                      fontWeight: FontWeight.w500,
+                                                                      textAlign: TextAlign.start),
+                                                                ],
+                                                              ),
+
+
+                                                              (awbModel != null) ? Container(
+                                                                height : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                                                                width : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                                                                child: DashedCircularProgressBar.aspectRatio(
+                                                                  aspectRatio: 2.1, // width ÷ height
+                                                                  valueNotifier: _valueNotifier,
+                                                                  progress: awbModel!.ULDProgress!.toDouble(),
+                                                                  maxProgress: 100,
+                                                                  corners: StrokeCap.butt,
+                                                                  foregroundColor:  (awbModel!.ULDProgress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
+                                                                  backgroundColor: const Color(0xffF2F4F8),
+                                                                  foregroundStrokeWidth: 5,
+                                                                  backgroundStrokeWidth: 5,
+                                                                  animation: true,
+                                                                  child: Center(
+                                                                    child: ValueListenableBuilder(
+                                                                      valueListenable: _valueNotifier,
+                                                                      builder: (_, double value, __) {
+                                                                        return CustomeText(text: '${value.toInt()}%', fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w500, textAlign: TextAlign.center);
+                                                                      },
+                                                                    ),
+                                                                  ),
+
+
+                                                                ),
+                                                              ) : SizedBox(),
+
+
                                                             ],
                                                           ),
                                                         ),
@@ -441,90 +499,52 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                     child: Column(
                                                       children: [
 
-                                                        (awbModel != null)
-                                                            ? Row(
+                                                        Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             Row(
+
                                                               children: [
-                                                                Switch(
-                                                                  value: _isOpenULDFlagEnable,
-                                                                  materialTapTargetSize:
-                                                                  MaterialTapTargetSize.shrinkWrap,
-                                                                  activeColor: MyColor.primaryColorblue,
-                                                                  inactiveThumbColor: MyColor.thumbColor,
-                                                                  inactiveTrackColor: MyColor.textColorGrey2,
-                                                                  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                                  onChanged: (value) {
-                                                                    setState(() {
-                                                                      _isOpenULDFlagEnable = value;
-                                                                    });
-
-                                                                    context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (value == true) ? 1 : 0);
-
-
-                                                                  },
+                                                                SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                SizedBox(
+                                                                  width: SizeConfig.blockSizeHorizontal,
                                                                 ),
                                                                 CustomeText(
                                                                     text: "${lableModel.showAllShipments}",
                                                                     fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                    fontWeight: FontWeight.w400,
-                                                                    textAlign: TextAlign.start),
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    textAlign: TextAlign.start)
                                                               ],
                                                             ),
+                                                            Switch(
+                                                              value: _isOpenULDFlagEnable,
+                                                              materialTapTargetSize:
+                                                              MaterialTapTargetSize.shrinkWrap,
+                                                              activeColor: MyColor.primaryColorblue,
+                                                              inactiveThumbColor: MyColor.thumbColor,
+                                                              inactiveTrackColor: MyColor.textColorGrey2,
+                                                              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                              onChanged: (value) {
+                                                                setState(() {
+                                                                  _isOpenULDFlagEnable = value;
+                                                                });
 
-                                                            Row(
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              mainAxisAlignment: MainAxisAlignment.center,
-                                                              children: [
-                                                                Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                                                  children: [
-                                                                    CustomeText(text: "${lableModel!.progress}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_2, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
-                                                                    CustomeText(text: "${lableModel.completion}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_2, fontWeight: FontWeight.w400, textAlign: TextAlign.start)
-                                                                  ],
-                                                                ),
-                                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-
-                                                                Container(
-                                                                  height : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6_5,
-                                                                  width : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6_5,
-                                                                  child: DashedCircularProgressBar.aspectRatio(
-                                                                    aspectRatio: 2.1, // width ÷ height
-                                                                    valueNotifier: _valueNotifier,
-                                                                    progress:  awbModel!.ULDProgress!.toDouble(),
-                                                                    maxProgress: 100,
-                                                                    corners: StrokeCap.butt,
-                                                                    foregroundColor:  (awbModel!.ULDProgress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
-                                                                    backgroundColor: const Color(0xffF2F4F8),
-                                                                    foregroundStrokeWidth: 6,
-                                                                    backgroundStrokeWidth: 6,
-                                                                    animation: true,
-                                                                    child: Center(
-                                                                      child: ValueListenableBuilder(
-                                                                        valueListenable: _valueNotifier,
-                                                                        builder: (_, double value, __) {
-                                                                          return CustomeText(text: '${value.toInt()}%', fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.center);
-                                                                        },
-                                                                      ),
-                                                                    ),
+                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (value == true) ? 1 : 0);
 
 
-                                                                  ),
-                                                                ),
-
-                                                              ],
-                                                            )
-
-
+                                                              },
+                                                            ),
 
                                                           ],
-                                                        )
-                                                            : SizedBox(),
+                                                        ),
 
-                                                        (awbModel != null) ? (filterAWBDetailsList.isNotEmpty)
-                                                            ? Column(
+                                                       /* (awbModel != null)
+                                                            ?
+                                                            : SizedBox(),*/
+
+                                                        (awbModel != null) ? (awbItemList.isNotEmpty)
+                                                            ? (filterAWBDetailsList.isNotEmpty) ? Column(
                                                           children: [
 
                                                             SizedBox(height: SizeConfig.blockSizeVertical,),
@@ -1162,16 +1182,33 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                             ),
                                                           ],
                                                         )
-                                                            : Center(
-                                                          child: CustomeText(text: "${lableModel.recordNotFound}", fontColor: MyColor.textColor,
-                                                              fontSize: SizeConfig.textMultiplier * 2.1,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.center),)
-                                                            : Center(
-                                                          child: CustomeText(text: "${lableModel.recordNotFound}", fontColor: MyColor.textColor,
-                                                              fontSize: SizeConfig.textMultiplier * 2.1,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.center),)
+                                                            : Padding(
+                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                              child: Center(
+                                                                child: CustomeText(text: "${lableModel.recordNotFound}", fontColor:
+                                                                MyColor.textColorGrey,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                                fontWeight: FontWeight.w500,
+                                                                textAlign: TextAlign.center),),
+                                                            )
+                                                            : Padding(
+                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                              child: Center(
+                                                                child: CustomeText(text: "${lableModel.allShipment}",
+                                                                fontColor: MyColor.textColorGrey,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                                fontWeight: FontWeight.w500,
+                                                                textAlign: TextAlign.center),),
+                                                            )
+                                                            : Padding(
+                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                              child: Center(
+                                                                child: CustomeText(text: "${lableModel.recordNotFound}",
+                                                                fontColor: MyColor.textColorGrey,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                                fontWeight: FontWeight.w500,
+                                                                textAlign: TextAlign.center),),
+                                                            )
                                                       ],
                                                     ),
 
@@ -1214,6 +1251,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
               uldSeqNo: widget.uldSeqNo,
               menuId: widget.menuId,
               lableModel: widget.lableModel,
+              groupIDRequires: widget.groupIDRequires,
+              groupIDCharSize: widget.groupIDCharSize,
             )));
 
     if(value == "Done"){

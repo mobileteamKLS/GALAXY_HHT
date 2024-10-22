@@ -2,6 +2,7 @@
 import 'package:galaxy/module/import/model/flightcheck/addMailModel.dart';
 import 'package:galaxy/module/import/model/flightcheck/airportcitymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/bdprioritymodel.dart';
+import 'package:galaxy/module/import/model/flightcheck/breakdownendmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/finalizeflightmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/importshipmentmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/maildetailmodel.dart';
@@ -11,6 +12,7 @@ import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../../model/flightcheck/mailtypemodel.dart';
+import '../../../model/flightcheck/pageloaddefault.dart';
 import '../../../model/flightcheck/updateawbremarkacknoledge.dart';
 import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../../model/uldacceptance/locationvalidationmodel.dart';
@@ -44,6 +46,17 @@ class ButtonRolesAndRightsSuccessState extends FlightCheckState{
 class ButtonRolesAndRightsFailureState extends FlightCheckState{
   final String error;
   ButtonRolesAndRightsFailureState(this.error);
+}
+
+
+class PageLoadDefaultSuccessState extends FlightCheckState{
+  final PageLoadDefaultModel pageLoadDefaultModel;
+  PageLoadDefaultSuccessState(this.pageLoadDefaultModel);
+}
+
+class PageLoadDefaultFailureState extends FlightCheckState{
+  final String error;
+  PageLoadDefaultFailureState(this.error);
 }
 
 
@@ -193,4 +206,14 @@ class ImportShipmentSaveSuccessState extends FlightCheckState {
 class ImportShipmentSaveFailureState extends FlightCheckState {
   final String error;
   ImportShipmentSaveFailureState(this.error);
+}
+
+class BreakDownEndSaveSuccessState extends FlightCheckState {
+  final BreakDownEndModel breakDownEndModel;
+  BreakDownEndSaveSuccessState(this.breakDownEndModel);
+}
+
+class BreakDownEndFailureState extends FlightCheckState {
+  final String error;
+  BreakDownEndFailureState(this.error);
 }

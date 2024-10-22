@@ -8,6 +8,7 @@ class MyColor {
   static const Color textColor = Color(0xFF8A8281);
 
 
+  static const Color cardBgColor = Color(0xFFf7f8f9);
   static const Color textColorBlueHigh = Color(0xFF184565);
   static const Color bggradientfirst =Color(0xFF0060E5);
   static const Color bggradientsecond =Color(0xFF1D86FF);

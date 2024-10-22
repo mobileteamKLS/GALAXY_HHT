@@ -139,7 +139,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   FilteringTextInputFormatter.allow(RegExp("[0-9]")),
                 ] : widget.doubleDigitOnly! ? <TextInputFormatter>[
                   DecimalTextInputFormatter(maxDigitsBeforeDecimal: 7, maxDigitsAfterDecimal: 2),
-                ] :[],
+                ] : <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
+                ],
                 //textAlign: TextAlign.left,
                 cursorColor: MyColor.primaryColorblue,
                 controller: widget.controller,

@@ -66,6 +66,7 @@ class FlightCheckInAWBBDList {
   String? transit;
   String? destination;
   String? commodity;
+  String? NOG;
   int? progress;
 
   FlightCheckInAWBBDList(
@@ -90,6 +91,7 @@ class FlightCheckInAWBBDList {
         this.transit,
         this.destination,
         this.commodity,
+        this.NOG,
         this.progress});
 
   FlightCheckInAWBBDList.fromJson(Map<String, dynamic> json) {
@@ -114,6 +116,7 @@ class FlightCheckInAWBBDList {
     transit = json['Transit'];
     destination = json['Destination'];
     commodity = json['Commodity'];
+    NOG = json['NOG'];
     progress = json['Progress'];
   }
 
@@ -140,6 +143,7 @@ class FlightCheckInAWBBDList {
     data['Transit'] = this.transit;
     data['Destination'] = this.destination;
     data['Commodity'] = this.commodity;
+    data['NOG'] = this.NOG;
     data['Progress'] = this.progress;
     return data;
   }

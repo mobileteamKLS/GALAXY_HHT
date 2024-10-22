@@ -170,7 +170,7 @@
     "awbListing" : "AWB Listing",
     "detailsForUldNo" : "Details for ULD No.",
     "scanAWB" : "Scan AWB",
-    "showAllShipments" : "Show All Shipments",
+    "showAllShipments" : "Show completion pending AWB only",
     "showMoreDetails" : "Show More Details",
     "showLessDetails" : "Show Less Details",
 
@@ -200,7 +200,7 @@
     "originDestinationSameMsg" : "Origin & destination can't the same",
     "mailTypeMsg" : "Please select mailtype",
 
-    "checkAWb" : "Check AWB",
+    "checkAWb" : "Check-In AWB",
     "detailsForAWBNo" : "Details for AWB No.",
     "otherDetail" : "Other Detail",
     "flight": "Flight",
@@ -208,6 +208,12 @@
     "damageAndSave" : "Damage & Save",
     "piecesMsg" : "Please enter pieces",
     "nogMsg" : "Please enter nature of goods",
+
+
+    "cargo" : "Cargo",
+    "mail" : "Mail",
+    "breakdownCompleted" : "Breakdown completed",
+    "groupIdCharSizeMsg" : "Group ID must be exactly {0} characters long",
 
 
 

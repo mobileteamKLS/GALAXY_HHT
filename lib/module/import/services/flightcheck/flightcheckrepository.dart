@@ -11,12 +11,14 @@ import '../../model/flightcheck/addMailModel.dart';
 import '../../model/flightcheck/airportcitymodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/bdprioritymodel.dart';
+import '../../model/flightcheck/breakdownendmodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../model/flightcheck/importshipmentmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
 import '../../model/flightcheck/mailtypemodel.dart';
+import '../../model/flightcheck/pageloaddefault.dart';
 import '../../model/flightcheck/recordatamodel.dart';
 import '../../model/flightcheck/updateawbremarkacknoledge.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
@@ -101,6 +103,48 @@ class FlightCheckRepository{
       if (response.statusCode == 200) {
         ButtonRolesRightsModel buttonRolesRightsModel = ButtonRolesRightsModel.fromJson(response.data);
         return buttonRolesRightsModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+
+  Future<PageLoadDefaultModel> getPageLoadDefault(int menuId, int userId, int companyCode) async {
+
+    try {
+
+      var payload = {
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('pageLoadDefaultModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.getPageLoadApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        PageLoadDefaultModel pageLoadDefaultModel = PageLoadDefaultModel.fromJson(response.data);
+        return pageLoadDefaultModel;
       } else {
         // Handle non-200 response
         throw DioException(
@@ -650,7 +694,7 @@ class FlightCheckRepository{
     }
   }
 
-  Future<ImportShipmentModel> importManifestSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, double nopWeightInput, String nog, int userId, int companyCode, int menuId) async {
+  Future<ImportShipmentModel> importManifestSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, int userId, int companyCode, int menuId) async {
 
     try {
 
@@ -662,11 +706,7 @@ class FlightCheckRepository{
         "HAWBId": hawbid,
         "IsOverride": "N",
         "NOPInput": nopInput,
-        "WtInput": nopWeightInput,
-        "NOPDamageInput": 0,
-        "WtDamageInput": 0,
-        "DamageCodeInput": "0",
-        "NatureOfGoods": nog,
+        "WtInput": 0,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -701,6 +741,51 @@ class FlightCheckRepository{
       }
     }
   }
+
+
+  Future<BreakDownEndModel> breakDownEnd(int flightSeqNo, int uLDSeqNo, String isConfirm, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo" : flightSeqNo,
+        "ULDSeqNo" : uLDSeqNo,
+        "IsConfirm": isConfirm,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('checkAirportCity: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.breakDownEndApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        BreakDownEndModel breakDownEndModel = BreakDownEndModel.fromJson(response.data);
+        return breakDownEndModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
 
 }

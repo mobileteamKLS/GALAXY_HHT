@@ -699,23 +699,23 @@ class DialogUtils {
                   children: [
                     Expanded(
                       flex: 1,
-                      child: RoundedButtonBlue(
-                        isborderButton: true,
-                        text: "${lableModel.cancel}",
+                      child: RoundedButton(
+                        text: "${lableModel.addMail}",
                         color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                         press: () {
-                          Navigator.pop(context);
+                          Navigator.pop(context, 3); // Return true when "Ok" is pressed
                         },
                       ),
                     ),
                     SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                     Expanded(
                       flex: 1,
-                      child: RoundedButton(
-                        text: "${lableModel.addMail}",
+                      child: RoundedButtonBlue(
+                        isborderButton: true,
+                        text: "${lableModel.cancel}",
                         color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                         press: () {
-                          Navigator.pop(context, 3); // Return true when "Ok" is pressed
+                          Navigator.pop(context);
                         },
                       ),
                     ),

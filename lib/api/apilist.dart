@@ -27,6 +27,7 @@ class Apilist{
   static String uldUCRApi = "/ULDAcceptance/UCR";
 
   // flight check-in
+  static String getPageLoadApi = "/FlightCheckIn/GetPageLoad";
   static String getFlightCheckULDListApi = "/FlightCheckIn/GetFlightDetails";
   static String getFlightSummarysApi = "/FlightCheckIn/GetFlightSummary";
   static String updateBDPriority = "/FlightCheckIn/UpdateBDPriority";
@@ -35,6 +36,8 @@ class Apilist{
 
   static String awbListApi = "/FlightCheckIn/GetAWBDetails";
   static String updateBDPriorityAWB = "/FlightCheckIn/UpdateAWBBDPriority";
+
+  // remark acknowledge
   static String updateAWBRemarksAcknowledge = "/FlightCheckIn/UpdateAWBRemarksAcknowledge";
 
   static String getAddMailDetailsApi = "/FlightCheckIn/GetAddMailView";
@@ -42,4 +45,5 @@ class Apilist{
   static String getMailTypeApi = "/FlightCheckIn/GetMailTypeList";
   static String importManifestSaveApi = "/FlightCheckIn/ImportManifestSave";
   static String checkAirportApi = "/AirportCode/AirportCodeValidate";
+  static String breakDownEndApi = "/FlightCheckIn/BreakDownEnd";
 }

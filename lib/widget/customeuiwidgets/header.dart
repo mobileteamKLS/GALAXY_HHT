@@ -36,7 +36,7 @@ class _HeaderWidgetState extends State<HeaderWidget> {
                 },
                 child: Icon(
                   Icons.arrow_back_ios_new_rounded,
-                  color: MyColor.primaryColorblue,
+                  color: MyColor.colorBlack,
                   size: SizeConfig.blockSizeVertical * 3,
                 ),
               ),

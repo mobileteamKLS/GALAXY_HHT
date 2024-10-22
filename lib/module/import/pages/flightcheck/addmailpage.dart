@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -479,35 +480,54 @@ class _AddMailPageState extends State<AddMailPage> {
                                           // text manifest and recived in pices text counter
 
                                           Directionality(
-                                            textDirection: uiDirection,
-                                            child: CustomTextField(
-                                              controller: av7NoController,
-                                              focusNode: av7NoFocusNode,
-                                              onPress: () {},
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "${lableModel.av7No} *",
-                                              readOnly: false,
-                                              onChanged: (value) {},
-                                              fillColor:  Colors.grey.shade100,
-                                              textInputType: TextInputType.number,
-                                              inputAction: TextInputAction.next,
-                                              hintTextcolor: Colors.black45,
-                                              verticalPadding: 0,
-                                              maxLength: 12,
-                                              digitsOnly: true,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                              validator: (value) {
-                                                if (value!.isEmpty) {
-                                                  return "Please fill out this field";
-                                                } else {
-                                                  return null;
-                                                }
-                                              },
+                                            textDirection: textDirection,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  flex:1,
+                                                  child: Directionality(
+                                                    textDirection: uiDirection,
+                                                    child: CustomTextField(
+                                                      controller: av7NoController,
+                                                      focusNode: av7NoFocusNode,
+                                                      onPress: () {},
+                                                      hasIcon: false,
+                                                      hastextcolor: true,
+                                                      animatedLabel: true,
+                                                      needOutlineBorder: true,
+                                                      labelText: "${lableModel.av7No} *",
+                                                      readOnly: false,
+                                                      onChanged: (value) {},
+                                                      fillColor:  Colors.grey.shade100,
+                                                      textInputType: TextInputType.text,
+                                                      inputAction: TextInputAction.next,
+                                                      hintTextcolor: Colors.black45,
+                                                      verticalPadding: 0,
+                                                      maxLength: 12,
+                                                      digitsOnly: false,
+                                                      doubleDigitOnly: false,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                      validator: (value) {
+                                                        if (value!.isEmpty) {
+                                                          return "Please fill out this field";
+                                                        } else {
+                                                          return null;
+                                                        }
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQR(lableModel);
+                                                  },
+                                                  child: Padding(padding: const EdgeInsets.all(8.0),
+                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
 
@@ -1092,6 +1112,26 @@ class _AddMailPageState extends State<AddMailPage> {
         )),
       ),
     );
+  }
+
+  Future<void> scanQR(LableModel lableModel) async {
+    String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Color for the scanner overlay
+      'Cancel', // Text for the cancel button
+      true, // Enable flash option
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    print("barcode scann ==== ${barcodeScanResult}");
+    if(barcodeScanResult == "-1"){
+    }else{
+      // Truncate the result to a maximum of 12 characters
+      String truncatedResult = barcodeScanResult.length > 12
+          ? barcodeScanResult.substring(0, 12)
+          : barcodeScanResult;
+
+      av7NoController.text = truncatedResult;
+    }
   }
 
 

@@ -169,7 +169,7 @@
     "awbListing" : "قائمة AWB",
     "detailsForUldNo" : "تفاصيل رقم ULD.",
     "scanAWB" : "مسح AWB",
-    "showAllShipments" : "عرض جميع الشحنات",
+    "showAllShipments" : "إظهار اكتمال الانتظار يو إل دي فقط",
     "showMoreDetails" : "عرض المزيد من التفاصيل",
     "showLessDetails" : "إظهار تفاصيل أقل",
 
@@ -200,7 +200,7 @@
     "mailTypeMsg" : "الرجاء تحديد نوع البريد",
 
 
-    "checkAWb" : "تحقق من AWB",
+    "checkAWb" : "تحقق في AWB",
     "detailsForAWBNo" : "تفاصيل رقم AWB.",
     "otherDetail" : "تفاصيل أخرى",
     "flight": "رحلة جوية",
@@ -208,6 +208,12 @@
     "damageAndSave" : "الضرر وحفظ",
     "piecesMsg" : "الرجاء إدخال القطع",
     "nogMsg" : "الرجاء إدخال طبيعة البضاعة",
+
+    "cargo" : "شحن",
+    "mail" : "البريد",
+
+    "breakdownCompleted" : "اكتمل الانهيار",
+    "groupIdCharSizeMsg" : "يجب أن يكون معرف المجموعة {0} حرفًا بالضبط",
 
 
     "2539" : "العصابات فضفاضة",

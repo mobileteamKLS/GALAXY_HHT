@@ -195,6 +195,11 @@ class LableModel {
   String? piecesMsg;
   String? nogMsg;
 
+  String? cargo;
+  String? mail;
+  String? breakdownCompleted;
+  String? groupIdCharSizeMsg;
+
   String? s654;
   String? s655;
   String? s656;
@@ -387,6 +392,10 @@ class LableModel {
         this.damageAndSave,
         this.piecesMsg,
         this.nogMsg,
+        this.cargo,
+        this.mail,
+        this.breakdownCompleted,
+        this.groupIdCharSizeMsg,
 
         this.save,
         this.s654,
@@ -595,6 +604,10 @@ class LableModel {
     damageAndSave = json['damageAndSave'];
     piecesMsg = json['piecesMsg'];
     nogMsg = json['nogMsg'];
+    cargo = json['cargo'];
+    mail = json['mail'];
+    breakdownCompleted = json['breakdownCompleted'];
+    groupIdCharSizeMsg = json['groupIdCharSizeMsg'];
 
     s654 = json['654'];
     s655 = json['655'];
@@ -803,6 +816,10 @@ class LableModel {
     data['damageAndSave'] = this.damageAndSave;
     data['piecesMsg'] = this.piecesMsg;
     data['nogMsg'] = this.nogMsg;
+    data['cargo'] = this.cargo;
+    data['mail'] = this.mail;
+    data['breakdownCompleted'] = this.breakdownCompleted;
+    data['groupIdCharSizeMsg'] = this.groupIdCharSizeMsg;
 
     data['654'] = this.s654;
     data['655'] = this.s655;
