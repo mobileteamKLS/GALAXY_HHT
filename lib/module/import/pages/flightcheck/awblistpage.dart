@@ -1214,7 +1214,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                   ),
                                                 )),
-
                                           ),
                                         ],
                                       ),

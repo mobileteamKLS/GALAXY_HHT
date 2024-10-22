@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/damageuipart1.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
@@ -42,15 +43,14 @@ class DamageShimentPage extends StatefulWidget {
 
 class _DamageShimentPageState extends State<DamageShimentPage>{
 
+  late PageController _pageController;
+  int _currentPage = 0;
+
   InactivityTimerManager? inactivityTimerManager;
 
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
-
-
-
-
 
   @override
   void initState() {
@@ -58,6 +58,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     super.initState();
     _loadUser();
 
+    _pageController = PageController(initialPage: 0);
 
   }
 
@@ -114,7 +115,51 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     // TODO: implement dispose
     super.dispose();
     inactivityTimerManager!.stopTimer();
+    _pageController.dispose();
   }
+
+
+  List<Widget> _listViews() {
+    return [
+      Damageuipart1(aWBItem: widget.aWBItem,
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+      },
+      nextclickCallback: () {
+        _currentPage < _listViews().length - 1
+            ? _onNextPressed()
+            : null;
+
+      },
+      ),
+     // Container(child: Text("Part 1 UI")),
+      Container(child: Text("Part 2 UI")), // You can replace this with the next UI part
+      Container(child: Text("Part 3 UI")), // Add more parts as needed
+    ];
+  }
+
+
+  void _onNextPressed() {
+    if (_currentPage < _listViews().length - 1) {
+      setState(() {
+        _currentPage++;
+        _pageController.animateToPage(_currentPage,
+            duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      });
+    }
+  }
+
+  void _onPreviousPressed() {
+    if (_currentPage > 0) {
+      setState(() {
+        _currentPage--;
+        _pageController.animateToPage(_currentPage,
+            duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      });
+    }
+  }
+
 
 
   @override
@@ -124,15 +169,15 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
 
     //ui direction not change for arabic
     ui.TextDirection uiDirection =
-        localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
-            ? ui.TextDirection.ltr
-            : ui.TextDirection.ltr;
+    localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
+        ? ui.TextDirection.ltr
+        : ui.TextDirection.ltr;
 
     //text direction change for arabic
     ui.TextDirection textDirection =
-        localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
-            ? ui.TextDirection.rtl
-            : ui.TextDirection.ltr;
+    localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
+        ? ui.TextDirection.rtl
+        : ui.TextDirection.ltr;
 
 
 
@@ -142,150 +187,53 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         textDirection: uiDirection,
         child: SafeArea(
             child: Scaffold(
-          backgroundColor: MyColor.colorWhite,
-          body: Stack(
-            children: [
+              backgroundColor: MyColor.colorWhite,
+              body: Stack(
+                children: [
 
-              MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
-              Positioned(
-                  top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification scroll) {
-                      _resumeTimerOnInteraction(); // Reset the timer on scroll event
-                      return true;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                      color: MyColor.bgColorGrey,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
-                          topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
-                                    child: Directionality(
-                    textDirection: textDirection,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
-                          child: HeaderWidget(
-                            titleTextColor: MyColor.colorBlack,
-                            title: "Damage & Save",
-                            onBack: () {
-                              _onWillPop();
-                            },
-                            clearText: "",
-                            onClear: () {
-
-                            },
-                          ),
-                        ),
-
-                        Expanded(
-                            child: SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10,
-                                    right: 10,
-                                    top: 0,
-                                    bottom: 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Directionality(
-                                            textDirection: uiDirection,
-                                            child: Row(
-                                              children: [
-                                                SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                CustomeText(
-                                                    text: "${lableModel!.detailsForAWBNo} ${AwbFormateNumberUtils.formatAWBNumber(widget.aWBItem.aWBNo!)}",
-                                                    fontColor: MyColor.textColorGrey2,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w500,
-                                                    textAlign: TextAlign.start)
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
+                  MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
+                  Positioned(
+                      top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                      bottom: 0,
+                      right: 0,
+                      left: 0,
+                      child: NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification scroll) {
+                          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                          return true;
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: MyColor.bgColorGrey,
+                              borderRadius: BorderRadius.only(
+                                  topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                                  topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                          child: Directionality(
+                            textDirection: textDirection,
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
+                                    child: PageView(
+                                      controller: _pageController,
+                                      children: _listViews(),
+                                      onPageChanged: (int page) {
+                                        setState(() {
+                                          _currentPage = page;
+                                        });
+                                      },
                                     ),
-
-
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: RoundedButtonBlue(
-                                              text: "Previous",
-                                              press: () async {
-
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: RoundedButtonBlue(
-                                              text: "Next",
-                                              press: () async {
-
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )
-
-
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            )),
 
+                              ],
+                            ),),),
+                      )),
 
-                      ],
-                    ),),),
-                  )),
-
-            ],
-          ),
-        )),
+                ],
+              ),
+            )),
       ),
     );
   }
