@@ -1914,86 +1914,93 @@ class _FlightCheckState extends State<FlightCheck>
     if (pageIndex == 0) {
       return  Column(
         children: [
-          SizedBox(height: SizeConfig.blockSizeVertical,),
-          Directionality(
-            textDirection: textDirection,
-            child: GroupIdCustomTextField(
-              textDirection: textDirection,
-              hasIcon: true,
-              hastextcolor: true,
-              animatedLabel: false,
-              needOutlineBorder: true,
-              isIcon: true,
-              isSearch: true,
-              prefixIconcolor: MyColor.colorBlack,
-              hintText: "${lableModel.searchULD}",
-              readOnly: false,
-              onChanged: (value) {
-                updateSearchList(value);
-              },
-              fillColor: MyColor.colorWhite,
-              textInputType: TextInputType.text,
-              inputAction: TextInputAction.next,
-              hintTextcolor: MyColor.colorBlack.withOpacity(0.7),
-              verticalPadding: 0,
-              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
-              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return "Please fill out this field";
-                } else {
-                  return null;
-                }
-              },
-            ),
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical,),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
 
+          (flightCheckULDListModel != null) ? Column(
+            children: [
+              SizedBox(height: SizeConfig.blockSizeVertical,),
+              Directionality(
+                textDirection: textDirection,
+                child: GroupIdCustomTextField(
+                  textDirection: textDirection,
+                  hasIcon: true,
+                  hastextcolor: true,
+                  animatedLabel: false,
+                  needOutlineBorder: true,
+                  isIcon: true,
+                  isSearch: true,
+                  prefixIconcolor: MyColor.colorBlack,
+                  hintText: "${lableModel.searchULD}",
+                  readOnly: false,
+                  onChanged: (value) {
+                    updateSearchList(value);
+                  },
+                  fillColor: MyColor.colorWhite,
+                  textInputType: TextInputType.text,
+                  inputAction: TextInputAction.next,
+                  hintTextcolor: MyColor.colorBlack.withOpacity(0.7),
+                  verticalPadding: 0,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
+                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return "Please fill out this field";
+                    } else {
+                      return null;
+                    }
+                  },
+                ),
+              ),
+              SizedBox(height: SizeConfig.blockSizeVertical,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                  SizedBox(
-                    width: SizeConfig.blockSizeHorizontal,
+                  Row(
+
+                    children: [
+                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                      SizedBox(
+                        width: SizeConfig.blockSizeHorizontal,
+                      ),
+                      CustomeText(
+                          text: "${lableModel.showCompletionMsg}",
+                          fontColor: MyColor.textColorGrey2,
+                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.start)
+                    ],
                   ),
-                  CustomeText(
-                      text: "${lableModel.showCompletionMsg}",
-                      fontColor: MyColor.textColorGrey2,
-                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                      fontWeight: FontWeight.w500,
-                      textAlign: TextAlign.start)
+                  Switch(
+                    value: _isOpenULDFlagEnable,
+                    materialTapTargetSize:
+                    MaterialTapTargetSize.shrinkWrap,
+                    activeColor: MyColor.primaryColorblue,
+                    inactiveThumbColor: MyColor.thumbColor,
+                    inactiveTrackColor: MyColor.textColorGrey2,
+                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                    onChanged: (value) {
+                      setState(() {
+                        _isOpenULDFlagEnable = value;
+                      });
+
+                      callFlightCheckULDListApi(
+                          context,
+                          locationController.text,
+                          "",
+                          flightNoEditingController.text,
+                          dateEditingController.text,
+                          _user!.userProfile!.userIdentity!,
+                          _splashDefaultData!.companyCode!,
+                          widget.menuId,
+                          (value == true) ? 1 : 0);
+                    },
+                  )
                 ],
               ),
-              Switch(
-                value: _isOpenULDFlagEnable,
-                materialTapTargetSize:
-                MaterialTapTargetSize.shrinkWrap,
-                activeColor: MyColor.primaryColorblue,
-                inactiveThumbColor: MyColor.thumbColor,
-                inactiveTrackColor: MyColor.textColorGrey2,
-                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                onChanged: (value) {
-                  setState(() {
-                    _isOpenULDFlagEnable = value;
-                  });
-
-                  callFlightCheckULDListApi(
-                      context,
-                      locationController.text,
-                      "",
-                      flightNoEditingController.text,
-                      dateEditingController.text,
-                      _user!.userProfile!.userIdentity!,
-                      _splashDefaultData!.companyCode!,
-                      widget.menuId,
-                      (value == true) ? 1 : 0);
-                },
-              )
             ],
-          ),
+          ) : SizedBox(),
+
+
           SizedBox(height: SizeConfig.blockSizeVertical,),
           (flightCheckULDListModel != null)
               ? (flightCheckULDListModel!.flightDetailList!.isNotEmpty)
@@ -2184,7 +2191,7 @@ class _FlightCheckState extends State<FlightCheck>
 
                                 ],
                               ),
-                              flightDetails.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(),
+                              flightDetails.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                               flightDetails.sHCCode!.isNotEmpty
                                   ? Row(
                                 children:shcCodes.asMap().entries.map((entry) {
@@ -2280,41 +2287,88 @@ class _FlightCheckState extends State<FlightCheck>
                                 ],
                               ),
                               SizedBox(height: SizeConfig.blockSizeVertical,),
-                              Container(
-
-                                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                ),
-                                child: InkWell(
-                                  child: Row(
-                                    children: [
-                                      CustomeText(
-                                          text: "P - ${flightDetails.bDPriority}",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w700,
-                                          textAlign: TextAlign.center),
-                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                      SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                    ],
-                                    mainAxisSize: MainAxisSize.min,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                    decoration: BoxDecoration(
+                                        color: MyColor.dropdownColor,
+                                        borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                    ),
+                                    child: InkWell(
+                                      child: Row(
+                                        children: [
+                                          CustomeText(
+                                              text: "P - ${flightDetails.bDPriority}",
+                                              fontColor: MyColor.textColorGrey3,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                              fontWeight: FontWeight.w700,
+                                              textAlign: TextAlign.center),
+                                          SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                          SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                        ],
+                                        mainAxisSize: MainAxisSize.min,
+                                      ),
+                                      onTap: () {
+                                        setState(() {
+                                          _selectedIndex = index; // Update the selected index
+                                        });
+                                        openEditPriorityBottomDialog(
+                                            context,
+                                            flightDetails.uLDNo!,
+                                            "${flightDetails.bDPriority}",
+                                            index,
+                                            flightDetails,
+                                            lableModel,
+                                            textDirection);
+                                      },
+                                    ),
                                   ),
-                                  onTap: () {
-                                    setState(() {
-                                      _selectedIndex = index; // Update the selected index
-                                    });
-                                    openEditPriorityBottomDialog(
-                                        context,
-                                        flightDetails.uLDNo!,
-                                        "${flightDetails.bDPriority}",
-                                        index,
-                                        flightDetails,
-                                        lableModel,
-                                        textDirection);
-                                  },
-                                ),
+                                  Row(
+                                    children: [
+
+                                      Container(
+                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                        decoration : BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
+                                            color: flightDetails.uldAcceptStatus == "A" ? MyColor.flightNotArrived : MyColor.flightFinalize
+                                        ),
+                                        child: CustomeText(
+                                          text: flightDetails.uldAcceptStatus == "A" ? lableModel.notaccepted!.toUpperCase() : lableModel.accepted!.toUpperCase(),
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                          fontWeight: FontWeight.w400,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ) ,
+                                      SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+                                      InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            _selectedIndex = index; // Update the selected index
+                                          });
+                                          openBottomDialog(
+                                              context,
+                                              flightDetails.uLDNo!,
+                                              flightDetails.damageNOP!,
+                                              flightDetails,
+                                              lableModel,
+                                              widget.mainMenuName);
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                          decoration: BoxDecoration(
+                                              color: MyColor.dropdownColor,
+                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                          ),
+                                          child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               )
 
                             ],
@@ -2349,7 +2403,7 @@ class _FlightCheckState extends State<FlightCheck>
                               ),
                             ),
                           ),
-                          Positioned(
+                         /* Positioned(
                             right: 0,
                             bottom: 0,
                             child: Row(
@@ -2395,7 +2449,7 @@ class _FlightCheckState extends State<FlightCheck>
                                 ),
                               ],
                             ),
-                          )
+                          )*/
                         ],
                       ),
                     ),
@@ -3082,7 +3136,7 @@ class _FlightCheckState extends State<FlightCheck>
                               children: [
                                 CustomeText(
                                     text: (flightCheckSummaryModel != null)
-                                        ? "0"
+                                        ? "${flightCheckSummaryModel!.flightSummary!.mailNOP!}"
                                         : "0",
                                     fontColor: MyColor.colorBlack,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
@@ -3231,7 +3285,7 @@ class _FlightCheckState extends State<FlightCheck>
                               children: [
                                 CustomeText(
                                     text: (flightCheckSummaryModel != null)
-                                        ? "0"
+                                        ? "${flightCheckSummaryModel!.flightSummary!.mailWeight!}"
                                         : "0",
                                     fontColor: MyColor.colorBlack,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
@@ -3451,6 +3505,7 @@ class _FlightCheckState extends State<FlightCheck>
                   lableModel: lableModel,
                   groupIDRequires: groupIDRequires,
                   groupIDCharSize: groupIDCharSize,
+                  bDEndStatus: flightDetails.bDEndStatus!,
                 )));
         if(value == "true"){
           _resumeTimerOnInteraction();

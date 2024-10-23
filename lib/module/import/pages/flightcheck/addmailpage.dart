@@ -321,10 +321,13 @@ class _AddMailPageState extends State<AddMailPage> {
                               av7NoController.clear();
                               selectedMailType = null;
                               originController.clear();
-                              descriptionController.clear();
+                              destinationController.clear();
                               nopController.clear();
                               weightController.clear();
                               descriptionController.clear();
+
+                              _isvalidateOrigin = false;
+                              _isvalidateDestination = false;
 
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 FocusScope.of(context).requestFocus(av7NoFocusNode);
@@ -416,7 +419,7 @@ class _AddMailPageState extends State<AddMailPage> {
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.addMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
-                              Vibration.vibrate(duration: 500);
+
                               SnackbarUtil.showSnackbar(context, state.addMailModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
 
                               context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
@@ -1138,7 +1141,7 @@ class _AddMailPageState extends State<AddMailPage> {
   // validation dialog
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
-        context, "${message}", widget.lableModel!);
+        context, "${message}.", widget.lableModel!);
 
     if (empty == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

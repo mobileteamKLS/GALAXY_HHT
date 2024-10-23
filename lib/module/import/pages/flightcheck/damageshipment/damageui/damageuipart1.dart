@@ -67,12 +67,12 @@ class _Damageuipart1State extends State<Damageuipart1> {
           onBack: () {
             Navigator.pop(context, "true");
           },
-          clearText: "",
+          clearText: "${lableModel!.clear}",
           onClear: () {
 
           },
         ),
-        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+        SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
           child: SingleChildScrollView(
             child: Padding(
@@ -569,47 +569,44 @@ class _Damageuipart1State extends State<Damageuipart1> {
             ),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: MyColor.colorWhite,
-              borderRadius: BorderRadius.circular(8),
-              boxShadow: [
-                BoxShadow(
-                  color: MyColor.colorBlack.withOpacity(0.09),
-                  spreadRadius: 2,
-                  blurRadius: 15,
-                  offset: Offset(0, 3), // changes position of shadow
+        Container(
+          padding: EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: MyColor.colorWhite,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: MyColor.colorBlack.withOpacity(0.09),
+                spreadRadius: 2,
+                blurRadius: 15,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 1,
+                child: RoundedButtonBlue(
+                  text: "Previous",
+                  press: () async {
+                    widget.preclickCallback();
+                  },
                 ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: RoundedButtonBlue(
-                    text: "Previous",
-                    press: () async {
-                      widget.preclickCallback();
-                    },
-                  ),
+              ),
+              SizedBox(
+                width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
+              ),
+              Expanded(
+                flex: 1,
+                child: RoundedButtonBlue(
+                  text: "Next",
+                  press: () async {
+                    widget.nextclickCallback();
+                  },
                 ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
-                ),
-                Expanded(
-                  flex: 1,
-                  child: RoundedButtonBlue(
-                    text: "Next",
-                    press: () async {
-                      widget.nextclickCallback();
-                    },
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         )
       ],

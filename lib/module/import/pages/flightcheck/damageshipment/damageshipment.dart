@@ -29,6 +29,16 @@ import '../../../../onboarding/sizeconfig.dart';
 
 import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
+import 'damageui/damageuipart2.dart';
+import 'damageui/damageuipart3.dart';
+import 'damageui/damageuipart4.dart';
+import 'damageui/damageuipart5.dart';
+import 'damageui/damageuipart6.dart';
+import 'damageui/damageuipart7.dart';
+import 'damageui/damageuipart71.dart';
+import 'damageui/damageuipart8.dart';
+import 'damageui/damageuipart81.dart';
+import 'damageui/damageuipart9.dart';
 
 
 class DamageShimentPage extends StatefulWidget {
@@ -133,9 +143,126 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
 
       },
       ),
-     // Container(child: Text("Part 1 UI")),
-      Container(child: Text("Part 2 UI")), // You can replace this with the next UI part
-      Container(child: Text("Part 3 UI")), // Add more parts as needed
+      Damageuipart2(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart3(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart4(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart5(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart6(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart71(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart7(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart81(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart8(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
+      Damageuipart9(
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ),
     ];
   }
 
@@ -216,6 +343,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
                                   child: Container(
                                     padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
                                     child: PageView(
+                                      physics: NeverScrollableScrollPhysics(),
                                       controller: _pageController,
                                       children: _listViews(),
                                       onPageChanged: (int page) {

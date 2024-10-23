@@ -66,6 +66,7 @@ class FlightDetailList {
   String? sHCCode;
   String? damageConditionCode;
   String? uldAcceptStatus;
+  String? bDEndStatus;
 
   FlightDetailList(
       {this.uLDId,
@@ -82,7 +83,8 @@ class FlightDetailList {
         this.transit,
         this.sHCCode,
         this.damageConditionCode,
-        this.uldAcceptStatus});
+        this.uldAcceptStatus,
+        this.bDEndStatus,});
 
   FlightDetailList.fromJson(Map<String, dynamic> json) {
     uLDId = json['ULDId'];
@@ -100,6 +102,7 @@ class FlightDetailList {
     sHCCode = json['SHCCode'];
     damageConditionCode = json['DamageConditionCode'];
     uldAcceptStatus = json['ULDAcceptStatus'];
+    bDEndStatus = json['BDEndStatus'];
   }
 
   Map<String, dynamic> toJson() {
@@ -119,6 +122,7 @@ class FlightDetailList {
     data['SHCCode'] = this.sHCCode;
     data['DamageConditionCode'] = this.damageConditionCode;
     data['ULDAcceptStatus'] = this.uldAcceptStatus;
+    data['BDEndStatus'] = this.bDEndStatus;
     return data;
   }
 }

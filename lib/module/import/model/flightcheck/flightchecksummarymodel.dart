@@ -34,6 +34,8 @@ class FlightSummary {
   int? shortLanded;
   int? excessLanded;
   int? damagePkgs;
+  int? mailNOP;
+  double? mailWeight;
   int? progress;
 
   FlightSummary(
@@ -45,6 +47,8 @@ class FlightSummary {
         this.shortLanded,
         this.excessLanded,
         this.damagePkgs,
+        this.mailNOP,
+        this.mailWeight,
         this.progress});
 
   FlightSummary.fromJson(Map<String, dynamic> json) {
@@ -56,6 +60,8 @@ class FlightSummary {
     shortLanded = json['ShortLanded'];
     excessLanded = json['ExcessLanded'];
     damagePkgs = json['DamagePkgs'];
+    mailNOP = json['MailNOP'];
+    mailWeight = json['MailWeight'];
     progress = json['Progress'];
   }
 
@@ -69,6 +75,8 @@ class FlightSummary {
     data['ShortLanded'] = this.shortLanded;
     data['ExcessLanded'] = this.excessLanded;
     data['DamagePkgs'] = this.damagePkgs;
+    data['MailNOP'] = this.mailNOP;
+    data['MailWeight'] = this.mailWeight;
     data['Progress'] = this.progress;
     return data;
   }

@@ -54,8 +54,9 @@ class AWBListPage extends StatefulWidget {
   String awbRemarkRequires;
   String groupIDRequires;
   int groupIDCharSize;
+  String bDEndStatus;
 
-  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize});
+  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize, required this.bDEndStatus});
 
   @override
   State<AWBListPage> createState() => _AWBListPageState();
@@ -573,27 +574,36 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                     },
                                                                     onDoubleTap: () async {
 
-                                                                      if(widget.awbRemarkRequires == "Y"){
-                                                                        if(aWBItem.remark == "Y"){
-                                                                         // bool? value = await openDialog(context, aWBItem, widget.mainMenuName);
+                                                                      if(widget.bDEndStatus == "N"){
+                                                                        if(widget.awbRemarkRequires == "Y"){
+                                                                          if(aWBItem.remark == "Y"){
+                                                                            // bool? value = await openDialog(context, aWBItem, widget.mainMenuName);
 
-                                                                          List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                            List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
 
-                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
+                                                                            var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
 
-                                                                          if(value == "true"){
+                                                                            if(value == "true"){
 
+                                                                              gotoCheckAWBScreen(aWBItem);
+
+                                                                            }else if(value == "Done"){
+                                                                              _resumeTimerOnInteraction();
+                                                                            }
+                                                                          }else{
                                                                             gotoCheckAWBScreen(aWBItem);
-
-                                                                          }else if(value == "Done"){
-                                                                            _resumeTimerOnInteraction();
                                                                           }
-                                                                        }else{
+                                                                        }
+                                                                        else{
                                                                           gotoCheckAWBScreen(aWBItem);
                                                                         }
                                                                       }else{
-                                                                        gotoCheckAWBScreen(aWBItem);
+                                                                        SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        Vibration.vibrate(duration: 500);
                                                                       }
+
+
+
                                                                       setState(() {
                                                                         _selectedIndex = index; // Update the selected index
                                                                       });
@@ -1106,7 +1116,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               _selectedIndex = index; // Update the selected index
                                                                                             });
 
-                                                                                            if(widget.awbRemarkRequires == "Y"){
+                                                                                         /*   if(widget.awbRemarkRequires == "Y"){
                                                                                               if(aWBItem.remark == "Y"){
 
                                                                                                 List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
@@ -1119,8 +1129,32 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               }else{
                                                                                                 gotoCheckAWBScreen(aWBItem);
                                                                                               }
-                                                                                            }else{
+                                                                                            }
+                                                                                            else{
                                                                                               gotoCheckAWBScreen(aWBItem);
+                                                                                            }*/
+
+                                                                                            if(widget.bDEndStatus == "N"){
+                                                                                              if(widget.awbRemarkRequires == "Y"){
+                                                                                                if(aWBItem.remark == "Y"){
+
+                                                                                                  List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
+                                                                                                  if(value == "true"){
+                                                                                                    gotoCheckAWBScreen(aWBItem);
+                                                                                                  }else if(value == "Done"){
+                                                                                                    _resumeTimerOnInteraction();
+                                                                                                  }
+                                                                                                }else{
+                                                                                                  gotoCheckAWBScreen(aWBItem);
+                                                                                                }
+                                                                                              }
+                                                                                              else{
+                                                                                                gotoCheckAWBScreen(aWBItem);
+                                                                                              }
+                                                                                            }else{
+                                                                                              SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                              Vibration.vibrate(duration: 500);
                                                                                             }
 
                                                                                           },

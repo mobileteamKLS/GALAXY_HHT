@@ -198,7 +198,7 @@
     "nopMsg" : "Please enter NoP",
     "weightMsg" : "Please enter weight",
     "originDestinationSameMsg" : "Origin & destination can't the same",
-    "mailTypeMsg" : "Please select mailtype",
+    "mailTypeMsg" : "Please select mail type.",
 
     "checkAWb" : "Check-In AWB",
     "detailsForAWBNo" : "Details for AWB No.",
