@@ -655,7 +655,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             child: RoundedButtonBlue(
                                               text: "${lableModel.damageAndSave}",
                                               press: () async {
-                                                Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(aWBItem: widget.aWBItem, mainMenuName: widget.mainMenuName,),));
+                                                Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, menuId: widget.menuId,),));
                                               },
                                             ),
                                           ),

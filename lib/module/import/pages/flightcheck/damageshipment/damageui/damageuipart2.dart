@@ -18,11 +18,14 @@ import '../../../../../../widget/customtextfield.dart';
 import '../../../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
+import '../../../../model/flightcheck/damagedetailmodel.dart';
+
 class Damageuipart2 extends StatefulWidget {
 
+  DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  Damageuipart2({super.key, required this.preclickCallback, required this.nextclickCallback});
+  Damageuipart2({super.key, required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
 
   @override
   State<Damageuipart2> createState() => _Damageuipart2State();
@@ -31,13 +34,13 @@ class Damageuipart2 extends StatefulWidget {
 class _Damageuipart2State extends State<Damageuipart2> {
 
 
-  List<String> materialList = ["Cloth", "Cardboard", "Corrugated", "Metal", "Styrofoam", "Wooden"];
+  List<ReferenceData9AList> materialList = [];
   List<String> selectedMaterialList = [];
 
-  List<String> typeList = ["Box", "Barrel", "Can", "Crate", "Pouch", "Stack"];
+  List<ReferenceData9BList> typeList = [];
   List<String> selectedTypeList = [];
 
-  List<String> markLableList = ["Content Indicated", "Fragile", "Handle With Care", "Keep In Stack", "Keep Dry", "None"];
+  List<ReferenceData11List> markLableList = [];
   List<String> selectedMarkLableList = [];
 
 
@@ -46,6 +49,18 @@ class _Damageuipart2State extends State<Damageuipart2> {
   FocusNode nopFocusNode = FocusNode();
   FocusNode weightFocusNode = FocusNode();
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    
+    materialList = List.from(widget.damageDetailsModel!.referenceData9AList!);
+    typeList = List.from(widget.damageDetailsModel!.referenceData9BList!);
+    markLableList = List.from(widget.damageDetailsModel!.referenceData11List!);
+  }
+  
+  
+  
   @override
   Widget build(BuildContext context) {
 
@@ -114,17 +129,20 @@ class _Damageuipart2State extends State<Damageuipart2> {
                             text: "C) PACKING DETAILS",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
 
-                        SizedBox(height: SizeConfig.blockSizeVertical * 0.5,),
+                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
                         CustomeText(
                             text: "9) Container",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w500,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -132,27 +150,45 @@ class _Damageuipart2State extends State<Damageuipart2> {
                             CustomeText(
                                 text: "a) Material",
                                 fontColor: MyColor.textColorGrey3,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                fontWeight: FontWeight.w500,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                fontWeight: FontWeight.w600,
                                 textAlign: TextAlign.start),
+
                             ListView.builder(
                               itemCount: materialList.length,
                               shrinkWrap: true,
                               physics: const NeverScrollableScrollPhysics(),
                               itemBuilder: (context, index) {
-                                String material = materialList[index];
+                                ReferenceData9AList material = materialList[index];
+
+                                Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Flexible(child: CustomeText(text: material, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                        Transform.scale(
-                                          scale: 0.8,
-                                          child: Switch(
-                                            value: selectedMaterialList.contains("${material}~"),
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Expanded(
+                                            child: Row(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                                  backgroundColor: backgroundColor,
+                                                  child: CustomeText(text: "${material.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                ),
+                                                SizedBox(
+                                                  width: 15,
+                                                ),
+                                                Flexible(child: CustomeText(text: material.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(width: 2),
+                                          Switch(
+                                            value: selectedMaterialList.contains("${material.referenceDataIdentifier}~"),
                                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                             activeColor: MyColor.primaryColorblue,
                                             inactiveThumbColor: MyColor.thumbColor,
@@ -161,15 +197,15 @@ class _Damageuipart2State extends State<Damageuipart2> {
                                             onChanged: (value) {
                                               setState(() {
                                                 if (value) {
-                                                  selectedMaterialList.add("${material}~");
+                                                  selectedMaterialList.add("${material.referenceDataIdentifier}~");
                                                 } else {
-                                                  selectedMaterialList.remove("${material}~");
+                                                  selectedMaterialList.remove("${material.referenceDataIdentifier}~");
                                                 }
                                               });
                                             },
-                                          ),
-                                        )
-                                      ],
+                                          )
+                                        ],
+                                      ),
                                     ),
                                     CustomDivider(
                                       space: 0,
@@ -186,6 +222,7 @@ class _Damageuipart2State extends State<Damageuipart2> {
                     ),
                   ),
                   SizedBox(height: SizeConfig.blockSizeVertical,),
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
@@ -205,81 +242,86 @@ class _Damageuipart2State extends State<Damageuipart2> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomeText(
+                                text: "b) Type",
+                                fontColor: MyColor.textColorGrey3,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                fontWeight: FontWeight.w600,
+                                textAlign: TextAlign.start),
 
+                            ListView.builder(
+                              itemCount: typeList.length,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                ReferenceData9BList type = typeList[index];
 
+                                Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomeText(
-                                  text: "b) Type",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w500,
-                                  textAlign: TextAlign.start),
-                              ListView.builder(
-                                itemCount: typeList.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  String type = typeList[index];
-
-
-
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                      child: Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Flexible(child: CustomeText(text: type, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                          Transform.scale(
-                                            scale: 0.8,
-                                            child: Switch(
-                                              value: selectedTypeList.contains("${type}~"),
-                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              activeColor: MyColor.primaryColorblue,
-                                              inactiveThumbColor: MyColor.thumbColor,
-                                              inactiveTrackColor: MyColor.textColorGrey2,
-                                              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  if (value) {
-                                                    selectedTypeList.add("${type}~");
-                                                  } else {
-                                                    selectedTypeList.remove("${type}~");
-                                                  }
-                                                });
-                                              },
+                                          Expanded(
+                                            child: Row(
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                                  backgroundColor: backgroundColor,
+                                                  child: CustomeText(text: "${type.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                ),
+                                                SizedBox(
+                                                  width: 15,
+                                                ),
+                                                Flexible(child: CustomeText(text: type.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                              ],
                                             ),
+                                          ),
+                                          SizedBox(width: 2),
+                                          Switch(
+                                            value: selectedTypeList.contains("${type.referenceDataIdentifier}~"),
+                                            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                            activeColor: MyColor.primaryColorblue,
+                                            inactiveThumbColor: MyColor.thumbColor,
+                                            inactiveTrackColor: MyColor.textColorGrey2,
+                                            trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                            onChanged: (value) {
+                                              setState(() {
+                                                if (value) {
+                                                  selectedTypeList.add("${type.referenceDataIdentifier}~");
+                                                } else {
+                                                  selectedTypeList.remove("${type.referenceDataIdentifier}~");
+                                                }
+                                              });
+                                            },
                                           )
                                         ],
                                       ),
-                                      CustomDivider(
-                                        space: 0,
-                                        color: Colors.black,
-                                        hascolor: true,
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
+                                    ),
+                                    CustomDivider(
+                                      space: 0,
+                                      color: Colors.black,
+                                      hascolor: true,
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ],
                         ),
-
-
-
                       ],
                     ),
                   ),
+
                   SizedBox(height: SizeConfig.blockSizeVertical,),
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
@@ -303,128 +345,78 @@ class _Damageuipart2State extends State<Damageuipart2> {
                         CustomeText(
                             text: "10) Mark & Lable",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w500,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
-                        SizedBox(height: SizeConfig.blockSizeVertical,),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: ListView.builder(
-                            itemCount: markLableList.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              String markLable = markLableList[index];
+                        ListView.builder(
+                          itemCount: markLableList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            ReferenceData11List markLable = markLableList[index];
 
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                            Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Flexible(child: CustomeText(text: markLable, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                      Transform.scale(
-                                        scale: 0.8,
-                                        child: Switch(
-                                          value: selectedMarkLableList.contains("${markLable}~"),
-                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                          activeColor: MyColor.primaryColorblue,
-                                          inactiveThumbColor: MyColor.thumbColor,
-                                          inactiveTrackColor: MyColor.textColorGrey2,
-                                          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              if (value) {
-                                                selectedMarkLableList.add("${markLable}~");
-                                              } else {
-                                                selectedMarkLableList.remove("${markLable}~");
-                                              }
-                                            });
-                                          },
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                              backgroundColor: backgroundColor,
+                                              child: CustomeText(text: "${markLable.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                            ),
+                                            SizedBox(
+                                              width: 15,
+                                            ),
+                                            Flexible(child: CustomeText(text: markLable.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                          ],
                                         ),
+                                      ),
+                                      SizedBox(width: 2),
+                                      Switch(
+                                        value: selectedMarkLableList.contains("${markLable.referenceDataIdentifier}~"),
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        activeColor: MyColor.primaryColorblue,
+                                        inactiveThumbColor: MyColor.thumbColor,
+                                        inactiveTrackColor: MyColor.textColorGrey2,
+                                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value) {
+                                              selectedMarkLableList.add("${markLable.referenceDataIdentifier}~");
+                                            } else {
+                                              selectedMarkLableList.remove("${markLable.referenceDataIdentifier}~");
+                                            }
+                                          });
+                                        },
                                       )
                                     ],
                                   ),
-                                  CustomDivider(
-                                    space: 0,
-                                    color: Colors.black,
-                                    hascolor: true,
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        )
-
-                        /*Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: GridView.builder(
-                            itemCount: markLableList.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // Number of columns
-                              crossAxisSpacing: 10, // Spacing between columns
-                              mainAxisSpacing: 0, // Spacing between rows
-                              childAspectRatio: 4, // Adjust based on your desired width/height ratio
-                            ),
-                            itemBuilder: (context, index) {
-                              String markLable = markLableList[index];
-
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: CustomeText(
-                                      text: markLable,
-                                      fontColor: MyColor.textColorGrey2,
-                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                      fontWeight: FontWeight.w500,
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  ),
-                                  Transform.scale(
-                                    scale: 0.8,
-                                    child: Switch(
-                                      value: selectedMarkLableList.contains("${markLable}~"),
-                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      activeColor: MyColor.primaryColorblue,
-                                      inactiveThumbColor: MyColor.thumbColor,
-                                      inactiveTrackColor: MyColor.textColorGrey2,
-                                      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            selectedMarkLableList.add("${markLable}~");
-                                          } else {
-                                            selectedMarkLableList.remove("${markLable}~");
-                                          }
-                                        });
-                                      },
-                                    ),
-                                  )
-                                ],
-                              );
-                            },
-                          ),
-                        )*/
-
-
-
-
-
+                                ),
+                                CustomDivider(
+                                  space: 0,
+                                  color: Colors.black,
+                                  hascolor: true,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
+
+
 
 
 

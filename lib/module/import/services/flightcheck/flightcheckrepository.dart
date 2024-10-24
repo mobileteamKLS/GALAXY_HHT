@@ -12,6 +12,7 @@ import '../../model/flightcheck/airportcitymodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/bdprioritymodel.dart';
 import '../../model/flightcheck/breakdownendmodel.dart';
+import '../../model/flightcheck/damagedetailmodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
@@ -786,6 +787,48 @@ class FlightCheckRepository{
     }
   }
 
+  Future<DamageDetailsModel> getDamageDetails(int flightSeqNo, String AWBId, String SHIPId, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo" : flightSeqNo,
+        "AWBId" : AWBId,
+        "SHIPId": SHIPId,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('checkAirportCity: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.getDamageDetailsApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        DamageDetailsModel damageDetailsModel = DamageDetailsModel.fromJson(response.data);
+        return damageDetailsModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 
 }

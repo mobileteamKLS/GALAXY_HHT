@@ -216,6 +216,18 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
+  Future<void> getDamageDetails(int flightSeqNo, String AWBId, String SHIPId, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final damageDetailsModel = await flightCheckRepository.getDamageDetails(flightSeqNo,AWBId, SHIPId, userId, companyCode, menuId);
+
+      emit(GetDamageDetailSuccessState(damageDetailsModel));
+    } catch (e) {
+      emit(GetDamageDetailFailureState(e.toString()));
+    }
+  }
+
+
 
   void resetState() {
     emit(MainInitialState());

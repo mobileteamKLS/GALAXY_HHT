@@ -18,11 +18,15 @@ import '../../../../../../widget/customtextfield.dart';
 import '../../../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
+import '../../../../model/flightcheck/damagedetailmodel.dart';
+
 class Damageuipart3 extends StatefulWidget {
 
+  DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  Damageuipart3({super.key, required this.preclickCallback, required this.nextclickCallback});
+
+  Damageuipart3({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
   State<Damageuipart3> createState() => _Damageuipart2State();
@@ -30,37 +34,20 @@ class Damageuipart3 extends StatefulWidget {
 
 class _Damageuipart2State extends State<Damageuipart3> {
 
-
-
-
-  List<String> outerPackingList = [
-    "BALE",
-    "Bag,handbag",
-    "BundlE",
-    "Drum",
-    "FIBREBOARD",
-    "Wooden/Metal Barrel",
-    "Wooden Crate",
-    "Hoopiron",
-    "Cardboard Carton",
-    "Sacket",
-    "Metal Box",
-    "Others",
-    "Pouch",
-    "Roll",
-    "Sack, Cloth",
-    "Sack, Paper",
-    "Suitcase",
-    "Unpacked",
-    "Wooden Box"
-  ];
+  List<ReferenceData10List> outerPackingList = [];
   List<String> selectedOuterPackingList = [];
 
+  bool _showFullList = false;
 
-  TextEditingController nopController = TextEditingController();
-  TextEditingController weightController = TextEditingController();
-  FocusNode nopFocusNode = FocusNode();
-  FocusNode weightFocusNode = FocusNode();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    outerPackingList = List.from(widget.damageDetailsModel!.referenceData10List!);
+
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +93,7 @@ class _Damageuipart2State extends State<Damageuipart3> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
@@ -129,66 +117,104 @@ class _Damageuipart2State extends State<Damageuipart3> {
                         CustomeText(
                             text: "11) Outer Packing",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w500,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
 
-                        SizedBox(height: SizeConfig.blockSizeVertical,),
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: ListView.builder(
-                            itemCount: outerPackingList.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemBuilder: (context, index) {
-                              String outerPacking = outerPackingList[index];
+                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
+                        ListView.builder(
+                          itemCount: _showFullList ? outerPackingList.length : (outerPackingList.length > 6 ? 6 : outerPackingList.length),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            ReferenceData10List outerPacking = outerPackingList[index];
+
+                            Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                  child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      Flexible(child: CustomeText(text: outerPacking, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                      Transform.scale(
-                                        scale: 0.8,
-                                        child: Switch(
-                                          value: selectedOuterPackingList.contains("${outerPacking}~"),
-                                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                          activeColor: MyColor.primaryColorblue,
-                                          inactiveThumbColor: MyColor.thumbColor,
-                                          inactiveTrackColor: MyColor.textColorGrey2,
-                                          trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                          onChanged: (value) {
-                                            setState(() {
-                                              if (value) {
-                                                selectedOuterPackingList.add("${outerPacking}~");
-                                              } else {
-                                                selectedOuterPackingList.remove("${outerPacking}~");
-                                              }
-                                            });
-                                          },
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                              backgroundColor: backgroundColor,
+                                              child: CustomeText(text: "${outerPacking.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                            ),
+                                            SizedBox(
+                                              width: 15,
+                                            ),
+                                            Flexible(child: CustomeText(text: outerPacking.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                          ],
                                         ),
+                                      ),
+                                      SizedBox(width: 2),
+                                      Switch(
+                                        value: selectedOuterPackingList.contains("${outerPacking.referenceDataIdentifier}~"),
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        activeColor: MyColor.primaryColorblue,
+                                        inactiveThumbColor: MyColor.thumbColor,
+                                        inactiveTrackColor: MyColor.textColorGrey2,
+                                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value) {
+                                              selectedOuterPackingList.add("${outerPacking.referenceDataIdentifier}~");
+                                            } else {
+                                              selectedOuterPackingList.remove("${outerPacking.referenceDataIdentifier}~");
+                                            }
+                                          });
+                                        },
                                       )
                                     ],
                                   ),
-                                  CustomDivider(
-                                    space: 0,
-                                    color: Colors.black,
-                                    hascolor: true,
+                                ),
+                                CustomDivider(
+                                  space: 0,
+                                  color: Colors.black,
+                                  hascolor: true,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
+                        if (outerPackingList.length > 6) // Only show the button if the list has more than 4 items
+                          InkWell(
+                            onTap: () {
+                              setState(() {
+                                _showFullList = !_showFullList; // Toggle between showing full list and limited list
+                              });
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomeText(
+                                    text: _showFullList ? "${lableModel.showLess}" : "${lableModel.showMore}", // Change text based on state
+                                    fontColor: MyColor.primaryColorblue,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w500, textAlign: TextAlign.center,
                                   ),
                                 ],
-                              );
-                            },
+                              ),
+                            ),
                           ),
-                        )
+
                       ],
                     ),
                   ),
+
                 ],
               ),
             ),

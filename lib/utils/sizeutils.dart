@@ -31,6 +31,7 @@ class SizeUtils{
   static double TEXTSIZE_1_35 = 1.35;
   static double TEXTSIZE_1_4 = 1.4;
   static double TEXTSIZE_1_5 = 1.5;
+  static double TEXTSIZE_1_5_5 = 1.55;
   static double TEXTSIZE_1_6 = 1.6;
   static double TEXTSIZE_1_7 = 1.7;
   static double TEXTSIZE_1_8 = 1.8;

@@ -9,6 +9,7 @@ import 'package:galaxy/module/import/model/flightcheck/maildetailmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/recordatamodel.dart';
 
 import '../../../model/flightcheck/awblistmodel.dart';
+import '../../../model/flightcheck/damagedetailmodel.dart';
 import '../../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../../model/flightcheck/mailtypemodel.dart';
@@ -216,4 +217,14 @@ class BreakDownEndSaveSuccessState extends FlightCheckState {
 class BreakDownEndFailureState extends FlightCheckState {
   final String error;
   BreakDownEndFailureState(this.error);
+}
+
+class GetDamageDetailSuccessState extends FlightCheckState {
+  final DamageDetailsModel damageDetailsModel;
+  GetDamageDetailSuccessState(this.damageDetailsModel);
+}
+
+class GetDamageDetailFailureState extends FlightCheckState {
+  final String error;
+  GetDamageDetailFailureState(this.error);
 }

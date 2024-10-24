@@ -786,6 +786,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                               needOutlineBorder: true,
                                               labelText: "${lableModel.description}",
                                               readOnly: false,
+                                              maxLength: 30,
                                               onChanged: (value) {},
                                               fillColor:  Colors.grey.shade100,
                                               textInputType: TextInputType.text,

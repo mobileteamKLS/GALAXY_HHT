@@ -1,12 +1,17 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/damageuipart1.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/custometext.dart';
+import 'package:vibration/vibration.dart';
 
 
 import '../../../../../core/images.dart';
@@ -29,6 +34,8 @@ import '../../../../onboarding/sizeconfig.dart';
 
 import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
+import '../../../model/flightcheck/damagedetailmodel.dart';
+import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
 import 'damageui/damageuipart2.dart';
 import 'damageui/damageuipart3.dart';
 import 'damageui/damageuipart4.dart';
@@ -45,7 +52,10 @@ class DamageShimentPage extends StatefulWidget {
 
   FlightCheckInAWBBDList aWBItem;
   String mainMenuName;
-  DamageShimentPage({super.key, required this.aWBItem, required this.mainMenuName});
+  FlightDetailSummary flightDetailSummary;
+  int menuId;
+
+  DamageShimentPage({super.key, required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.menuId});
 
   @override
   State<DamageShimentPage> createState() => _DamageShimentPageState();
@@ -61,6 +71,8 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
+  DamageDetailsModel? damageDetailsModel;
+
 
   @override
   void initState() {
@@ -80,6 +92,9 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         _user = user;
         _splashDefaultData = splashDefaultData;
       });
+
+      context.read<FlightCheckCubit>().getDamageDetails(widget.flightDetailSummary.flightSeqNo!, "${widget.aWBItem.iMPAWBRowId!}", "${widget.aWBItem.iMPShipRowId!}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
 
       inactivityTimerManager = InactivityTimerManager(
         context: context,
@@ -131,19 +146,23 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
 
   List<Widget> _listViews() {
     return [
-      Damageuipart1(aWBItem: widget.aWBItem,
-        preclickCallback: () {
-          _currentPage > 0 ? _onPreviousPressed() : null;
 
+      (damageDetailsModel != null) ? Damageuipart1(
+        damageDetailsModel: damageDetailsModel!,
+        preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage > 0 ? _onPreviousPressed() : null;
       },
       nextclickCallback: () {
+        _resumeTimerOnInteraction(); // Reset the timer on scroll event
         _currentPage < _listViews().length - 1
             ? _onNextPressed()
             : null;
+        },
+      ) : Container(),
 
-      },
-      ),
-      Damageuipart2(
+      (damageDetailsModel != null) ? Damageuipart2(
+        damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
           _currentPage > 0 ? _onPreviousPressed() : null;
 
@@ -154,113 +173,128 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               : null;
 
         },
-      ),
-      Damageuipart3(
+      ) : Container(),
+
+      (damageDetailsModel != null) ? Damageuipart3(
+        damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
 
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
 
         },
-      ),
-      Damageuipart4(
+      ) : Container(),
+
+      (damageDetailsModel != null) ? Damageuipart4(
+        damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
 
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
-      ),
+      ) : Container(),
+
       Damageuipart5(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
+
       Damageuipart6(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
+
       Damageuipart71(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
+
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
+
       Damageuipart7(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
+
       Damageuipart81(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
+
       Damageuipart8(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
+
       Damageuipart9(
         preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
-
         },
         nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage < _listViews().length - 1
               ? _onNextPressed()
               : null;
-
         },
       ),
     ];
@@ -319,45 +353,80 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
                 children: [
 
                   MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
-                  Positioned(
-                      top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
-                      bottom: 0,
-                      right: 0,
-                      left: 0,
-                      child: NotificationListener<ScrollNotification>(
-                        onNotification: (ScrollNotification scroll) {
-                          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-                          return true;
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: MyColor.bgColorGrey,
-                              borderRadius: BorderRadius.only(
-                                  topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
-                                  topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
-                          child: Directionality(
-                            textDirection: textDirection,
-                            child: Column(
-                              children: [
-                                Expanded(
-                                  child: Container(
-                                    padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
-                                    child: PageView(
-                                      physics: NeverScrollableScrollPhysics(),
-                                      controller: _pageController,
-                                      children: _listViews(),
-                                      onPageChanged: (int page) {
-                                        setState(() {
-                                          _currentPage = page;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ),
 
-                              ],
-                            ),),),
-                      )),
+                  BlocConsumer<FlightCheckCubit, FlightCheckState>(
+                    listener: (context, state) {
+                      if(state is MainLoadingState){
+                        DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
+                      }
+                      else if(state is GetDamageDetailSuccessState){
+                        DialogUtils.hideLoadingDialog(context);
+                        if(state.damageDetailsModel.status == "E"){
+                          Vibration.vibrate(duration: 500);
+                          SnackbarUtil.showSnackbar(context, state.damageDetailsModel.statusMessage!, MyColor.textColor, icon: FontAwesomeIcons.times);
+                        }else{
+                          damageDetailsModel = state.damageDetailsModel;
+                          setState(() {
+
+                          });
+                        }
+
+                      }else if(state is GetDamageDetailFailureState){
+
+                      }
+                    },
+                    builder: (context, state) {
+                      if(state is GetDamageDetailSuccessState){
+                        return Positioned(
+                            top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                            bottom: 0,
+                            right: 0,
+                            left: 0,
+                            child: NotificationListener<ScrollNotification>(
+                              onNotification: (ScrollNotification scroll) {
+                                _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                                return true;
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    color: MyColor.bgColorGrey,
+                                    borderRadius: BorderRadius.only(
+                                        topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                                        topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                                child: Directionality(
+                                  textDirection: textDirection,
+                                  child: Column(
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
+                                          child: PageView(
+                                            physics: NeverScrollableScrollPhysics(),
+                                            controller: _pageController,
+                                            children: _listViews(),
+                                            onPageChanged: (int page) {
+                                              setState(() {
+                                                _currentPage = page;
+                                              });
+                                            },
+                                          ),
+                                        ),
+                                      ),
+
+                                    ],
+                                  ),),),
+                            ));
+                      }
+
+                      return Container();
+                    },
+                  )
+
+
+
+
+
+                  ,
 
                 ],
               ),

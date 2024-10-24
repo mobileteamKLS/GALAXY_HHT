@@ -33,7 +33,7 @@ class _Damageuipart5State extends State<Damageuipart5> {
   List<TextEditingController> controllers = [];
   List<FocusNode> focusNodes = [];
 
-  String selectedOption = "No";
+
   List<String> contentList = [
     "Container(AAC)",
     "Container(AML)",
@@ -133,125 +133,9 @@ class _Damageuipart5State extends State<Damageuipart5> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-
-                    decoration: BoxDecoration(
-                      color: MyColor.colorWhite,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: MyColor.colorBlack.withOpacity(0.09),
-                          spreadRadius: 2,
-                          blurRadius: 15,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        CustomeText(
-                            text: "13) Is Packing Sufficient?",
-                            fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w500,
-                            textAlign: TextAlign.start),
-                        
-                        Row(
-                          children: [
-                            Radio(
-
-                              value: "Yes",
-                              groupValue: selectedOption,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedOption = value!;
-                                });
-                              },
-                            ),
-                            const Text("Yes"),
-                            Radio(
-                              value: "No",
-                              groupValue: selectedOption,
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedOption = value!;// Clear remark if "No" is selected
-                                });
-                              },
-                            ),
-                            const Text("No"),
-                            SizedBox(width: 5,),
-                            CustomeText(text: "Explain in remark box(#21)", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w500, textAlign: TextAlign.start)
-                          ],
-                        ),
-
-                        /*  Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: GridView.builder(
-                            itemCount: innerPackingList.length,
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, // Number of columns
-                              crossAxisSpacing: 10, // Spacing between columns
-                              mainAxisSpacing: 0, // Spacing between rows
-                              childAspectRatio: 4, // Adjust based on your desired width/height ratio
-                            ),
-                            itemBuilder: (context, index) {
-                              String innerPacking = innerPackingList[index];
-
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Flexible(
-                                    child: CustomeText(
-                                      text: innerPacking,
-                                      fontColor: MyColor.colorBlack,
-                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                      fontWeight: FontWeight.w500,
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  ),
-                                  Transform.scale(
-                                    scale: 0.8,
-                                    child: Switch(
-                                      value: selectedInnerPackList.contains("${innerPacking}~"),
-                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                      activeColor: MyColor.primaryColorblue,
-                                      inactiveThumbColor: MyColor.thumbColor,
-                                      inactiveTrackColor: MyColor.textColorGrey2,
-                                      trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          if (value) {
-                                            selectedInnerPackList.add("${innerPacking}~");
-                                          } else {
-                                            selectedInnerPackList.remove("${innerPacking}~");
-                                          }
-                                        });
-                                      },
-                                    ),
-                                  )
-                                ],
-                              );
-                            },
-                          ),
-                        )*/
 
 
 
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: SizeConfig.blockSizeVertical,),
 
                   Container(
                     width: double.infinity,
@@ -281,72 +165,6 @@ class _Damageuipart5State extends State<Damageuipart5> {
                             textAlign: TextAlign.start),
 
                         SizedBox(height: SizeConfig.blockSizeVertical,),
-                       /* Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomeText(
-                                  text: "14.a) Content",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                  fontWeight: FontWeight.w500,
-                                  textAlign: TextAlign.start),
-
-                              ListView.builder(
-                                itemCount: innerPackingList.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  String innerPack = innerPackingList[index];
-
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Flexible(child:
-                                          CustomeText(
-                                              text: innerPack, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                          Transform.scale(
-                                            scale: 0.8,
-                                            child: Switch(
-                                              value: selectedInnerPackList.contains("${innerPack}~"),
-                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                              activeColor: MyColor.primaryColorblue,
-                                              inactiveThumbColor: MyColor.thumbColor,
-                                              inactiveTrackColor: MyColor.textColorGrey2,
-                                              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  if (value) {
-                                                    selectedInnerPackList.add("${innerPack}~");
-                                                  } else {
-                                                    selectedInnerPackList.remove("${innerPack}~");
-                                                  }
-                                                });
-                                              },
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                      CustomDivider(
-                                        space: 0,
-                                        color: Colors.black,
-                                        hascolor: true,
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        ),*/
 
                         Container(
                           padding: EdgeInsets.all(5),
