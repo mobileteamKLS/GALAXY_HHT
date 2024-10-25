@@ -574,33 +574,50 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                     },
                                                                     onDoubleTap: () async {
 
-                                                                      if(widget.bDEndStatus == "N"){
-                                                                        if(widget.awbRemarkRequires == "Y"){
-                                                                          if(aWBItem.remark == "Y"){
-                                                                            // bool? value = await openDialog(context, aWBItem, widget.mainMenuName);
+                                                                      if(widget.flightDetailSummary.flightStatus == "A"){
+                                                                        if(widget.bDEndStatus == "N"){
+                                                                          if(widget.awbRemarkRequires == "Y"){
+                                                                            if(aWBItem.remark == "Y"){
+                                                                              // bool? value = await openDialog(context, aWBItem, widget.mainMenuName);
 
-                                                                            List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                              List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
 
-                                                                            var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
 
-                                                                            if(value == "true"){
+                                                                              if(value == "true"){
 
+                                                                                gotoCheckAWBScreen(aWBItem);
+
+                                                                              }else if(value == "Done"){
+                                                                                _resumeTimerOnInteraction();
+                                                                              }
+                                                                            }else{
                                                                               gotoCheckAWBScreen(aWBItem);
-
-                                                                            }else if(value == "Done"){
-                                                                              _resumeTimerOnInteraction();
                                                                             }
-                                                                          }else{
+                                                                          }
+                                                                          else{
                                                                             gotoCheckAWBScreen(aWBItem);
                                                                           }
                                                                         }
                                                                         else{
-                                                                          gotoCheckAWBScreen(aWBItem);
+                                                                          if(widget.uldNo == "BULK"){
+                                                                            SnackbarUtil.showSnackbar(context, "Breakdown completed for BULK.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                            Vibration.vibrate(duration: 500);
+                                                                          }else{
+                                                                            SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                            Vibration.vibrate(duration: 500);
+                                                                          }
+
                                                                         }
-                                                                      }else{
-                                                                        SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                      }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                                        SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        Vibration.vibrate(duration: 500);
+                                                                      }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                                        SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);
                                                                       }
+
+
 
 
 
@@ -1134,28 +1151,45 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               gotoCheckAWBScreen(aWBItem);
                                                                                             }*/
 
-                                                                                            if(widget.bDEndStatus == "N"){
-                                                                                              if(widget.awbRemarkRequires == "Y"){
-                                                                                                if(aWBItem.remark == "Y"){
+                                                                                            if(widget.flightDetailSummary.flightStatus == "A"){
+                                                                                              if(widget.bDEndStatus == "N"){
+                                                                                                if(widget.awbRemarkRequires == "Y"){
+                                                                                                  if(aWBItem.remark == "Y"){
 
-                                                                                                  List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
-                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
-                                                                                                  if(value == "true"){
+                                                                                                    List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
+                                                                                                    if(value == "true"){
+                                                                                                      gotoCheckAWBScreen(aWBItem);
+                                                                                                    }else if(value == "Done"){
+                                                                                                      _resumeTimerOnInteraction();
+                                                                                                    }
+                                                                                                  }else{
                                                                                                     gotoCheckAWBScreen(aWBItem);
-                                                                                                  }else if(value == "Done"){
-                                                                                                    _resumeTimerOnInteraction();
                                                                                                   }
-                                                                                                }else{
+                                                                                                }
+                                                                                                else{
                                                                                                   gotoCheckAWBScreen(aWBItem);
                                                                                                 }
                                                                                               }
                                                                                               else{
-                                                                                                gotoCheckAWBScreen(aWBItem);
+                                                                                                if(widget.uldNo == "BULK"){
+                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown completed for BULK.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                  Vibration.vibrate(duration: 500);
+                                                                                                }else{
+                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                  Vibration.vibrate(duration: 500);
+                                                                                                }
                                                                                               }
-                                                                                            }else{
-                                                                                              SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                            }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                                                              SnackbarUtil.showSnackbar(context, "Flight is finalized", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                              Vibration.vibrate(duration: 500);
+                                                                                            }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                                                              SnackbarUtil.showSnackbar(context, "Flight is not arrived", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                               Vibration.vibrate(duration: 500);
                                                                                             }
+
+
+
 
                                                                                           },
                                                                                           child: Container(

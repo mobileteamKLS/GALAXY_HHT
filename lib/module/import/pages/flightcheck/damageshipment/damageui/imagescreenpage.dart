@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:galaxy/module/import/model/flightcheck/awblistmodel.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -13,7 +12,6 @@ import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
-import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/dialogutils.dart';
 import '../../../../../../utils/sizeutils.dart';
@@ -27,17 +25,19 @@ import '../../../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import 'package:image/image.dart' as img;
 
-class Damageuipart9 extends StatefulWidget {
+import '../../../../model/flightcheck/damagedetailmodel.dart';
 
+class ImageScreenPage extends StatefulWidget {
+  DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  Damageuipart9({super.key, required this.preclickCallback, required this.nextclickCallback});
+  ImageScreenPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
-  State<Damageuipart9> createState() => _Damageuipart9State();
+  State<ImageScreenPage> createState() => _ImageScreenPageState();
 }
 
-class _Damageuipart9State extends State<Damageuipart9> {
+class _ImageScreenPageState extends State<ImageScreenPage> {
 
   List<String> selectImageBase64List = [];
   String images = "";
@@ -52,18 +52,14 @@ class _Damageuipart9State extends State<Damageuipart9> {
   FocusNode securityFocusNode = FocusNode();
 
 
-  List<String> dispositionList = [
-    "Only The Surface Is Damaged",
-    "Delivered Against Clean Receipt",
-    "Delivered Against Remarked Receipt",
-    "Damaged,Weight Missing,Utilization Of Average Commissioner Is Recommended",
-    "Damaged,Accessible,Inventory Check Suggested At Customs Inspection",
-    "Damaged But Content Not Accessible",
-    "Written / Verbal Claim Receipt"
-  ];
-  List<String> selecteddispositionList = [];
+  TextEditingController wordController = TextEditingController();
 
+  FocusNode wordFocusNode = FocusNode();
 
+  String selectedOption = "Yes";
+
+  List<ReferenceData17List> whetherConditionList = [];
+  List<String> selectedWhetherList = [];
 
 
 
@@ -72,6 +68,8 @@ class _Damageuipart9State extends State<Damageuipart9> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    whetherConditionList = List.from(widget.damageDetailsModel!.referenceData17List!);
 
   }
 
@@ -127,96 +125,6 @@ class _Damageuipart9State extends State<Damageuipart9> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-
-                    decoration: BoxDecoration(
-                      color: MyColor.colorWhite,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: MyColor.colorBlack.withOpacity(0.09),
-                          spreadRadius: 2,
-                          blurRadius: 15,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: MyColor.cardBgColor,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomeText(
-                                  text: "22. Disposition",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                  fontWeight: FontWeight.w500,
-                                  textAlign: TextAlign.start),
-                              ListView.builder(
-                                itemCount: dispositionList.length,
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  String disposition = dispositionList[index];
-
-                                  return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(top: 5, bottom: 5),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(child: CustomeText(text: disposition, fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                            Transform.scale(
-                                              scale: 0.8,
-                                              child: Switch(
-                                                value: selecteddispositionList.contains("${disposition}~"),
-                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                activeColor: MyColor.primaryColorblue,
-                                                inactiveThumbColor: MyColor.thumbColor,
-                                                inactiveTrackColor: MyColor.textColorGrey2,
-                                                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    if (value) {
-                                                      selecteddispositionList.add("${disposition}~");
-                                                    } else {
-                                                      selecteddispositionList.remove("${disposition}~");
-                                                    }
-                                                  });
-                                                },
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      CustomDivider(
-                                        space: 0,
-                                        color: Colors.black,
-                                        hascolor: true,
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: SizeConfig.blockSizeVertical),
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
@@ -238,13 +146,168 @@ class _Damageuipart9State extends State<Damageuipart9> {
                       children: [
 
                         CustomeText(
-                            text: "23) Representative",
+                            text: "22) Any damage remarked in : a) The AWB. b) The Manifest",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w500,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+
+
+
+                        Directionality(
+                          textDirection: uiDirection,
+                          child: CustomTextField(
+                            controller: wordController,
+                            focusNode: wordFocusNode,
+                            onPress: () {},
+                            hasIcon: false,
+                            hastextcolor: true,
+                            animatedLabel: true,
+                            needOutlineBorder: true,
+                            labelText: "Exact Wording",
+                            readOnly: false,
+                            onChanged: (value) {},
+                            fillColor:  Colors.grey.shade100,
+                            textInputType: TextInputType.text,
+                            inputAction: TextInputAction.next,
+                            hintTextcolor: Colors.black45,
+                            verticalPadding: 0,
+                            maxLength: 12,
+                            digitsOnly: false,
+                            doubleDigitOnly: false,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "Please fill out this field";
+                              } else {
+                                return null;
+                              }
+                            },
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+
+
+                  SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+
+                    decoration: BoxDecoration(
+                      color: MyColor.colorWhite,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: MyColor.colorBlack.withOpacity(0.09),
+                          spreadRadius: 2,
+                          blurRadius: 15,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+
+                        CustomeText(
+                            text: "23) Weather Condition ?",
+                            fontColor: MyColor.textColorGrey3,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
 
-                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+
+                        SizedBox(height: SizeConfig.blockSizeVertical,),
+                        GridView.builder(
+                          itemCount: whetherConditionList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 3, // Number of columns
+                            crossAxisSpacing: 5, // Spacing between columns
+                            mainAxisSpacing: 0, // Spacing between rows
+                            childAspectRatio: 3, // Adjust based on your desired width/height ratio
+                          ),
+                          itemBuilder: (context, index) {
+                            ReferenceData17List whetherCondition = whetherConditionList[index];
+
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: CustomeText(
+                                    text: whetherCondition.referenceDescription!,
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5,
+                                    fontWeight: FontWeight.w500,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                                Switch(
+                                  value: selectedWhetherList.contains("${whetherCondition.referenceDataIdentifier}~"),
+                                  materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  activeColor: MyColor.primaryColorblue,
+                                  inactiveThumbColor: MyColor.thumbColor,
+                                  inactiveTrackColor: MyColor.textColorGrey2,
+                                  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      if (value) {
+                                        selectedWhetherList.add("${whetherCondition.referenceDataIdentifier}~");
+                                      } else {
+                                        selectedWhetherList.remove("${whetherCondition.referenceDataIdentifier}~");
+                                      }
+                                    });
+                                  },
+                                )
+                              ],
+                            );
+                          },
+                        )
+
+
+
+
+
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: SizeConfig.blockSizeVertical,),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(10),
+
+                    decoration: BoxDecoration(
+                      color: MyColor.colorWhite,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: MyColor.colorBlack.withOpacity(0.09),
+                          spreadRadius: 2,
+                          blurRadius: 15,
+                          offset: Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+
+                        CustomeText(
+                            text: "24) Representative",
+                            fontColor: MyColor.textColorGrey3,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+
 
                         Directionality(
                           textDirection: uiDirection,

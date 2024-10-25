@@ -676,7 +676,7 @@ class DialogUtils {
                         },
                       ),
                     ) ,
-                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                    message.contains('BULK') ? SizedBox() : SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                     Expanded(
                       flex: 1,
                       child: RoundedButton(

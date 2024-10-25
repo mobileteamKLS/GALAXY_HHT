@@ -22,18 +22,18 @@ import 'dart:ui' as ui;
 
 import '../../../../model/flightcheck/damagedetailmodel.dart';
 
-class Damageuipart1 extends StatefulWidget {
+class DamageAwbDetailPage extends StatefulWidget {
 
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  Damageuipart1({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+  DamageAwbDetailPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
-  State<Damageuipart1> createState() => _Damageuipart1State();
+  State<DamageAwbDetailPage> createState() => _DamageAwbDetailPageState();
 }
 
-class _Damageuipart1State extends State<Damageuipart1> {
+class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
 
   List<ReferenceDataTypeOfDiscrepancyList> typesOfDiscrepancy = [];
@@ -155,7 +155,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                                       text:  widget.damageDetailsModel!.damageAWBDetail!.origin!,
                                       fontColor: MyColor.textColorGrey3,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w800,
                                       textAlign: TextAlign.start),
                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                   SvgPicture.asset(arrival, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
@@ -164,7 +164,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                                       text:  widget.damageDetailsModel!.damageAWBDetail!.destination!,
                                       fontColor: MyColor.textColorGrey3,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                      fontWeight: FontWeight.w600,
+                                      fontWeight: FontWeight.w800,
                                       textAlign: TextAlign.start),
                                 ],
                               ),
@@ -177,7 +177,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                                     text: "${widget.damageDetailsModel!.damageFlightDetail!.flightNo!}",
                                     fontColor: MyColor.colorBlack,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w800,
                                     textAlign: TextAlign.start,
                                   ),
                                   SizedBox(width: 5),
@@ -214,7 +214,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                                     text: widget.damageDetailsModel!.damageAWBDetail!.origin!,
                                     fontColor: MyColor.colorBlack,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w800,
                                     textAlign: TextAlign.start,
                                   ),
                                 ],
@@ -236,7 +236,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                                     text: widget.damageDetailsModel!.damageAWBDetail!.offLoadPoint!,
                                     fontColor: MyColor.colorBlack,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w800,
                                     textAlign: TextAlign.start,
                                   ),
                                 ],
@@ -254,7 +254,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                               text: "DESC : ",
                               fontColor: MyColor.textColorGrey2,
                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w500,
                               textAlign: TextAlign.start,
                             ),
                             SizedBox(width: 5),
@@ -262,7 +262,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                               text: widget.damageDetailsModel!.damageAWBDetail!.description!,
                               fontColor: MyColor.colorBlack,
                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w800,
                               textAlign: TextAlign.start,
                             ),
                           ],
@@ -363,7 +363,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                         CustomeText(
                             text: "7) Shipment weight Details",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical,),
@@ -381,7 +381,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                                 text: "${widget.damageDetailsModel!.damageAWBDetail!.nPX}/${widget.damageDetailsModel!.damageAWBDetail!.wtExp} kg",
                                 fontColor: MyColor.textColorGrey3,
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.w800,
                                 textAlign: TextAlign.start),
                           ],
                         ),
@@ -508,22 +508,29 @@ class _Damageuipart1State extends State<Damageuipart1> {
                           ],
                         ),
                         SizedBox(height: SizeConfig.blockSizeVertical,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomeText(
-                                text: "c) Difference",
-                                fontColor: MyColor.textColorGrey3,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                fontWeight: FontWeight.w500,
-                                textAlign: TextAlign.start),
-                            CustomeText(
-                                text: "$differenceNpx/${differenceWeight.toStringAsFixed(2)} kg",
-                                fontColor: MyColor.textColorGrey3,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start),
-                          ],
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MyColor.dropdownColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomeText(
+                                  text: "c) Difference",
+                                  fontColor: MyColor.textColorGrey3,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                  fontWeight: FontWeight.w500,
+                                  textAlign: TextAlign.start),
+                              CustomeText(
+                                  text: "$differenceNpx/${differenceWeight.toStringAsFixed(2)} kg",
+                                  fontColor: MyColor.textColorGrey3,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                  fontWeight: FontWeight.w800,
+                                  textAlign: TextAlign.start),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -553,7 +560,7 @@ class _Damageuipart1State extends State<Damageuipart1> {
                             text: "8) Individual Wt. Of Each Damage Pkg./Pcs.",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
 
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
@@ -645,22 +652,30 @@ class _Damageuipart1State extends State<Damageuipart1> {
                         ),
 
                         SizedBox(height: SizeConfig.blockSizeVertical,),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomeText(
-                                text: "c) Difference",
-                                fontColor: MyColor.textColorGrey3,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                fontWeight: FontWeight.w500,
-                                textAlign: TextAlign.start),
-                            CustomeText(
-                                text: "${actuleDifferenceWeight.toStringAsFixed(2)} kg",
-                                fontColor: MyColor.textColorGrey3,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start),
-                          ],
+                        
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: MyColor.dropdownColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomeText(
+                                  text: "c) Difference",
+                                  fontColor: MyColor.textColorGrey3,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                  fontWeight: FontWeight.w500,
+                                  textAlign: TextAlign.start),
+                              CustomeText(
+                                  text: "${actuleDifferenceWeight.toStringAsFixed(2)} kg",
+                                  fontColor: MyColor.textColorGrey3,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                  fontWeight: FontWeight.w800,
+                                  textAlign: TextAlign.start),
+                            ],
+                          ),
                         ),
                       ],
                     ),

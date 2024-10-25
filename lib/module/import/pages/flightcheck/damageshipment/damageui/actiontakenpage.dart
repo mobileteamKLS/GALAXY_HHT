@@ -1,9 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:galaxy/module/import/model/flightcheck/awblistmodel.dart';
-
-import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
@@ -20,35 +16,51 @@ import 'dart:ui' as ui;
 
 import '../../../../model/flightcheck/damagedetailmodel.dart';
 
-class Damageuipart4 extends StatefulWidget {
+class ActionTakenPage extends StatefulWidget {
+
 
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  Damageuipart4({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+  ActionTakenPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
-  State<Damageuipart4> createState() => _Damageuipart4State();
+  State<ActionTakenPage> createState() => _ActionTakenPageState();
 }
 
-class _Damageuipart4State extends State<Damageuipart4> {
+class _ActionTakenPageState extends State<ActionTakenPage> {
+
+
+
+  List<ReferenceData21List> salvageActionList = [];
+  List<String> selectedsalvageActionList = [];
+
+
+  List<ReferenceData22List> dispositionList = [];
+  List<String> selecteddispositionList = [];
 
 
 
 
-  List<ReferenceData12List> innerPackingList = [];
-  List<String> selectedInnerPackList = [];
-  bool _showFullList = false;
-  String selectedOption = "No";
+
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    innerPackingList = List.from(widget.damageDetailsModel!.referenceData12List!);
+    salvageActionList = List.from(widget.damageDetailsModel!.referenceData21List!);
+    dispositionList = List.from(widget.damageDetailsModel!.referenceData22List!);
 
   }
+
+  @override
+  void dispose() {
+    // Dispose of controllers and focus nodes
+    super.dispose();
+  }
+
 
 
   @override
@@ -95,6 +107,7 @@ class _Damageuipart4State extends State<Damageuipart4> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
@@ -116,9 +129,9 @@ class _Damageuipart4State extends State<Damageuipart4> {
                       children: [
 
                         CustomeText(
-                            text: "12) Inner Packing",
+                            text: "E) ACTION TAKEN",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
@@ -126,12 +139,20 @@ class _Damageuipart4State extends State<Damageuipart4> {
 
                         SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
+                        CustomeText(
+                            text: "20) Salvage Action",
+                            fontColor: MyColor.textColorGrey3,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.start),
+                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
+
                         ListView.builder(
-                          itemCount: _showFullList ? innerPackingList.length : (innerPackingList.length > 6 ? 6 : innerPackingList.length),
+                          itemCount: salvageActionList.length,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            ReferenceData12List innerPacking = innerPackingList[index];
+                            ReferenceData21List salvageAction = salvageActionList[index];
 
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
@@ -149,18 +170,18 @@ class _Damageuipart4State extends State<Damageuipart4> {
                                             CircleAvatar(
                                               radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                               backgroundColor: backgroundColor,
-                                              child: CustomeText(text: "${innerPacking.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                              child: CustomeText(text: "${salvageAction.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                             ),
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: innerPacking.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: salvageAction.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selectedInnerPackList.contains("${innerPacking.referenceDataIdentifier}~"),
+                                        value: selectedsalvageActionList.contains("${salvageAction.referenceDataIdentifier}~"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -169,9 +190,9 @@ class _Damageuipart4State extends State<Damageuipart4> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selectedInnerPackList.add("${innerPacking.referenceDataIdentifier}~");
+                                              selectedsalvageActionList.add("${salvageAction.referenceDataIdentifier}~");
                                             } else {
-                                              selectedInnerPackList.remove("${innerPacking.referenceDataIdentifier}~");
+                                              selectedsalvageActionList.remove("${salvageAction.referenceDataIdentifier}~");
                                             }
                                           });
                                         },
@@ -188,34 +209,13 @@ class _Damageuipart4State extends State<Damageuipart4> {
                             );
                           },
                         ),
-
-                        if (innerPackingList.length > 6) // Only show the button if the list has more than 4 items
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                _showFullList = !_showFullList; // Toggle between showing full list and limited list
-                              });
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomeText(
-                                    text: _showFullList ? "${lableModel.showLess}" : "${lableModel.showMore}", // Change text based on state
-                                    fontColor: MyColor.primaryColorblue,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                    fontWeight: FontWeight.w500, textAlign: TextAlign.center,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
                       ],
                     ),
                   ),
-                  SizedBox(height: SizeConfig.blockSizeVertical,),
+
+
+                  SizedBox(height: SizeConfig.blockSizeVertical),
+
                   Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(10),
@@ -237,79 +237,80 @@ class _Damageuipart4State extends State<Damageuipart4> {
                       children: [
 
                         CustomeText(
-                            text: "13) Is Packing Sufficient?",
+                            text: "21) Disposition",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start),
-                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
+                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
+                        ListView.builder(
+                          itemCount: dispositionList.length,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            ReferenceData22List disposition = dispositionList[index];
 
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              // Yes Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedOption = "Yes";
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: selectedOption == "Yes" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
-                                      ),
-                                      border: Border.all(color: MyColor.primaryColorblue), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:8, horizontal: 10),
-                                    child: Center(
-                                      child: CustomeText(text: "YES", fontColor: selectedOption == "Yes" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                      /* Text(
-                                        "Yes",
-                                        style: TextStyle(
-                                          color: selectedOption == "Yes" ? Colors.white : Colors.black, // Selected white text, unselected black
+                            Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Row(
+                                          children: [
+                                            CircleAvatar(
+                                              radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                              backgroundColor: backgroundColor,
+                                              child: CustomeText(text: "${disposition.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                            ),
+                                            SizedBox(
+                                              width: 15,
+                                            ),
+                                            Flexible(child: CustomeText(text: disposition.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                          ],
                                         ),
-                                      ),*/
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // No Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      selectedOption = "No";
-                                    });
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: selectedOption == "No" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
                                       ),
-                                      border: Border.all(color:MyColor.primaryColorblue), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:8, horizontal: 10),
-                                    child: Center(
-                                      child: CustomeText(text: "No Explain in the Remark Box (21)", fontColor: selectedOption == "No" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                    ),
+                                      SizedBox(width: 2),
+                                      Switch(
+                                        value: selecteddispositionList.contains("${disposition.referenceDataIdentifier}~"),
+                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        activeColor: MyColor.primaryColorblue,
+                                        inactiveThumbColor: MyColor.thumbColor,
+                                        inactiveTrackColor: MyColor.textColorGrey2,
+                                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            if (value) {
+                                              selecteddispositionList.add("${disposition.referenceDataIdentifier}~");
+                                            } else {
+                                              selecteddispositionList.remove("${disposition.referenceDataIdentifier}~");
+                                            }
+                                          });
+                                        },
+                                      )
+                                    ],
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        )
+                                CustomDivider(
+                                  space: 0,
+                                  color: Colors.black,
+                                  hascolor: true,
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),
+
+
 
                 ],
               ),

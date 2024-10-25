@@ -1130,11 +1130,17 @@ class _AddMailPageState extends State<AddMailPage> {
     if(barcodeScanResult == "-1"){
     }else{
       // Truncate the result to a maximum of 12 characters
-      String truncatedResult = barcodeScanResult.length > 12
-          ? barcodeScanResult.substring(0, 12)
-          : barcodeScanResult;
+
+      String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+
+      String truncatedResult = sanitizedResult.length > 12
+          ? sanitizedResult.substring(0, 12)
+          : sanitizedResult;
 
       av7NoController.text = truncatedResult;
+      setState(() {
+
+      });
     }
   }
 
@@ -1142,7 +1148,7 @@ class _AddMailPageState extends State<AddMailPage> {
   // validation dialog
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
-        context, "${message}.", widget.lableModel!);
+        context, "${message}", widget.lableModel!);
 
     if (empty == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {

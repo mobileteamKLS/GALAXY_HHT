@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/damageuipart1.dart';
+import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/damageawbdetailpage.dart';
+import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/markandlable.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
@@ -36,16 +37,16 @@ import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/damagedetailmodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
-import 'damageui/damageuipart2.dart';
-import 'damageui/damageuipart3.dart';
-import 'damageui/damageuipart4.dart';
-import 'damageui/damageuipart5.dart';
-import 'damageui/damageuipart6.dart';
-import 'damageui/damageuipart7.dart';
-import 'damageui/damageuipart71.dart';
-import 'damageui/damageuipart8.dart';
-import 'damageui/damageuipart81.dart';
-import 'damageui/damageuipart9.dart';
+import 'damageui/packingdetailspage.dart';
+import 'damageui/outerpackingpage.dart';
+import 'damageui/innerpackingpage.dart';
+import 'damageui/detailsofdamagepage13a.dart';
+import 'damageui/detailsofdamagepage13b.dart';
+import 'damageui/missingitemandremarks.dart';
+import 'damageui/damagediscoverpage.dart';
+import 'damageui/actiontakenpage.dart';
+import 'damageui/damageapparentlypage.dart';
+import 'damageui/imagescreenpage.dart';
 
 
 class DamageShimentPage extends StatefulWidget {
@@ -147,7 +148,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
   List<Widget> _listViews() {
     return [
 
-      (damageDetailsModel != null) ? Damageuipart1(
+      (damageDetailsModel != null) ? DamageAwbDetailPage(
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -161,7 +162,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      (damageDetailsModel != null) ? Damageuipart2(
+      (damageDetailsModel != null) ? PackingDetailsPage(
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -175,7 +176,21 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      (damageDetailsModel != null) ? Damageuipart3(
+      (damageDetailsModel != null) ? MarkAndLablePage(
+        damageDetailsModel: damageDetailsModel!,
+        preclickCallback: () {
+          _currentPage > 0 ? _onPreviousPressed() : null;
+
+        },
+        nextclickCallback: () {
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+
+        },
+      ) : Container(),
+
+      (damageDetailsModel != null) ? OuterPackingPage(
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -191,7 +206,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      (damageDetailsModel != null) ? Damageuipart4(
+      (damageDetailsModel != null) ? InnerPackingPage(
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -206,7 +221,50 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      Damageuipart5(
+      (damageDetailsModel != null) ? DetailsOfDamage13aPage(
+        damageDetailsModel: damageDetailsModel,
+        preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage > 0 ? _onPreviousPressed() : null;
+        },
+        nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+        },
+      ) : Container(),
+
+      (damageDetailsModel != null) ? DetailsOfDamagePage13b(
+        damageDetailsModel: damageDetailsModel,
+        preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage > 0 ? _onPreviousPressed() : null;
+        },
+        nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+        },
+      ) : Container(),
+
+      (damageDetailsModel != null) ? DamageDiscoveredPage(
+        damageDetailsModel: damageDetailsModel,
+        preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage > 0 ? _onPreviousPressed() : null;
+        },
+
+        nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+        },
+      ) : Container(),
+
+      MissingItemAndRemarksPage(
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -219,7 +277,8 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ),
 
-      Damageuipart6(
+      (damageDetailsModel != null) ? DamageApparentlyPage(
+        damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -230,23 +289,10 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               ? _onNextPressed()
               : null;
         },
-      ),
+      ) : Container(),
 
-      Damageuipart71(
-        preclickCallback: () {
-          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-          _currentPage > 0 ? _onPreviousPressed() : null;
-        },
-
-        nextclickCallback: () {
-          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-          _currentPage < _listViews().length - 1
-              ? _onNextPressed()
-              : null;
-        },
-      ),
-
-      Damageuipart7(
+      (damageDetailsModel != null) ? ActionTakenPage(
+        damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -257,9 +303,10 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               ? _onNextPressed()
               : null;
         },
-      ),
+      ) : Container(),
 
-      Damageuipart81(
+      (damageDetailsModel != null) ? ImageScreenPage(
+        damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -270,33 +317,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               ? _onNextPressed()
               : null;
         },
-      ),
-
-      Damageuipart8(
-        preclickCallback: () {
-          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-          _currentPage > 0 ? _onPreviousPressed() : null;
-        },
-        nextclickCallback: () {
-          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-          _currentPage < _listViews().length - 1
-              ? _onNextPressed()
-              : null;
-        },
-      ),
-
-      Damageuipart9(
-        preclickCallback: () {
-          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-          _currentPage > 0 ? _onPreviousPressed() : null;
-        },
-        nextclickCallback: () {
-          _resumeTimerOnInteraction(); // Reset the timer on scroll event
-          _currentPage < _listViews().length - 1
-              ? _onNextPressed()
-              : null;
-        },
-      ),
+      ) : Container(),
     ];
   }
 

@@ -20,33 +20,40 @@ import 'dart:ui' as ui;
 
 import '../../../../model/flightcheck/damagedetailmodel.dart';
 
-class Damageuipart3 extends StatefulWidget {
+class DamageApparentlyPage extends StatefulWidget {
 
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-
-  Damageuipart3({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+  DamageApparentlyPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
-  State<Damageuipart3> createState() => _Damageuipart2State();
+  State<DamageApparentlyPage> createState() => _DamageApparentlyPageState();
 }
 
-class _Damageuipart2State extends State<Damageuipart3> {
+class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
 
-  List<ReferenceData10List> outerPackingList = [];
-  List<String> selectedOuterPackingList = [];
 
+
+  List<ReferenceData18List> damageApparentlyList = [];
+  List<String> selecteddamageApparentlyList = [];
   bool _showFullList = false;
+
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    outerPackingList = List.from(widget.damageDetailsModel!.referenceData10List!);
-
+    damageApparentlyList = List.from(widget.damageDetailsModel!.referenceData18List!);
   }
+
+  @override
+  void dispose() {
+    // Dispose of controllers and focus nodes
+    super.dispose();
+  }
+
 
 
   @override
@@ -115,7 +122,7 @@ class _Damageuipart2State extends State<Damageuipart3> {
                       children: [
 
                         CustomeText(
-                            text: "11) Outer Packing",
+                            text: "19) The Damage Apparently Caused By",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -126,11 +133,11 @@ class _Damageuipart2State extends State<Damageuipart3> {
                         SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
                         ListView.builder(
-                          itemCount: _showFullList ? outerPackingList.length : (outerPackingList.length > 6 ? 6 : outerPackingList.length),
+                          itemCount: _showFullList ? damageApparentlyList.length : (damageApparentlyList.length > 6 ? 6 : damageApparentlyList.length),
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            ReferenceData10List outerPacking = outerPackingList[index];
+                            ReferenceData18List damageApparently = damageApparentlyList[index];
 
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
@@ -148,18 +155,18 @@ class _Damageuipart2State extends State<Damageuipart3> {
                                             CircleAvatar(
                                               radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                               backgroundColor: backgroundColor,
-                                              child: CustomeText(text: "${outerPacking.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                              child: CustomeText(text: "${damageApparently.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                             ),
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: outerPacking.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: damageApparently.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selectedOuterPackingList.contains("${outerPacking.referenceDataIdentifier}~"),
+                                        value: selecteddamageApparentlyList.contains("${damageApparently.referenceDataIdentifier}~"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -168,9 +175,9 @@ class _Damageuipart2State extends State<Damageuipart3> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selectedOuterPackingList.add("${outerPacking.referenceDataIdentifier}~");
+                                              selecteddamageApparentlyList.add("${damageApparently.referenceDataIdentifier}~");
                                             } else {
-                                              selectedOuterPackingList.remove("${outerPacking.referenceDataIdentifier}~");
+                                              selecteddamageApparentlyList.remove("${damageApparently.referenceDataIdentifier}~");
                                             }
                                           });
                                         },
@@ -188,7 +195,7 @@ class _Damageuipart2State extends State<Damageuipart3> {
                           },
                         ),
 
-                        if (outerPackingList.length > 6) // Only show the button if the list has more than 4 items
+                        if (damageApparentlyList.length > 6) // Only show the button if the list has more than 4 items
                           InkWell(
                             onTap: () {
                               setState(() {

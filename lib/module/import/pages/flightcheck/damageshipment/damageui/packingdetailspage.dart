@@ -20,18 +20,18 @@ import 'dart:ui' as ui;
 
 import '../../../../model/flightcheck/damagedetailmodel.dart';
 
-class Damageuipart2 extends StatefulWidget {
+class PackingDetailsPage extends StatefulWidget {
 
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  Damageuipart2({super.key, required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
+  PackingDetailsPage({super.key, required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
 
   @override
-  State<Damageuipart2> createState() => _Damageuipart2State();
+  State<PackingDetailsPage> createState() => _PackingDetailsPageState();
 }
 
-class _Damageuipart2State extends State<Damageuipart2> {
+class _PackingDetailsPageState extends State<PackingDetailsPage> {
 
 
   List<ReferenceData9AList> materialList = [];
@@ -40,14 +40,6 @@ class _Damageuipart2State extends State<Damageuipart2> {
   List<ReferenceData9BList> typeList = [];
   List<String> selectedTypeList = [];
 
-  List<ReferenceData11List> markLableList = [];
-  List<String> selectedMarkLableList = [];
-
-
-  TextEditingController nopController = TextEditingController();
-  TextEditingController weightController = TextEditingController();
-  FocusNode nopFocusNode = FocusNode();
-  FocusNode weightFocusNode = FocusNode();
 
   @override
   void initState() {
@@ -56,7 +48,6 @@ class _Damageuipart2State extends State<Damageuipart2> {
     
     materialList = List.from(widget.damageDetailsModel!.referenceData9AList!);
     typeList = List.from(widget.damageDetailsModel!.referenceData9BList!);
-    markLableList = List.from(widget.damageDetailsModel!.referenceData11List!);
   }
   
   
@@ -315,102 +306,6 @@ class _Damageuipart2State extends State<Damageuipart2> {
                               },
                             ),
                           ],
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: SizeConfig.blockSizeVertical,),
-
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(10),
-
-                    decoration: BoxDecoration(
-                      color: MyColor.colorWhite,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: MyColor.colorBlack.withOpacity(0.09),
-                          spreadRadius: 2,
-                          blurRadius: 15,
-                          offset: Offset(0, 3), // changes position of shadow
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-
-                        CustomeText(
-                            text: "10) Mark & Lable",
-                            fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
-                            textAlign: TextAlign.start),
-                        SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
-
-                        ListView.builder(
-                          itemCount: markLableList.length,
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            ReferenceData11List markLable = markLableList[index];
-
-                            Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
-
-                            return Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Expanded(
-                                        child: Row(
-                                          children: [
-                                            CircleAvatar(
-                                              radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
-                                              backgroundColor: backgroundColor,
-                                              child: CustomeText(text: "${markLable.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                                            ),
-                                            SizedBox(
-                                              width: 15,
-                                            ),
-                                            Flexible(child: CustomeText(text: markLable.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(width: 2),
-                                      Switch(
-                                        value: selectedMarkLableList.contains("${markLable.referenceDataIdentifier}~"),
-                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                        activeColor: MyColor.primaryColorblue,
-                                        inactiveThumbColor: MyColor.thumbColor,
-                                        inactiveTrackColor: MyColor.textColorGrey2,
-                                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selectedMarkLableList.add("${markLable.referenceDataIdentifier}~");
-                                            } else {
-                                              selectedMarkLableList.remove("${markLable.referenceDataIdentifier}~");
-                                            }
-                                          });
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                ),
-                                CustomDivider(
-                                  space: 0,
-                                  color: Colors.black,
-                                  hascolor: true,
-                                ),
-                              ],
-                            );
-                          },
                         ),
                       ],
                     ),
