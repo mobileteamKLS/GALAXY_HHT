@@ -23,6 +23,7 @@ import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
+import '../../../../widget/customeedittext/remarkedittextfeild.dart';
 import '../../../../widget/customeuiwidgets/footer.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
@@ -416,6 +417,9 @@ class _AddMailPageState extends State<AddMailPage> {
                           else if (state is AddMailSuccessState){
                             DialogUtils.hideLoadingDialog(context);
                             if(state.addMailModel.status == "E"){
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(av7NoFocusNode);
+                              });
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.addMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
@@ -776,7 +780,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                                           Directionality(
                                             textDirection: uiDirection,
-                                            child: CustomTextField(
+                                            child: RemarkCustomTextField(
                                               controller: descriptionController,
                                               focusNode: descriptionFocusNode,
                                               onPress: () {},
@@ -1019,7 +1023,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: "${lableModel.nop}",
+                                                                text: "${lableModel.nop} :",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w400,
@@ -1038,7 +1042,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: "${lableModel.weight}",
+                                                                text: "${lableModel.weight} :",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w400,
@@ -1057,7 +1061,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: "${lableModel.type}",
+                                                                text: "${lableModel.type} :",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w400,

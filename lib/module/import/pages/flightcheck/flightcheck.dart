@@ -3687,10 +3687,14 @@ class _FlightCheckState extends State<FlightCheck>
     if(locationcodeScanResult == "-1"){
 
     }else{
-      locationController.text = locationcodeScanResult;
+
+      String sanitizedResult = locationcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+
+
+      locationController.text = sanitizedResult;
       // Call searchLocation api to validate or not
       context.read<FlightCheckCubit>().getValidateLocation(
-          locationcodeScanResult,
+          sanitizedResult,
           _user!.userProfile!.userIdentity!,
           _splashDefaultData!.companyCode!,
           widget.menuId, "a");
@@ -3710,9 +3714,13 @@ class _FlightCheckState extends State<FlightCheck>
 
     print("barcode scann ==== ${barcodeScanResult}");
     if(barcodeScanResult == "-1"){
+
     }else{
-      igmNoEditingController.text = barcodeScanResult;
-      callFlightCheckULDListApi(context, locationController.text, barcodeScanResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+      String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^0-9]'), '');
+
+      igmNoEditingController.text = sanitizedResult;
+      callFlightCheckULDListApi(context, locationController.text, sanitizedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
     }
 
   }

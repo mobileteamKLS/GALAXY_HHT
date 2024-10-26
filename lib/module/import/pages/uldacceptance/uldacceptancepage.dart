@@ -2365,6 +2365,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                     lablekey: "ULD",
                     textDirection: textDirection,
                     controller: uldNoController,
+                    nextFocus: groupIdFocusNode,
                     hasIcon: false,
                     hastextcolor: true,
                     isShowSuffixIcon: uldNoController.text.isEmpty ? false : (_suffixIconUld) ? true : false,
@@ -3565,6 +3566,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
           FocusScope.of(context).requestFocus(uldNoFocusNode);
         });
 
+        uldNoController.clear();
+
         setState(() {
           _suffixIconUld = false;
           _isvalidULDNo = false;
@@ -3610,7 +3613,12 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     if(locationcodeScanResult == "-1"){
 
     }else{
-      locationController.text = locationcodeScanResult;
+
+      String sanitizedResult = locationcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+
+
+
+      locationController.text = sanitizedResult;
       // Call searchLocation api to validate or not
 
       leaveLocationFocus();
@@ -3639,14 +3647,18 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
 
     }else{
 
-      scanFlightController.text = barcodeScanResult;
+
+      String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^0-9]'), '');
+
+
+      scanFlightController.text = sanitizedResult;
 
       context.read<UldAcceptanceCubit>().getUldAcceptanceList(
           _user!.userProfile!.userIdentity!,
           _splashDefaultData!.companyCode!,
           "",
           "1990-01-01",
-          barcodeScanResult,
+          sanitizedResult,
           widget.menuId);
     }
 

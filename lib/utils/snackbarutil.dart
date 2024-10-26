@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../core/mycolor.dart';
 
 class SnackbarUtil {
+
   static void showSnackbar(BuildContext context, String message, Color backgroundColor, {IconData? icon}) {
     ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
