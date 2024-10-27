@@ -1135,17 +1135,36 @@ class _AddMailPageState extends State<AddMailPage> {
     }else{
       // Truncate the result to a maximum of 12 characters
 
-      String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+    //  String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
 
-      String truncatedResult = sanitizedResult.length > 12
-          ? sanitizedResult.substring(0, 12)
-          : sanitizedResult;
+      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
 
-      av7NoController.text = truncatedResult;
-      setState(() {
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
-      });
+      
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        av7NoController.clear();
+      }else{
+        String truncatedResult = barcodeScanResult.length > 12
+            ? barcodeScanResult.substring(0, 12)
+            : barcodeScanResult;
+        av7NoController.text = truncatedResult;
+      }
+      
+
+      
     }
+  }
+
+
+  bool containsSpecialCharacters(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
   }
 
 

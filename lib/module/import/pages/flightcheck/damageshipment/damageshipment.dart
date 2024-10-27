@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/damageawbdetailpage.dart';
 import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/markandlable.dart';
+import 'package:galaxy/module/import/pages/flightcheck/damageshipment/damageui/pointlistingpage.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
@@ -161,6 +162,16 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
             : null;
         },
       ) : Container(),
+
+      PointListingPage(preclickCallback: () {
+        _resumeTimerOnInteraction(); // Reset the timer on scroll event
+        _currentPage > 0 ? _onPreviousPressed() : null;
+      }, nextclickCallback: () {
+        _resumeTimerOnInteraction(); // Reset the timer on scroll event
+        _currentPage < _listViews().length - 1
+            ? _onNextPressed()
+            : null;
+      },),
 
       (damageDetailsModel != null) ? PackingDetailsPage(
         damageDetailsModel: damageDetailsModel!,
