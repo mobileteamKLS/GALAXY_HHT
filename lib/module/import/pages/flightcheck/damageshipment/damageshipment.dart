@@ -163,15 +163,22 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      PointListingPage(preclickCallback: () {
+      PointListingPage(
+        preclickCallback: () {
         _resumeTimerOnInteraction(); // Reset the timer on scroll event
         _currentPage > 0 ? _onPreviousPressed() : null;
-      }, nextclickCallback: () {
+      },
+        nextclickCallback: () {
         _resumeTimerOnInteraction(); // Reset the timer on scroll event
         _currentPage < _listViews().length - 1
             ? _onNextPressed()
             : null;
-      },),
+      },
+      curruentCallback: (curruentPage) {
+        _pageController.animateToPage(curruentPage,
+            duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+      },
+      ),
 
       (damageDetailsModel != null) ? PackingDetailsPage(
         damageDetailsModel: damageDetailsModel!,

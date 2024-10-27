@@ -24,7 +24,8 @@ class PointListingPage extends StatefulWidget {
 
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  PointListingPage({super.key,  required this.preclickCallback, required this.nextclickCallback});
+  final Function(int) curruentCallback;
+  PointListingPage({super.key, required this.preclickCallback, required this.nextclickCallback, required this.curruentCallback});
 
   @override
   State<PointListingPage> createState() => _PointListingPageState();
@@ -109,26 +110,31 @@ class _PointListingPageState extends State<PointListingPage> {
 
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "C) PACKING DETAILS",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
+                          child: InkWell(
+                            onTap: () {
+                              widget.nextclickCallback();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "C) PACKING DETAILS",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
 
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                 ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
 
-                            ],
+                              ],
+                            ),
                           ),
                         ),
 
@@ -138,547 +144,63 @@ class _PointListingPageState extends State<PointListingPage> {
 
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "9) Container",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "a) Material",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "b) Type",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "10) Mark & Lable",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "11) Outer Packing",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "12) Inner Packing",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "D) DETAILS OF DAMAGE OBSERVED",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "13.a) Content",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "13.b) Containers",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "14) Damage Discovered",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "15.a) Any Space For Missing Items",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "b) Is Shortage Verified By Invoice",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "16) Is Packing Sufficient?",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "17) Any Evidence Of Pilferage",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "18) Remarks ",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "19) The Damage Apparently Caused By",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "E) ACTION TAKEN",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "20) Salvage Action",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "21) Disposition",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
-
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Flexible(
-                                child: CustomeText(
-                                    text: "22) Any damage remarked in : a) The AWB. b) The Manifest",
+                          child: InkWell(
+                            onTap: () {
+                              widget.nextclickCallback();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "9) Container",
                                     fontColor: MyColor.textColorGrey3,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                     fontWeight: FontWeight.w600,
                                     textAlign: TextAlign.start),
-                              ),
 
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                 ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.nextclickCallback();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "a) Material",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 
@@ -687,25 +209,30 @@ class _PointListingPageState extends State<PointListingPage> {
 
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "23) Weather Condition ?",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
+                          child: InkWell(
+                            onTap: () {
+                              widget.nextclickCallback();
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "b) Type",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
 
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                 ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
 
@@ -714,25 +241,614 @@ class _PointListingPageState extends State<PointListingPage> {
 
                         Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(
-                                  text: "24) Representative",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(3);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "10) Mark & Lable",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
 
-                              Container(
-                                padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                 ),
-                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                              ),
-                            ],
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(4);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "11) Outer Packing",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(5);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "12) Inner Packing",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(6);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "D) DETAILS OF DAMAGE OBSERVED",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(6);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "13.a) Content",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(7);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "13.b) Containers",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(8);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "14) Damage Discovered",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "15.a) Any Space For Missing Items",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "b) Is Shortage Verified By Invoice",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "16) Is Packing Sufficient?",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "17) Any Evidence Of Pilferage",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "18) Remarks ",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(10);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "19) The Damage Apparently Caused By",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(11);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "E) ACTION TAKEN",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(11);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "20) Salvage Action",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(11);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "21) Disposition",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(12);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Flexible(
+                                  child: CustomeText(
+                                      text: "22) Any damage remarked in : a) The AWB. b) The Manifest",
+                                      fontColor: MyColor.textColorGrey3,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                      fontWeight: FontWeight.w600,
+                                      textAlign: TextAlign.start),
+                                ),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(12);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "23) Weather Condition ?",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(12);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(
+                                    text: "24) Representative",
+                                    fontColor: MyColor.textColorGrey3,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w600,
+                                    textAlign: TextAlign.start),
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
 
