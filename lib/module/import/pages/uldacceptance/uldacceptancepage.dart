@@ -3541,7 +3541,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
       if(specialCharAllow == true){
         SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        locationController.clear();
+        uldNoController.clear();
 
 
         WidgetsBinding.instance.addPostFrameCallback((_) {
