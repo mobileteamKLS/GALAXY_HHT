@@ -83,13 +83,17 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
   late AnimationController _blinkController;
   late Animation<Color?> _colorAnimation;
 
+  double weightCount = 0.00;
+
+
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _loadUser();
-
+    weightController.text = "${weightCount}";
     _blinkController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: TickerProviders(), // Manually providing Ticker
@@ -227,6 +231,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                               weightController.clear();
                               groupIdController.clear();
 
+                              weightCount = 0.00;
+                              weightController.text = "${weightCount.toStringAsFixed(2)}";
+
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 FocusScope.of(context).requestFocus(piecesFocusNode);
                               });
@@ -318,7 +325,20 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                     labelText: "${lableModel.pieces} *",
                                                     readOnly: false,
                                                     maxLength: 4,
-                                                    onChanged: (value) {},
+                                                    onChanged: (value) {
+                                                      int piecesCount = int.tryParse(value) ?? 0;
+
+                                                      // Calculate the weight count using the formula
+                                                      setState(() {
+
+                                                        weightCount = double.parse(((piecesCount * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+
+
+                                                       // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
+                                                        weightController.text = "${weightCount}";
+                                                      });
+
+                                                    },
                                                     fillColor:  Colors.grey.shade100,
                                                     textInputType: TextInputType.number,
                                                     inputAction: TextInputAction.next,
@@ -687,7 +707,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
                                                 // Check if the groupId length is between 14 (min and max 14 characters)
                                                 if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                  openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long", groupIdFocusNode);
+                                                  openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
                                                   return;
                                                 }
 

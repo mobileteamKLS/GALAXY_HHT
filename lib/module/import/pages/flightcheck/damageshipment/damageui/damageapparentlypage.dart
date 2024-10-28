@@ -46,6 +46,14 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
     // TODO: implement initState
     super.initState();
     damageApparentlyList = List.from(widget.damageDetailsModel!.referenceData18List!);
+
+    List<String> selectedDamageApparentlyListItem = CommonUtils.SELECTEDDAMAGEAPPARENTLY.split("~");
+    for (var item in damageApparentlyList) {
+      if (selectedDamageApparentlyListItem.contains(item.referenceDataIdentifier)) {
+        selecteddamageApparentlyList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
   }
 
   @override
@@ -249,6 +257,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDDAMAGEAPPARENTLY = selecteddamageApparentlyList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -261,6 +270,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDDAMAGEAPPARENTLY = selecteddamageApparentlyList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),

@@ -528,6 +528,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                               trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                                               onChanged: (value) {
                                                                 setState(() {
+                                                                  scanNoEditingController.clear();
                                                                   _isOpenULDFlagEnable = value;
                                                                 });
 
@@ -1411,12 +1412,34 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     print("barcode scann ==== ${barcodeScanResult}");
     if(barcodeScanResult == "-1"){
     }else{
-      scanNoEditingController.text = barcodeScanResult.toString().replaceAll(" ", "");
-      updateSearchList(scanNoEditingController.text);
-      setState(() {
 
-      });
+      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        scanNoEditingController.clear();
+      }else{
+
+        scanNoEditingController.text = barcodeScanResult.toString().replaceAll(" ", "");
+        updateSearchList(scanNoEditingController.text);
+        setState(() {
+
+        });
+      }
+
+
     }
+  }
+
+  bool containsSpecialCharacters(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
   }
 
 

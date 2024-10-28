@@ -41,6 +41,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
   List<FocusNode> focusNodes = [];
 
   List<ReferenceData14BList> containersList = [];
+  List<String> selectedContainersList = [];
 
   bool _showFullList = false;
 
@@ -164,7 +165,9 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                               needOutlineBorder: true,
                               labelText: "${content.referenceDescription}",
                               readOnly: false,
-                              onChanged: (value) {},
+                              onChanged: (value) {
+                                updateSelectedContainersList(index, value);
+                              },
                               fillColor:  Colors.grey.shade100,
                               textInputType: TextInputType.number,
                               inputAction: TextInputAction.next,
@@ -241,6 +244,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDCONTAINER = selectedContainersList.join(',').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -253,6 +257,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDCONTAINER = selectedContainersList.join(',').toString();
                     widget.nextclickCallback();
                   },
                 ),
@@ -263,4 +268,20 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
       ],
     );
   }
+  void updateSelectedContainersList(int index, String value) {
+    String? identifier = containersList[index].referenceDataIdentifier;
+
+    if (identifier != null) {
+      // Remove the existing entry for the identifier if it exists
+      selectedContainersList.removeWhere((item) => item.startsWith('$identifier~'));
+
+      // Only add the entry if value is not empty
+      if (value.isNotEmpty) {
+        selectedContainersList.add('$identifier~$value');
+      }else{
+        selectedContainersList.remove('$identifier~$value');
+      }
+    }
+  }
+
 }

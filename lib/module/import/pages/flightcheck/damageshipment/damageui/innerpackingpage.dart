@@ -48,6 +48,12 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
 
     innerPackingList = List.from(widget.damageDetailsModel!.referenceData12List!);
 
+    List<String> selectedinnerPackingListItem = CommonUtils.SELECTEDINNERPACKING.split("~");
+    for (var item in innerPackingList) {
+      if (selectedinnerPackingListItem.contains(item.referenceDataIdentifier)) {
+        selectedInnerPackList.add("${item.referenceDataIdentifier}~");
+      }
+    }
   }
 
 
@@ -244,6 +250,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDINNERPACKING = selectedInnerPackList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -256,6 +263,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDINNERPACKING = selectedInnerPackList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),

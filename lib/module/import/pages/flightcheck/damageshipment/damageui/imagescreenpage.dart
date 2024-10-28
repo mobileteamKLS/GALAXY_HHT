@@ -71,6 +71,11 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
     whetherConditionList = List.from(widget.damageDetailsModel!.referenceData17List!);
 
+
+    selectImageBase64List = List.from(CommonUtils.SELECTEDIMAGELIST);
+    images = generateImageXMLData(CommonUtils.SELECTEDIMAGELIST);
+    imageCount = "${selectImageBase64List.length}";
+
   }
 
   @override
@@ -500,6 +505,13 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                 child: RoundedButtonBlue(
                   text: "Record Damage",
                   press: () async {
+                    String exactWording = wordController.text;
+                    String ghaRep = ghaController.text;
+                    String airlineRep = airlineController.text;
+                    String securityRep = securityController.text;
+                    CommonUtils.SELECTEDWHETHER = selectedWhetherList.join('').toString();
+
+
 
                   },
                 ),
@@ -885,5 +897,17 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
     );
   }
 
+
+  String generateImageXMLData(List<String> selectImageList) {
+    StringBuffer xmlBuffer = StringBuffer();
+    xmlBuffer.write('<BinaryImageLists>');
+    for (String base64Image in selectImageList) {
+      xmlBuffer.write('<BinaryImageList>');
+      xmlBuffer.write('<BinaryImage>$base64Image</BinaryImage>');
+      xmlBuffer.write('</BinaryImageList>');
+    }
+    xmlBuffer.write('</BinaryImageLists>');
+    return xmlBuffer.toString();
+  }
 
 }

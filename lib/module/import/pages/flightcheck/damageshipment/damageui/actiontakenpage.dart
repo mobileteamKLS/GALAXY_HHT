@@ -53,6 +53,22 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
     salvageActionList = List.from(widget.damageDetailsModel!.referenceData21List!);
     dispositionList = List.from(widget.damageDetailsModel!.referenceData22List!);
 
+
+    List<String> selectedSalvageActionListItem = CommonUtils.SELECTEDSALVAGEACTION.split("~");
+    for (var item in salvageActionList) {
+      if (selectedSalvageActionListItem.contains(item.referenceDataIdentifier)) {
+        selectedsalvageActionList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
+    List<String> selectedDispositionListItem = CommonUtils.SELECTEDDISPOSITION.split("~");
+    for (var item in dispositionList) {
+      if (selectedDispositionListItem.contains(item.referenceDataIdentifier)) {
+        selecteddispositionList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
+
   }
 
   @override
@@ -339,6 +355,8 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDSALVAGEACTION = selectedsalvageActionList.join('').toString();
+                    CommonUtils.SELECTEDDISPOSITION = selecteddispositionList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -351,6 +369,8 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDSALVAGEACTION = selectedsalvageActionList.join('').toString();
+                    CommonUtils.SELECTEDDISPOSITION = selecteddispositionList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),

@@ -48,6 +48,24 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
     
     materialList = List.from(widget.damageDetailsModel!.referenceData9AList!);
     typeList = List.from(widget.damageDetailsModel!.referenceData9BList!);
+
+
+    List<String> selectedMaterialListItem = CommonUtils.SELECTEDMATERIAL.split("~");
+    for (var item in materialList) {
+      if (selectedMaterialListItem.contains(item.referenceDataIdentifier)) {
+        selectedMaterialList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
+    List<String> selectedTypeListItem = CommonUtils.SELECTEDTYPE.split("~");
+    for (var item in typeList) {
+      if (selectedTypeListItem.contains(item.referenceDataIdentifier)) {
+        selectedTypeList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
+
+
   }
   
   
@@ -342,6 +360,8 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDMATERIAL = selectedMaterialList.join('').toString();
+                    CommonUtils.SELECTEDTYPE = selectedTypeList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -354,6 +374,8 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDMATERIAL = selectedMaterialList.join('').toString();
+                    CommonUtils.SELECTEDTYPE = selectedTypeList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),

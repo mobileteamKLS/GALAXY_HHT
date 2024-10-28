@@ -2194,7 +2194,7 @@ class _FlightCheckState extends State<FlightCheck>
                               flightDetails.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                               flightDetails.sHCCode!.isNotEmpty
                                   ? Row(
-                                children:shcCodes.asMap().entries.map((entry) {
+                                children:shcCodes.asMap().entries.take(3).map((entry) {
                                   int index = entry.key; // Get the index for colorList assignment
                                   String code = entry.value.trim(); // Get the code value and trim it
 
@@ -3687,17 +3687,29 @@ class _FlightCheckState extends State<FlightCheck>
     if(locationcodeScanResult == "-1"){
 
     }else{
+      bool specialCharAllow = containsSpecialCharactersA(locationcodeScanResult);
 
-      String sanitizedResult = locationcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        locationController.clear();
+      }else{
 
-      locationController.text = sanitizedResult;
-      // Call searchLocation api to validate or not
-      context.read<FlightCheckCubit>().getValidateLocation(
-          sanitizedResult,
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          widget.menuId, "a");
+        String truncatedResult = locationcodeScanResult.length > 15
+            ? locationcodeScanResult.substring(0, 15)
+            : locationcodeScanResult;
+
+        locationController.text = truncatedResult;
+        // Call searchLocation api to validate or not
+        context.read<FlightCheckCubit>().getValidateLocation(
+            truncatedResult,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId, "a");
+      }
+
     }
 
 
@@ -3717,13 +3729,44 @@ class _FlightCheckState extends State<FlightCheck>
 
     }else{
 
-      String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^0-9]'), '');
+      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
 
-      igmNoEditingController.text = sanitizedResult;
-      callFlightCheckULDListApi(context, locationController.text, sanitizedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        igmNoEditingController.clear();
+      }else{
+        String truncatedResult = barcodeScanResult.length > 15
+            ? barcodeScanResult.substring(0, 15)
+            : barcodeScanResult;
+        igmNoEditingController.text = truncatedResult;
+        callFlightCheckULDListApi(context, locationController.text, truncatedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+      }
+
     }
 
   }
+
+  bool containsSpecialCharactersA(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
+  }
+
+
+  bool containsSpecialCharacters(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
+  }
+
 
   // flight check ULD List api call function
   void callFlightCheckULDListApi(

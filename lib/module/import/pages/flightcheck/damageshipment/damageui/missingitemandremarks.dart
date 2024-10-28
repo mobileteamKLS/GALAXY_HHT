@@ -31,10 +31,11 @@ class MissingItemAndRemarksPage extends StatefulWidget {
 class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
 
 
-  String selectedOption = "Yes";
+  String missingItems = "Y";
 
-  String selectedOption1 = "Yes";
-  String selectedOption2 = "Yes";
+  String verifiedInvoice = "Y";
+  String packingSufficient = "Y";
+  String evidence = "Y";
   TextEditingController remarkController = TextEditingController();
   FocusNode remarkFocusNode = FocusNode();
 
@@ -136,12 +137,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption = "Yes";
+                                      missingItems = "Y";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption == "Yes" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: missingItems == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         bottomLeft: Radius.circular(10),
@@ -150,7 +151,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: selectedOption == "Yes" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "YES", fontColor: missingItems == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -161,17 +162,17 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption = "No";
+                                      missingItems = "N";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption == "No" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: missingItems == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue)), // Border color
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "No", fontColor: selectedOption == "No" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "NO", fontColor: missingItems == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -182,12 +183,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption = "N/A";
+                                      missingItems = "N/A";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption == "N/A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: missingItems == "N/A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         bottomRight: Radius.circular(10),
@@ -196,7 +197,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "N/A", fontColor: selectedOption == "N/A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "N/A", fontColor: missingItems == "N/A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -249,12 +250,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption2 = "Yes";
+                                      verifiedInvoice = "Y";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption2 == "Yes" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: verifiedInvoice == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         bottomLeft: Radius.circular(10),
@@ -263,7 +264,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: selectedOption2 == "Yes" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "YES", fontColor: verifiedInvoice == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -274,17 +275,17 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption2 = "No";
+                                      verifiedInvoice = "N";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption2 == "No" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: verifiedInvoice == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue)), // Border color
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "No", fontColor: selectedOption2 == "No" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "NO", fontColor: verifiedInvoice == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -295,12 +296,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption2 = "N/A";
+                                      verifiedInvoice = "N/A";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption2 == "N/A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: verifiedInvoice == "N/A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         bottomRight: Radius.circular(10),
@@ -309,7 +310,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "N/A", fontColor: selectedOption2 == "N/A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "N/A", fontColor: verifiedInvoice == "N/A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -361,21 +362,21 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption1 = "Yes";
+                                      packingSufficient = "Y";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption1 == "Yes" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: packingSufficient == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         bottomLeft: Radius.circular(10),
                                       ),
                                       border: Border.all(color: MyColor.primaryColorblue), // Border color
                                     ),
-                                    padding: EdgeInsets.symmetric(vertical:8, horizontal: 10),
+                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: selectedOption1 == "Yes" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "YES", fontColor: packingSufficient == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
 
                                     ),
                                   ),
@@ -387,21 +388,21 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption1 = "No";
+                                      packingSufficient = "N";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption1 == "No" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: packingSufficient == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         bottomRight: Radius.circular(10),
                                       ),
                                       border: Border.all(color:MyColor.primaryColorblue), // Border color
                                     ),
-                                    padding: EdgeInsets.symmetric(vertical:8, horizontal: 10),
+                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "No", fontColor: selectedOption1 == "No" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "NO", fontColor: packingSufficient == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -454,12 +455,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption = "Yes";
+                                      evidence = "Y";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption == "Yes" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: evidence == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topLeft: Radius.circular(10),
                                         bottomLeft: Radius.circular(10),
@@ -468,7 +469,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: selectedOption == "Yes" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "YES", fontColor: evidence == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -479,12 +480,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 child: InkWell(
                                   onTap: () {
                                     setState(() {
-                                      selectedOption = "No";
+                                      evidence = "N";
                                     });
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: selectedOption == "No" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: evidence == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         bottomRight: Radius.circular(10),
@@ -493,7 +494,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "No", fontColor: selectedOption == "No" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "NO", fontColor: evidence == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -597,6 +598,11 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.MISSINGITEM = missingItems;
+                    CommonUtils.VERIFIEDINVOICE = verifiedInvoice;
+                    CommonUtils.SUFFICIENT = packingSufficient;
+                    CommonUtils.EVIDENCE = evidence;
+                    CommonUtils.REMARKS = remarkController.text;
                     widget.preclickCallback();
                   },
                 ),
@@ -609,6 +615,11 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.MISSINGITEM = missingItems;
+                    CommonUtils.VERIFIEDINVOICE = verifiedInvoice;
+                    CommonUtils.SUFFICIENT = packingSufficient;
+                    CommonUtils.EVIDENCE = evidence;
+                    CommonUtils.REMARKS = remarkController.text;
                     widget.nextclickCallback();
                   },
                 ),

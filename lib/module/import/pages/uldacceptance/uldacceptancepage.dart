@@ -3533,51 +3533,60 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     if(uldScanResult == "-1"){
 
     }else{
-      uldNoController.text = uldScanResult.replaceAll(" ", "");
 
-      String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(uldScanResult.toUpperCase());
+      bool specialCharAllow = containsSpecialCharactersA(uldScanResult);
 
-      print("uldNumcer CHECK====== ${uldNumber}");
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
-      if(uldNumber == "Valid"){
-        setState(() {
-
-        });
-        _suffixIconUld = false;
-        _isvalidULDNo = true;
-
-        uldNoController.text = CommonUtils.ULDNUMBERCEHCK;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(groupIdFocusNode);
-        });
-
-      await context.read<UldAcceptanceCubit>().getFlightFromULD(
-          uldScanResult.replaceAll(" ", ""),
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          widget.menuId
-      );
-      }
-      else{
-
-        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(uldNoFocusNode);
-        });
+        locationController.clear();
+      }else{
 
-        uldNoController.clear();
+        uldNoController.text = uldScanResult.replaceAll(" ", "");
 
-        setState(() {
+        String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(uldScanResult.toUpperCase());
+
+        print("uldNumcer CHECK====== ${uldNumber}");
+
+        if(uldNumber == "Valid"){
+          setState(() {
+
+          });
           _suffixIconUld = false;
-          _isvalidULDNo = false;
-        });
+          _isvalidULDNo = true;
+
+          uldNoController.text = CommonUtils.ULDNUMBERCEHCK;
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(groupIdFocusNode);
+          });
+
+          await context.read<UldAcceptanceCubit>().getFlightFromULD(
+              uldScanResult.replaceAll(" ", ""),
+              _user!.userProfile!.userIdentity!,
+              _splashDefaultData!.companyCode!,
+              widget.menuId
+          );
+        }
+        else{
+
+          SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+          Vibration.vibrate(duration: 500);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(uldNoFocusNode);
+          });
+
+          uldNoController.clear();
+
+          setState(() {
+            _suffixIconUld = false;
+            _isvalidULDNo = false;
+          });
+        }
       }
 
     }
-
-
-
   }
 
 
@@ -3613,20 +3622,31 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     if(locationcodeScanResult == "-1"){
 
     }else{
+      bool specialCharAllow = containsSpecialCharactersA(locationcodeScanResult);
 
-      String sanitizedResult = locationcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        locationController.clear();
+      }else{
+
+        String truncatedResult = locationcodeScanResult.length > 15
+            ? locationcodeScanResult.substring(0, 15)
+            : locationcodeScanResult;
+
+        locationController.text = truncatedResult;
+        // Call searchLocation api to validate or not
+
+        leaveLocationFocus();
+      }
 
 
 
-      locationController.text = sanitizedResult;
-      // Call searchLocation api to validate or not
 
-      leaveLocationFocus();
-      /*context.read<UldAcceptanceCubit>().getValidateLocation(
-          locationcodeScanResult,
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          widget.menuId, "a");*/
+
     }
 
 
@@ -3648,21 +3668,55 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     }else{
 
 
-      String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^0-9]'), '');
+      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
 
-      scanFlightController.text = sanitizedResult;
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only numeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        scanFlightController.clear();
+      }else{
 
-      context.read<UldAcceptanceCubit>().getUldAcceptanceList(
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          "",
-          "1990-01-01",
-          sanitizedResult,
-          widget.menuId);
+        String truncatedResult = barcodeScanResult.length > 15
+            ? barcodeScanResult.substring(0, 15)
+            : barcodeScanResult;
+
+
+        scanFlightController.text = truncatedResult;
+
+        context.read<UldAcceptanceCubit>().getUldAcceptanceList(
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            "",
+            "1990-01-01",
+            truncatedResult,
+            widget.menuId);
+      }
+
+
+
     }
 
   }
+
+  bool containsSpecialCharacters(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
+  }
+
+  bool containsSpecialCharactersA(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
+  }
+
 
   bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
     ButtonRight? button = buttonList.firstWhere(

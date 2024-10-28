@@ -29,6 +29,27 @@ class CommonUtils{
   static String TROLLYTYPENUMBER = "";
   static String TROLLYDATETIME = "";
 
+
+  static String SELECTEDMATERIAL = "";
+  static String SELECTEDTYPE = "";
+  static String SELECTEDMARKANDLABLE = "";
+  static String SELECTEDOUTRERPACKING = "";
+  static String SELECTEDINNERPACKING = "";
+  static String SELECTEDCONTENT = "";
+  static String SELECTEDCONTAINER = "";
+  static String SELECTEDDAMAGEDISCOVER = "";
+  static String SELECTEDDAMAGEAPPARENTLY = "";
+  static String SELECTEDSALVAGEACTION = "";
+  static String SELECTEDDISPOSITION = "";
+  static String SELECTEDWHETHER = "";
+
+  static String MISSINGITEM = "";
+  static String VERIFIEDINVOICE = "";
+  static String SUFFICIENT = "";
+  static String EVIDENCE = "";
+  static String REMARKS = "";
+
+
   static String getImagePath(String imageName){
     return "assets/images/${imageName}";
   }

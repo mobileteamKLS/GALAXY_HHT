@@ -38,6 +38,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
 
 
   List<ReferenceData14AList> contentList = [];
+  List<String> selectedContentList = [];
   bool _showFullList = false;
 
 
@@ -48,8 +49,15 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
 
     contentList = List.from(widget.damageDetailsModel!.referenceData14AList!);
 
-    controllers = List.generate(widget.damageDetailsModel!.referenceData14AList!.length, (index) => TextEditingController());
-    focusNodes = List.generate(widget.damageDetailsModel!.referenceData14AList!.length, (index) => FocusNode());
+    controllers = List.generate(contentList.length, (index) => TextEditingController());
+    focusNodes = List.generate(contentList.length, (index) => FocusNode());
+
+
+    print("CHECK_CONTENT ===== ${CommonUtils.SELECTEDCONTENT}");
+
+   // List<String> selectedContentListItem = CommonUtils.SELECTEDCONTENT.split("~");
+
+
   }
 
   @override
@@ -168,7 +176,9 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                                 child: CustomTextField(
                                   controller: controller,
                                   focusNode: focusNode,
-                                  onPress: () {},
+                                  onPress: () {
+
+                                  },
                                   hasIcon: false,
                                   maxLength: 4,
                                   hastextcolor: true,
@@ -176,7 +186,9 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                                   needOutlineBorder: true,
                                   labelText: "${content.referenceDescription}",
                                   readOnly: false,
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    updateSelectedContentList(index, value);
+                                  },
                                   fillColor:  Colors.grey.shade100,
                                   textInputType: TextInputType.number,
                                   inputAction: TextInputAction.next,
@@ -259,6 +271,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDCONTENT = selectedContentList.join(',').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -271,6 +284,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDCONTENT = selectedContentList.join(',').toString();
                     widget.nextclickCallback();
                   },
                 ),
@@ -281,4 +295,21 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
       ],
     );
   }
+
+  void updateSelectedContentList(int index, String value) {
+    String? identifier = contentList[index].referenceDataIdentifier;
+
+    if (identifier != null) {
+      // Remove the existing entry for the identifier if it exists
+      selectedContentList.removeWhere((item) => item.startsWith('$identifier~'));
+
+      // Only add the entry if value is not empty
+      if (value.isNotEmpty) {
+        selectedContentList.add('$identifier~$value');
+      }else{
+        selectedContentList.remove('$identifier~$value');
+      }
+    }
+  }
+
 }

@@ -44,6 +44,15 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
     super.initState();
 
     markLableList = List.from(widget.damageDetailsModel!.referenceData11List!);
+
+    List<String> selectedmarkLableListItem = CommonUtils.SELECTEDMARKANDLABLE.split("~");
+    for (var item in markLableList) {
+      if (selectedmarkLableListItem.contains(item.referenceDataIdentifier)) {
+        selectedMarkLableList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
+
   }
   
   
@@ -218,6 +227,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDMARKANDLABLE = selectedMarkLableList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -230,6 +240,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDMARKANDLABLE = selectedMarkLableList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),

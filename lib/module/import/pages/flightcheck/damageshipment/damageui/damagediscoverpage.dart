@@ -48,6 +48,14 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
 
     damageDiscoveredList = List.from(widget.damageDetailsModel!.referenceData15List!);
 
+
+    List<String> selectedDamageDiscoveredListItem = CommonUtils.SELECTEDDAMAGEDISCOVER.split("~");
+    for (var item in damageDiscoveredList) {
+      if (selectedDamageDiscoveredListItem.contains(item.referenceDataIdentifier)) {
+        selecteddamageDiscoveredList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
   }
 
   @override
@@ -248,6 +256,7 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDDAMAGEDISCOVER = selecteddamageDiscoveredList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -260,6 +269,7 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDDAMAGEDISCOVER = selecteddamageDiscoveredList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),

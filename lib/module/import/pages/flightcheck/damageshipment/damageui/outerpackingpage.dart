@@ -46,6 +46,14 @@ class _Damageuipart2State extends State<OuterPackingPage> {
 
     outerPackingList = List.from(widget.damageDetailsModel!.referenceData10List!);
 
+
+    List<String> selectedouterPackingListItem = CommonUtils.SELECTEDOUTRERPACKING.split("~");
+    for (var item in outerPackingList) {
+      if (selectedouterPackingListItem.contains(item.referenceDataIdentifier)) {
+        selectedOuterPackingList.add("${item.referenceDataIdentifier}~");
+      }
+    }
+
   }
 
 
@@ -242,6 +250,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDOUTRERPACKING = selectedOuterPackingList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -254,6 +263,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+                    CommonUtils.SELECTEDOUTRERPACKING = selectedOuterPackingList.join('').toString();
                     widget.nextclickCallback();
                   },
                 ),
