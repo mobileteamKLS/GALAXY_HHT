@@ -784,7 +784,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                     Row(
                                                                                       children: [
                                                                                         Expanded(
-                                                                                          flex: 2,
+                                                                                          flex: 1,
                                                                                           child: Row(
                                                                                             children: [
                                                                                               CustomeText(
@@ -806,7 +806,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                           ),
                                                                                         ),
                                                                                         Expanded(
-                                                                                          flex: 2,
+                                                                                          flex: 1,
                                                                                           child: Row(
                                                                                             children: [
                                                                                               CustomeText(
@@ -827,9 +827,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                             ],
                                                                                           ),
                                                                                         ),
-                                                                                        Expanded(
-                                                                                            flex: 1,
-                                                                                            child: Container())
                                                                                       ],
                                                                                     ),
 
@@ -840,7 +837,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                         Row(
                                                                                           children: [
                                                                                             Expanded(
-                                                                                              flex: 2,
+                                                                                              flex: 1,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
@@ -852,7 +849,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   ),
                                                                                                   SizedBox(width: 5),
                                                                                                   CustomeText(
-                                                                                                    text: "${aWBItem.weightExp}",
+                                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.weightExp!)}",
                                                                                                     fontColor: MyColor.colorBlack,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w600,
@@ -862,7 +859,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               ),
                                                                                             ),
                                                                                             Expanded(
-                                                                                              flex: 2,
+                                                                                              flex: 1,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
@@ -874,7 +871,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   ),
                                                                                                   SizedBox(width: 5),
                                                                                                   CustomeText(
-                                                                                                    text: "${aWBItem.weightRec}",
+                                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.weightRec!)}",
                                                                                                     fontColor: MyColor.colorBlack,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w600,
@@ -883,16 +880,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                 ],
                                                                                               ),
                                                                                             ),
-                                                                                            Expanded(
-                                                                                                flex: 1,
-                                                                                                child: Container())
                                                                                           ],
                                                                                         ),
                                                                                         SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
                                                                                         Row(
                                                                                           children: [
                                                                                             Expanded(
-                                                                                              flex: 2,
+                                                                                              flex: 1,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
@@ -914,7 +908,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               ),
                                                                                             ),
                                                                                             Expanded(
-                                                                                              flex: 2,
+                                                                                              flex: 1,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
@@ -935,9 +929,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                 ],
                                                                                               ),
                                                                                             ),
-                                                                                            Expanded(
-                                                                                                flex: 1,
-                                                                                                child: Container())
 
                                                                                           ],
                                                                                         ),
@@ -945,7 +936,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                         Row(
                                                                                           children: [
                                                                                             Expanded(
-                                                                                              flex: 2,
+                                                                                              flex: 1,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
@@ -967,7 +958,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               ),
                                                                                             ),
                                                                                             Expanded(
-                                                                                              flex: 2,
+                                                                                              flex: 1,
                                                                                               child: Row(
                                                                                                 children: [
                                                                                                   CustomeText(
@@ -979,7 +970,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   ),
                                                                                                   SizedBox(width: 5),
                                                                                                   CustomeText(
-                                                                                                    text: "${aWBItem.damageWeight}",
+                                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.damageWeight!)}",
                                                                                                     fontColor: MyColor.colorBlack,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w600,
@@ -988,9 +979,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                 ],
                                                                                               ),
                                                                                             ),
-                                                                                            Expanded(
-                                                                                                flex: 1,
-                                                                                                child: Container())
                                                                                           ],
                                                                                         ),
                                                                                         SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
@@ -1023,7 +1011,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                     Row(
                                                                                       children: [
                                                                                         Expanded(
-                                                                                          flex : 2,
+                                                                                          flex : 1,
                                                                                           child: Row(
                                                                                             children: [
                                                                                               Container(
@@ -1067,7 +1055,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                         ),
 
                                                                                         Expanded(
-                                                                                            flex: 2,
+                                                                                            flex: 1,
                                                                                             child: (aWBItem.mAWBInd == "M") ? CustomeText(text: "House", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start) : (aWBItem.transit!.isNotEmpty)
                                                                                                 ? Row(
                                                                                               children: [
@@ -1095,9 +1083,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                 CustomeText(text: aWBItem.agentName!, fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
                                                                                               ],
                                                                                             )),
-                                                                                        Expanded(
-                                                                                            flex: 1,
-                                                                                            child: Container())
                                                                                       ],
                                                                                     ),
                                                                                     SizedBox(height: SizeConfig.blockSizeVertical,),
@@ -1413,7 +1398,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     if(barcodeScanResult == "-1"){
     }else{
 
-      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
@@ -1421,9 +1406,19 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
         SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanNoEditingController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(scanAwbFocusNode);
+        });
       }else{
 
-        scanNoEditingController.text = barcodeScanResult.toString().replaceAll(" ", "");
+        String result = barcodeScanResult.replaceAll(" ", "");
+
+
+        String truncatedResult = result.length > 11
+            ? result.substring(0, 11)
+            : result;
+
+        scanNoEditingController.text = truncatedResult.toString();
         updateSearchList(scanNoEditingController.text);
         setState(() {
 
@@ -1432,14 +1427,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
     }
-  }
-
-  bool containsSpecialCharacters(String input) {
-    // Define a regular expression pattern for special characters
-    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
-
-    // Returns true if the input contains any special characters
-    return specialCharactersRegex.hasMatch(input);
   }
 
 

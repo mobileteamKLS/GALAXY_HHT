@@ -93,7 +93,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
     // TODO: implement initState
     super.initState();
     _loadUser();
-    weightController.text = "${weightCount}";
+    weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
     _blinkController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: TickerProviders(), // Manually providing Ticker
@@ -335,7 +335,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
 
                                                        // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
-                                                        weightController.text = "${weightCount}";
+                                                        weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
                                                       });
 
                                                     },

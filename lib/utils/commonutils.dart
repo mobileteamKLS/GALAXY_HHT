@@ -71,4 +71,27 @@ class CommonUtils{
   }
 
 
+  static bool containsSpecialCharacters(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
+  }
+
+  static bool containsSpecialCharactersAndAlpha(String input) {
+    // Define a regular expression pattern for special characters
+    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
+
+    // Returns true if the input contains any special characters
+    return specialCharactersRegex.hasMatch(input);
+  }
+
+
+
+  static String formateToTwoDecimalPlacesValue(double value){
+    return value.toStringAsFixed(2);
+  }
+
+
 }

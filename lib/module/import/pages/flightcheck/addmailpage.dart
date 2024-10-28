@@ -1050,7 +1050,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                                               ),
                                                               SizedBox(width: 5),
                                                               CustomeText(
-                                                                text: "${addMailDetails.weightKg}",
+                                                                text: "${CommonUtils.formateToTwoDecimalPlacesValue(addMailDetails.weightKg!)}",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w600,
@@ -1137,7 +1137,7 @@ class _AddMailPageState extends State<AddMailPage> {
 
     //  String sanitizedResult = barcodeScanResult.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
 
-      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
@@ -1146,25 +1146,20 @@ class _AddMailPageState extends State<AddMailPage> {
         SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         av7NoController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(av7NoFocusNode);
+        });
       }else{
-        String truncatedResult = barcodeScanResult.length > 12
-            ? barcodeScanResult.substring(0, 12)
-            : barcodeScanResult;
+
+        String result = barcodeScanResult.replaceAll(" ", "");
+
+        String truncatedResult = result.length > 12
+            ? result.substring(0, 12)
+            : result;
         av7NoController.text = truncatedResult;
       }
-      
 
-      
     }
-  }
-
-
-  bool containsSpecialCharacters(String input) {
-    // Define a regular expression pattern for special characters
-    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
-
-    // Returns true if the input contains any special characters
-    return specialCharactersRegex.hasMatch(input);
   }
 
 

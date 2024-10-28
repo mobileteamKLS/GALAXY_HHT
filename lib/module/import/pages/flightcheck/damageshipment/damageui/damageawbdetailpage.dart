@@ -378,7 +378,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                 fontWeight: FontWeight.w500,
                                 textAlign: TextAlign.start),
                             CustomeText(
-                                text: "${widget.damageDetailsModel!.damageAWBDetail!.nPX}/${widget.damageDetailsModel!.damageAWBDetail!.wtExp} kg",
+                                text: "${widget.damageDetailsModel!.damageAWBDetail!.nPX}/${CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageAWBDetail!.wtExp!)} kg",
                                 fontColor: MyColor.textColorGrey3,
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                 fontWeight: FontWeight.w800,

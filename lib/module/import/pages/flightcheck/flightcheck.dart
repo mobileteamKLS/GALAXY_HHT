@@ -3220,7 +3220,7 @@ class _FlightCheckState extends State<FlightCheck>
                                   children: [
                                     CustomeText(
                                         text: (flightCheckSummaryModel != null)
-                                            ? "${flightCheckSummaryModel!.flightSummary!.weightExp!}"
+                                            ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightCheckSummaryModel!.flightSummary!.weightExp!)}"
                                             : "0",
                                         fontColor: MyColor.colorBlack,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
@@ -3242,7 +3242,7 @@ class _FlightCheckState extends State<FlightCheck>
                                   children: [
                                     CustomeText(
                                         text: (flightCheckSummaryModel != null)
-                                            ? "${flightCheckSummaryModel!.flightSummary!.weightRec!}"
+                                            ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightCheckSummaryModel!.flightSummary!.weightRec!)}"
                                             : "0",
                                         fontColor: MyColor.colorBlack,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
@@ -3285,7 +3285,7 @@ class _FlightCheckState extends State<FlightCheck>
                               children: [
                                 CustomeText(
                                     text: (flightCheckSummaryModel != null)
-                                        ? "${flightCheckSummaryModel!.flightSummary!.mailWeight!}"
+                                        ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightCheckSummaryModel!.flightSummary!.mailWeight!)}"
                                         : "0",
                                     fontColor: MyColor.colorBlack,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
@@ -3687,7 +3687,7 @@ class _FlightCheckState extends State<FlightCheck>
     if(locationcodeScanResult == "-1"){
 
     }else{
-      bool specialCharAllow = containsSpecialCharactersA(locationcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(locationcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
@@ -3695,11 +3695,16 @@ class _FlightCheckState extends State<FlightCheck>
         SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         locationController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(locationFocusNode);
+        });
       }else{
 
-        String truncatedResult = locationcodeScanResult.length > 15
-            ? locationcodeScanResult.substring(0, 15)
-            : locationcodeScanResult;
+        String result = locationcodeScanResult.replaceAll(" ", "");
+
+        String truncatedResult = result.length > 15
+            ? result.substring(0, 15)
+            : result;
 
         locationController.text = truncatedResult;
         // Call searchLocation api to validate or not
@@ -3729,7 +3734,7 @@ class _FlightCheckState extends State<FlightCheck>
 
     }else{
 
-      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
@@ -3738,35 +3743,21 @@ class _FlightCheckState extends State<FlightCheck>
         SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         igmNoEditingController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(igmNoFocusNode);
+        });
       }else{
-        String truncatedResult = barcodeScanResult.length > 15
-            ? barcodeScanResult.substring(0, 15)
-            : barcodeScanResult;
+        String result = barcodeScanResult.replaceAll(" ", "");
+
+        String truncatedResult = result.length > 15
+            ? result.substring(0, 15)
+            : result;
+
         igmNoEditingController.text = truncatedResult;
         callFlightCheckULDListApi(context, locationController.text, truncatedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
       }
-
     }
-
   }
-
-  bool containsSpecialCharactersA(String input) {
-    // Define a regular expression pattern for special characters
-    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
-
-    // Returns true if the input contains any special characters
-    return specialCharactersRegex.hasMatch(input);
-  }
-
-
-  bool containsSpecialCharacters(String input) {
-    // Define a regular expression pattern for special characters
-    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
-
-    // Returns true if the input contains any special characters
-    return specialCharactersRegex.hasMatch(input);
-  }
-
 
   // flight check ULD List api call function
   void callFlightCheckULDListApi(

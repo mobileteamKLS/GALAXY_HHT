@@ -3534,7 +3534,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
 
     }else{
 
-      bool specialCharAllow = containsSpecialCharactersA(uldScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(uldScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
@@ -3542,6 +3542,11 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
         SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         locationController.clear();
+
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(uldNoFocusNode);
+        });
       }else{
 
         uldNoController.text = uldScanResult.replaceAll(" ", "");
@@ -3551,9 +3556,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
         print("uldNumcer CHECK====== ${uldNumber}");
 
         if(uldNumber == "Valid"){
-          setState(() {
-
-          });
+          setState(() {});
           _suffixIconUld = false;
           _isvalidULDNo = true;
 
@@ -3590,26 +3593,6 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
   }
 
 
-/*
-  Future<void> scanLocationQR() async{
-    String locationcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Color for the scanner overlay
-      'Cancel', // Text for the cancel button
-      true, // Enable flash option
-      ScanMode.DEFAULT, // Scan mode
-    );
-
-    if(locationcodeScanResult == "-1"){
-
-    }else{
-      locationController.text = locationcodeScanResult;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(locationFocusNode);
-      });
-      //context.read<UldAcceptanceCubit>().getValidateLocation(locationcodeScanResult, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "a");
-    }
-  }
-*/
 
   Future<void> scanLocationQR() async{
     String locationcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
@@ -3622,7 +3605,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     if(locationcodeScanResult == "-1"){
 
     }else{
-      bool specialCharAllow = containsSpecialCharactersA(locationcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(locationcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
@@ -3631,11 +3614,19 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
         SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         locationController.clear();
+
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(locationFocusNode);
+        });
+
       }else{
 
-        String truncatedResult = locationcodeScanResult.length > 15
-            ? locationcodeScanResult.substring(0, 15)
-            : locationcodeScanResult;
+        String result = locationcodeScanResult.replaceAll(" ", "");
+
+        String truncatedResult = result.length > 15
+            ? result.substring(0, 15)
+            : result;
 
         locationController.text = truncatedResult;
         // Call searchLocation api to validate or not
@@ -3668,20 +3659,24 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     }else{
 
 
-      bool specialCharAllow = containsSpecialCharacters(barcodeScanResult);
-
-      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
 
 
       if(specialCharAllow == true){
         SnackbarUtil.showSnackbar(context, "Only numeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanFlightController.clear();
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(scanFlightFocusNode);
+        });
       }else{
 
-        String truncatedResult = barcodeScanResult.length > 15
-            ? barcodeScanResult.substring(0, 15)
-            : barcodeScanResult;
+        String result = barcodeScanResult.replaceAll(" ", "");
+
+        String truncatedResult = result.length > 15
+            ? result.substring(0, 15)
+            : result;
 
 
         scanFlightController.text = truncatedResult;
@@ -3701,13 +3696,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
 
   }
 
-  bool containsSpecialCharacters(String input) {
-    // Define a regular expression pattern for special characters
-    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>a-zA-Z]');
 
-    // Returns true if the input contains any special characters
-    return specialCharactersRegex.hasMatch(input);
-  }
 
   bool containsSpecialCharactersA(String input) {
     // Define a regular expression pattern for special characters
