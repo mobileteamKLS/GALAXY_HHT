@@ -406,7 +406,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
 
                   MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
 
-                  BlocConsumer<FlightCheckCubit, FlightCheckState>(
+                  BlocListener<FlightCheckCubit, FlightCheckState>(
                     listener: (context, state) {
                       if(state is MainLoadingState){
                         DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
@@ -424,54 +424,49 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
                         }
 
                       }else if(state is GetDamageDetailFailureState){
-
+                        Vibration.vibrate(duration: 500);
+                        SnackbarUtil.showSnackbar(context, state.error, MyColor.textColor, icon: FontAwesomeIcons.times);
                       }
                     },
-                    builder: (context, state) {
-                      if(state is GetDamageDetailSuccessState){
-                        return Positioned(
-                            top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
-                            bottom: 0,
-                            right: 0,
-                            left: 0,
-                            child: NotificationListener<ScrollNotification>(
-                              onNotification: (ScrollNotification scroll) {
-                                _resumeTimerOnInteraction(); // Reset the timer on scroll event
-                                return true;
-                              },
-                              child: Container(
-                                decoration: BoxDecoration(
-                                    color: MyColor.bgColorGrey,
-                                    borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
-                                        topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
-                                child: Directionality(
-                                  textDirection: textDirection,
-                                  child: Column(
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
-                                          child: PageView(
-                                            physics: NeverScrollableScrollPhysics(),
-                                            controller: _pageController,
-                                            children: _listViews(),
-                                            onPageChanged: (int page) {
-                                              setState(() {
-                                                _currentPage = page;
-                                              });
-                                            },
-                                          ),
-                                        ),
+                    child: Positioned(
+                        top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                        bottom: 0,
+                        right: 0,
+                        left: 0,
+                        child: NotificationListener<ScrollNotification>(
+                          onNotification: (ScrollNotification scroll) {
+                            _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                            return true;
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: MyColor.bgColorGrey,
+                                borderRadius: BorderRadius.only(
+                                    topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                                    topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                            child: Directionality(
+                              textDirection: textDirection,
+                              child: Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
+                                      child: PageView(
+                                        physics: NeverScrollableScrollPhysics(),
+                                        controller: _pageController,
+                                        children: _listViews(),
+                                        onPageChanged: (int page) {
+                                          setState(() {
+                                            _currentPage = page;
+                                          });
+                                        },
                                       ),
+                                    ),
+                                  ),
 
-                                    ],
-                                  ),),),
-                            ));
-                      }
-
-                      return Container();
-                    },
+                                ],
+                              ),),),
+                        )),
                   )
 
 

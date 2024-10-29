@@ -12,6 +12,7 @@ import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
+import '../../../../../../utils/dialogutils.dart';
 import '../../../../../../utils/sizeutils.dart';
 import '../../../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../../../widget/custometext.dart';
@@ -722,6 +723,28 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
             text: "Next",
             press: () async {
 
+              if(int.parse(nopController.text) == 0){
+                openValidationDialog("Please enter pieces greater than 0.", nopFocusNode, lableModel);
+                return;
+              }
+
+
+              if (nopController.text.isEmpty) {
+                openValidationDialog("${lableModel.piecesMsg}", nopFocusNode, lableModel);
+                return;
+              }
+
+              if(double.parse(weightController.text) == 0){
+                openValidationDialog("Please enter weight greater than 0.", weightFocusNode, lableModel);
+                return;
+              }
+
+              if (weightController.text.isEmpty) {
+                openValidationDialog("${lableModel.weightMsg}", weightFocusNode, lableModel);
+                return;
+              }
+
+
               CommonUtils.SELECTEDTYPEOFDISCRPENCY = (selectedDiscrepancy == null) ? " " : selectedDiscrepancy!.referenceDataIdentifier!;
               CommonUtils.shipTotalPcs = widget.damageDetailsModel!.damageAWBDetail!.nPX!;
               CommonUtils.ShipTotalWt = CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageAWBDetail!.wtExp!);
@@ -735,6 +758,9 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
               CommonUtils.individualWTPerDoc = CommonUtils.formateToTwoDecimalPlacesValue(double.tryParse(documentweightController.text) ?? 0.00);
               CommonUtils.individualWTActChk = CommonUtils.formateToTwoDecimalPlacesValue(double.tryParse(actualDocumentweightController.text) ?? 0.00);
               CommonUtils.individualWTDifference = CommonUtils.formateToTwoDecimalPlacesValue(actuleDifferenceWeight);
+
+
+
 
               widget.nextclickCallback();
             },
@@ -760,6 +786,19 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     } else {
       setState(() {
         actuleDifferenceWeight = documentWeight - actualWeight; // Calculate the difference
+      });
+    }
+  }
+
+
+  // validation dialog
+  Future<void> openValidationDialog(String message, FocusNode focuseNode, LableModel lableModel) async {
+    bool? empty = await DialogUtils.showDataNotFoundDialogbot(
+        context, "${message}", lableModel);
+
+    if (empty == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(focuseNode);
       });
     }
   }

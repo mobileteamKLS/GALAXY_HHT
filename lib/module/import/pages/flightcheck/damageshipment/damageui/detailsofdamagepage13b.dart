@@ -71,6 +71,20 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
   }
 
 
+  void clearAllTextFields() {
+    CommonUtils.SELECTEDCONTAINER = "";
+    setState(() {
+      for (var controller in CommonUtils.CONTAINERCONTROLLER) {
+        controller.clear();
+      }
+      selectedContainersList.clear(); // Also clear the selected content list if needed
+      if (focusNodes.isNotEmpty) {
+        FocusScope.of(context).requestFocus(focusNodes[0]);
+      }
+    });
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +115,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
-
+            clearAllTextFields();
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),

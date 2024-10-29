@@ -98,7 +98,11 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+            selecteddamageDiscoveredList.clear();
+            setState(() {
 
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),

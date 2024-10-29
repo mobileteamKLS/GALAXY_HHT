@@ -700,7 +700,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
 
                                                 if(int.parse(piecesController.text) == 0){
-                                                  openValidationDialog("Please enter pieces greater than 0", piecesFocusNode);
+                                                  openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
                                                   return;
                                                 }
 
@@ -711,7 +711,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 }
 
                                                 if(double.parse(weightController.text) == 0){
-                                                  openValidationDialog("Please enter weight greater than 0", weightFocusNode);
+                                                  openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
                                                   return;
                                                 }
 

@@ -109,6 +109,14 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
           clearText: "${lableModel!.clear}",
           onClear: () {
 
+            CommonUtils.SELECTEDSALVAGEACTION = "";
+            selectedsalvageActionList.clear();
+            CommonUtils.SELECTEDDISPOSITION = "";
+            selecteddispositionList.clear();
+            setState(() {
+
+            });
+
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),

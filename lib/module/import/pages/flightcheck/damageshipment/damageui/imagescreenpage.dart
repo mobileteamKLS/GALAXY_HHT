@@ -137,8 +137,54 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
         if(state.damageBreakDownSaveModel.status == "E"){
           SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
           Vibration.vibrate(duration: 500);
+        }else if(state.damageBreakDownSaveModel.status == "V"){
+          SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+          Vibration.vibrate(duration: 500);
         }else{
 
+          CommonUtils.SELECTEDWHETHER = "";
+          selectedWhetherList.clear();
+          wordController.clear();
+          ghaController.clear();
+          airlineController.clear();
+          securityController.clear();
+          images = "";
+          selectImageBase64List.clear();
+          CommonUtils.SELECTEDIMAGELIST.clear();
+          imageCount = "0";
+
+          CommonUtils.shipTotalPcs = 0;
+          CommonUtils.ShipTotalWt = "0.00";
+          CommonUtils.shipDamagePcs = 0;
+          CommonUtils.ShipDamageWt = "0.00";
+          CommonUtils.shipDifferencePcs = 0;
+          CommonUtils.shipDifferenceWt = "0.00";
+          CommonUtils.individualWTPerDoc = "0.00";
+          CommonUtils.individualWTActChk = "0.00";
+          CommonUtils.individualWTDifference = "0.00";
+          CommonUtils.SELECTEDMATERIAL = "";
+          CommonUtils.SELECTEDTYPE = "";
+          CommonUtils.SELECTEDMARKANDLABLE = "";
+          CommonUtils.SELECTEDOUTRERPACKING = "";
+          CommonUtils.SELECTEDINNERPACKING = "";
+          CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+          CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+          CommonUtils.SELECTEDSALVAGEACTION = "";
+          CommonUtils.SELECTEDDISPOSITION = "";
+          CommonUtils.MISSINGITEM = "Y";
+          CommonUtils.VERIFIEDINVOICE = "Y";
+          CommonUtils.SUFFICIENT = "Y";
+          CommonUtils.EVIDENCE = "Y";
+          CommonUtils.REMARKS = "";
+
+          CommonUtils.SELECTEDCONTENT = "";
+          for (var controller in CommonUtils.CONTENTCONTROLLER) {
+            controller.clear();
+          }
+          CommonUtils.SELECTEDCONTAINER = "";
+          for (var controller in CommonUtils.CONTAINERCONTROLLER) {
+            controller.clear();
+          }
 
           SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
           Navigator.pop(context, "true");
@@ -158,6 +204,23 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+
+            CommonUtils.SELECTEDWHETHER = "";
+            selectedWhetherList.clear();
+
+            wordController.clear();
+            ghaController.clear();
+            airlineController.clear();
+            securityController.clear();
+
+            images = "";
+            selectImageBase64List.clear();
+            CommonUtils.SELECTEDIMAGELIST.clear();
+            imageCount = "0";
+
+            setState(() {
+
+            });
 
           },
         ),
@@ -549,6 +612,22 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                 child: RoundedButtonBlue(
                   text: "Record Damage",
                   press: () async {
+
+                    if (ghaController.text.isEmpty) {
+                      openValidationDialog("Please enter GHA Representative.", ghaFocusNode, lableModel);
+                      return;
+                    }
+
+                    if (airlineController.text.isEmpty) {
+                      openValidationDialog("Please enter Airline Representative.", airlineFocusNode, lableModel);
+                      return;
+                    }
+
+                    if (securityController.text.isEmpty) {
+                      openValidationDialog("Please enter Security Representative.", airlineFocusNode, lableModel);
+                      return;
+                    }
+
                     String exactWording = wordController.text;
                     String ghaRep = ghaController.text;
                     String airlineRep = airlineController.text;
@@ -1013,6 +1092,17 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
     );
   }
 
+
+  Future<void> openValidationDialog(String message, FocusNode focuseNode, LableModel lableModel) async {
+    bool? empty = await DialogUtils.showDataNotFoundDialogbot(
+        context, "${message}", lableModel);
+
+    if (empty == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(focuseNode);
+      });
+    }
+  }
 
   String generateImageXMLData(List<String> selectImageList) {
     StringBuffer xmlBuffer = StringBuffer();

@@ -86,7 +86,11 @@ class _Damageuipart2State extends State<OuterPackingPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            CommonUtils.SELECTEDOUTRERPACKING = "";
+            selectedOuterPackingList.clear();
+            setState(() {
 
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),

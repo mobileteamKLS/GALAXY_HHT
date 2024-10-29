@@ -99,6 +99,14 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            CommonUtils.SELECTEDMATERIAL = "";
+            CommonUtils.SELECTEDTYPE = "";
+            selectedMaterialList.clear();
+            selectedTypeList.clear();
+            setState(() {
+
+            });
+
 
           },
         ),

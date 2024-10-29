@@ -93,7 +93,11 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+            selecteddamageApparentlyList.clear();
+            setState(() {
 
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),

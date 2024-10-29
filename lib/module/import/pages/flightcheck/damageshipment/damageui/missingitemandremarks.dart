@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/module/import/model/flightcheck/awblistmodel.dart';
+import 'package:galaxy/widget/customeedittext/remarkedittextfeild.dart';
 
 import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
@@ -9,6 +10,7 @@ import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
+import '../../../../../../utils/dialogutils.dart';
 import '../../../../../../utils/sizeutils.dart';
 import '../../../../../../widget/customdivider.dart';
 import '../../../../../../widget/customebuttons/roundbuttonblue.dart';
@@ -32,7 +34,6 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
 
 
   String missingItems = "Y";
-
   String verifiedInvoice = "Y";
   String packingSufficient = "Y";
   String evidence = "Y";
@@ -89,7 +90,15 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            missingItems = CommonUtils.MISSINGITEM = "Y";
+            verifiedInvoice = CommonUtils.VERIFIEDINVOICE = "Y";
+            packingSufficient = CommonUtils.SUFFICIENT = "Y";
+            evidence = CommonUtils.EVIDENCE = "Y";
+            remarkController.clear();
+            CommonUtils.REMARKS = "";
+            setState(() {
 
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
@@ -543,7 +552,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
 
                         Directionality(
                           textDirection: uiDirection,
-                          child: CustomTextField(
+                          child: RemarkCustomTextField(
                             controller: remarkController,
                             focusNode: remarkFocusNode,
                             onPress: () {},
@@ -604,6 +613,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    FocusManager.instance.primaryFocus?.unfocus();
                     CommonUtils.MISSINGITEM = missingItems;
                     CommonUtils.VERIFIEDINVOICE = verifiedInvoice;
                     CommonUtils.SUFFICIENT = packingSufficient;
@@ -621,6 +631,15 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                 child: RoundedButtonBlue(
                   text: "Next",
                   press: () async {
+
+                    if (remarkController.text.isEmpty) {
+                      openValidationDialog("Please enter remarks.", remarkFocusNode, lableModel);
+                      return;
+                    }
+
+                    FocusManager.instance.primaryFocus?.unfocus();
+
+
                     CommonUtils.MISSINGITEM = missingItems;
                     CommonUtils.VERIFIEDINVOICE = verifiedInvoice;
                     CommonUtils.SUFFICIENT = packingSufficient;
@@ -635,5 +654,16 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
         )
       ],
     );
+  }
+
+  Future<void> openValidationDialog(String message, FocusNode focuseNode, LableModel lableModel) async {
+    bool? empty = await DialogUtils.showDataNotFoundDialogbot(
+        context, "${message}", lableModel);
+
+    if (empty == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(focuseNode);
+      });
+    }
   }
 }

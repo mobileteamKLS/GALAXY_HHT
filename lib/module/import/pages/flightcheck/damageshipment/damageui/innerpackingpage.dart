@@ -86,7 +86,11 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            CommonUtils.SELECTEDINNERPACKING = "";
+            selectedInnerPackList.clear();
+            setState(() {
 
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),

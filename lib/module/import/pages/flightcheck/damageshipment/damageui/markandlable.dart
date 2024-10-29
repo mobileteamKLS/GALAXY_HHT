@@ -86,7 +86,11 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            CommonUtils.SELECTEDMARKANDLABLE = "";
+            selectedMarkLableList.clear();
+            setState(() {
 
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
