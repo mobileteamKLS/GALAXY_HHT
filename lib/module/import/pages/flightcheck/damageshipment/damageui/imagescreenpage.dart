@@ -4,9 +4,15 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
+import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
+import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:vibration/vibration.dart';
 
 import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
@@ -25,13 +31,24 @@ import '../../../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import 'package:image/image.dart' as img;
 
+import '../../../../model/flightcheck/awblistmodel.dart';
 import '../../../../model/flightcheck/damagedetailmodel.dart';
+import '../../../../model/flightcheck/flightcheckuldlistmodel.dart';
 
 class ImageScreenPage extends StatefulWidget {
+
+  FlightDetailSummary flightDetailSummary;
+  FlightCheckInAWBBDList aWBItem;
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  ImageScreenPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+  int userId;
+  int companyCode;
+  int menuId;
+
+
+
+  ImageScreenPage({super.key, required this.aWBItem, required this.flightDetailSummary, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback, required this.userId, required this.companyCode, required this.menuId});
 
   @override
   State<ImageScreenPage> createState() => _ImageScreenPageState();
@@ -72,6 +89,14 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
     whetherConditionList = List.from(widget.damageDetailsModel!.referenceData17List!);
 
 
+    List<String> selectedwhetherConditionListItem = CommonUtils.SELECTEDWHETHER.split(",");
+    for (var item in whetherConditionList) {
+      if (selectedwhetherConditionListItem.contains(item.referenceDataIdentifier)) {
+        selectedWhetherList.add("${item.referenceDataIdentifier},");
+      }
+    }
+
+
     selectImageBase64List = List.from(CommonUtils.SELECTEDIMAGELIST);
     images = generateImageXMLData(CommonUtils.SELECTEDIMAGELIST);
     imageCount = "${selectImageBase64List.length}";
@@ -105,7 +130,25 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
         : ui.TextDirection.ltr;
 
 
-    return Column(
+    return BlocListener<FlightCheckCubit, FlightCheckState>(listener: (context, state) {
+      if(state is MainLoadingState){
+        DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+      }else if(state is DamageBreakDownSaveSuccessState){
+        if(state.damageBreakDownSaveModel.status == "E"){
+          SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+          Vibration.vibrate(duration: 500);
+        }else{
+
+
+          SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+          Navigator.pop(context, "true");
+        }
+      }else if(state is DamageBreakDownSaveFailureState){
+        SnackbarUtil.showSnackbar(context, state.error!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+      }
+    },
+    child: Column(
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
@@ -256,7 +299,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                   ),
                                 ),
                                 Switch(
-                                  value: selectedWhetherList.contains("${whetherCondition.referenceDataIdentifier}~"),
+                                  value: selectedWhetherList.contains("${whetherCondition.referenceDataIdentifier},"),
                                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                   activeColor: MyColor.primaryColorblue,
                                   inactiveThumbColor: MyColor.thumbColor,
@@ -265,9 +308,9 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                   onChanged: (value) {
                                     setState(() {
                                       if (value) {
-                                        selectedWhetherList.add("${whetherCondition.referenceDataIdentifier}~");
+                                        selectedWhetherList.add("${whetherCondition.referenceDataIdentifier},");
                                       } else {
-                                        selectedWhetherList.remove("${whetherCondition.referenceDataIdentifier}~");
+                                        selectedWhetherList.remove("${whetherCondition.referenceDataIdentifier},");
                                       }
                                     });
                                   },
@@ -493,6 +536,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                 child: RoundedButtonBlue(
                   text: "Previous",
                   press: () async {
+                    CommonUtils.SELECTEDWHETHER = selectedWhetherList.join('').toString();
                     widget.preclickCallback();
                   },
                 ),
@@ -511,7 +555,78 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                     String securityRep = securityController.text;
                     CommonUtils.SELECTEDWHETHER = selectedWhetherList.join('').toString();
 
+                    List<String> awb = widget.damageDetailsModel!.damageAWBDetail!.aWBNo!.split(" ");
+                    String awbPrefix = awb[0];
+                    String awbNumber = awb[1];
+                    int awbId = widget.aWBItem.iMPAWBRowId!;
+                    int shipId = widget.aWBItem.iMPShipRowId!;
+                    int flightSeqNo = widget.flightDetailSummary.flightSeqNo!;
+                    String typeOfDiscrepancy = CommonUtils.SELECTEDTYPEOFDISCRPENCY!;
 
+                    int shipTotalPcs =  CommonUtils.shipTotalPcs;
+                    String ShipTotalWt =  CommonUtils.ShipTotalWt;
+                    int shipDamagePcs =  CommonUtils.shipDamagePcs;
+                    String ShipDamageWt =  CommonUtils.ShipDamageWt;
+                    int shipDifferencePcs =  CommonUtils.shipDifferencePcs;
+                    String shipDifferenceWt =  CommonUtils.shipDifferenceWt;
+
+                    String individualWTPerDoc =  CommonUtils.individualWTPerDoc;
+                    String individualWTActChk =  CommonUtils.individualWTActChk;
+                    String individualWTDifference =  CommonUtils.individualWTDifference;
+
+                    String containerMaterial = CommonUtils.SELECTEDMATERIAL;
+                    String containerType = CommonUtils.SELECTEDTYPE;
+                    String marksLabels = CommonUtils.SELECTEDMARKANDLABLE;
+                    String outerPacking = CommonUtils.SELECTEDOUTRERPACKING;
+                    String innerPacking = CommonUtils.SELECTEDINNERPACKING;
+                    String damageObserContent = CommonUtils.SELECTEDCONTENT;
+                    String damageObserContainers = CommonUtils.SELECTEDCONTAINER;
+                    String damageDiscovered = CommonUtils.SELECTEDDAMAGEDISCOVER;
+                    String spaceForMissing = CommonUtils.MISSINGITEM;
+                    String verifiedInvoice = CommonUtils.VERIFIEDINVOICE;
+                    String isSufficient = CommonUtils.SUFFICIENT;
+                    String evidenceOfPilerage = CommonUtils.EVIDENCE;
+                    String remarksValue = CommonUtils.REMARKS;
+                    String aparentCause = CommonUtils.SELECTEDDAMAGEAPPARENTLY;
+                    String salvageAction = CommonUtils.SELECTEDSALVAGEACTION;
+                    String disposition = CommonUtils.SELECTEDDISPOSITION;
+                    String damageRemarked = exactWording;
+                    String weatherCondition = CommonUtils.SELECTEDWHETHER;
+                    String GHARepresent = ghaRep;
+                    String AirlineRepresent = airlineRep;
+                    String SecurityRepresent = securityRep;
+                    int problemSeqId = widget.damageDetailsModel!.damageDetail!.seqNo!;
+
+                    context.read<FlightCheckCubit>().damageBreakDownSave(
+                        awbPrefix, awbNumber,
+                        awbId, shipId, flightSeqNo,
+                        typeOfDiscrepancy,
+                        shipTotalPcs, ShipTotalWt, shipDamagePcs, ShipDamageWt, shipDifferencePcs, shipDifferenceWt,
+                        individualWTPerDoc, individualWTActChk, individualWTDifference,
+                        containerMaterial,
+                        containerType,
+                        marksLabels,
+                        outerPacking,
+                        innerPacking,
+                        damageObserContent,
+                        damageObserContainers,
+                        damageDiscovered,
+                        spaceForMissing,
+                        verifiedInvoice,
+                        isSufficient,
+                        evidenceOfPilerage,
+                        remarksValue,
+                        aparentCause,
+                        salvageAction,
+                        disposition,
+                        damageRemarked,
+                        weatherCondition,
+                        GHARepresent,
+                        AirlineRepresent,
+                        SecurityRepresent,
+                        problemSeqId,
+                        images,
+                        widget.userId, widget.companyCode, widget.menuId);
 
                   },
                 ),
@@ -520,6 +635,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
           ),
         )
       ],
+    ),
     );
   }
 
@@ -818,7 +934,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                             builder: (context) =>
                                                 EnlargedBinaryImageScreen(
                                                   binaryFile: base64Image,
-                                                  imageList: imageList!,
+                                                  imageList: imageList,
                                                   index: index,
                                                 ),
                                             fullscreenDialog:

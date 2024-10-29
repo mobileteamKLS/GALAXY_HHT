@@ -50,17 +50,17 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
     typeList = List.from(widget.damageDetailsModel!.referenceData9BList!);
 
 
-    List<String> selectedMaterialListItem = CommonUtils.SELECTEDMATERIAL.split("~");
+    List<String> selectedMaterialListItem = CommonUtils.SELECTEDMATERIAL.split(",");
     for (var item in materialList) {
       if (selectedMaterialListItem.contains(item.referenceDataIdentifier)) {
-        selectedMaterialList.add("${item.referenceDataIdentifier}~");
+        selectedMaterialList.add("${item.referenceDataIdentifier},");
       }
     }
 
-    List<String> selectedTypeListItem = CommonUtils.SELECTEDTYPE.split("~");
+    List<String> selectedTypeListItem = CommonUtils.SELECTEDTYPE.split(",");
     for (var item in typeList) {
       if (selectedTypeListItem.contains(item.referenceDataIdentifier)) {
-        selectedTypeList.add("${item.referenceDataIdentifier}~");
+        selectedTypeList.add("${item.referenceDataIdentifier},");
       }
     }
 
@@ -197,7 +197,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                           ),
                                           SizedBox(width: 2),
                                           Switch(
-                                            value: selectedMaterialList.contains("${material.referenceDataIdentifier}~"),
+                                            value: selectedMaterialList.contains("${material.referenceDataIdentifier},"),
                                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                             activeColor: MyColor.primaryColorblue,
                                             inactiveThumbColor: MyColor.thumbColor,
@@ -206,9 +206,9 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                             onChanged: (value) {
                                               setState(() {
                                                 if (value) {
-                                                  selectedMaterialList.add("${material.referenceDataIdentifier}~");
+                                                  selectedMaterialList.add("${material.referenceDataIdentifier},");
                                                 } else {
-                                                  selectedMaterialList.remove("${material.referenceDataIdentifier}~");
+                                                  selectedMaterialList.remove("${material.referenceDataIdentifier},");
                                                 }
                                               });
                                             },
@@ -295,7 +295,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                           ),
                                           SizedBox(width: 2),
                                           Switch(
-                                            value: selectedTypeList.contains("${type.referenceDataIdentifier}~"),
+                                            value: selectedTypeList.contains("${type.referenceDataIdentifier},"),
                                             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                             activeColor: MyColor.primaryColorblue,
                                             inactiveThumbColor: MyColor.thumbColor,
@@ -304,9 +304,9 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                             onChanged: (value) {
                                               setState(() {
                                                 if (value) {
-                                                  selectedTypeList.add("${type.referenceDataIdentifier}~");
+                                                  selectedTypeList.add("${type.referenceDataIdentifier},");
                                                 } else {
-                                                  selectedTypeList.remove("${type.referenceDataIdentifier}~");
+                                                  selectedTypeList.remove("${type.referenceDataIdentifier},");
                                                 }
                                               });
                                             },

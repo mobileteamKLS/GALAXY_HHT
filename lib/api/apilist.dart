@@ -47,4 +47,5 @@ class Apilist{
   static String checkAirportApi = "/AirportCode/AirportCodeValidate";
   static String breakDownEndApi = "/FlightCheckIn/BreakDownEnd";
   static String getDamageDetailsApi = "/FlightCheckIn/GetDamageDetails";
+  static String damageDetailsSaveApi = "/FlightCheckIn/DamageSave";
 }

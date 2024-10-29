@@ -37,7 +37,7 @@ class DetailsOfDamagePage13b extends StatefulWidget {
 
 class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
 
-  List<TextEditingController> controllers = [];
+
   List<FocusNode> focusNodes = [];
 
   List<ReferenceData14BList> containersList = [];
@@ -54,14 +54,14 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
 
     containersList = List.from(widget.damageDetailsModel!.referenceData14BList!);
 
-    controllers = List.generate(widget.damageDetailsModel!.referenceData14BList!.length, (index) => TextEditingController());
+    CommonUtils.CONTAINERCONTROLLER = List.generate(widget.damageDetailsModel!.referenceData14BList!.length, (index) => TextEditingController());
     focusNodes = List.generate(widget.damageDetailsModel!.referenceData14BList!.length, (index) => FocusNode());
   }
 
   @override
   void dispose() {
     // Dispose of controllers and focus nodes
-    for (var controller in controllers) {
+    for (var controller in CommonUtils.CONTAINERCONTROLLER) {
       controller.dispose();
     }
     for (var focusNode in focusNodes) {
@@ -147,7 +147,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         ReferenceData14BList content = containersList[index];
-                        TextEditingController controller = controllers[index];
+                        TextEditingController controller = CommonUtils.CONTAINERCONTROLLER[index];
                         FocusNode focusNode = focusNodes[index];
 
                         return Padding(

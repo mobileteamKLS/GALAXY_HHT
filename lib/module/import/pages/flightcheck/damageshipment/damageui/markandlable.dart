@@ -45,10 +45,10 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
 
     markLableList = List.from(widget.damageDetailsModel!.referenceData11List!);
 
-    List<String> selectedmarkLableListItem = CommonUtils.SELECTEDMARKANDLABLE.split("~");
+    List<String> selectedmarkLableListItem = CommonUtils.SELECTEDMARKANDLABLE.split(",");
     for (var item in markLableList) {
       if (selectedmarkLableListItem.contains(item.referenceDataIdentifier)) {
-        selectedMarkLableList.add("${item.referenceDataIdentifier}~");
+        selectedMarkLableList.add("${item.referenceDataIdentifier},");
       }
     }
 
@@ -164,7 +164,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selectedMarkLableList.contains("${markLable.referenceDataIdentifier}~"),
+                                        value: selectedMarkLableList.contains("${markLable.referenceDataIdentifier},"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -173,9 +173,9 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selectedMarkLableList.add("${markLable.referenceDataIdentifier}~");
+                                              selectedMarkLableList.add("${markLable.referenceDataIdentifier},");
                                             } else {
-                                              selectedMarkLableList.remove("${markLable.referenceDataIdentifier}~");
+                                              selectedMarkLableList.remove("${markLable.referenceDataIdentifier},");
                                             }
                                           });
                                         },

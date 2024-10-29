@@ -47,10 +47,10 @@ class _Damageuipart2State extends State<OuterPackingPage> {
     outerPackingList = List.from(widget.damageDetailsModel!.referenceData10List!);
 
 
-    List<String> selectedouterPackingListItem = CommonUtils.SELECTEDOUTRERPACKING.split("~");
+    List<String> selectedouterPackingListItem = CommonUtils.SELECTEDOUTRERPACKING.split(",");
     for (var item in outerPackingList) {
       if (selectedouterPackingListItem.contains(item.referenceDataIdentifier)) {
-        selectedOuterPackingList.add("${item.referenceDataIdentifier}~");
+        selectedOuterPackingList.add("${item.referenceDataIdentifier},");
       }
     }
 
@@ -167,7 +167,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selectedOuterPackingList.contains("${outerPacking.referenceDataIdentifier}~"),
+                                        value: selectedOuterPackingList.contains("${outerPacking.referenceDataIdentifier},"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -176,9 +176,9 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selectedOuterPackingList.add("${outerPacking.referenceDataIdentifier}~");
+                                              selectedOuterPackingList.add("${outerPacking.referenceDataIdentifier},");
                                             } else {
-                                              selectedOuterPackingList.remove("${outerPacking.referenceDataIdentifier}~");
+                                              selectedOuterPackingList.remove("${outerPacking.referenceDataIdentifier},");
                                             }
                                           });
                                         },

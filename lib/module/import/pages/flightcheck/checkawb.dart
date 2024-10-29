@@ -372,11 +372,16 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "${lableModel.weight}",
-                                                    readOnly: true,
+                                                    readOnly: false,
                                                     maxLength: 10,
                                                     digitsOnly: false,
                                                     doubleDigitOnly: true,
-                                                    onChanged: (value) {},
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
+                                                      });
+
+                                                    },
                                                     fillColor:  Colors.grey.shade100,
                                                     textInputType: TextInputType.number,
                                                     inputAction: TextInputAction.next,
@@ -675,7 +680,10 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             child: RoundedButtonBlue(
                                               text: "${lableModel.damageAndSave}",
                                               press: () async {
-                                                Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, menuId: widget.menuId,),));
+                                                int npxPices = widget.aWBItem.nPR!;
+                                                double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+
+                                                Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo,),));
                                               },
                                             ),
                                           ),
@@ -690,8 +698,20 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
                                                 String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
 
+
+                                                if(int.parse(piecesController.text) == 0){
+                                                  openValidationDialog("Please enter pieces greater than 0", piecesFocusNode);
+                                                  return;
+                                                }
+
+
                                                 if (piecesController.text.isEmpty) {
                                                   openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
+                                                  return;
+                                                }
+
+                                                if(double.parse(weightController.text) == 0){
+                                                  openValidationDialog("Please enter weight greater than 0", weightFocusNode);
                                                   return;
                                                 }
 
@@ -712,7 +732,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 }
 
 
-                                                context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
                                               },
                                             ),

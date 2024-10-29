@@ -3443,13 +3443,10 @@ class _FlightCheckState extends State<FlightCheck>
                     if (flightFinalized == true) {
                       // call api for flight finalize
                       context.read<FlightCheckCubit>().finalizeFlight(flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
                     }
 
-
                   } else {
-                    openValidationDialog(
-                        "${lableModel.enterFlightDate}", dateFocusNode);
+                    openValidationDialog("${lableModel.enterFlightDate}", dateFocusNode);
                   }
                 }
                 else {

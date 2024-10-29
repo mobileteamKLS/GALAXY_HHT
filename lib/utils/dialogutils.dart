@@ -180,7 +180,7 @@ class DialogUtils {
     }
   }
 
-  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo) {
+  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo, int uldProgress) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -189,8 +189,8 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
-          title: CustomeText(text: "Breakdown Completed",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
-          content: CustomeText(text: "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          title: CustomeText(text: uldProgress < 100 ? "Breakdown Not completed" : "Breakdown Completed",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          content: CustomeText(text: uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
             InkWell(
                 onTap: () {

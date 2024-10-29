@@ -42,6 +42,12 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
   @override
   void initState() {
     // TODO: implement initState
+
+    missingItems = CommonUtils.MISSINGITEM;
+    verifiedInvoice = CommonUtils.VERIFIEDINVOICE;
+    packingSufficient = CommonUtils.SUFFICIENT;
+    evidence = CommonUtils.EVIDENCE;
+
     super.initState();
 
   }

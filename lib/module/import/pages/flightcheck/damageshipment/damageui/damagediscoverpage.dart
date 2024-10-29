@@ -49,10 +49,10 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
     damageDiscoveredList = List.from(widget.damageDetailsModel!.referenceData15List!);
 
 
-    List<String> selectedDamageDiscoveredListItem = CommonUtils.SELECTEDDAMAGEDISCOVER.split("~");
+    List<String> selectedDamageDiscoveredListItem = CommonUtils.SELECTEDDAMAGEDISCOVER.split(",");
     for (var item in damageDiscoveredList) {
       if (selectedDamageDiscoveredListItem.contains(item.referenceDataIdentifier)) {
-        selecteddamageDiscoveredList.add("${item.referenceDataIdentifier}~");
+        selecteddamageDiscoveredList.add("${item.referenceDataIdentifier},");
       }
     }
 
@@ -175,7 +175,7 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                                   ),
                                   SizedBox(width: 2),
                                   Switch(
-                                    value: selecteddamageDiscoveredList.contains("${damageDiscovered.referenceDataIdentifier}~"),
+                                    value: selecteddamageDiscoveredList.contains("${damageDiscovered.referenceDataIdentifier},"),
                                     materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                     activeColor: MyColor.primaryColorblue,
                                     inactiveThumbColor: MyColor.thumbColor,
@@ -184,9 +184,9 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                                     onChanged: (value) {
                                       setState(() {
                                         if (value) {
-                                          selecteddamageDiscoveredList.add("${damageDiscovered.referenceDataIdentifier}~");
+                                          selecteddamageDiscoveredList.add("${damageDiscovered.referenceDataIdentifier},");
                                         } else {
-                                          selecteddamageDiscoveredList.remove("${damageDiscovered.referenceDataIdentifier}~");
+                                          selecteddamageDiscoveredList.remove("${damageDiscovered.referenceDataIdentifier},");
                                         }
                                       });
                                     },

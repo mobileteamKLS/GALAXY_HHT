@@ -12,6 +12,7 @@ import '../../model/flightcheck/airportcitymodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/bdprioritymodel.dart';
 import '../../model/flightcheck/breakdownendmodel.dart';
+import '../../model/flightcheck/damagebreakdownsavemodel.dart';
 import '../../model/flightcheck/damagedetailmodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
@@ -695,7 +696,7 @@ class FlightCheckRepository{
     }
   }
 
-  Future<ImportShipmentModel> importManifestSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, int userId, int companyCode, int menuId) async {
+  Future<ImportShipmentModel> importManifestSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput, int userId, int companyCode, int menuId) async {
 
     try {
 
@@ -707,7 +708,7 @@ class FlightCheckRepository{
         "HAWBId": hawbid,
         "IsOverride": "N",
         "NOPInput": nopInput,
-        "WtInput": 0,
+        "WtInput": wtInput,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -829,6 +830,118 @@ class FlightCheckRepository{
       }
     }
   }
+
+
+  Future<DamageBreakDownSaveModel> damageBreakDownSave(
+      String awbPrefix, String awbNumber,
+      int AWBId, int SHIPId, int flightSeqNo,
+      String typeOfDiscrepancy,
+      int shipTotalPcs, String ShipTotalWt, int shipDamagePcs, String ShipDamageWt, int shipDifferencePcs, String shipDifferenceWt,
+      String individualWTPerDoc, String individualWTActChk, String individualWTDifference,
+      String containerMaterial, String containerType,
+      String marksLabels,
+      String outerPacking,
+      String innerPacking,
+      String damageObserContent,
+      String damageObserContainers,
+      String damageDiscovered,
+      String spaceForMissing,
+      String verifiedInvoice,
+      String isSufficient,
+      String evidenceOfPilerage,
+      String remarks,
+      String aparentCause,
+      String salvageAction,
+      String disposition,
+      String damageRemarked,
+      String weatherCondition,
+      String GHARepresent,
+      String AirlineRepresent,
+      String SecurityRepresent,
+      int problemSeqId,
+      String XmlBinaryImage,
+      int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "AwbPrefix" : awbPrefix,
+        "AwbNumber" : awbNumber,
+        "AWBId" : AWBId,
+        "SHIPId": SHIPId,
+        "FlightSeqNo" : flightSeqNo,
+        "HouseSeqNo": 0,
+        "TypeOfDiscrepancy": typeOfDiscrepancy,
+        "ShipTotalPcs": shipTotalPcs,
+        "ShipTotalWt": ShipTotalWt,
+        "ShipDamagePcs": shipDamagePcs,
+        "ShipDamageWt": ShipDamageWt,
+        "ShipDifferencePcs": shipDifferencePcs,
+        "ShipDifferenceWt": shipDifferenceWt,
+        "IndividualWTPerDoc": individualWTPerDoc,
+        "IndividualWTActChk": individualWTActChk,
+        "IndividualWTDifference": individualWTDifference,
+        "ContainerMaterial": containerMaterial,
+        "ContainerType": containerType,
+        "MarksLabels": marksLabels,
+        "OuterPacking": outerPacking,
+        "InnerPacking": innerPacking,
+        "DamageObserContent": damageObserContent,
+        "DamageObserContainers": damageObserContainers,
+        "DamageDiscovered": damageDiscovered,
+        "SpaceForMissing": spaceForMissing,
+        "VerifiedInvoice": verifiedInvoice,
+        "IsSufficient": isSufficient,
+        "EvidenceOfPilerage": evidenceOfPilerage,
+        "Remarks": remarks,
+        "AparentCause": aparentCause,
+        "SalvageAction": salvageAction,
+        "Disposition": disposition,
+
+        "DamageRemarked": damageRemarked,
+        "WeatherCondition": weatherCondition,
+        "GHARepresent": GHARepresent,
+        "AirlineRepresent": AirlineRepresent,
+        "SecurityRepresent": SecurityRepresent,
+        "ProblemSeqId" : problemSeqId,
+        "XmlBinaryImage": XmlBinaryImage,
+
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('damageBreakDownSave: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.damageDetailsSaveApi,
+          data: payload
+      );
+
+
+      if (response.statusCode == 200) {
+        DamageBreakDownSaveModel damageBreakDownSaveModel = DamageBreakDownSaveModel.fromJson(response.data);
+        return damageBreakDownSaveModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
 
 }

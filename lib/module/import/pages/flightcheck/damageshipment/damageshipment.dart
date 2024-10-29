@@ -56,8 +56,14 @@ class DamageShimentPage extends StatefulWidget {
   String mainMenuName;
   FlightDetailSummary flightDetailSummary;
   int menuId;
+  int userId;
+  int companyCode;
 
-  DamageShimentPage({super.key, required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.menuId});
+  int npxPieces;
+  double npxWeightCo;
+
+
+  DamageShimentPage({super.key, required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.userId, required this.companyCode, required this.menuId, required this.npxPieces, required this.npxWeightCo});
 
   @override
   State<DamageShimentPage> createState() => _DamageShimentPageState();
@@ -150,6 +156,8 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     return [
 
       (damageDetailsModel != null) ? DamageAwbDetailPage(
+        npxPieces: widget.npxPieces,
+        npxWeightCo: widget.npxWeightCo,
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -324,6 +332,11 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? ImageScreenPage(
+        userId: widget.userId,
+        companyCode: widget.companyCode,
+        menuId: widget.menuId,
+        flightDetailSummary: widget.flightDetailSummary,
+        aWBItem: widget.aWBItem,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event

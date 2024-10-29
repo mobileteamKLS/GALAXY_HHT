@@ -164,13 +164,40 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
     print("ULD_PROGRSS == ${uldProgress}");
 
-    bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo);
+    bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress);
     if (exitConfirmed == true) {
+      bool hasIncompleteAWB = false;
 
-      context.read<FlightCheckCubit>().breakDownEnd(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, uldProgress < 100 ? "N" : "Y", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+      for (var item in filterAWBDetailsList) {
+        if (item.progress == 0) {
+          hasIncompleteAWB = true;
+          String awbNo = item.aWBNo!;
 
-     // return true; // Exit the app
-    }else{
+          // Show Snackbar with the AWB number of the first item with Progress 0
+          SnackbarUtil.showSnackbar(
+            context,
+            "All the AWBs have not yet been matched/recorded discrepancy.",
+            MyColor.colorRed,
+            icon: FontAwesomeIcons.times,
+          );
+
+          Vibration.vibrate(duration: 500);
+          break; // Stop after finding the first item with Progress 0
+        }
+      }
+
+      // Call breakDownEnd only if all items have non-zero progress
+      if (!hasIncompleteAWB) {
+        context.read<FlightCheckCubit>().breakDownEnd(
+          widget.flightDetailSummary.flightSeqNo!,
+          widget.uldSeqNo,
+          uldProgress < 100 ? "Y" : "N",
+          _user!.userProfile!.userIdentity!,
+          _splashDefaultData!.companyCode!,
+          widget.menuId,
+        );
+      }
+    } else {
       Navigator.pop(context, "Done");
     }
     return false; // Stay in the app (Cancel was clicked)
@@ -1398,12 +1425,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     if(barcodeScanResult == "-1"){
     }else{
 
-      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanNoEditingController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1411,18 +1438,27 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
         });
       }else{
 
-        String result = barcodeScanResult.replaceAll(" ", "");
+        if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
+          // Show invalid message if alphabet characters are present
+          SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+          Vibration.vibrate(duration: 500);
+          scanNoEditingController.clear();
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(scanAwbFocusNode);
+          });
+        } else {
+          String result = barcodeScanResult.replaceAll(" ", "");
+          String truncatedResult = result.length > 11
+              ? result.substring(0, 11)
+              : result;
+
+          scanNoEditingController.text = truncatedResult.toString();
+          updateSearchList(scanNoEditingController.text);
+        }
 
 
-        String truncatedResult = result.length > 11
-            ? result.substring(0, 11)
-            : result;
 
-        scanNoEditingController.text = truncatedResult.toString();
-        updateSearchList(scanNoEditingController.text);
-        setState(() {
 
-        });
       }
 
 

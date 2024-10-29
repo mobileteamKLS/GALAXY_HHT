@@ -27,7 +27,14 @@ class DamageAwbDetailPage extends StatefulWidget {
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  DamageAwbDetailPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+
+  int npxPieces;
+  double npxWeightCo;
+
+  DamageAwbDetailPage({super.key,
+    required this.npxPieces,
+    required this.npxWeightCo,
+    required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
   State<DamageAwbDetailPage> createState() => _DamageAwbDetailPageState();
@@ -69,6 +76,15 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     weight = widget.damageDetailsModel!.damageAWBDetail!.wtExp!;
 
     typesOfDiscrepancy = List.of(widget.damageDetailsModel!.referenceDataTypeOfDiscrepancyList!);
+    selectedDiscrepancy = typesOfDiscrepancy[0];
+
+
+    nopController.text = "${widget.npxPieces}";
+    weightController.text = "${widget.npxWeightCo.toStringAsFixed(2)}";
+
+    differenceNpx = npx - widget.npxPieces;
+    differenceWeight = weight - widget.npxWeightCo;
+
   }
 
 
@@ -702,30 +718,26 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: RoundedButtonBlue(
-                  text: "Previous",
-                  press: () async {
-                    widget.preclickCallback();
-                  },
-                ),
-              ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
-              ),
-              Expanded(
-                flex: 1,
-                child: RoundedButtonBlue(
-                  text: "Next",
-                  press: () async {
-                    widget.nextclickCallback();
-                  },
-                ),
-              ),
-            ],
+          child: RoundedButtonBlue(
+            text: "Next",
+            press: () async {
+
+              CommonUtils.SELECTEDTYPEOFDISCRPENCY = (selectedDiscrepancy == null) ? " " : selectedDiscrepancy!.referenceDataIdentifier!;
+              CommonUtils.shipTotalPcs = widget.damageDetailsModel!.damageAWBDetail!.nPX!;
+              CommonUtils.ShipTotalWt = CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageAWBDetail!.wtExp!);
+              CommonUtils.shipDamagePcs = int.tryParse(nopController.text) ?? 0;
+              CommonUtils.ShipDamageWt = CommonUtils.formateToTwoDecimalPlacesValue(double.tryParse(weightController.text) ?? 0.00);
+
+              CommonUtils.shipDifferencePcs = differenceNpx;
+              CommonUtils.shipDifferenceWt = CommonUtils.formateToTwoDecimalPlacesValue(differenceWeight);
+
+
+              CommonUtils.individualWTPerDoc = CommonUtils.formateToTwoDecimalPlacesValue(double.tryParse(documentweightController.text) ?? 0.00);
+              CommonUtils.individualWTActChk = CommonUtils.formateToTwoDecimalPlacesValue(double.tryParse(actualDocumentweightController.text) ?? 0.00);
+              CommonUtils.individualWTDifference = CommonUtils.formateToTwoDecimalPlacesValue(actuleDifferenceWeight);
+
+              widget.nextclickCallback();
+            },
           ),
         )
       ],

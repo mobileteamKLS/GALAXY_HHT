@@ -54,17 +54,17 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
     dispositionList = List.from(widget.damageDetailsModel!.referenceData22List!);
 
 
-    List<String> selectedSalvageActionListItem = CommonUtils.SELECTEDSALVAGEACTION.split("~");
+    List<String> selectedSalvageActionListItem = CommonUtils.SELECTEDSALVAGEACTION.split(",");
     for (var item in salvageActionList) {
       if (selectedSalvageActionListItem.contains(item.referenceDataIdentifier)) {
-        selectedsalvageActionList.add("${item.referenceDataIdentifier}~");
+        selectedsalvageActionList.add("${item.referenceDataIdentifier},");
       }
     }
 
-    List<String> selectedDispositionListItem = CommonUtils.SELECTEDDISPOSITION.split("~");
+    List<String> selectedDispositionListItem = CommonUtils.SELECTEDDISPOSITION.split(",");
     for (var item in dispositionList) {
       if (selectedDispositionListItem.contains(item.referenceDataIdentifier)) {
-        selecteddispositionList.add("${item.referenceDataIdentifier}~");
+        selecteddispositionList.add("${item.referenceDataIdentifier},");
       }
     }
 
@@ -197,7 +197,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selectedsalvageActionList.contains("${salvageAction.referenceDataIdentifier}~"),
+                                        value: selectedsalvageActionList.contains("${salvageAction.referenceDataIdentifier},"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -206,9 +206,9 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selectedsalvageActionList.add("${salvageAction.referenceDataIdentifier}~");
+                                              selectedsalvageActionList.add("${salvageAction.referenceDataIdentifier},");
                                             } else {
-                                              selectedsalvageActionList.remove("${salvageAction.referenceDataIdentifier}~");
+                                              selectedsalvageActionList.remove("${salvageAction.referenceDataIdentifier},");
                                             }
                                           });
                                         },
@@ -294,7 +294,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selecteddispositionList.contains("${disposition.referenceDataIdentifier}~"),
+                                        value: selecteddispositionList.contains("${disposition.referenceDataIdentifier},"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -303,9 +303,9 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selecteddispositionList.add("${disposition.referenceDataIdentifier}~");
+                                              selecteddispositionList.add("${disposition.referenceDataIdentifier},");
                                             } else {
-                                              selecteddispositionList.remove("${disposition.referenceDataIdentifier}~");
+                                              selecteddispositionList.remove("${disposition.referenceDataIdentifier},");
                                             }
                                           });
                                         },

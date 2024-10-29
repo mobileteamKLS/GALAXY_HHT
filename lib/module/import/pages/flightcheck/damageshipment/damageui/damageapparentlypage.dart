@@ -47,10 +47,10 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
     super.initState();
     damageApparentlyList = List.from(widget.damageDetailsModel!.referenceData18List!);
 
-    List<String> selectedDamageApparentlyListItem = CommonUtils.SELECTEDDAMAGEAPPARENTLY.split("~");
+    List<String> selectedDamageApparentlyListItem = CommonUtils.SELECTEDDAMAGEAPPARENTLY.split(",");
     for (var item in damageApparentlyList) {
       if (selectedDamageApparentlyListItem.contains(item.referenceDataIdentifier)) {
-        selecteddamageApparentlyList.add("${item.referenceDataIdentifier}~");
+        selecteddamageApparentlyList.add("${item.referenceDataIdentifier},");
       }
     }
 
@@ -174,7 +174,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selecteddamageApparentlyList.contains("${damageApparently.referenceDataIdentifier}~"),
+                                        value: selecteddamageApparentlyList.contains("${damageApparently.referenceDataIdentifier},"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -183,9 +183,9 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selecteddamageApparentlyList.add("${damageApparently.referenceDataIdentifier}~");
+                                              selecteddamageApparentlyList.add("${damageApparently.referenceDataIdentifier},");
                                             } else {
-                                              selecteddamageApparentlyList.remove("${damageApparently.referenceDataIdentifier}~");
+                                              selecteddamageApparentlyList.remove("${damageApparently.referenceDataIdentifier},");
                                             }
                                           });
                                         },

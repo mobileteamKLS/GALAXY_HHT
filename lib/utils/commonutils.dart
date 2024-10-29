@@ -1,4 +1,8 @@
 
+import 'package:flutter/cupertino.dart';
+
+import '../module/import/model/flightcheck/damagedetailmodel.dart';
+
 class CommonUtils{
 
   static String airportCode = "BLR";
@@ -29,13 +33,32 @@ class CommonUtils{
   static String TROLLYTYPENUMBER = "";
   static String TROLLYDATETIME = "";
 
+  static String SELECTEDTYPEOFDISCRPENCY = "";
+
+  static int shipTotalPcs = 0;
+  static String ShipTotalWt = "0.00";
+
+  static int shipDamagePcs = 0;
+  static String ShipDamageWt = "0.00";
+
+  static int shipDifferencePcs = 0;
+  static String shipDifferenceWt = "0.00";
+
+  static String individualWTPerDoc = "0.00";
+  static String individualWTActChk = "0.00";
+  static String individualWTDifference = "0.00";
+
 
   static String SELECTEDMATERIAL = "";
   static String SELECTEDTYPE = "";
   static String SELECTEDMARKANDLABLE = "";
   static String SELECTEDOUTRERPACKING = "";
   static String SELECTEDINNERPACKING = "";
+
+  static List<TextEditingController> CONTENTCONTROLLER = [];
   static String SELECTEDCONTENT = "";
+
+  static List<TextEditingController> CONTAINERCONTROLLER = [];
   static String SELECTEDCONTAINER = "";
   static String SELECTEDDAMAGEDISCOVER = "";
   static String SELECTEDDAMAGEAPPARENTLY = "";
@@ -43,10 +66,10 @@ class CommonUtils{
   static String SELECTEDDISPOSITION = "";
   static String SELECTEDWHETHER = "";
 
-  static String MISSINGITEM = "";
-  static String VERIFIEDINVOICE = "";
-  static String SUFFICIENT = "";
-  static String EVIDENCE = "";
+  static String MISSINGITEM = "Y";
+  static String VERIFIEDINVOICE = "Y";
+  static String SUFFICIENT = "Y";
+  static String EVIDENCE = "Y";
   static String REMARKS = "";
 
 

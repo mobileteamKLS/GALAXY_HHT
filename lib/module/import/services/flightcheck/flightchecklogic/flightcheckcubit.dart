@@ -194,10 +194,10 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
   }
 
 
-  Future<void> importShipmentSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, int userId, int companyCode, int menuId) async {
+  Future<void> importShipmentSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput,  int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
-      final importManifestModel = await flightCheckRepository.importManifestSave(flightSeqNo,uLDSeqNo, groupId, awbId, hawbid, nopInput, userId, companyCode, menuId);
+      final importManifestModel = await flightCheckRepository.importManifestSave(flightSeqNo,uLDSeqNo, groupId, awbId, hawbid, nopInput, wtInput, userId, companyCode, menuId);
 
       emit(ImportShipmentSaveSuccessState(importManifestModel));
     } catch (e) {
@@ -222,6 +222,75 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       final damageDetailsModel = await flightCheckRepository.getDamageDetails(flightSeqNo,AWBId, SHIPId, userId, companyCode, menuId);
 
       emit(GetDamageDetailSuccessState(damageDetailsModel));
+    } catch (e) {
+      emit(GetDamageDetailFailureState(e.toString()));
+    }
+  }
+
+
+  Future<void> damageBreakDownSave(
+      String awbPrefix, String awbNumber,
+      int AWBId, int SHIPId, int flightSeqNo,
+      String typeOfDiscrepancy,
+      int shipTotalPcs, String ShipTotalWt, int shipDamagePcs, String ShipDamageWt, int shipDifferencePcs, String shipDifferenceWt,
+      String individualWTPerDoc, String individualWTActChk, String individualWTDifference,
+      String containerMaterial, String containerType,
+      String marksLabels,
+      String outerPacking,
+      String innerPacking,
+      String damageObserContent,
+      String damageObserContainers,
+      String damageDiscovered,
+      String spaceForMissing,
+      String verifiedInvoice,
+      String isSufficient,
+      String evidenceOfPilerage,
+      String remarks,
+      String aparentCause,
+      String salvageAction,
+      String disposition,
+      String damageRemarked,
+      String weatherCondition,
+      String GHARepresent,
+      String AirlineRepresent,
+      String SecurityRepresent,
+      int problemSeqId,
+      String XmlBinaryImage,
+      int userId, int companyCode, int menuId) async {
+
+    emit(MainLoadingState());
+    try {
+      final damageBreakDownSaveModel = await flightCheckRepository.damageBreakDownSave(
+          awbPrefix,awbNumber, AWBId, SHIPId, flightSeqNo,
+          typeOfDiscrepancy,
+          shipTotalPcs, ShipTotalWt, shipDamagePcs, ShipDamageWt, shipDifferencePcs, shipDifferenceWt,
+          individualWTPerDoc, individualWTActChk, individualWTDifference,
+          containerMaterial, containerType,
+          marksLabels,
+          outerPacking,
+          innerPacking,
+          damageObserContent,
+          damageObserContainers,
+          damageDiscovered,
+          spaceForMissing,
+          verifiedInvoice,
+          isSufficient,
+          evidenceOfPilerage,
+          remarks,
+          aparentCause,
+          salvageAction,
+          disposition,
+          damageRemarked,
+          weatherCondition,
+          GHARepresent,
+          AirlineRepresent,
+          SecurityRepresent,
+          problemSeqId,
+          XmlBinaryImage,
+          userId, companyCode, menuId
+      );
+
+      emit(DamageBreakDownSaveSuccessState(damageBreakDownSaveModel));
     } catch (e) {
       emit(GetDamageDetailFailureState(e.toString()));
     }

@@ -48,10 +48,10 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
 
     innerPackingList = List.from(widget.damageDetailsModel!.referenceData12List!);
 
-    List<String> selectedinnerPackingListItem = CommonUtils.SELECTEDINNERPACKING.split("~");
+    List<String> selectedinnerPackingListItem = CommonUtils.SELECTEDINNERPACKING.split(",");
     for (var item in innerPackingList) {
       if (selectedinnerPackingListItem.contains(item.referenceDataIdentifier)) {
-        selectedInnerPackList.add("${item.referenceDataIdentifier}~");
+        selectedInnerPackList.add("${item.referenceDataIdentifier},");
       }
     }
   }
@@ -166,7 +166,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                                       ),
                                       SizedBox(width: 2),
                                       Switch(
-                                        value: selectedInnerPackList.contains("${innerPacking.referenceDataIdentifier}~"),
+                                        value: selectedInnerPackList.contains("${innerPacking.referenceDataIdentifier},"),
                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                         activeColor: MyColor.primaryColorblue,
                                         inactiveThumbColor: MyColor.thumbColor,
@@ -175,9 +175,9 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                                         onChanged: (value) {
                                           setState(() {
                                             if (value) {
-                                              selectedInnerPackList.add("${innerPacking.referenceDataIdentifier}~");
+                                              selectedInnerPackList.add("${innerPacking.referenceDataIdentifier},");
                                             } else {
-                                              selectedInnerPackList.remove("${innerPacking.referenceDataIdentifier}~");
+                                              selectedInnerPackList.remove("${innerPacking.referenceDataIdentifier},");
                                             }
                                           });
                                         },
