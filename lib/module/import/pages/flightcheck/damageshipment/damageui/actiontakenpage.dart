@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
+import '../../../../../../manager/timermanager.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/sizeutils.dart';
@@ -22,7 +23,10 @@ class ActionTakenPage extends StatefulWidget {
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  ActionTakenPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+  InactivityTimerManager? inactivityTimerManager;
+  ActionTakenPage({super.key,
+    required this.inactivityTimerManager,
+    required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
   State<ActionTakenPage> createState() => _ActionTakenPageState();
@@ -41,6 +45,12 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
 
 
 
+  @override
+  void dispose() {
+    // Dispose of controllers and focus nodes
+    super.dispose();
+    widget.inactivityTimerManager!.stopTimer();
+  }
 
 
 
@@ -71,12 +81,6 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
 
   }
 
-  @override
-  void dispose() {
-    // Dispose of controllers and focus nodes
-    super.dispose();
-  }
-
 
 
   @override
@@ -104,7 +108,8 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
           titleTextColor: MyColor.colorBlack,
           title: "Damage & Save",
           onBack: () {
-            Navigator.pop(context, "true");
+            widget.inactivityTimerManager?.stopTimer();
+            Navigator.pop(context, "Done");
           },
           clearText: "${lableModel!.clear}",
           onClear: () {

@@ -860,6 +860,7 @@ class FlightCheckRepository{
       String SecurityRepresent,
       int problemSeqId,
       String XmlBinaryImage,
+      String groupid,
       int userId, int companyCode, int menuId) async {
 
     try {
@@ -905,7 +906,7 @@ class FlightCheckRepository{
         "SecurityRepresent": SecurityRepresent,
         "ProblemSeqId" : problemSeqId,
         "XmlBinaryImage": XmlBinaryImage,
-
+        "GroupId" : groupid,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

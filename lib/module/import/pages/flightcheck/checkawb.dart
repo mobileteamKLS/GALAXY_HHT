@@ -24,6 +24,7 @@ import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
+import '../../../../utils/validationmsgcodeutils.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customeuiwidgets/footer.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
@@ -37,9 +38,11 @@ import '../../../onboarding/sizeconfig.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 
 class CheckAWBPage extends StatefulWidget {
 
+  List<ButtonRight> buttonRightsList;
   int uldSeqNo;
   FlightCheckInAWBBDList aWBItem;
   String mainMenuName;
@@ -50,7 +53,9 @@ class CheckAWBPage extends StatefulWidget {
   String groupIDRequires;
   int groupIDCharSize;
 
-  CheckAWBPage({super.key, required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo, required this.menuId, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize});
+  CheckAWBPage({super.key,
+    required this.buttonRightsList,
+    required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo, required this.menuId, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize});
 
   @override
   State<CheckAWBPage> createState() => _CheckAWBPageState();
@@ -191,571 +196,656 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
       child: Directionality(
         textDirection: uiDirection,
         child: SafeArea(
-            child: Scaffold(
-          backgroundColor: MyColor.colorWhite,
-          body: Stack(
-            children: [
+            child: GestureDetector(
+              onTap: _resumeTimerOnInteraction,  // Resuming on any tap
+              onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
+              child: Scaffold(
+                        backgroundColor: MyColor.colorWhite,
+                        body: Stack(
+              children: [
 
-              MainHeadingWidget(mainMenuName: widget.mainMenuName!),
-              Positioned(
-                  top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: NotificationListener<ScrollNotification>(
-                    onNotification: (ScrollNotification scroll) {
-                      _resumeTimerOnInteraction(); // Reset the timer on scroll event
-                      return true;
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                      color: MyColor.bgColorGrey,
-                      borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
-                          topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
-                                    child: Directionality(
-                    textDirection: textDirection,
-                    child: Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
-                          child: HeaderWidget(
-                            titleTextColor: MyColor.colorBlack,
-                            title: "${lableModel!.checkAWb}",
-                            onBack: () {
-                              _onWillPop();
-                            },
-                            clearText: lableModel.clear,
-                            onClear: () {
-                              piecesController.clear();
-                              weightController.clear();
-                              groupIdController.clear();
+                MainHeadingWidget(mainMenuName: widget.mainMenuName!),
+                Positioned(
+                    top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scroll) {
+                        _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                        return true;
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                        color: MyColor.bgColorGrey,
+                        borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                            topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                                      child: Directionality(
+                      textDirection: textDirection,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
+                            child: HeaderWidget(
+                              titleTextColor: MyColor.colorBlack,
+                              title: "${lableModel!.checkAWb}",
+                              onBack: () {
+                                _onWillPop();
+                              },
+                              clearText: lableModel.clear,
+                              onClear: () {
+                                piecesController.clear();
+                                weightController.clear();
+                                groupIdController.clear();
 
-                              weightCount = 0.00;
-                              weightController.text = "${weightCount.toStringAsFixed(2)}";
+                                weightCount = 0.00;
+                                weightController.text = "${weightCount.toStringAsFixed(2)}";
 
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                FocusScope.of(context).requestFocus(piecesFocusNode);
-                              });
-                            },
+                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                  FocusScope.of(context).requestFocus(piecesFocusNode);
+                                });
+                              },
+                            ),
                           ),
-                        ),
 
-                        BlocListener<FlightCheckCubit, FlightCheckState>(
-                          listener: (context, state) {
-                            if(state is MainLoadingState){
-                              DialogUtils.showLoadingDialog(context, message: lableModel.loading);
-                            }
-                            else if(state is ImportShipmentSaveSuccessState){
-                              DialogUtils.hideLoadingDialog(context);
-
-                              if(state.importShipmentModel.status == "E"){
-                                Vibration.vibrate(duration: 500);
-                                SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                              }else{
-                                Navigator.pop(context, "true");
+                          BlocListener<FlightCheckCubit, FlightCheckState>(
+                            listener: (context, state) {
+                              if(state is MainLoadingState){
+                                DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                               }
+                              else if(state is ImportShipmentSaveSuccessState){
+                                DialogUtils.hideLoadingDialog(context);
 
-                            }else if(state is ImportShipmentSaveFailureState){
-                              Vibration.vibrate(duration: 500);
-                              SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                            }
-                        },
-                        child: Expanded(
-                            child: SingleChildScrollView(
-                              child: Padding(
-                                padding: const EdgeInsets.only(
-                                    left: 10,
-                                    right: 10,
-                                    top: 0,
-                                    bottom: 0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
+                                if(state.importShipmentModel.status == "E"){
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }else{
+                                  Navigator.pop(context, "true");
+                                }
 
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Directionality(
-                                            textDirection: uiDirection,
-                                            child: Row(
-                                              children: [
-                                                SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                CustomeText(
-                                                    text: "${lableModel.detailsForAWBNo} ${AwbFormateNumberUtils.formatAWBNumber(widget.aWBItem.aWBNo!)}",
-                                                    fontColor: MyColor.textColorGrey2,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w500,
-                                                    textAlign: TextAlign.start)
-                                              ],
+                              }else if(state is ImportShipmentSaveFailureState){
+                                Vibration.vibrate(duration: 500);
+                                SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              }
+                          },
+                          child: Expanded(
+                              child: SingleChildScrollView(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      left: 10,
+                                      right: 10,
+                                      top: 0,
+                                      bottom: 0),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: MyColor.colorWhite,
+                                          borderRadius: BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: MyColor.colorBlack.withOpacity(0.09),
+                                              spreadRadius: 2,
+                                              blurRadius: 15,
+                                              offset: Offset(0, 3), // changes position of shadow
                                             ),
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                                          // text manifest and recived in pices text counter
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex:1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: piecesController,
-                                                    focusNode: piecesFocusNode,
-                                                    nextFocus: groupIdFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "${lableModel.pieces} *",
-                                                    readOnly: false,
-                                                    maxLength: 4,
-                                                    onChanged: (value) {
-                                                      int piecesCount = int.tryParse(value) ?? 0;
-
-                                                      // Calculate the weight count using the formula
-                                                      setState(() {
-
-                                                        weightCount = double.parse(((piecesCount * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-
-
-                                                       // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
-                                                        weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
-                                                      });
-
-                                                    },
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.number,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    digitsOnly: true,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                              Expanded(
-                                                flex:1,
-                                                child: Directionality(
-                                                  textDirection: uiDirection,
-                                                  child: CustomTextField(
-                                                    controller: weightController,
-                                                    focusNode: weightFocusNode,
-                                                    onPress: () {},
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "${lableModel.weight}",
-                                                    readOnly: false,
-                                                    maxLength: 10,
-                                                    digitsOnly: false,
-                                                    doubleDigitOnly: true,
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
-                                                      });
-
-                                                    },
-                                                    fillColor:  Colors.grey.shade100,
-                                                    textInputType: TextInputType.number,
-                                                    inputAction: TextInputAction.next,
-                                                    hintTextcolor: Colors.black45,
-                                                    verticalPadding: 0,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                    validator: (value) {
-                                                      if (value!.isEmpty) {
-                                                        return "Please fill out this field";
-                                                      } else {
-                                                        return null;
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                                          // text manifest and recived in pices text counter
-                                          Directionality(
-                                            textDirection: uiDirection,
-                                            child: CustomTextField(
-                                              controller: groupIdController,
-                                              focusNode: groupIdFocusNode,
-                                              onPress: () {},
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: widget.groupIDRequires == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
-                                              readOnly: false,
-                                              maxLength: widget.groupIDCharSize,
-                                              onChanged: (value) {},
-                                              fillColor: Colors.grey.shade100,
-                                              textInputType: TextInputType.text,
-                                              inputAction: TextInputAction.next,
-                                              hintTextcolor: Colors.black45,
-                                              verticalPadding: 0,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                              validator: (value) {
-                                                if (value!.isEmpty) {
-                                                  return "Please fill out this field";
-                                                } else {
-                                                  return null;
-                                                }
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      height: SizeConfig.blockSizeVertical,
-                                    ),
-
-                                    Container(
-                                      padding: const EdgeInsets.all(10),
-
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Directionality(
+                                              textDirection: uiDirection,
+                                              child: Row(
                                                 children: [
-                                                  CustomeText(
-                                                    text: "${widget.flightDetailSummary.flightNo!}",
-                                                    fontColor: MyColor.colorBlack,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w600,
-                                                    textAlign: TextAlign.start,
-                                                  ),
-                                                  SizedBox(width: 5),
-                                                  CustomeText(
-                                                    text: " ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",
-                                                    fontColor: MyColor.textColorGrey2,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w600,
-                                                    textAlign: TextAlign.start,
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                   CustomeText(
-                                                    text: widget.location,
-                                                    fontColor: MyColor.colorBlack,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w600,
-                                                    textAlign: TextAlign.start,
-                                                  ),
+                                                      text: "${lableModel.detailsForAWBNo} ${AwbFormateNumberUtils.formatAWBNumber(widget.aWBItem.aWBNo!)}",
+                                                      fontColor: MyColor.textColorGrey2,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w500,
+                                                      textAlign: TextAlign.start)
                                                 ],
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                            SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                            // text manifest and recived in pices text counter
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex:1,
+                                                  child: Directionality(
+                                                    textDirection: uiDirection,
+                                                    child: CustomTextField(
+                                                      controller: piecesController,
+                                                      focusNode: piecesFocusNode,
+                                                      nextFocus: groupIdFocusNode,
+                                                      onPress: () {},
+                                                      hasIcon: false,
+                                                      hastextcolor: true,
+                                                      animatedLabel: true,
+                                                      needOutlineBorder: true,
+                                                      labelText: "${lableModel.pieces} *",
+                                                      readOnly: false,
+                                                      maxLength: 4,
+                                                      onChanged: (value) {
+                                                        int piecesCount = int.tryParse(value) ?? 0;
 
-                                          (shcCodes.isNotEmpty) ? SizedBox(height: SizeConfig.blockSizeVertical,) : SizedBox(),
+                                                        // Calculate the weight count using the formula
+                                                        setState(() {
 
-                                          Row(
-                                            children: [
-                                              widget.aWBItem.sHCCode!.isNotEmpty
-                                                  ? Row(
-                                                children:shcCodes.asMap().entries.take(3).map((entry) {
-                                                  int index = entry.key; // Get the index for colorList assignment
-                                                  String code = entry.value.trim(); // Get the code value and trim it
+                                                          weightCount = double.parse(((piecesCount * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
 
-                                                  return Padding(
-                                                    padding: EdgeInsets.only(right: 5.0),
-                                                    child: AnimatedBuilder(
-                                                      animation: _colorAnimation,
-                                                      builder: (context, child) {
-                                                        return Container(
-                                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                                          decoration : BoxDecoration(
-                                                            borderRadius: BorderRadius.circular(5),
-                                                            color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                                          child: CustomeText(
-                                                            text: code.trim(),
-                                                            fontColor: MyColor.textColorGrey3,
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                            fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.center,
-                                                          ),
-                                                        );
+
+                                                         // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
+                                                          weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
+                                                        });
+
+                                                      },
+                                                      fillColor:  Colors.grey.shade100,
+                                                      textInputType: TextInputType.number,
+                                                      inputAction: TextInputAction.next,
+                                                      hintTextcolor: Colors.black45,
+                                                      verticalPadding: 0,
+                                                      digitsOnly: true,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                      validator: (value) {
+                                                        if (value!.isEmpty) {
+                                                          return "Please fill out this field";
+                                                        } else {
+                                                          return null;
+                                                        }
                                                       },
                                                     ),
-                                                  );
-                                                }).toList(),
-                                              )
-                                                  : SizedBox(),
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical,),
-                                          Row(
-                                            children: [
-                                              CustomeText(
-                                                text: "NoG : ",
-                                                fontColor: MyColor.textColorGrey2,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w400,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              SizedBox(width: 5),
-                                              CustomeText(
-                                                text: "${widget.aWBItem.NOG}",
-                                                fontColor: MyColor.colorBlack,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w600,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(height: SizeConfig.blockSizeVertical),
-                                          Row(
-                                            children: [
-                                              CustomeText(
-                                                text: "Commodity : ",
-                                                fontColor: MyColor.textColorGrey2,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w400,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              SizedBox(width: 5),
-                                              CustomeText(
-                                                text: widget.aWBItem.commodity!,
-                                                fontColor: MyColor.colorBlack,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w600,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: Row(
-                                                  children: [
-                                                    CustomeText(
-                                                      text: "NPX :",
-                                                      fontColor: MyColor.textColorGrey2,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                      fontWeight: FontWeight.w400,
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                    CustomeText(
-                                                      text: "${widget.aWBItem.nPX}",
-                                                      fontColor: MyColor.colorBlack,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                      fontWeight: FontWeight.w600,
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: Row(
-                                                  children: [
-                                                    CustomeText(
-                                                      text: "NPR :",
-                                                      fontColor: MyColor.textColorGrey2,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                      fontWeight: FontWeight.w400,
-                                                      textAlign: TextAlign.start,
+                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                                Expanded(
+                                                  flex:1,
+                                                  child: Directionality(
+                                                    textDirection: uiDirection,
+                                                    child: CustomTextField(
+                                                      controller: weightController,
+                                                      focusNode: weightFocusNode,
+                                                      onPress: () {},
+                                                      hasIcon: false,
+                                                      hastextcolor: true,
+                                                      animatedLabel: true,
+                                                      needOutlineBorder: true,
+                                                      labelText: "${lableModel.weight}",
+                                                      readOnly: false,
+                                                      maxLength: 10,
+                                                      digitsOnly: false,
+                                                      doubleDigitOnly: true,
+                                                      onChanged: (value) {
+                                                        setState(() {
+                                                          weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
+                                                        });
+
+                                                      },
+                                                      fillColor:  Colors.grey.shade100,
+                                                      textInputType: TextInputType.number,
+                                                      inputAction: TextInputAction.next,
+                                                      hintTextcolor: Colors.black45,
+                                                      verticalPadding: 0,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                      validator: (value) {
+                                                        if (value!.isEmpty) {
+                                                          return "Please fill out this field";
+                                                        } else {
+                                                          return null;
+                                                        }
+                                                      },
                                                     ),
-                                                    SizedBox(width: 5),
-                                                    CustomeText(
-                                                      text: "${widget.aWBItem.nPR}",
-                                                      fontColor: MyColor.colorBlack,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                      fontWeight: FontWeight.w600,
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                  ],
+                                                  ),
                                                 ),
-                                              ),
-
-                                            ],
-                                          ),
-
-                                          SizedBox(height: SizeConfig.blockSizeVertical,),
-
-                                          Row(
-                                            children: [
-                                              CustomeText(
-                                                text: "Suggestive Location : ",
-                                                fontColor: MyColor.textColorGrey2,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w400,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                              SizedBox(width: 5),
-                                              CustomeText(
-                                                text: "-",
-                                                fontColor: MyColor.colorBlack,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                fontWeight: FontWeight.w600,
-                                                textAlign: TextAlign.start,
-                                              ),
-                                            ],
-                                          ),
-
-
-
-                                        ],
-                                      ),
-                                    ),
-
-                                    SizedBox(
-                                      height: SizeConfig.blockSizeVertical,
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.all(10),
-                                      decoration: BoxDecoration(
-                                        color: MyColor.colorWhite,
-                                        borderRadius: BorderRadius.circular(8),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: MyColor.colorBlack.withOpacity(0.09),
-                                            spreadRadius: 2,
-                                            blurRadius: 15,
-                                            offset: Offset(0, 3), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            flex: 1,
-                                            child: RoundedButtonBlue(
-                                              text: "${lableModel.damageAndSave}",
-                                              press: () async {
-                                                int npxPices = widget.aWBItem.nPR!;
-                                                double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-
-                                                Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo,),));
-                                              },
+                                              ],
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: RoundedButtonBlue(
-                                              text: "${lableModel.save}",
-                                              press: () async {
-
-                                                String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
-
-
-                                                if(int.parse(piecesController.text) == 0){
-                                                  openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
-                                                  return;
-                                                }
-
-
-                                                if (piecesController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
-                                                  return;
-                                                }
-
-                                                if(double.parse(weightController.text) == 0){
-                                                  openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
-                                                  return;
-                                                }
-
-
-                                                if(widget.groupIDRequires == "Y"){
-                                                  if (groupIdController.text.isEmpty) {
-                                                    openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                    return;
+                                            SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                            // text manifest and recived in pices text counter
+                                            Directionality(
+                                              textDirection: uiDirection,
+                                              child: CustomTextField(
+                                                controller: groupIdController,
+                                                focusNode: groupIdFocusNode,
+                                                onPress: () {},
+                                                hasIcon: false,
+                                                hastextcolor: true,
+                                                animatedLabel: true,
+                                                needOutlineBorder: true,
+                                                labelText: widget.groupIDRequires == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
+                                                readOnly: false,
+                                                maxLength: widget.groupIDCharSize,
+                                                onChanged: (value) {},
+                                                fillColor: Colors.grey.shade100,
+                                                textInputType: TextInputType.text,
+                                                inputAction: TextInputAction.next,
+                                                hintTextcolor: Colors.black45,
+                                                verticalPadding: 0,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                validator: (value) {
+                                                  if (value!.isEmpty) {
+                                                    return "Please fill out this field";
+                                                  } else {
+                                                    return null;
                                                   }
-                                                }
-
-
-
-                                                // Check if the groupId length is between 14 (min and max 14 characters)
-                                                if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                  openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
-                                                  return;
-                                                }
-
-
-                                                context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-                                              },
+                                                },
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    )
+
+                                      SizedBox(
+                                        height: SizeConfig.blockSizeVertical,
+                                      ),
+
+                                      Container(
+                                        padding: const EdgeInsets.all(10),
+
+                                        decoration: BoxDecoration(
+                                          color: MyColor.colorWhite,
+                                          borderRadius: BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: MyColor.colorBlack.withOpacity(0.09),
+                                              spreadRadius: 2,
+                                              blurRadius: 15,
+                                              offset: Offset(0, 3), // changes position of shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Row(
+                                                  children: [
+                                                    CustomeText(
+                                                      text: "${widget.flightDetailSummary.flightNo!}",
+                                                      fontColor: MyColor.colorBlack,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w600,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                    SizedBox(width: 5),
+                                                    CustomeText(
+                                                      text: " ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",
+                                                      fontColor: MyColor.textColorGrey2,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w600,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ],
+                                                ),
+                                                Row(
+                                                  children: [
+                                                    SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                    CustomeText(
+                                                      text: widget.location,
+                                                      fontColor: MyColor.colorBlack,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w600,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+
+                                            (shcCodes.isNotEmpty) ? SizedBox(height: SizeConfig.blockSizeVertical,) : SizedBox(),
+
+                                            Row(
+                                              children: [
+                                                widget.aWBItem.sHCCode!.isNotEmpty
+                                                    ? Row(
+                                                  children:shcCodes.asMap().entries.take(3).map((entry) {
+                                                    int index = entry.key; // Get the index for colorList assignment
+                                                    String code = entry.value.trim(); // Get the code value and trim it
+
+                                                    return Padding(
+                                                      padding: EdgeInsets.only(right: 5.0),
+                                                      child: AnimatedBuilder(
+                                                        animation: _colorAnimation,
+                                                        builder: (context, child) {
+                                                          return Container(
+                                                            padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                                            decoration : BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(5),
+                                                              color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                                            child: CustomeText(
+                                                              text: code.trim(),
+                                                              fontColor: MyColor.textColorGrey3,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.center,
+                                                            ),
+                                                          );
+                                                        },
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                )
+                                                    : SizedBox(),
+                                              ],
+                                            ),
+                                            SizedBox(height: SizeConfig.blockSizeVertical,),
+                                            Row(
+                                              children: [
+                                                CustomeText(
+                                                  text: "NoG : ",
+                                                  fontColor: MyColor.textColorGrey2,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w400,
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                                SizedBox(width: 5),
+                                                CustomeText(
+                                                  text: "${widget.aWBItem.NOG}",
+                                                  fontColor: MyColor.colorBlack,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w600,
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ],
+                                            ),
+
+                                            SizedBox(height: SizeConfig.blockSizeVertical),
+                                            Row(
+                                              children: [
+                                                CustomeText(
+                                                  text: "Commodity : ",
+                                                  fontColor: MyColor.textColorGrey2,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w400,
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                                SizedBox(width: 5),
+                                                CustomeText(
+                                                  text: widget.aWBItem.commodity!,
+                                                  fontColor: MyColor.colorBlack,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w600,
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: SizeConfig.blockSizeVertical),
+                                            Row(
+                                              children: [
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "NPX :",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w400,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "${widget.aWBItem.nPX}",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "NPR :",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w400,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "${widget.aWBItem.nPR}",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+
+                                            SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                            Row(
+                                              children: [
+                                                CustomeText(
+                                                  text: "Suggestive Location : ",
+                                                  fontColor: MyColor.textColorGrey2,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w400,
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                                SizedBox(width: 5),
+                                                CustomeText(
+                                                  text: "-",
+                                                  fontColor: MyColor.colorBlack,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w600,
+                                                  textAlign: TextAlign.start,
+                                                ),
+                                              ],
+                                            ),
 
 
-                                  ],
+
+                                          ],
+                                        ),
+                                      ),
+
+                                      SizedBox(
+                                        height: SizeConfig.blockSizeVertical,
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.all(10),
+                                        decoration: BoxDecoration(
+                                          color: MyColor.colorWhite,
+                                          borderRadius: BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: MyColor.colorBlack.withOpacity(0.09),
+                                              spreadRadius: 2,
+                                              blurRadius: 15,
+                                              offset: Offset(0, 3), // changes position of shadow
+                                            ),
+                                          ],
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: RoundedButtonBlue(
+                                                text: "${lableModel.damageAndSave}",
+                                                press: () async {
+
+                                                  if(isButtonEnabled("awbdamageandsave", widget.buttonRightsList)){
+                                                    int npxPices = widget.aWBItem.nPR!;
+                                                    double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+
+                                                    if(widget.groupIDRequires == "Y"){
+                                                      if (groupIdController.text.isEmpty) {
+                                                        openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                        return;
+                                                      }
+
+                                                      // Check if the groupId length is between 14 (min and max 14 characters)
+                                                      if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                        openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                        return;
+                                                      }
+
+                                                    }
+
+
+                                                    CommonUtils.SELECTEDWHETHER = "";
+
+                                                    CommonUtils.SELECTEDIMAGELIST.clear();
+
+                                                    CommonUtils.shipTotalPcs = 0;
+                                                    CommonUtils.ShipTotalWt = "0.00";
+                                                    CommonUtils.shipDamagePcs = 0;
+                                                    CommonUtils.ShipDamageWt = "0.00";
+                                                    CommonUtils.shipDifferencePcs = 0;
+                                                    CommonUtils.shipDifferenceWt = "0.00";
+                                                    CommonUtils.individualWTPerDoc = "0.00";
+                                                    CommonUtils.individualWTActChk = "0.00";
+                                                    CommonUtils.individualWTDifference = "0.00";
+                                                    CommonUtils.SELECTEDMATERIAL = "";
+                                                    CommonUtils.SELECTEDTYPE = "";
+                                                    CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                    CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                    CommonUtils.SELECTEDINNERPACKING = "";
+                                                    CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                    CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                    CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                    CommonUtils.SELECTEDDISPOSITION = "";
+                                                    CommonUtils.MISSINGITEM = "Y";
+                                                    CommonUtils.VERIFIEDINVOICE = "Y";
+                                                    CommonUtils.SUFFICIENT = "Y";
+                                                    CommonUtils.EVIDENCE = "Y";
+                                                    CommonUtils.REMARKS = "";
+
+                                                    CommonUtils.SELECTEDCONTENT = "";
+                                                    /* for (var controller in CommonUtils.CONTENTCONTROLLER) {
+                                                    controller.clear();
+                                                  }*/
+                                                    CommonUtils.SELECTEDCONTAINER = "";
+                                                    /*  for (var controller in CommonUtils.CONTAINERCONTROLLER) {
+                                                    controller.clear();
+                                                  }*/
+
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                      buttonRightsList: widget.buttonRightsList,
+                                                      aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+
+                                                    if(value == "Done"){
+                                                      _resumeTimerOnInteraction();
+                                                    }else if(value == "true"){
+                                                      Navigator.pop(context, "true");
+                                                    }
+                                                  }
+                                                  else{
+                                                    SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    Vibration.vibrate(duration: 500);
+                                                  }
+
+
+
+
+
+
+                                                  },
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
+                                            ),
+                                            Expanded(
+                                              flex: 1,
+                                              child: RoundedButtonBlue(
+                                                text: "${lableModel.save}",
+                                                press: () async {
+
+                                                  if(isButtonEnabled("awbsave", widget.buttonRightsList)){
+
+                                                    String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
+
+
+                                                    if(int.parse(piecesController.text) == 0){
+                                                      openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
+                                                      return;
+                                                    }
+
+
+                                                    if (piecesController.text.isEmpty) {
+                                                      openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
+                                                      return;
+                                                    }
+
+                                                    if(double.parse(weightController.text) == 0){
+                                                      openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
+                                                      return;
+                                                    }
+
+
+                                                    if(widget.groupIDRequires == "Y"){
+                                                      if (groupIdController.text.isEmpty) {
+                                                        openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                        return;
+                                                      }
+
+                                                      // Check if the groupId length is between 14 (min and max 14 characters)
+                                                      if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                        openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                        return;
+                                                      }
+
+                                                    }
+
+                                                    context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                  }
+                                                  else{
+                                                    SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    Vibration.vibrate(duration: 500);
+                                                  }
+
+
+
+                                                },
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+
+
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            )),
-                        )
+                              )),
+                          )
 
 
-                      ],
-                    ),),),
-                  )),
+                        ],
+                      ),),),
+                    )),
 
-            ],
-          ),
-        )),
+              ],
+                        ),
+                      ),
+            )),
       ),
     );
   }
@@ -772,6 +862,14 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
       });
     }
   }
+
+  bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
+    ButtonRight? button = buttonList.firstWhere(
+          (button) => button.buttonId == buttonId,
+    );
+    return button.isEnable == 'Y';
+  }
+
 }
 
 // ticker animation for DGR code blink animation

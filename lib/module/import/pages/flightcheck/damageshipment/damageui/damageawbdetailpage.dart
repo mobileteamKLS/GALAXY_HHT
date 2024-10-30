@@ -10,6 +10,7 @@ import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
+import '../../../../../../manager/timermanager.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/dialogutils.dart';
@@ -29,13 +30,16 @@ class DamageAwbDetailPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
 
+  InactivityTimerManager? inactivityTimerManager;
+
+
   int npxPieces;
   double npxWeightCo;
 
   DamageAwbDetailPage({super.key,
     required this.npxPieces,
     required this.npxWeightCo,
-    required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+    required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback, required this.inactivityTimerManager});
 
   @override
   State<DamageAwbDetailPage> createState() => _DamageAwbDetailPageState();
@@ -88,6 +92,12 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
   }
 
+  @override
+  void dispose() {
+    // Dispose of controllers and focus nodes
+    super.dispose();
+    widget.inactivityTimerManager!.stopTimer();
+  }
 
 
 
@@ -118,11 +128,24 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
           titleTextColor: MyColor.colorBlack,
           title: "Damage & Save",
           onBack: () {
-            Navigator.pop(context, "true");
+            widget.inactivityTimerManager!.stopTimer();
+            Navigator.pop(context, "Done");
+
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
+            selectedDiscrepancy = typesOfDiscrepancy[0];
+            documentweightController.clear();
+            actualDocumentweightController.clear();
+            actuleDifferenceWeight = 0.00;
+            nopController.text = "${widget.npxPieces}";
+            weightController.text = widget.npxWeightCo.toStringAsFixed(2);
 
+            differenceNpx = npx - widget.npxPieces;
+            differenceWeight = weight - widget.npxWeightCo;
+            setState(() {
+
+            });
           },
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
@@ -158,7 +181,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                         CustomeText(
                             text: "${AwbFormateNumberUtils.formatAWBNumber(widget.damageDetailsModel!.damageAWBDetail!.aWBNo!)}",
                             fontColor: MyColor.textColorGrey3,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                             fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
@@ -477,6 +500,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                 child: CustomTextField(
                                   controller: weightController,
                                   focusNode: weightFocusNode,
+                                  nextFocus: documentweightFocusNode,
                                   onPress: () {},
                                   hasIcon: false,
                                   hastextcolor: true,
@@ -587,6 +611,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                           child: CustomTextField(
                             controller: documentweightController,
                             focusNode: documentweightFocusNode,
+                            nextFocus: actualDocumentweightFocusNode,
                             onPress: () {},
                             hasIcon: false,
                             hastextcolor: true,

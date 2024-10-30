@@ -7,6 +7,7 @@ import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
+import '../../../../../../manager/timermanager.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/sizeutils.dart';
@@ -18,14 +19,13 @@ import '../../../../../../widget/customtextfield.dart';
 import '../../../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
-import '../../../../model/flightcheck/damagedetailmodel.dart';
-
 class PointListingPage extends StatefulWidget {
 
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   final Function(int) curruentCallback;
-  PointListingPage({super.key, required this.preclickCallback, required this.nextclickCallback, required this.curruentCallback});
+  InactivityTimerManager? inactivityTimerManager;
+  PointListingPage({super.key, required this.preclickCallback, required this.nextclickCallback, required this.curruentCallback, required this.inactivityTimerManager});
 
   @override
   State<PointListingPage> createState() => _PointListingPageState();
@@ -41,9 +41,16 @@ class _PointListingPageState extends State<PointListingPage> {
     super.initState();
 
   }
-  
-  
-  
+
+  @override
+  void dispose() {
+    // Dispose of controllers and focus nodes
+    super.dispose();
+    widget.inactivityTimerManager!.stopTimer();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -69,7 +76,8 @@ class _PointListingPageState extends State<PointListingPage> {
           titleTextColor: MyColor.colorBlack,
           title: "Damage & Save",
           onBack: () {
-            Navigator.pop(context, "true");
+            widget.inactivityTimerManager!.stopTimer();
+            Navigator.pop(context, "Done");
           },
           clearText: "",
           onClear: () {
@@ -127,7 +135,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                         fontWeight: FontWeight.w600,
                                         textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                    SizedBox(width: 5,),
 
                                     CustomeText(
                                         text: "PACKING DETAILS",
@@ -168,24 +176,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "9)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 20),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "9)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Container",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Container",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -217,24 +228,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               children: [
 
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "a)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "a)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Material",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Material",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -264,24 +278,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "b)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 40),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "b)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Type",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Type",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -311,24 +328,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "10)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "10)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Mark & Lable",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Mark & Label",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -358,24 +378,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "11)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "11)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Outer Packing",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Outer Packing",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -405,24 +428,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "12)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "12)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Inner Packing",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Inner Packing",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -461,7 +487,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                         fontWeight: FontWeight.w600,
                                         textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                    SizedBox(width: 5,),
 
                                     CustomeText(
                                         text: "DETAILS OF DAMAGE OBSERVED",
@@ -499,24 +525,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "13.a)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "13.a)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Content",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Content",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -546,24 +575,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "13.b)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 12),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "13.b)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Containers",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Containers",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -593,24 +625,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "14)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "14)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Damage Discovered",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Damage Discovered",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -641,24 +676,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "15.a)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 10),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "15.a)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width:5,),
 
-                                    CustomeText(
-                                        text: "Any Space For Missing Items",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Any Space For Missing Items",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -688,24 +726,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "b)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 32),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "b)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Is Shortage Verified By Invoice",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Is Shortage Verified By Invoice",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -736,75 +777,29 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "16)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "16)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Is Packing Sufficient?",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
-                                ),
-
-
-
-
-                                Container(
-                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                  decoration: BoxDecoration(
-                                      color: MyColor.dropdownColor,
-                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                      CustomeText(
+                                          text: "Is Packing Sufficient?",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
                                   ),
-                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                 ),
-                              ],
-                            ),
-                          ),
-                        ),
 
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              widget.curruentCallback(9);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "17)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-
-                                    SizedBox(width: 8,),
-
-                                    CustomeText(
-                                        text: "Any Evidence Of Pilferage",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
-                                ),
 
 
 
@@ -835,25 +830,29 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "18)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "17)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Remarks",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Any Evidence Of Pilferage",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
+
 
 
                                 Container(
@@ -875,6 +874,57 @@ class _PointListingPageState extends State<PointListingPage> {
 
                         Padding(
                           padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "18)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+
+                                      SizedBox(width: 5,),
+
+                                      CustomeText(
+                                          text: "Remarks",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
+                                ),
+
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.only(left: 33.0, bottom: 8, top: 8, right: 8),
                           child: InkWell(
                             onTap: () {
                               widget.curruentCallback(10);
@@ -883,24 +933,28 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "19)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "19)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "The Damage Apparently Caused By",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      Flexible(
+                                        child: CustomeText(
+                                            text: "The Damage Apparently Caused By",
+                                            fontColor: MyColor.textColorGrey3,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start),
+                                      ),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -916,6 +970,8 @@ class _PointListingPageState extends State<PointListingPage> {
                             ),
                           ),
                         ),
+
+
 
 
                         CustomDivider(space: 0, color: Colors.black, hascolor: true,),
@@ -980,24 +1036,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               children: [
 
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "20)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "20)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Salvage Action",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Salvage Action",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
                                 Container(
@@ -1026,24 +1085,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "21)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "21)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Disposition",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Disposition",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 
@@ -1064,7 +1126,7 @@ class _PointListingPageState extends State<PointListingPage> {
                         CustomDivider(space: 0, color: Colors.black, hascolor: true,),
 
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 33, right: 8.0, top: 8, bottom: 8),
                           child: InkWell(
                             onTap: () {
                               widget.curruentCallback(12);
@@ -1083,7 +1145,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                           fontWeight: FontWeight.w600,
                                           textAlign: TextAlign.start),
 
-                                      SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
                                       Flexible(
                                         child: CustomeText(
@@ -1125,24 +1187,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               children: [
 
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "23)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "23)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Weather Condition ?",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Weather Condition ?",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
                                 Container(
@@ -1171,24 +1236,27 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Row(
-                                  children: [
-                                    CustomeText(
-                                        text: "24)",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "24)",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
 
-                                    SizedBox(width: 8,),
+                                      SizedBox(width: 5,),
 
-                                    CustomeText(
-                                        text: "Representative",
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start),
-                                  ],
+                                      CustomeText(
+                                          text: "Representative",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
                                 ),
 
 

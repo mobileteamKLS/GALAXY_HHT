@@ -8,6 +8,7 @@ import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
+import '../../../../../../manager/timermanager.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/sizeutils.dart';
@@ -26,7 +27,10 @@ class DetailsOfDamagePage13b extends StatefulWidget {
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
+  InactivityTimerManager? inactivityTimerManager;
+
   DetailsOfDamagePage13b({super.key,
+    required this.inactivityTimerManager,
     required this.damageDetailsModel,
     required this.preclickCallback,
     required this.nextclickCallback});
@@ -67,6 +71,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
     for (var focusNode in focusNodes) {
       focusNode.dispose();
     }
+    widget.inactivityTimerManager!.stopTimer();
     super.dispose();
   }
 
@@ -111,7 +116,8 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
           titleTextColor: MyColor.colorBlack,
           title: "Damage & Save",
           onBack: () {
-            Navigator.pop(context, "true");
+            widget.inactivityTimerManager!.stopTimer();
+            Navigator.pop(context, "Done");
           },
           clearText: "${lableModel!.clear}",
           onClear: () {

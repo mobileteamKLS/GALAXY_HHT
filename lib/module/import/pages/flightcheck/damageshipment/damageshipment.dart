@@ -38,6 +38,7 @@ import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/damagedetailmodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import 'damageui/packingdetailspage.dart';
 import 'damageui/outerpackingpage.dart';
 import 'damageui/innerpackingpage.dart';
@@ -52,6 +53,7 @@ import 'damageui/imagescreenpage.dart';
 
 class DamageShimentPage extends StatefulWidget {
 
+  List<ButtonRight> buttonRightsList;
   FlightCheckInAWBBDList aWBItem;
   String mainMenuName;
   FlightDetailSummary flightDetailSummary;
@@ -61,9 +63,11 @@ class DamageShimentPage extends StatefulWidget {
 
   int npxPieces;
   double npxWeightCo;
+  String groupId;
 
-
-  DamageShimentPage({super.key, required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.userId, required this.companyCode, required this.menuId, required this.npxPieces, required this.npxWeightCo});
+  DamageShimentPage({super.key,
+    required this.buttonRightsList,
+    required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.userId, required this.companyCode, required this.menuId, required this.npxPieces, required this.npxWeightCo, required this.groupId});
 
   @override
   State<DamageShimentPage> createState() => _DamageShimentPageState();
@@ -137,6 +141,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
   }
 
   Future<bool> _onWillPop() async {
+    inactivityTimerManager!.stopTimer();
     FocusScope.of(context).unfocus();
     Navigator.pop(context, "Done");
     return false; // Prevents the default back button action
@@ -159,6 +164,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         npxPieces: widget.npxPieces,
         npxWeightCo: widget.npxWeightCo,
         damageDetailsModel: damageDetailsModel!,
+        inactivityTimerManager: inactivityTimerManager,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -172,6 +178,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       PointListingPage(
+        inactivityTimerManager: inactivityTimerManager,
         preclickCallback: () {
         _resumeTimerOnInteraction(); // Reset the timer on scroll event
         _currentPage > 0 ? _onPreviousPressed() : null;
@@ -189,6 +196,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ),
 
       (damageDetailsModel != null) ? PackingDetailsPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -203,6 +211,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? MarkAndLablePage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -217,6 +226,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? OuterPackingPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -233,6 +243,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? InnerPackingPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -248,6 +259,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DetailsOfDamage13aPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -262,6 +274,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DetailsOfDamagePage13b(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -276,6 +289,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DamageDiscoveredPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -291,6 +305,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       MissingItemAndRemarksPage(
+        inactivityTimerManager: inactivityTimerManager,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
           _currentPage > 0 ? _onPreviousPressed() : null;
@@ -304,6 +319,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ),
 
       (damageDetailsModel != null) ? DamageApparentlyPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -318,6 +334,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? ActionTakenPage(
+        inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -332,11 +349,14 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? ImageScreenPage(
+        buttonRightsList: widget.buttonRightsList,
+        inactivityTimerManager: inactivityTimerManager,
         userId: widget.userId,
         companyCode: widget.companyCode,
         menuId: widget.menuId,
         flightDetailSummary: widget.flightDetailSummary,
         aWBItem: widget.aWBItem,
+        groupId: widget.groupId,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -399,83 +419,87 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       child: Directionality(
         textDirection: uiDirection,
         child: SafeArea(
-            child: Scaffold(
-              backgroundColor: MyColor.colorWhite,
-              body: Stack(
-                children: [
+            child: GestureDetector(
+              onTap: _resumeTimerOnInteraction,  // Resuming on any tap
+              onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
+              child: Scaffold(
+                backgroundColor: MyColor.colorWhite,
+                body: Stack(
+                  children: [
 
-                  MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
+                    MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
 
-                  BlocListener<FlightCheckCubit, FlightCheckState>(
-                    listener: (context, state) {
-                      if(state is MainLoadingState){
-                        DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
-                      }
-                      else if(state is GetDamageDetailSuccessState){
-                        DialogUtils.hideLoadingDialog(context);
-                        if(state.damageDetailsModel.status == "E"){
-                          Vibration.vibrate(duration: 500);
-                          SnackbarUtil.showSnackbar(context, state.damageDetailsModel.statusMessage!, MyColor.textColor, icon: FontAwesomeIcons.times);
-                        }else{
-                          damageDetailsModel = state.damageDetailsModel;
-                          setState(() {
-
-                          });
+                    BlocListener<FlightCheckCubit, FlightCheckState>(
+                      listener: (context, state) {
+                        if(state is MainLoadingState){
+                          DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                         }
+                        else if(state is GetDamageDetailSuccessState){
+                          DialogUtils.hideLoadingDialog(context);
+                          if(state.damageDetailsModel.status == "E"){
+                            Vibration.vibrate(duration: 500);
+                            SnackbarUtil.showSnackbar(context, state.damageDetailsModel.statusMessage!, MyColor.textColor, icon: FontAwesomeIcons.times);
+                          }else{
+                            damageDetailsModel = state.damageDetailsModel;
+                            setState(() {
 
-                      }else if(state is GetDamageDetailFailureState){
-                        Vibration.vibrate(duration: 500);
-                        SnackbarUtil.showSnackbar(context, state.error, MyColor.textColor, icon: FontAwesomeIcons.times);
-                      }
-                    },
-                    child: Positioned(
-                        top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
-                        bottom: 0,
-                        right: 0,
-                        left: 0,
-                        child: NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification scroll) {
-                            _resumeTimerOnInteraction(); // Reset the timer on scroll event
-                            return true;
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: MyColor.bgColorGrey,
-                                borderRadius: BorderRadius.only(
-                                    topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
-                                    topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
-                            child: Directionality(
-                              textDirection: textDirection,
-                              child: Column(
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
-                                      child: PageView(
-                                        physics: NeverScrollableScrollPhysics(),
-                                        controller: _pageController,
-                                        children: _listViews(),
-                                        onPageChanged: (int page) {
-                                          setState(() {
-                                            _currentPage = page;
-                                          });
-                                        },
+                            });
+                          }
+
+                        }else if(state is GetDamageDetailFailureState){
+                          Vibration.vibrate(duration: 500);
+                          SnackbarUtil.showSnackbar(context, state.error, MyColor.textColor, icon: FontAwesomeIcons.times);
+                        }
+                      },
+                      child: Positioned(
+                          top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                          bottom: 0,
+                          right: 0,
+                          left: 0,
+                          child: NotificationListener<ScrollNotification>(
+                            onNotification: (ScrollNotification scroll) {
+                              _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                              return true;
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: MyColor.bgColorGrey,
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                                      topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                              child: Directionality(
+                                textDirection: textDirection,
+                                child: Column(
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        padding: const EdgeInsets.only(left: 10, right: 10, top: 12, bottom: 12),
+                                        child: PageView(
+                                          physics: NeverScrollableScrollPhysics(),
+                                          controller: _pageController,
+                                          children: _listViews(),
+                                          onPageChanged: (int page) {
+                                            setState(() {
+                                              _currentPage = page;
+                                            });
+                                          },
+                                        ),
                                       ),
                                     ),
-                                  ),
 
-                                ],
-                              ),),),
-                        )),
-                  )
-
+                                  ],
+                                ),),),
+                          )),
+                    )
 
 
 
 
-                  ,
 
-                ],
+                    ,
+
+                  ],
+                ),
               ),
             )),
       ),

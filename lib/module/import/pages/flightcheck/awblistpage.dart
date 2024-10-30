@@ -39,10 +39,12 @@ import 'dart:ui' as ui;
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import 'checkawb.dart';
 
 class AWBListPage extends StatefulWidget {
 
+  List<ButtonRight> buttonRightsList;
   String location;
   String mainMenuName;
   String uldNo;
@@ -56,7 +58,9 @@ class AWBListPage extends StatefulWidget {
   int groupIDCharSize;
   String bDEndStatus;
 
-  AWBListPage({super.key,required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize, required this.bDEndStatus});
+  AWBListPage({super.key,
+    required this.buttonRightsList,
+    required this.uldNo, required this.mainMenuName, required this.flightDetailSummary, required this.uldSeqNo, required this.menuId, required this.location, required this.awbRemarkRequires, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize, required this.bDEndStatus});
 
   @override
   State<AWBListPage> createState() => _AWBListPageState();
@@ -164,7 +168,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
     print("ULD_PROGRSS == ${uldProgress}");
 
-    bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress);
+    bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress, widget.bDEndStatus);
     if (exitConfirmed == true) {
       bool hasIncompleteAWB = false;
 
@@ -610,7 +614,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                               List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
 
-                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(
+                                                                                  buttonRightsList: widget.buttonRightsList,
+                                                                                  mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
 
                                                                               if(value == "true"){
 
@@ -629,10 +635,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         }
                                                                         else{
                                                                           if(widget.uldNo == "BULK"){
-                                                                            SnackbarUtil.showSnackbar(context, "Breakdown completed for BULK.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                            SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                             Vibration.vibrate(duration: 500);
                                                                           }else{
-                                                                            SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                            SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                             Vibration.vibrate(duration: 500);
                                                                           }
 
@@ -1170,7 +1176,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   if(aWBItem.remark == "Y"){
 
                                                                                                     List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
-                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(
+                                                                                                      buttonRightsList: widget.buttonRightsList,
+                                                                                                      mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
                                                                                                     if(value == "true"){
                                                                                                       gotoCheckAWBScreen(aWBItem);
                                                                                                     }else if(value == "Done"){
@@ -1186,10 +1194,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               }
                                                                                               else{
                                                                                                 if(widget.uldNo == "BULK"){
-                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown completed for BULK.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                   Vibration.vibrate(duration: 500);
                                                                                                 }else{
-                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown completed for this ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                   Vibration.vibrate(duration: 500);
                                                                                                 }
                                                                                               }
@@ -1324,6 +1332,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
         context,
         CupertinoPageRoute(
             builder: (context) => CheckAWBPage(
+              buttonRightsList: widget.buttonRightsList,
               aWBItem: aWBItem,
               mainMenuName: widget.mainMenuName,
               flightDetailSummary: widget.flightDetailSummary,

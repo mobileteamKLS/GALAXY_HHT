@@ -21,6 +21,7 @@ import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
+import '../../../../utils/validationmsgcodeutils.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/customeedittext/remarkedittextfeild.dart';
@@ -37,18 +38,23 @@ import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
 import '../../model/flightcheck/mailtypemodel.dart';
+import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import '../../services/flightcheck/flightchecklogic/flightcheckstate.dart';
 
 class AddMailPage extends StatefulWidget {
 
+
+  List<ButtonRight> buttonRightsList;
   LableModel? lableModel;
   int uldSeqNo;
   int flightSeqNo;
   String mainMenuName;
   int menuId;
   String uldNo;
-  AddMailPage({super.key, required this.uldNo, required this.mainMenuName, required this.uldSeqNo, required this.flightSeqNo, required this.menuId, required this.lableModel});
+  AddMailPage({super.key,
+    required this.buttonRightsList,
+    required this.uldNo, required this.mainMenuName, required this.uldSeqNo, required this.flightSeqNo, required this.menuId, required this.lableModel});
 
   @override
   State<AddMailPage> createState() => _AddMailPageState();
@@ -854,83 +860,60 @@ class _AddMailPageState extends State<AddMailPage> {
 
                                                 print("MAILTYPE === ${selectedMailType}");
 
-                                               /* if(av7NoController.text.isNotEmpty){
-                                                  if(originController.text.isNotEmpty){
-                                                    if(destinationController.text.isNotEmpty){
-                                                      if(originController.text.contains(destinationController.text)){
-                                                        if(nopController.text.isNotEmpty){
-                                                          if(weightController.text.isNotEmpty){
 
-                                                            if(selectedMailType == null){
-                                                              SnackbarUtil.showSnackbar(context, "Please select mil type", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                            }else{
-
-                                                            }
-                                                          }else{
-                                                            openValidationDialog("Please enter weight", weightFocusNode);
-                                                          }
-                                                        }
-                                                        else{
-                                                          openValidationDialog("Please enter NoP", nopFocusNode);
-                                                        }
-                                                      }else{
-                                                        openValidationDialog("Origin & Destination are same", destinationFocusNode);
-                                                      }
-                                                    }else{
-                                                      openValidationDialog("Please enter destination", destinationFocusNode);
-                                                    }
-                                                  }else{
-                                                    openValidationDialog("Please enter origin.", originFocusNode);
+                                                if(isButtonEnabled("addmailsave", widget.buttonRightsList)){
+                                                  if (av7NoController.text.isEmpty) {
+                                                    openValidationDialog("${lableModel.av7NoMsg}", av7NoFocusNode);
+                                                    return;
                                                   }
+
+                                                  if (originController.text.isEmpty) {
+                                                    openValidationDialog("${lableModel.originMsg}", originFocusNode);
+                                                    return;
+                                                  }
+
+                                                  if (destinationController.text.isEmpty) {
+                                                    openValidationDialog("${lableModel.destinationMsg}", destinationFocusNode);
+                                                    return;
+                                                  }
+
+                                                  if (originController.text == destinationController.text) {
+                                                    openValidationDialog("${lableModel.originDestinationSameMsg}", destinationFocusNode);
+                                                    return;
+                                                  }
+
+                                                  if (nopController.text.isEmpty) {
+                                                    openValidationDialog("${lableModel.nopMsg}", nopFocusNode);
+                                                    return;
+                                                  }
+
+                                                  if (weightController.text.isEmpty) {
+                                                    openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
+                                                    return;
+                                                  }
+
+                                                  if (selectedMailType == null) {
+                                                    SnackbarUtil.showSnackbar(
+                                                      context,
+                                                      "${lableModel.mailTypeMsg}",
+                                                      MyColor.colorRed,
+                                                      icon: FontAwesomeIcons.times,
+                                                    );
+                                                    return;
+                                                  }
+
+                                                  // If all validations pass, proceed with further actions here
+                                                  // Your further logic goes here...
+
+                                                  context.read<FlightCheckCubit>().addMail(widget.flightSeqNo, widget.uldSeqNo, av7NoController.text, selectedMailType!.referenceDataIdentifier!, originController.text, destinationController.text, int.parse(nopController.text), double.parse(weightController.text), descriptionController.text,_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+
                                                 }else{
-                                                  openValidationDialog("Please enter Av7 No.", av7NoFocusNode);
-                                                }*/
-
-
-                                                if (av7NoController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.av7NoMsg}", av7NoFocusNode);
-                                                  return;
+                                                  SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  Vibration.vibrate(duration: 500);
                                                 }
 
-                                                if (originController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.originMsg}", originFocusNode);
-                                                  return;
-                                                }
 
-                                                if (destinationController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.destinationMsg}", destinationFocusNode);
-                                                  return;
-                                                }
-
-                                                if (originController.text == destinationController.text) {
-                                                  openValidationDialog("${lableModel.originDestinationSameMsg}", destinationFocusNode);
-                                                  return;
-                                                }
-
-                                                if (nopController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.nopMsg}", nopFocusNode);
-                                                  return;
-                                                }
-
-                                                if (weightController.text.isEmpty) {
-                                                  openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
-                                                  return;
-                                                }
-
-                                                if (selectedMailType == null) {
-                                                  SnackbarUtil.showSnackbar(
-                                                    context,
-                                                    "${lableModel.mailTypeMsg}",
-                                                    MyColor.colorRed,
-                                                    icon: FontAwesomeIcons.times,
-                                                  );
-                                                  return;
-                                                }
-
-                                                // If all validations pass, proceed with further actions here
-                                                // Your further logic goes here...
-
-                                                context.read<FlightCheckCubit>().addMail(widget.flightSeqNo, widget.uldSeqNo, av7NoController.text, selectedMailType!.referenceDataIdentifier!, originController.text, destinationController.text, int.parse(nopController.text), double.parse(weightController.text), descriptionController.text,_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
 
                                               },
@@ -1173,6 +1156,14 @@ class _AddMailPageState extends State<AddMailPage> {
         FocusScope.of(context).requestFocus(focuseNode);
       });
     }
+  }
+
+
+  bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
+    ButtonRight? button = buttonList.firstWhere(
+          (button) => button.buttonId == buttonId,
+    );
+    return button.isEnable == 'Y';
   }
 
 }

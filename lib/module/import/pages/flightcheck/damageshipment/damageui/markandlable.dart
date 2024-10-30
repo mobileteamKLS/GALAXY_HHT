@@ -7,6 +7,7 @@ import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
+import '../../../../../../manager/timermanager.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/sizeutils.dart';
@@ -25,7 +26,10 @@ class MarkAndLablePage extends StatefulWidget {
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  MarkAndLablePage({super.key, required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
+  InactivityTimerManager? inactivityTimerManager;
+  MarkAndLablePage({super.key,
+    required this.inactivityTimerManager,
+    required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
 
   @override
   State<MarkAndLablePage> createState() => _MarkAndLablePageState();
@@ -36,6 +40,8 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
 
   List<ReferenceData11List> markLableList = [];
   List<String> selectedMarkLableList = [];
+
+  InactivityTimerManager? inactivityTimerManager;
 
 
   @override
@@ -51,12 +57,16 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
         selectedMarkLableList.add("${item.referenceDataIdentifier},");
       }
     }
-
-
   }
-  
-  
-  
+  @override
+  void dispose() {
+    // Dispose of controllers and focus nodes
+    super.dispose();
+    widget.inactivityTimerManager!.stopTimer();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -82,7 +92,8 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
           titleTextColor: MyColor.colorBlack,
           title: "Damage & Save",
           onBack: () {
-            Navigator.pop(context, "true");
+            widget.inactivityTimerManager!.stopTimer();
+            Navigator.pop(context, "Done");
           },
           clearText: "${lableModel!.clear}",
           onClear: () {
@@ -127,7 +138,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                       children: [
 
                         CustomeText(
-                            text: "10) Mark & Lable",
+                            text: "10) Mark & Label",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,

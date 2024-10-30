@@ -7,6 +7,7 @@ import '../../../../../../core/images.dart';
 import '../../../../../../core/mycolor.dart';
 import '../../../../../../language/appLocalizations.dart';
 import '../../../../../../language/model/lableModel.dart';
+import '../../../../../../manager/timermanager.dart';
 import '../../../../../../utils/awbformatenumberutils.dart';
 import '../../../../../../utils/commonutils.dart';
 import '../../../../../../utils/sizeutils.dart';
@@ -25,7 +26,10 @@ class DamageApparentlyPage extends StatefulWidget {
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
-  DamageApparentlyPage({super.key, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
+  InactivityTimerManager? inactivityTimerManager;
+  DamageApparentlyPage({super.key,
+    required this.inactivityTimerManager,
+    required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
   @override
   State<DamageApparentlyPage> createState() => _DamageApparentlyPageState();
@@ -60,6 +64,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
   void dispose() {
     // Dispose of controllers and focus nodes
     super.dispose();
+    widget.inactivityTimerManager!.stopTimer();
   }
 
 
@@ -89,7 +94,8 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
           titleTextColor: MyColor.colorBlack,
           title: "Damage & Save",
           onBack: () {
-            Navigator.pop(context, "true");
+            widget.inactivityTimerManager!.stopTimer();
+            Navigator.pop(context, "Done");
           },
           clearText: "${lableModel!.clear}",
           onClear: () {

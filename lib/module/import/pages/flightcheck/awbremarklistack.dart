@@ -20,6 +20,7 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
 import '../../../../utils/snackbarutil.dart';
+import '../../../../utils/validationmsgcodeutils.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
@@ -31,16 +32,22 @@ import 'dart:ui' as ui;
 
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
+import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 
 
 class AWBRemarkListAckPage extends StatefulWidget {
+
+
+  List<ButtonRight> buttonRightsList;
 
   String mainMenuName;
   List<AWBRemarksList>? aWBRemarkList = [];
   FlightCheckInAWBBDList aWBItem;
   int menuId;
 
-  AWBRemarkListAckPage({super.key, required this.mainMenuName, required this.aWBRemarkList, required this.aWBItem, required this.menuId});
+  AWBRemarkListAckPage({super.key,
+    required this.buttonRightsList,
+    required this.mainMenuName, required this.aWBRemarkList, required this.aWBItem, required this.menuId});
 
   @override
   State<AWBRemarkListAckPage> createState() => _AWBRemarkListAckPageState();
@@ -532,12 +539,21 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
                                         text: "${lableModel.acknowledge}",
                                         color: MyColor.primaryColorblue,
                                         press: () async {
-                                          context.read<FlightCheckCubit>().aWBRemarkUpdateAcknoledge(
-                                              widget.aWBItem.iMPAWBRowId!,
-                                              widget.aWBItem.iMPShipRowId!,
-                                              _user!.userProfile!.userIdentity!,
-                                              _splashDefaultData!.companyCode!,
-                                              widget.menuId);
+
+                                          if(isButtonEnabled("acknowledge", widget.buttonRightsList)){
+                                            context.read<FlightCheckCubit>().aWBRemarkUpdateAcknoledge(
+                                                widget.aWBItem.iMPAWBRowId!,
+                                                widget.aWBItem.iMPShipRowId!,
+                                                _user!.userProfile!.userIdentity!,
+                                                _splashDefaultData!.companyCode!,
+                                                widget.menuId);
+                                          }else{
+                                            SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            Vibration.vibrate(duration: 500);
+                                          }
+
+
+
                                         },
                                       ),
                                     ),
@@ -569,6 +585,13 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
     )..layout(maxWidth: MediaQuery.of(context).size.width * 0.7); // Adjust maxWidth as needed
 
     return textPainter.didExceedMaxLines;
+  }
+
+  bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
+    ButtonRight? button = buttonList.firstWhere(
+          (button) => button.buttonId == buttonId,
+    );
+    return button.isEnable == 'Y';
   }
 
 }

@@ -180,7 +180,7 @@ class DialogUtils {
     }
   }
 
-  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo, int uldProgress) {
+  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo, int uldProgress, String bdEndStatus) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -189,22 +189,23 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
-          title: CustomeText(text: uldProgress < 100 ? "Breakdown Not completed" : "Breakdown Completed",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
-          content: CustomeText(text: uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          title: CustomeText(text: "Breakdown",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+         // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed." : (uldNo == "BULK") ? "Are you sure you want to complete ${uldNo} breakdown ?" : "Are you sure you want to complete ULD ${uldNo} breakdown ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
             InkWell(
                 onTap: () {
                   Navigator.of(context).pop(false);
                 },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: (bdEndStatus == "N") ? "${lableModel.no}" : "${lableModel.ok}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            (bdEndStatus == "N") ? SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,) : Container(),
 
-            InkWell(
+            (bdEndStatus == "N") ? InkWell(
                 onTap: () {
                   Navigator.of(context).pop(true);
                 },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)) : Container(),
 
           ],
         );
@@ -665,7 +666,7 @@ class DialogUtils {
                         text: "${lableModel.damage}",
                         color: /*(damageNop == 0) ? */(damageConditionCode.isEmpty) ? (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue : MyColor.colorRed /*: MyColor.colorRed*/,
                         press: () {
-                          if(isButtonEnabled("damage", buttonRightsList)){
+                          if(isButtonEnabled("ulddamage", buttonRightsList)){
                             Navigator.pop(context, 1); // Return true when "Ok" is pressed
                           }else{
 
@@ -703,7 +704,15 @@ class DialogUtils {
                         text: "${lableModel.addMail}",
                         color: (uldDamageAcceptStatus == "A") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                         press: () {
-                          Navigator.pop(context, 3); // Return true when "Ok" is pressed
+
+                          if(isButtonEnabled("addmail", buttonRightsList)){
+                            Navigator.pop(context, 3); // Return true when "Ok" is pressed
+                          }else{
+
+                            SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            Vibration.vibrate(duration: 500);
+                          }
+
                         },
                       ),
                     ),

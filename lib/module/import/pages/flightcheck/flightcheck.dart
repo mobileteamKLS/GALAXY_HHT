@@ -2125,17 +2125,6 @@ class _FlightCheckState extends State<FlightCheck>
                                   )
                                       : SizedBox(),
 
-                                  /*(flightDetails.damageNOP == 0)
-                                                ? (flightDetails.damageConditionCode!.isNotEmpty)
-                                                ? Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                                                  child: Row(
-                                                    children: [
-                                                  SvgPicture.asset(damageIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                  CustomeText(text: "DMG", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w400, textAlign: TextAlign.start)],),
-                                                ) : SizedBox() : SizedBox(),*/
-
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -2332,6 +2321,24 @@ class _FlightCheckState extends State<FlightCheck>
                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
                                         decoration : BoxDecoration(
                                             borderRadius: BorderRadius.circular(20),
+                                            color: flightDetails.bDEndStatus == "Y" ? MyColor.flightFinalize : MyColor.transparentColor
+                                        ),
+                                        child: CustomeText(
+                                          text: flightDetails.bDEndStatus == "Y" ? "BD DONE" : "",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                          fontWeight: FontWeight.w400,
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ),
+                                      SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+
+
+                                      Container(
+                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                        decoration : BoxDecoration(
+                                            borderRadius: BorderRadius.circular(20),
                                             color: flightDetails.uldAcceptStatus == "A" ? MyColor.flightNotArrived : MyColor.flightFinalize
                                         ),
                                         child: CustomeText(
@@ -2341,7 +2348,7 @@ class _FlightCheckState extends State<FlightCheck>
                                           fontWeight: FontWeight.w400,
                                           textAlign: TextAlign.center,
                                         ),
-                                      ) ,
+                                      ),
                                       SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
 
                                       InkWell(
@@ -3492,6 +3499,7 @@ class _FlightCheckState extends State<FlightCheck>
             context,
             CupertinoPageRoute(
                 builder: (context) => AWBListPage(
+                  buttonRightsList: buttonRightsList,
                   mainMenuName: mainMenuName,
                   uldNo: uldNo,
                   flightDetailSummary: flightCheckULDListModel!.flightDetailSummary!,
@@ -3582,6 +3590,7 @@ class _FlightCheckState extends State<FlightCheck>
             context,
             CupertinoPageRoute(
                 builder: (context) => AddMailPage(
+                  buttonRightsList: buttonRightsList,
                   uldNo: flightDetails.uLDNo!,
                   mainMenuName: mainMenuName,
                   uldSeqNo: flightDetails.uLDId!,

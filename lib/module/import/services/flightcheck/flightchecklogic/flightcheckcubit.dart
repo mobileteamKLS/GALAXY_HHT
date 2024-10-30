@@ -256,6 +256,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       String SecurityRepresent,
       int problemSeqId,
       String XmlBinaryImage,
+      String groupid,
       int userId, int companyCode, int menuId) async {
 
     emit(MainLoadingState());
@@ -287,6 +288,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
           SecurityRepresent,
           problemSeqId,
           XmlBinaryImage,
+          groupid,
           userId, companyCode, menuId
       );
 
