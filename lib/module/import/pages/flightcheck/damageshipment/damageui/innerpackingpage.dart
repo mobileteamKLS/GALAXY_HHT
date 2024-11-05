@@ -52,6 +52,17 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
 
     innerPackingList = List.from(widget.damageDetailsModel!.referenceData12List!);
 
+    if(widget.damageDetailsModel?.damageDetail?.packInnerPacking == null){
+
+    }else{
+      CommonUtils.SELECTEDINNERPACKING = widget.damageDetailsModel!.damageDetail!.packInnerPacking!;
+
+    }
+
+
+
+
+
     List<String> selectedinnerPackingListItem = CommonUtils.SELECTEDINNERPACKING.split(",");
     for (var item in innerPackingList) {
       if (selectedinnerPackingListItem.contains(item.referenceDataIdentifier)) {

@@ -54,6 +54,16 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
     typeList = List.from(widget.damageDetailsModel!.referenceData9BList!);
 
 
+    if(widget.damageDetailsModel?.damageDetail?.packContainerMaterial == null || widget.damageDetailsModel?.damageDetail?.packContainerType == null){
+
+    }else{
+      CommonUtils.SELECTEDMATERIAL = widget.damageDetailsModel!.damageDetail!.packContainerMaterial!;
+      CommonUtils.SELECTEDTYPE = widget.damageDetailsModel!.damageDetail!.packContainerType!;
+
+    }
+
+
+
     List<String> selectedMaterialListItem = CommonUtils.SELECTEDMATERIAL.split(",");
     for (var item in materialList) {
       if (selectedMaterialListItem.contains(item.referenceDataIdentifier)) {

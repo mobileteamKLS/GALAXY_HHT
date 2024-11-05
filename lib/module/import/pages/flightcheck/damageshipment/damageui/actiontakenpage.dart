@@ -64,6 +64,20 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
     dispositionList = List.from(widget.damageDetailsModel!.referenceData22List!);
 
 
+    if(widget.damageDetailsModel?.damageDetail?.actionSalvage == null
+        || widget.damageDetailsModel?.damageDetail?.actionDisposition == null){
+
+    }else{
+      CommonUtils.SELECTEDSALVAGEACTION = widget.damageDetailsModel!.damageDetail!.actionSalvage!;
+      CommonUtils.SELECTEDDISPOSITION = widget.damageDetailsModel!.damageDetail!.actionDisposition!;
+
+    }
+
+
+
+
+
+
     List<String> selectedSalvageActionListItem = CommonUtils.SELECTEDSALVAGEACTION.split(",");
     for (var item in salvageActionList) {
       if (selectedSalvageActionListItem.contains(item.referenceDataIdentifier)) {

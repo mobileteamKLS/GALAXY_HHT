@@ -51,6 +51,15 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
     super.initState();
     damageApparentlyList = List.from(widget.damageDetailsModel!.referenceData18List!);
 
+
+    if(widget.damageDetailsModel?.damageDetail?.damageApparentCause == null){
+
+    }else{
+      CommonUtils.SELECTEDDAMAGEAPPARENTLY = widget.damageDetailsModel!.damageDetail!.damageApparentCause!;
+
+    }
+
+
     List<String> selectedDamageApparentlyListItem = CommonUtils.SELECTEDDAMAGEAPPARENTLY.split(",");
     for (var item in damageApparentlyList) {
       if (selectedDamageApparentlyListItem.contains(item.referenceDataIdentifier)) {

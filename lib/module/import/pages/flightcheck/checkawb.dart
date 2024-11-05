@@ -689,76 +689,120 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 text: "${lableModel.damageAndSave}",
                                                 press: () async {
 
-                                                  if(isButtonEnabled("awbdamageandsave", widget.buttonRightsList)){
-                                                    int npxPices = widget.aWBItem.nPR!;
-                                                    double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+                                                  if(widget.flightDetailSummary.flightStatus == "A"){
 
-                                                    if(widget.groupIDRequires == "Y"){
-                                                      if (groupIdController.text.isEmpty) {
-                                                        openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                        return;
-                                                      }
+                                                    String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
 
-                                                      // Check if the groupId length is between 14 (min and max 14 characters)
-                                                      if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                        openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
-                                                        return;
-                                                      }
 
+                                                    if (piecesController.text.isEmpty) {
+                                                      openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
+                                                      return;
                                                     }
 
-
-                                                    CommonUtils.SELECTEDWHETHER = "";
-
-                                                    CommonUtils.SELECTEDIMAGELIST.clear();
-
-                                                    CommonUtils.shipTotalPcs = 0;
-                                                    CommonUtils.ShipTotalWt = "0.00";
-                                                    CommonUtils.shipDamagePcs = 0;
-                                                    CommonUtils.ShipDamageWt = "0.00";
-                                                    CommonUtils.shipDifferencePcs = 0;
-                                                    CommonUtils.shipDifferenceWt = "0.00";
-                                                    CommonUtils.individualWTPerDoc = "0.00";
-                                                    CommonUtils.individualWTActChk = "0.00";
-                                                    CommonUtils.individualWTDifference = "0.00";
-                                                    CommonUtils.SELECTEDMATERIAL = "";
-                                                    CommonUtils.SELECTEDTYPE = "";
-                                                    CommonUtils.SELECTEDMARKANDLABLE = "";
-                                                    CommonUtils.SELECTEDOUTRERPACKING = "";
-                                                    CommonUtils.SELECTEDINNERPACKING = "";
-                                                    CommonUtils.SELECTEDDAMAGEDISCOVER = "";
-                                                    CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
-                                                    CommonUtils.SELECTEDSALVAGEACTION = "";
-                                                    CommonUtils.SELECTEDDISPOSITION = "";
-                                                    CommonUtils.MISSINGITEM = "Y";
-                                                    CommonUtils.VERIFIEDINVOICE = "Y";
-                                                    CommonUtils.SUFFICIENT = "Y";
-                                                    CommonUtils.EVIDENCE = "Y";
-                                                    CommonUtils.REMARKS = "";
-
-                                                    CommonUtils.SELECTEDCONTENT = "";
-                                                    /* for (var controller in CommonUtils.CONTENTCONTROLLER) {
-                                                    controller.clear();
-                                                  }*/
-                                                    CommonUtils.SELECTEDCONTAINER = "";
-                                                    /*  for (var controller in CommonUtils.CONTAINERCONTROLLER) {
-                                                    controller.clear();
-                                                  }*/
-
-                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                      buttonRightsList: widget.buttonRightsList,
-                                                      aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
-
-                                                    if(value == "Done"){
-                                                      _resumeTimerOnInteraction();
-                                                    }else if(value == "true"){
-                                                      Navigator.pop(context, "true");
+                                                    if(int.parse(piecesController.text) == 0){
+                                                      openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
+                                                      return;
                                                     }
-                                                  }
-                                                  else{
-                                                    SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                                    if(double.parse(weightController.text) == 0){
+                                                      openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
+                                                      return;
+                                                    }
+
+                                                    if(isButtonEnabled("awbdamageandsave", widget.buttonRightsList)){
+
+                                                      int damageNop = widget.aWBItem.damageNOP!;
+                                                      double damageWt = widget.aWBItem.damageWeight!;
+
+
+                                                      int npxPices = widget.aWBItem.nPR!;
+                                                      double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+
+                                                      if(widget.groupIDRequires == "Y"){
+                                                        if (groupIdController.text.isEmpty) {
+                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                        // Check if the groupId length is between 14 (min and max 14 characters)
+                                                        if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                          openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                      }
+
+
+                                                      CommonUtils.SELECTEDWHETHER = "";
+
+                                                      CommonUtils.SELECTEDIMAGELIST.clear();
+
+                                                      CommonUtils.shipTotalPcs = 0;
+                                                      CommonUtils.ShipTotalWt = "0.00";
+                                                      CommonUtils.shipDamagePcs = 0;
+                                                      CommonUtils.ShipDamageWt = "0.00";
+                                                      CommonUtils.shipDifferencePcs = 0;
+                                                      CommonUtils.shipDifferenceWt = "0.00";
+                                                      CommonUtils.individualWTPerDoc = "0.00";
+                                                      CommonUtils.individualWTActChk = "0.00";
+                                                      CommonUtils.individualWTDifference = "0.00";
+                                                      CommonUtils.SELECTEDMATERIAL = "";
+                                                      CommonUtils.SELECTEDTYPE = "";
+                                                      CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                      CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                      CommonUtils.SELECTEDINNERPACKING = "";
+                                                      CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                      CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                      CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                      CommonUtils.SELECTEDDISPOSITION = "";
+                                                      CommonUtils.MISSINGITEM = "Y";
+                                                      CommonUtils.VERIFIEDINVOICE = "Y";
+                                                      CommonUtils.SUFFICIENT = "Y";
+                                                      CommonUtils.EVIDENCE = "Y";
+                                                      CommonUtils.REMARKS = "";
+
+                                                      CommonUtils.SELECTEDCONTENT = "";
+                                                      /* for (var controller in CommonUtils.CONTENTCONTROLLER) {
+                                                    controller.clear();
+                                                  }*/
+                                                      CommonUtils.SELECTEDCONTAINER = "";
+                                                      /*  for (var controller in CommonUtils.CONTAINERCONTROLLER) {
+                                                    controller.clear();
+                                                  }*/
+
+                                                      var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                        pageView: 0,
+                                                        enterDamageNop: int.parse(piecesController.text),
+                                                        enterDamageWt: double.parse(weightController.text),
+                                                        damageNop: damageNop,
+                                                        damageWt: damageWt,
+                                                        buttonRightsList: widget.buttonRightsList,
+                                                        aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+
+                                                      if(value == "Done"){
+                                                        _resumeTimerOnInteraction();
+                                                      }else if(value == "true"){
+                                                        //Navigator.pop(context, "true");
+
+                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }
+                                                    }
+                                                    else{
+                                                      SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
+                                                    }
+                                                  }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                    SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    Vibration.vibrate(duration: 500);
+                                                  }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                    SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }
+
+
+
+
 
 
 
@@ -777,49 +821,63 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 text: "${lableModel.save}",
                                                 press: () async {
 
-                                                  if(isButtonEnabled("awbsave", widget.buttonRightsList)){
+                                                  if(widget.flightDetailSummary.flightStatus == "A"){
+                                                    if(isButtonEnabled("awbsave", widget.buttonRightsList)){
 
-                                                    String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
-
-
-                                                    if(int.parse(piecesController.text) == 0){
-                                                      openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
-                                                      return;
-                                                    }
+                                                      String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
 
 
-                                                    if (piecesController.text.isEmpty) {
-                                                      openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
-                                                      return;
-                                                    }
 
-                                                    if(double.parse(weightController.text) == 0){
-                                                      openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
-                                                      return;
-                                                    }
-
-
-                                                    if(widget.groupIDRequires == "Y"){
-                                                      if (groupIdController.text.isEmpty) {
-                                                        openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                      if (piecesController.text.isEmpty) {
+                                                        openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
                                                         return;
                                                       }
 
-                                                      // Check if the groupId length is between 14 (min and max 14 characters)
-                                                      if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                        openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                      if(int.parse(piecesController.text) == 0){
+                                                        openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
                                                         return;
                                                       }
 
+                                                      if(double.parse(weightController.text) == 0){
+                                                        openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
+                                                        return;
+                                                      }
+
+
+                                                      if(widget.groupIDRequires == "Y"){
+                                                        if (groupIdController.text.isEmpty) {
+                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                        // Check if the groupId length is between 14 (min and max 14 characters)
+                                                        if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                          openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                      }
+
+                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                    }
+                                                    else{
+                                                      SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
                                                     }
 
-                                                    context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-                                                  }
-                                                  else{
-                                                    SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                    SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    Vibration.vibrate(duration: 500);
+                                                  }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                    SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }
+
+
+
+
+
 
 
 

@@ -50,6 +50,15 @@ class _Damageuipart2State extends State<OuterPackingPage> {
     outerPackingList = List.from(widget.damageDetailsModel!.referenceData10List!);
 
 
+    if(widget.damageDetailsModel?.damageDetail?.packOuterPacking == null){
+
+    }else{
+      CommonUtils.SELECTEDOUTRERPACKING = widget.damageDetailsModel!.damageDetail!.packOuterPacking!;
+
+    }
+
+
+
     List<String> selectedouterPackingListItem = CommonUtils.SELECTEDOUTRERPACKING.split(",");
     for (var item in outerPackingList) {
       if (selectedouterPackingListItem.contains(item.referenceDataIdentifier)) {

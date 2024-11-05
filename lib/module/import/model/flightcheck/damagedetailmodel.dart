@@ -13,6 +13,7 @@ class DamageDetailsModel {
   List<ReferenceData21List>? referenceData21List;
   List<ReferenceData22List>? referenceData22List;
   List<ReferenceDataTypeOfDiscrepancyList>? referenceDataTypeOfDiscrepancyList;
+  List<DamageImagesList>? damageImagesList;
 
   DamageDetail? damageDetail;
   DamageFlightDetail? damageFlightDetail;
@@ -40,6 +41,7 @@ class DamageDetailsModel {
         this.damageFlightDetail,
         this.damageHouseDetailList,
         this.systemDefaultsIsDmgWt,
+        this.damageImagesList,
         this.status,
         this.statusMessage});
 
@@ -127,6 +129,14 @@ class DamageDetailsModel {
         referenceData17List!.add(new ReferenceData17List.fromJson(v));
       });
     }
+
+    if (json['DamageImagesList'] != null) {
+      damageImagesList = <DamageImagesList>[];
+      json['DamageImagesList'].forEach((v) {
+        damageImagesList!.add(new DamageImagesList.fromJson(v));
+      });
+    }
+
     damageDetail = json['DamageDetail'] != null
         ? new DamageDetail.fromJson(json['DamageDetail'])
         : null;
@@ -854,6 +864,27 @@ class SystemDefaultsIsDmgWt {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['IsDmgWtChar'] = this.isDmgWtChar;
+    return data;
+  }
+}
+
+class DamageImagesList {
+  String? FileName;
+  String? BinaryFile;
+
+  DamageImagesList(
+      {this.FileName,
+        this.BinaryFile});
+
+  DamageImagesList.fromJson(Map<String, dynamic> json) {
+    FileName = json['FileName'];
+    BinaryFile = json['BinaryFile'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FileName'] = this.FileName;
+    data['BinaryFile'] = this.BinaryFile;
     return data;
   }
 }

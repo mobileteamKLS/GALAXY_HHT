@@ -21,12 +21,16 @@ import '../../../../../../widget/customtextfield.dart';
 import '../../../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
+import '../../../../model/flightcheck/damagedetailmodel.dart';
+
 class MissingItemAndRemarksPage extends StatefulWidget {
 
+  DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
   MissingItemAndRemarksPage({super.key,
+    required this.damageDetailsModel,
     required this.inactivityTimerManager,
     required this.preclickCallback, required this.nextclickCallback});
 
@@ -47,6 +51,24 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
   @override
   void initState() {
     // TODO: implement initState
+
+    if(widget.damageDetailsModel?.damageDetail?.damageSpaceMissing == null
+        || widget.damageDetailsModel?.damageDetail?.damageVerifiedInvoice == null
+        || widget.damageDetailsModel?.damageDetail?.packIsSufficient == null
+        || widget.damageDetailsModel?.damageDetail?.damageEvidencePilferage == null
+        || widget.damageDetailsModel?.damageDetail?.remark == null){
+
+    }else{
+      CommonUtils.MISSINGITEM = widget.damageDetailsModel!.damageDetail!.damageSpaceMissing!;
+      CommonUtils.VERIFIEDINVOICE = widget.damageDetailsModel!.damageDetail!.damageVerifiedInvoice!;
+      CommonUtils.SUFFICIENT = widget.damageDetailsModel!.damageDetail!.packIsSufficient!;
+      CommonUtils.EVIDENCE = widget.damageDetailsModel!.damageDetail!.damageEvidencePilferage!;
+
+      remarkController.text = widget.damageDetailsModel!.damageDetail!.remark!;
+
+    }
+
+
 
     missingItems = CommonUtils.MISSINGITEM;
     verifiedInvoice = CommonUtils.VERIFIEDINVOICE;

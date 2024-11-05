@@ -65,9 +65,21 @@ class DamageShimentPage extends StatefulWidget {
   double npxWeightCo;
   String groupId;
 
+  int damageNop;
+  double damageWt;
+
+  int enterDamageNop;
+  double enterDamageWt;
+  int pageView;
+
+
   DamageShimentPage({super.key,
+    required this.enterDamageNop,
+    required this.enterDamageWt,
+    required this.damageNop,
+    required this.damageWt,
     required this.buttonRightsList,
-    required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.userId, required this.companyCode, required this.menuId, required this.npxPieces, required this.npxWeightCo, required this.groupId});
+    required this.aWBItem, required this.flightDetailSummary, required this.mainMenuName, required this.userId, required this.companyCode, required this.menuId, required this.npxPieces, required this.npxWeightCo, required this.groupId, required this.pageView});
 
   @override
   State<DamageShimentPage> createState() => _DamageShimentPageState();
@@ -161,6 +173,11 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     return [
 
       (damageDetailsModel != null) ? DamageAwbDetailPage(
+        pageView: widget.pageView,
+        enterDamageNop: widget.enterDamageNop,
+        enterDamageWt: widget.enterDamageWt,
+        damageNop: widget.damageNop,
+        damageWt: widget.damageWt,
         npxPieces: widget.npxPieces,
         npxWeightCo: widget.npxWeightCo,
         damageDetailsModel: damageDetailsModel!,
@@ -304,7 +321,8 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      MissingItemAndRemarksPage(
+      (damageDetailsModel != null) ? MissingItemAndRemarksPage(
+        damageDetailsModel: damageDetailsModel,
         inactivityTimerManager: inactivityTimerManager,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event
@@ -316,7 +334,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               ? _onNextPressed()
               : null;
         },
-      ),
+      ) : Container(),
 
       (damageDetailsModel != null) ? DamageApparentlyPage(
         inactivityTimerManager: inactivityTimerManager,
@@ -441,6 +459,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
                             SnackbarUtil.showSnackbar(context, state.damageDetailsModel.statusMessage!, MyColor.textColor, icon: FontAwesomeIcons.times);
                           }else{
                             damageDetailsModel = state.damageDetailsModel;
+
                             setState(() {
 
                             });

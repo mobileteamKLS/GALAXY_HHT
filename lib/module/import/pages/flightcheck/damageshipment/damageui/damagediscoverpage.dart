@@ -52,6 +52,15 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
 
     damageDiscoveredList = List.from(widget.damageDetailsModel!.referenceData15List!);
 
+    if(widget.damageDetailsModel?.damageDetail?.damageDiscovered == null){
+
+    }else{
+      CommonUtils.SELECTEDDAMAGEDISCOVER = widget.damageDetailsModel!.damageDetail!.damageDiscovered!;
+
+    }
+
+
+
 
     List<String> selectedDamageDiscoveredListItem = CommonUtils.SELECTEDDAMAGEDISCOVER.split(",");
     for (var item in damageDiscoveredList) {

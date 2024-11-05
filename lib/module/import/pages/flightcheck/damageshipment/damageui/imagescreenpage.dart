@@ -96,13 +96,35 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
     whetherConditionList = List.from(widget.damageDetailsModel!.referenceData17List!);
 
 
+
+    if(widget.damageDetailsModel?.damageDetail?.weatherCondition == null
+        || widget.damageDetailsModel?.damageDetail?.damageRemarked == null
+        || widget.damageDetailsModel?.damageDetail?.gHARep == null
+        || widget.damageDetailsModel?.damageDetail?.airlineRep == null
+        || widget.damageDetailsModel?.damageDetail?.securityRep == null){
+
+    }else{
+      CommonUtils.SELECTEDWHETHER = widget.damageDetailsModel!.damageDetail!.weatherCondition!;
+      wordController.text = widget.damageDetailsModel!.damageDetail!.damageRemarked!;
+      ghaController.text = widget.damageDetailsModel!.damageDetail!.gHARep!;
+      airlineController.text = widget.damageDetailsModel!.damageDetail!.airlineRep!;
+      securityController.text = widget.damageDetailsModel!.damageDetail!.securityRep!;
+
+    }
+
+
+
+
     List<String> selectedwhetherConditionListItem = CommonUtils.SELECTEDWHETHER.split(",");
     for (var item in whetherConditionList) {
       if (selectedwhetherConditionListItem.contains(item.referenceDataIdentifier)) {
         selectedWhetherList.add("${item.referenceDataIdentifier},");
       }
     }
-
+    widget.damageDetailsModel!.damageImagesList!.map((e) {
+      CommonUtils.SELECTEDIMAGELIST.add(e.BinaryFile!);
+    },
+    ).toList();
 
     selectImageBase64List = List.from(CommonUtils.SELECTEDIMAGELIST);
     images = generateImageXMLData(CommonUtils.SELECTEDIMAGELIST);
@@ -153,7 +175,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
         }
         else{
 
-          Navigator.pop(context, "true");
+
           CommonUtils.SELECTEDWHETHER = "";
           selectedWhetherList.clear();
           wordController.clear();
@@ -199,7 +221,8 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
             controller.clear();
           }*/
 
-          SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+         // SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+          Navigator.pop(context, "true");
         }
       }else if(state is DamageBreakDownSaveFailureState){
         DialogUtils.hideLoadingDialog(context);
@@ -629,111 +652,122 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                   text: "Record Damage",
                   press: () async {
 
+                    if(widget.flightDetailSummary.flightStatus == "A"){
+                      String totalImages = "$images";
 
-                    String totalImages = "$images";
+                      print("IAMGSSS ==== $images");
 
-                    print("IAMGSSS ==== $images");
+                      if(isButtonEnabled("awbrecorddamage", widget.buttonRightsList)){
+                        if (ghaController.text.isEmpty) {
+                          openValidationDialog("Please enter GHA Representative.", ghaFocusNode, lableModel);
+                          return;
+                        }
 
-                    if(isButtonEnabled("awbrecorddamage", widget.buttonRightsList)){
-                      if (ghaController.text.isEmpty) {
-                        openValidationDialog("Please enter GHA Representative.", ghaFocusNode, lableModel);
-                        return;
+                        if (airlineController.text.isEmpty) {
+                          openValidationDialog("Please enter Airline Representative.", airlineFocusNode, lableModel);
+                          return;
+                        }
+
+                        if (securityController.text.isEmpty) {
+                          openValidationDialog("Please enter Security Representative.", airlineFocusNode, lableModel);
+                          return;
+                        }
+
+                        String exactWording = wordController.text;
+                        String ghaRep = ghaController.text;
+                        String airlineRep = airlineController.text;
+                        String securityRep = securityController.text;
+                        CommonUtils.SELECTEDWHETHER = selectedWhetherList.join('').toString();
+
+                        List<String> awb = widget.damageDetailsModel!.damageAWBDetail!.aWBNo!.split(" ");
+                        String awbPrefix = awb[0];
+                        String awbNumber = awb[1];
+                        int awbId = widget.aWBItem.iMPAWBRowId!;
+                        int shipId = widget.aWBItem.iMPShipRowId!;
+                        int flightSeqNo = widget.flightDetailSummary.flightSeqNo!;
+                        String typeOfDiscrepancy = CommonUtils.SELECTEDTYPEOFDISCRPENCY!;
+
+                        int shipTotalPcs =  CommonUtils.shipTotalPcs;
+                        String ShipTotalWt =  CommonUtils.ShipTotalWt;
+                        int shipDamagePcs =  CommonUtils.shipDamagePcs;
+                        String ShipDamageWt =  CommonUtils.ShipDamageWt;
+                        int shipDifferencePcs =  CommonUtils.shipDifferencePcs;
+                        String shipDifferenceWt =  CommonUtils.shipDifferenceWt;
+
+                        String individualWTPerDoc =  CommonUtils.individualWTPerDoc;
+                        String individualWTActChk =  CommonUtils.individualWTActChk;
+                        String individualWTDifference =  CommonUtils.individualWTDifference;
+
+                        String containerMaterial = CommonUtils.SELECTEDMATERIAL;
+                        String containerType = CommonUtils.SELECTEDTYPE;
+                        String marksLabels = CommonUtils.SELECTEDMARKANDLABLE;
+                        String outerPacking = CommonUtils.SELECTEDOUTRERPACKING;
+                        String innerPacking = CommonUtils.SELECTEDINNERPACKING;
+                        String damageObserContent = CommonUtils.SELECTEDCONTENT;
+                        String damageObserContainers = CommonUtils.SELECTEDCONTAINER;
+                        String damageDiscovered = CommonUtils.SELECTEDDAMAGEDISCOVER;
+                        String spaceForMissing = CommonUtils.MISSINGITEM;
+                        String verifiedInvoice = CommonUtils.VERIFIEDINVOICE;
+                        String isSufficient = CommonUtils.SUFFICIENT;
+                        String evidenceOfPilerage = CommonUtils.EVIDENCE;
+                        String remarksValue = CommonUtils.REMARKS;
+                        String aparentCause = CommonUtils.SELECTEDDAMAGEAPPARENTLY;
+                        String salvageAction = CommonUtils.SELECTEDSALVAGEACTION;
+                        String disposition = CommonUtils.SELECTEDDISPOSITION;
+                        String damageRemarked = exactWording;
+                        String weatherCondition = CommonUtils.SELECTEDWHETHER;
+                        String GHARepresent = ghaRep;
+                        String AirlineRepresent = airlineRep;
+                        String SecurityRepresent = securityRep;
+                        int problemSeqId = widget.damageDetailsModel!.damageDetail!.seqNo!;
+
+                        context.read<FlightCheckCubit>().damageBreakDownSave(
+                            awbPrefix, awbNumber,
+                            awbId, shipId, flightSeqNo,
+                            typeOfDiscrepancy,
+                            shipTotalPcs, ShipTotalWt, shipDamagePcs, ShipDamageWt, shipDifferencePcs, shipDifferenceWt,
+                            individualWTPerDoc, individualWTActChk, individualWTDifference,
+                            containerMaterial,
+                            containerType,
+                            marksLabels,
+                            outerPacking,
+                            innerPacking,
+                            damageObserContent,
+                            damageObserContainers,
+                            damageDiscovered,
+                            spaceForMissing,
+                            verifiedInvoice,
+                            isSufficient,
+                            evidenceOfPilerage,
+                            remarksValue,
+                            aparentCause,
+                            salvageAction,
+                            disposition,
+                            damageRemarked,
+                            weatherCondition,
+                            GHARepresent,
+                            AirlineRepresent,
+                            SecurityRepresent,
+                            problemSeqId,
+                            totalImages,
+                            widget.groupId,
+                            widget.userId, widget.companyCode, widget.menuId);
+
                       }
-
-                      if (airlineController.text.isEmpty) {
-                        openValidationDialog("Please enter Airline Representative.", airlineFocusNode, lableModel);
-                        return;
+                      else{
+                        SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                        Vibration.vibrate(duration: 500);
                       }
-
-                      if (securityController.text.isEmpty) {
-                        openValidationDialog("Please enter Security Representative.", airlineFocusNode, lableModel);
-                        return;
-                      }
-
-                      String exactWording = wordController.text;
-                      String ghaRep = ghaController.text;
-                      String airlineRep = airlineController.text;
-                      String securityRep = securityController.text;
-                      CommonUtils.SELECTEDWHETHER = selectedWhetherList.join('').toString();
-
-                      List<String> awb = widget.damageDetailsModel!.damageAWBDetail!.aWBNo!.split(" ");
-                      String awbPrefix = awb[0];
-                      String awbNumber = awb[1];
-                      int awbId = widget.aWBItem.iMPAWBRowId!;
-                      int shipId = widget.aWBItem.iMPShipRowId!;
-                      int flightSeqNo = widget.flightDetailSummary.flightSeqNo!;
-                      String typeOfDiscrepancy = CommonUtils.SELECTEDTYPEOFDISCRPENCY!;
-
-                      int shipTotalPcs =  CommonUtils.shipTotalPcs;
-                      String ShipTotalWt =  CommonUtils.ShipTotalWt;
-                      int shipDamagePcs =  CommonUtils.shipDamagePcs;
-                      String ShipDamageWt =  CommonUtils.ShipDamageWt;
-                      int shipDifferencePcs =  CommonUtils.shipDifferencePcs;
-                      String shipDifferenceWt =  CommonUtils.shipDifferenceWt;
-
-                      String individualWTPerDoc =  CommonUtils.individualWTPerDoc;
-                      String individualWTActChk =  CommonUtils.individualWTActChk;
-                      String individualWTDifference =  CommonUtils.individualWTDifference;
-
-                      String containerMaterial = CommonUtils.SELECTEDMATERIAL;
-                      String containerType = CommonUtils.SELECTEDTYPE;
-                      String marksLabels = CommonUtils.SELECTEDMARKANDLABLE;
-                      String outerPacking = CommonUtils.SELECTEDOUTRERPACKING;
-                      String innerPacking = CommonUtils.SELECTEDINNERPACKING;
-                      String damageObserContent = CommonUtils.SELECTEDCONTENT;
-                      String damageObserContainers = CommonUtils.SELECTEDCONTAINER;
-                      String damageDiscovered = CommonUtils.SELECTEDDAMAGEDISCOVER;
-                      String spaceForMissing = CommonUtils.MISSINGITEM;
-                      String verifiedInvoice = CommonUtils.VERIFIEDINVOICE;
-                      String isSufficient = CommonUtils.SUFFICIENT;
-                      String evidenceOfPilerage = CommonUtils.EVIDENCE;
-                      String remarksValue = CommonUtils.REMARKS;
-                      String aparentCause = CommonUtils.SELECTEDDAMAGEAPPARENTLY;
-                      String salvageAction = CommonUtils.SELECTEDSALVAGEACTION;
-                      String disposition = CommonUtils.SELECTEDDISPOSITION;
-                      String damageRemarked = exactWording;
-                      String weatherCondition = CommonUtils.SELECTEDWHETHER;
-                      String GHARepresent = ghaRep;
-                      String AirlineRepresent = airlineRep;
-                      String SecurityRepresent = securityRep;
-                      int problemSeqId = widget.damageDetailsModel!.damageDetail!.seqNo!;
-
-                      context.read<FlightCheckCubit>().damageBreakDownSave(
-                          awbPrefix, awbNumber,
-                          awbId, shipId, flightSeqNo,
-                          typeOfDiscrepancy,
-                          shipTotalPcs, ShipTotalWt, shipDamagePcs, ShipDamageWt, shipDifferencePcs, shipDifferenceWt,
-                          individualWTPerDoc, individualWTActChk, individualWTDifference,
-                          containerMaterial,
-                          containerType,
-                          marksLabels,
-                          outerPacking,
-                          innerPacking,
-                          damageObserContent,
-                          damageObserContainers,
-                          damageDiscovered,
-                          spaceForMissing,
-                          verifiedInvoice,
-                          isSufficient,
-                          evidenceOfPilerage,
-                          remarksValue,
-                          aparentCause,
-                          salvageAction,
-                          disposition,
-                          damageRemarked,
-                          weatherCondition,
-                          GHARepresent,
-                          AirlineRepresent,
-                          SecurityRepresent,
-                          problemSeqId,
-                          totalImages,
-                          widget.groupId,
-                          widget.userId, widget.companyCode, widget.menuId);
-
-                    }else{
-                      SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                    }else if(widget.flightDetailSummary.flightStatus == "F"){
+                      SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      Vibration.vibrate(duration: 500);
+                    }else if(widget.flightDetailSummary.flightStatus == "N"){
+                      SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                       Vibration.vibrate(duration: 500);
                     }
+
+
+
                   },
                 ),
               ),

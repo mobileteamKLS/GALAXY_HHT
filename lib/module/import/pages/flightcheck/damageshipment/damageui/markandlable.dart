@@ -51,6 +51,15 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
 
     markLableList = List.from(widget.damageDetailsModel!.referenceData11List!);
 
+
+    if(widget.damageDetailsModel?.damageDetail?.packMarksLabels == null){
+
+    }else{
+      CommonUtils.SELECTEDMARKANDLABLE = widget.damageDetailsModel!.damageDetail!.packMarksLabels!;
+
+    }
+
+
     List<String> selectedmarkLableListItem = CommonUtils.SELECTEDMARKANDLABLE.split(",");
     for (var item in markLableList) {
       if (selectedmarkLableListItem.contains(item.referenceDataIdentifier)) {

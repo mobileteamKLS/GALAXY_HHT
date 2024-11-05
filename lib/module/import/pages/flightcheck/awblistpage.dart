@@ -41,6 +41,7 @@ import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import 'checkawb.dart';
+import 'damageshipment/damageshipment.dart';
 
 class AWBListPage extends StatefulWidget {
 
@@ -168,42 +169,49 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
     print("ULD_PROGRSS == ${uldProgress}");
 
-    bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress, widget.bDEndStatus);
-    if (exitConfirmed == true) {
-      bool hasIncompleteAWB = false;
+    if(widget.bDEndStatus == "N"){
+      bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress, widget.bDEndStatus);
+      if (exitConfirmed == true) {
+        bool hasIncompleteAWB = false;
 
-      for (var item in filterAWBDetailsList) {
-        if (item.progress == 0) {
-          hasIncompleteAWB = true;
-          String awbNo = item.aWBNo!;
+        for (var item in filterAWBDetailsList) {
+          if (item.progress == 0) {
+            hasIncompleteAWB = true;
+            String awbNo = item.aWBNo!;
 
-          // Show Snackbar with the AWB number of the first item with Progress 0
-          SnackbarUtil.showSnackbar(
-            context,
-            "All the AWBs have not yet been matched/recorded discrepancy.",
-            MyColor.colorRed,
-            icon: FontAwesomeIcons.times,
+            // Show Snackbar with the AWB number of the first item with Progress 0
+            SnackbarUtil.showSnackbar(
+              context,
+              "All the AWBs have not yet been matched/recorded discrepancy.",
+              MyColor.colorRed,
+              icon: FontAwesomeIcons.times,
+            );
+
+            Vibration.vibrate(duration: 500);
+            break; // Stop after finding the first item with Progress 0
+          }
+        }
+
+        // Call breakDownEnd only if all items have non-zero progress
+        if (!hasIncompleteAWB) {
+          context.read<FlightCheckCubit>().breakDownEnd(
+            widget.flightDetailSummary.flightSeqNo!,
+            widget.uldSeqNo,
+            uldProgress < 100 ? "Y" : "N",
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId,
           );
-
-          Vibration.vibrate(duration: 500);
-          break; // Stop after finding the first item with Progress 0
         }
       }
-
-      // Call breakDownEnd only if all items have non-zero progress
-      if (!hasIncompleteAWB) {
-        context.read<FlightCheckCubit>().breakDownEnd(
-          widget.flightDetailSummary.flightSeqNo!,
-          widget.uldSeqNo,
-          uldProgress < 100 ? "Y" : "N",
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          widget.menuId,
-        );
+      else {
+        Navigator.pop(context, "Done");
       }
-    } else {
+    }else{
       Navigator.pop(context, "Done");
     }
+
+
     return false; // Stay in the app (Cancel was clicked)
 
 
@@ -635,17 +643,109 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         }
                                                                         else{
                                                                           if(widget.uldNo == "BULK"){
-                                                                            SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                            Vibration.vibrate(duration: 500);
+
+                                                                            if(aWBItem.damageNOP == 0){
+                                                                              SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                              Vibration.vibrate(duration: 500);
+                                                                            }
+                                                                            else{
+
+                                                                              int npxPices = aWBItem.nPR!;
+                                                                              double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                pageView: 1,
+                                                                                enterDamageNop: 0,
+                                                                                enterDamageWt: 0.00,
+                                                                                damageNop: aWBItem.damageNOP!,
+                                                                                damageWt: aWBItem.damageWeight!,
+                                                                                buttonRightsList: widget.buttonRightsList,
+                                                                                aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+                                                                              if(value == "Done"){
+                                                                                _resumeTimerOnInteraction();
+                                                                              }else if(value == "true"){
+                                                                                //Navigator.pop(context, "true");
+
+                                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                              }
+
+
+                                                                            }
+
+
+
                                                                           }else{
-                                                                            SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                            Vibration.vibrate(duration: 500);
+                                                                            if(aWBItem.damageNOP == 0){
+                                                                              SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                              Vibration.vibrate(duration: 500);
+                                                                            }
+                                                                            else{
+
+                                                                              int npxPices = aWBItem.nPR!;
+                                                                              double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                pageView: 1,
+                                                                                enterDamageNop: 0,
+                                                                                enterDamageWt: 0.00,
+                                                                                damageNop: aWBItem.damageNOP!,
+                                                                                damageWt: aWBItem.damageWeight!,
+                                                                                buttonRightsList: widget.buttonRightsList,
+                                                                                aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+
+                                                                              if(value == "Done"){
+                                                                                _resumeTimerOnInteraction();
+                                                                              }else if(value == "true"){
+                                                                                //Navigator.pop(context, "true");
+
+                                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                              }
+
+                                                                            }
                                                                           }
 
                                                                         }
                                                                       }else if(widget.flightDetailSummary.flightStatus == "F"){
-                                                                        SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                        Vibration.vibrate(duration: 500);
+                                                                        if(aWBItem.damageNOP == 0){
+                                                                          SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          Vibration.vibrate(duration: 500);
+                                                                        }
+                                                                        else{
+
+                                                                          int npxPices = aWBItem.nPR!;
+                                                                          double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                            pageView: 1,
+                                                                            enterDamageNop: 0,
+                                                                            enterDamageWt: 0.00,
+                                                                            damageNop: aWBItem.damageNOP!,
+                                                                            damageWt: aWBItem.damageWeight!,
+                                                                            buttonRightsList: widget.buttonRightsList,
+                                                                            aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+                                                                          if(value == "Done"){
+                                                                            _resumeTimerOnInteraction();
+                                                                          }else if(value == "true"){
+                                                                            //Navigator.pop(context, "true");
+
+                                                                            context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                          }
+
+
+                                                                        }
+
+                                                                        /*  SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        Vibration.vibrate(duration: 500);*/
                                                                       }else if(widget.flightDetailSummary.flightStatus == "N"){
                                                                         SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);
@@ -1152,23 +1252,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               _selectedIndex = index; // Update the selected index
                                                                                             });
 
-                                                                                         /*   if(widget.awbRemarkRequires == "Y"){
-                                                                                              if(aWBItem.remark == "Y"){
 
-                                                                                                List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
-                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
-                                                                                                if(value == "true"){
-                                                                                                  gotoCheckAWBScreen(aWBItem);
-                                                                                                }else if(value == "Done"){
-                                                                                                  _resumeTimerOnInteraction();
-                                                                                                }
-                                                                                              }else{
-                                                                                                gotoCheckAWBScreen(aWBItem);
-                                                                                              }
-                                                                                            }
-                                                                                            else{
-                                                                                              gotoCheckAWBScreen(aWBItem);
-                                                                                            }*/
+
+
 
                                                                                             if(widget.flightDetailSummary.flightStatus == "A"){
                                                                                               if(widget.bDEndStatus == "N"){
@@ -1194,21 +1280,115 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               }
                                                                                               else{
                                                                                                 if(widget.uldNo == "BULK"){
-                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                                                  Vibration.vibrate(duration: 500);
-                                                                                                }else{
-                                                                                                  SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                                                  Vibration.vibrate(duration: 500);
+
+                                                                                                  if(aWBItem.damageNOP == 0){
+                                                                                                    SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                    Vibration.vibrate(duration: 500);
+                                                                                                  }
+                                                                                                  else{
+
+                                                                                                    int npxPices = aWBItem.nPR!;
+                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      pageView: 1,
+                                                                                                      enterDamageNop: 0,
+                                                                                                      enterDamageWt: 0.00,
+                                                                                                      damageNop: aWBItem.damageNOP!,
+                                                                                                      damageWt: aWBItem.damageWeight!,
+                                                                                                      buttonRightsList: widget.buttonRightsList,
+                                                                                                      aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+                                                                                                    if(value == "Done"){
+                                                                                                      _resumeTimerOnInteraction();
+                                                                                                    }else if(value == "true"){
+                                                                                                      //Navigator.pop(context, "true");
+
+                                                                                                      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                                                    }
+
+
+                                                                                                  }
+
+
+
                                                                                                 }
+                                                                                                else{
+                                                                                                  if(aWBItem.damageNOP == 0){
+                                                                                                    SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                    Vibration.vibrate(duration: 500);
+                                                                                                  }
+                                                                                                  else{
+
+                                                                                                    int npxPices = aWBItem.nPR!;
+                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      pageView: 1,
+                                                                                                      enterDamageNop: 0,
+                                                                                                      enterDamageWt: 0.00,
+                                                                                                      damageNop: aWBItem.damageNOP!,
+                                                                                                      damageWt: aWBItem.damageWeight!,
+                                                                                                      buttonRightsList: widget.buttonRightsList,
+                                                                                                      aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+
+                                                                                                    if(value == "Done"){
+                                                                                                      _resumeTimerOnInteraction();
+                                                                                                    }else if(value == "true"){
+                                                                                                      //Navigator.pop(context, "true");
+
+                                                                                                      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                                                    }
+
+                                                                                                  }
+                                                                                                }
+
                                                                                               }
                                                                                             }else if(widget.flightDetailSummary.flightStatus == "F"){
-                                                                                              SnackbarUtil.showSnackbar(context, "Flight is finalized", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                                              Vibration.vibrate(duration: 500);
+                                                                                             /* SnackbarUtil.showSnackbar(context, "Flight is finalized", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                              Vibration.vibrate(duration: 500);*/
+
+                                                                                              if(aWBItem.damageNOP == 0){
+                                                                                                SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                Vibration.vibrate(duration: 500);
+                                                                                              }
+                                                                                              else{
+
+                                                                                                int npxPices = aWBItem.nPR!;
+                                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                  pageView: 1,
+                                                                                                  enterDamageNop: 0,
+                                                                                                  enterDamageWt: 0.00,
+                                                                                                  damageNop: aWBItem.damageNOP!,
+                                                                                                  damageWt: aWBItem.damageWeight!,
+                                                                                                  buttonRightsList: widget.buttonRightsList,
+                                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+                                                                                                if(value == "Done"){
+                                                                                                  _resumeTimerOnInteraction();
+                                                                                                }else if(value == "true"){
+                                                                                                  //Navigator.pop(context, "true");
+
+                                                                                                  context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                                                }
+
+
+                                                                                              }
+
                                                                                             }else if(widget.flightDetailSummary.flightStatus == "N"){
                                                                                               SnackbarUtil.showSnackbar(context, "Flight is not arrived", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                               Vibration.vibrate(duration: 500);
                                                                                             }
-
 
 
 

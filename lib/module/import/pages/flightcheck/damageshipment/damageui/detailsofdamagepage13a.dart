@@ -53,13 +53,18 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
 
     contentList = List.from(widget.damageDetailsModel!.referenceData14AList!);
 
+
+
     CommonUtils.CONTENTCONTROLLER = List.generate(contentList.length, (index) => TextEditingController());
     focusNodes = List.generate(contentList.length, (index) => FocusNode());
 
+    if(widget.damageDetailsModel?.damageDetail?.damageContainer == null){
 
-    print("CHECK_CONTENT ===== ${CommonUtils.SELECTEDCONTENT}");
+    }else{
+      setTextFieldValues(widget.damageDetailsModel!.damageDetail!.damageContainer!);
+      print("CHECK_CONTENT ===== ${CommonUtils.SELECTEDCONTENT}");
 
-   // List<String> selectedContentListItem = CommonUtils.SELECTEDCONTENT.split("~");
+    }
 
 
   }
@@ -333,5 +338,30 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
       }
     }
   }
+
+  void setTextFieldValues(String input) {
+    // Parse the input string into a map
+    Map<String, String> identifierMap = {};
+    List<String> pairs = input.split(',');
+
+    for (String pair in pairs) {
+      List<String> parts = pair.split('~');
+      if (parts.length == 2) {
+        identifierMap[parts[0]] = parts[1];
+      }
+    }
+
+    // Set each controller's text based on the identifier
+    for (int i = 0; i < contentList.length; i++) {
+      String? identifier = contentList[i].referenceDataIdentifier;
+
+      if (identifier != null && identifierMap.containsKey(identifier)) {
+        String value = identifierMap[identifier]!;
+        CommonUtils.CONTENTCONTROLLER[i].text = value;
+        updateSelectedContentList(i, value); // Update the selected list if needed
+      }
+    }
+  }
+
 
 }

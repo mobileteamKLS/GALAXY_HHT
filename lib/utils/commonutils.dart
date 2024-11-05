@@ -60,6 +60,7 @@ class CommonUtils{
 
   static List<TextEditingController> CONTAINERCONTROLLER = [];
   static String SELECTEDCONTAINER = "";
+
   static String SELECTEDDAMAGEDISCOVER = "";
   static String SELECTEDDAMAGEAPPARENTLY = "";
   static String SELECTEDSALVAGEACTION = "";
