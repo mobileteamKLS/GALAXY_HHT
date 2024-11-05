@@ -9,42 +9,40 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/import/pages/flightcheck/awbremarklistack.dart';
-import 'package:galaxy/module/import/pages/flightcheck/house/houselistpage.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customdivider.dart';
 import 'package:vibration/vibration.dart';
 
-import '../../../../core/images.dart';
-import '../../../../core/mycolor.dart';
-import '../../../../language/appLocalizations.dart';
-import '../../../../language/model/lableModel.dart';
-import '../../../../manager/timermanager.dart';
-import '../../../../prefrence/savedprefrence.dart';
-import '../../../../utils/awbformatenumberutils.dart';
-import '../../../../utils/commonutils.dart';
-import '../../../../utils/dialogutils.dart';
-import '../../../../utils/sizeutils.dart';
-import '../../../../widget/custometext.dart';
-import '../../../../widget/customeuiwidgets/header.dart';
-import '../../../../widget/customtextfield.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
-import '../../../../widget/header/mainheadingwidget.dart';
-import '../../../../widget/roundbutton.dart';
-import '../../../login/model/userlogindatamodel.dart';
-import '../../../login/pages/signinscreenmethods.dart';
-import '../../../onboarding/sizeconfig.dart';
+import '../../../../../core/images.dart';
+import '../../../../../core/mycolor.dart';
+import '../../../../../language/appLocalizations.dart';
+import '../../../../../language/model/lableModel.dart';
+import '../../../../../manager/timermanager.dart';
+import '../../../../../prefrence/savedprefrence.dart';
+import '../../../../../utils/awbformatenumberutils.dart';
+import '../../../../../utils/commonutils.dart';
+import '../../../../../utils/dialogutils.dart';
+import '../../../../../utils/sizeutils.dart';
+import '../../../../../widget/custometext.dart';
+import '../../../../../widget/customeuiwidgets/header.dart';
+import '../../../../../widget/groupidcustomtextfield.dart';
+import '../../../../../widget/header/mainheadingwidget.dart';
+import '../../../../login/model/userlogindatamodel.dart';
+import '../../../../login/pages/signinscreenmethods.dart';
+import '../../../../onboarding/sizeconfig.dart';
+import '../../../../splash/model/splashdefaultmodel.dart';
+import '../../../model/flightcheck/awblistmodel.dart';
+import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import 'dart:ui' as ui;
 
-import '../../../splash/model/splashdefaultmodel.dart';
-import '../../model/flightcheck/awblistmodel.dart';
-import '../../model/flightcheck/flightcheckuldlistmodel.dart';
-import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
-import 'checkawb.dart';
-import 'damageshipment/damageshipment.dart';
+import '../checkawb.dart';
+import '../damageshipment/damageshipment.dart';
 
-class AWBListPage extends StatefulWidget {
+
+class HouseListPage extends StatefulWidget {
 
   List<ButtonRight> buttonRightsList;
   String location;
@@ -54,15 +52,16 @@ class AWBListPage extends StatefulWidget {
   int uldSeqNo;
   int menuId;
   LableModel lableModel;
-
   String awbRemarkRequires;
   String groupIDRequires;
   int groupIDCharSize;
   String bDEndStatus;
+  FlightCheckInAWBBDList aWBItem;
 
-  AWBListPage({super.key,
+  HouseListPage({super.key,
     required this.buttonRightsList,
     required this.uldNo,
+    required this.aWBItem,
     required this.mainMenuName,
     required this.flightDetailSummary,
     required this.uldSeqNo,
@@ -75,10 +74,10 @@ class AWBListPage extends StatefulWidget {
     required this.bDEndStatus});
 
   @override
-  State<AWBListPage> createState() => _AWBListPageState();
+  State<HouseListPage> createState() => _HouseListPageState();
 }
 
-class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStateMixin{
+class _HouseListPageState extends State<HouseListPage> with SingleTickerProviderStateMixin{
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
@@ -136,7 +135,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
         _splashDefaultData = splashDefaultData;
       });
 
-
       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
       inactivityTimerManager = InactivityTimerManager(
@@ -147,9 +145,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       inactivityTimerManager?.startTimer();
 
     }
-
-
-
   }
 
   Future<void> _handleInactivityTimeout() async {
@@ -161,8 +156,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     }else{
       _logoutUser();
     }
-
   }
+
   Future<void> _logoutUser() async {
     await savedPrefrence.logout();
     Navigator.pushAndRemoveUntil(
@@ -639,30 +634,17 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                               if(value == "true"){
 
-                                                                                if(aWBItem.mAWBInd == "M"){
-                                                                                  gotoHouseListScreen(aWBItem);
-                                                                                }else{
-                                                                                  gotoCheckAWBScreen(aWBItem);
-                                                                                }
-
+                                                                                gotoCheckAWBScreen(aWBItem);
 
                                                                               }else if(value == "Done"){
                                                                                 _resumeTimerOnInteraction();
                                                                               }
                                                                             }else{
-                                                                              if(aWBItem.mAWBInd == "M"){
-                                                                                gotoHouseListScreen(aWBItem);
-                                                                              }else{
-                                                                                gotoCheckAWBScreen(aWBItem);
-                                                                              }
+                                                                              gotoCheckAWBScreen(aWBItem);
                                                                             }
                                                                           }
                                                                           else{
-                                                                            if(aWBItem.mAWBInd == "M"){
-                                                                              gotoHouseListScreen(aWBItem);
-                                                                            }else{
-                                                                              gotoCheckAWBScreen(aWBItem);
-                                                                            }
+                                                                            gotoCheckAWBScreen(aWBItem);
                                                                           }
                                                                         }
                                                                         else{
@@ -1392,28 +1374,16 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                       buttonRightsList: widget.buttonRightsList,
                                                                                                       mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
                                                                                                     if(value == "true"){
-                                                                                                      if(aWBItem.mAWBInd == "M"){
-                                                                                                        gotoHouseListScreen(aWBItem);
-                                                                                                      }else{
-                                                                                                        gotoCheckAWBScreen(aWBItem);
-                                                                                                      }
+                                                                                                      gotoCheckAWBScreen(aWBItem);
                                                                                                     }else if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
                                                                                                     }
                                                                                                   }else{
-                                                                                                    if(aWBItem.mAWBInd == "M"){
-                                                                                                      gotoHouseListScreen(aWBItem);
-                                                                                                    }else{
-                                                                                                      gotoCheckAWBScreen(aWBItem);
-                                                                                                    }
+                                                                                                    gotoCheckAWBScreen(aWBItem);
                                                                                                   }
                                                                                                 }
                                                                                                 else{
-                                                                                                  if(aWBItem.mAWBInd == "M"){
-                                                                                                    gotoHouseListScreen(aWBItem);
-                                                                                                  }else{
-                                                                                                    gotoCheckAWBScreen(aWBItem);
-                                                                                                  }
+                                                                                                  gotoCheckAWBScreen(aWBItem);
                                                                                                 }
                                                                                               }
                                                                                               else{
@@ -1775,37 +1745,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     }
 
   }
-
-
-  Future<void> gotoHouseListScreen(FlightCheckInAWBBDList aWBItem) async {
-    inactivityTimerManager!.stopTimer();
-    var value = await Navigator.push(
-        context,
-        CupertinoPageRoute(
-            builder: (context) => HouseListPage(
-              buttonRightsList: widget.buttonRightsList,
-              aWBItem: aWBItem,
-              uldNo: widget.uldNo,
-              awbRemarkRequires: widget.awbRemarkRequires,
-              bDEndStatus: widget.bDEndStatus,
-              mainMenuName: widget.mainMenuName,
-              flightDetailSummary: widget.flightDetailSummary,
-              location: widget.location,
-              uldSeqNo: widget.uldSeqNo,
-              menuId: widget.menuId,
-              lableModel: widget.lableModel,
-              groupIDRequires: widget.groupIDRequires,
-              groupIDCharSize: widget.groupIDCharSize,
-            )));
-
-    if(value == "Done"){
-      _resumeTimerOnInteraction();
-    }else if(value == "true"){
-      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
-    }
-
-  }
-
 
 
   // update serch list function
