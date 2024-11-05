@@ -213,6 +213,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ),
 
       (damageDetailsModel != null) ? PackingDetailsPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
@@ -228,6 +229,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? MarkAndLablePage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel!,
         preclickCallback: () {
@@ -243,6 +245,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? OuterPackingPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -260,6 +263,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? InnerPackingPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -276,6 +280,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DetailsOfDamage13aPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -291,6 +296,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DetailsOfDamagePage13b(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -306,6 +312,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DamageDiscoveredPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -322,6 +329,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? MissingItemAndRemarksPage(
+        pageView: widget.pageView,
         damageDetailsModel: damageDetailsModel,
         inactivityTimerManager: inactivityTimerManager,
         preclickCallback: () {
@@ -337,6 +345,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? DamageApparentlyPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -352,6 +361,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? ActionTakenPage(
+        pageView: widget.pageView,
         inactivityTimerManager: inactivityTimerManager,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
@@ -367,6 +377,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       ) : Container(),
 
       (damageDetailsModel != null) ? ImageScreenPage(
+        pageView: widget.pageView,
         buttonRightsList: widget.buttonRightsList,
         inactivityTimerManager: inactivityTimerManager,
         userId: widget.userId,

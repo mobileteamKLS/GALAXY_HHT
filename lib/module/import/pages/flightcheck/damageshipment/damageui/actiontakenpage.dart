@@ -24,7 +24,10 @@ class ActionTakenPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
+
   ActionTakenPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
@@ -231,13 +234,18 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                         inactiveTrackColor: MyColor.textColorGrey2,
                                         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                         onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selectedsalvageActionList.add("${salvageAction.referenceDataIdentifier},");
-                                            } else {
-                                              selectedsalvageActionList.remove("${salvageAction.referenceDataIdentifier},");
-                                            }
-                                          });
+
+                                          if(widget.pageView == 0){
+                                            setState(() {
+                                              if (value) {
+                                                selectedsalvageActionList.add("${salvageAction.referenceDataIdentifier},");
+                                              } else {
+                                                selectedsalvageActionList.remove("${salvageAction.referenceDataIdentifier},");
+                                              }
+                                            });
+                                          }
+
+
                                         },
                                       )
                                     ],
@@ -328,13 +336,19 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                         inactiveTrackColor: MyColor.textColorGrey2,
                                         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                         onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selecteddispositionList.add("${disposition.referenceDataIdentifier},");
-                                            } else {
-                                              selecteddispositionList.remove("${disposition.referenceDataIdentifier},");
-                                            }
-                                          });
+
+                                          if(widget.pageView == 0){
+                                            setState(() {
+                                              if (value) {
+                                                selecteddispositionList.add("${disposition.referenceDataIdentifier},");
+                                              } else {
+                                                selecteddispositionList.remove("${disposition.referenceDataIdentifier},");
+                                              }
+                                            });
+                                          }
+
+
+
                                         },
                                       )
                                     ],

@@ -185,7 +185,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
             Navigator.pop(context, "Done");
 
           },
-          clearText: "${lableModel!.clear}",
+          clearText: (widget.pageView == 0) ? "${lableModel!.clear}" : "",
           onClear: () {
             selectedDiscrepancy = typesOfDiscrepancy[0];
             documentweightController.clear();
@@ -429,9 +429,13 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   value: typesOfDiscrepancy[index],
                                   groupValue: selectedDiscrepancy,
                                   onChanged: (ReferenceDataTypeOfDiscrepancyList? value) {
-                                    setState(() {
-                                      selectedDiscrepancy = value;
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        selectedDiscrepancy = value;
+                                      });
+                                    }
+
                                   },
                                 ),
                                 CustomeText(
@@ -520,7 +524,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   animatedLabel: true,
                                   needOutlineBorder: true,
                                   labelText: "Pieces",
-                                  readOnly: false,
+                                  readOnly: (widget.pageView == 0) ? false : true,
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
                                       int enteredNpx = int.tryParse(value) ?? 0;
@@ -585,7 +589,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   animatedLabel: true,
                                   needOutlineBorder: true,
                                   labelText: "Weight",
-                                  readOnly: false,
+                                  readOnly: (widget.pageView == 0) ? false : true,
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
                                       double enteredWeight = double.tryParse(value) ?? 0.00;
@@ -703,7 +707,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             animatedLabel: true,
                             needOutlineBorder: true,
                             labelText: "a) As Per Document (Kg)",
-                            readOnly: false,
+                            readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {
 
                               if (value.isEmpty) {
@@ -753,7 +757,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                               animatedLabel: true,
                               needOutlineBorder: true,
                               labelText: "b) As Per Actual Weight Check (Kg)",
-                              readOnly: false,
+                              readOnly: (widget.pageView == 0) ? false : true,
                               onChanged: (value) {
                                 calculateDifference();
                               },
@@ -834,7 +838,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
             press: () async {
 
               if (nopController.text.isEmpty) {
-                openValidationDialog("${lableModel.piecesMsg}", nopFocusNode, lableModel);
+                openValidationDialog("${lableModel!.piecesMsg}", nopFocusNode, lableModel);
                 return;
               }
 
@@ -860,17 +864,17 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
 
               if(int.parse(nopController.text) == 0){
-                openValidationDialog("Please enter pieces greater than 0.", nopFocusNode, lableModel);
+                openValidationDialog("Please enter pieces greater than 0.", nopFocusNode, lableModel!);
                 return;
               }
 
               if(double.parse(weightController.text) == 0){
-                openValidationDialog("Please enter weight greater than 0.", weightFocusNode, lableModel);
+                openValidationDialog("Please enter weight greater than 0.", weightFocusNode, lableModel!);
                 return;
               }
 
               if (weightController.text.isEmpty) {
-                openValidationDialog("${lableModel.weightMsg}", weightFocusNode, lableModel);
+                openValidationDialog("${lableModel!.weightMsg}", weightFocusNode, lableModel!);
                 return;
               }
 

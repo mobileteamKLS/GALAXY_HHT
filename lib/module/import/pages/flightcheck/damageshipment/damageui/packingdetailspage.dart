@@ -27,7 +27,11 @@ class PackingDetailsPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+
+  int pageView;
+
   PackingDetailsPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
 
@@ -235,13 +239,18 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                             inactiveTrackColor: MyColor.textColorGrey2,
                                             trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                             onChanged: (value) {
-                                              setState(() {
-                                                if (value) {
-                                                  selectedMaterialList.add("${material.referenceDataIdentifier},");
-                                                } else {
-                                                  selectedMaterialList.remove("${material.referenceDataIdentifier},");
-                                                }
-                                              });
+
+                                              if(widget.pageView == 0){
+                                                setState(() {
+                                                  if (value) {
+                                                    selectedMaterialList.add("${material.referenceDataIdentifier},");
+                                                  } else {
+                                                    selectedMaterialList.remove("${material.referenceDataIdentifier},");
+                                                  }
+                                                });
+                                              }
+
+
                                             },
                                           )
                                         ],
@@ -333,13 +342,18 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                             inactiveTrackColor: MyColor.textColorGrey2,
                                             trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                             onChanged: (value) {
-                                              setState(() {
-                                                if (value) {
-                                                  selectedTypeList.add("${type.referenceDataIdentifier},");
-                                                } else {
-                                                  selectedTypeList.remove("${type.referenceDataIdentifier},");
-                                                }
-                                              });
+
+                                              if(widget.pageView == 0){
+                                                setState(() {
+                                                  if (value) {
+                                                    selectedTypeList.add("${type.referenceDataIdentifier},");
+                                                  } else {
+                                                    selectedTypeList.remove("${type.referenceDataIdentifier},");
+                                                  }
+                                                });
+                                              }
+
+
                                             },
                                           )
                                         ],

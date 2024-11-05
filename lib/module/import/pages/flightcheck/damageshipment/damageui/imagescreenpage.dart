@@ -51,8 +51,10 @@ class ImageScreenPage extends StatefulWidget {
   int menuId;
   String groupId;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
 
   ImageScreenPage({super.key,
+    required this.pageView,
     required this.buttonRightsList,
     required this.inactivityTimerManager,
     required this.aWBItem, required this.flightDetailSummary, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback, required this.userId, required this.companyCode, required this.menuId, required this.groupId});
@@ -314,7 +316,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             animatedLabel: true,
                             needOutlineBorder: true,
                             labelText: "Exact Wording",
-                            readOnly: false,
+                            readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
                             textInputType: TextInputType.text,
@@ -406,13 +408,18 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                   inactiveTrackColor: MyColor.textColorGrey2,
                                   trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                   onChanged: (value) {
-                                    setState(() {
-                                      if (value) {
-                                        selectedWhetherList.add("${whetherCondition.referenceDataIdentifier},");
-                                      } else {
-                                        selectedWhetherList.remove("${whetherCondition.referenceDataIdentifier},");
-                                      }
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        if (value) {
+                                          selectedWhetherList.add("${whetherCondition.referenceDataIdentifier},");
+                                        } else {
+                                          selectedWhetherList.remove("${whetherCondition.referenceDataIdentifier},");
+                                        }
+                                      });
+                                    }
+
+
                                   },
                                 )
                               ],
@@ -469,7 +476,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             animatedLabel: true,
                             needOutlineBorder: true,
                             labelText: "GHA Rep.",
-                            readOnly: false,
+                            readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
                             textInputType: TextInputType.text,
@@ -504,7 +511,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             animatedLabel: true,
                             needOutlineBorder: true,
                             labelText: "Airline Rep.",
-                            readOnly: false,
+                            readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
                             textInputType: TextInputType.text,
@@ -538,7 +545,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             animatedLabel: true,
                             needOutlineBorder: true,
                             labelText: "Security Rep.",
-                            readOnly: false,
+                            readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
                             textInputType: TextInputType.text,
@@ -566,7 +573,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                           children: [
                             InkWell(
                               onTap: () async {
-                                var result = await showImageDialog(context, lableModel, 0, selectImageBase64List);
+                                var result = await showImageDialog(context, lableModel, 0, selectImageBase64List, widget.pageView);
                                 if(result != null){
                                   images = result['images']!;
                                   imageCount = result['imageCount']!;
@@ -779,7 +786,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
     );
   }
 
-  static Future<Map<String, String>?> showImageDialog(BuildContext context, LableModel lableModel, int recordView, List<String> selectImageList) {
+  static Future<Map<String, String>?> showImageDialog(BuildContext context, LableModel lableModel, int recordView, List<String> selectImageList, int pageView) {
 
     print("IMAGELIST COUNT S ==== ${selectImageList.length}");
 
@@ -930,7 +937,10 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                               flex: 1,
                               child: InkWell(
                                 onTap: () {
-                                  _takePicture(setState, lableModel);
+                                  if(pageView == 0){
+                                    _takePicture(setState, lableModel);
+                                  }
+
                                 },
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -947,7 +957,10 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                               flex: 1,
                               child: InkWell(
                                 onTap: () {
-                                  _attachPhotoFromGallery(setState, lableModel);
+                                  if(pageView == 0){
+                                    _attachPhotoFromGallery(setState, lableModel);
+                                  }
+
                                 },
                                 child: Row(children: [
                                   SvgPicture.asset(link, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
@@ -1015,7 +1028,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                   ),
 
                                   // Positioned remove icon on top right of the image
-                                  Positioned(
+                                  (pageView == 0) ? Positioned(
                                     top: 5,
                                     right: 5,
                                     child: InkWell(
@@ -1035,7 +1048,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                         child: SvgPicture.asset(trashcan, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                                       ),
                                     ),
-                                  ),
+                                  ) : Container(),
                                 ],
                               );
                             },

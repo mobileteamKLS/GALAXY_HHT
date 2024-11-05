@@ -27,7 +27,10 @@ class DetailsOfDamage13aPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
+
   DetailsOfDamage13aPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
@@ -212,7 +215,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                                   animatedLabel: true,
                                   needOutlineBorder: true,
                                   labelText: "${content.referenceDescription}",
-                                  readOnly: false,
+                                  readOnly: (widget.pageView == 0) ? false : true,
                                   onChanged: (value) {
                                     updateSelectedContentList(index, value);
                                   },

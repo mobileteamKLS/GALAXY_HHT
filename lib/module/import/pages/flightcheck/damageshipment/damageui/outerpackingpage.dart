@@ -27,7 +27,9 @@ class OuterPackingPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
   OuterPackingPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
@@ -199,13 +201,18 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                                         inactiveTrackColor: MyColor.textColorGrey2,
                                         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                         onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selectedOuterPackingList.add("${outerPacking.referenceDataIdentifier},");
-                                            } else {
-                                              selectedOuterPackingList.remove("${outerPacking.referenceDataIdentifier},");
-                                            }
-                                          });
+
+                                          if(widget.pageView == 0){
+                                            setState(() {
+                                              if (value) {
+                                                selectedOuterPackingList.add("${outerPacking.referenceDataIdentifier},");
+                                              } else {
+                                                selectedOuterPackingList.remove("${outerPacking.referenceDataIdentifier},");
+                                              }
+                                            });
+                                          }
+
+
                                         },
                                       )
                                     ],

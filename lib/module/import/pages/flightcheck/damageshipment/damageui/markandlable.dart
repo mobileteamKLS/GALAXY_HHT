@@ -27,7 +27,9 @@ class MarkAndLablePage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
   MarkAndLablePage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel,  required this.preclickCallback, required this.nextclickCallback});
 
@@ -195,13 +197,19 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                                         inactiveTrackColor: MyColor.textColorGrey2,
                                         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                         onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selectedMarkLableList.add("${markLable.referenceDataIdentifier},");
-                                            } else {
-                                              selectedMarkLableList.remove("${markLable.referenceDataIdentifier},");
-                                            }
-                                          });
+
+                                          if(widget.pageView == 0){
+                                            setState(() {
+                                              if (value) {
+                                                selectedMarkLableList.add("${markLable.referenceDataIdentifier},");
+                                              } else {
+                                                selectedMarkLableList.remove("${markLable.referenceDataIdentifier},");
+                                              }
+                                            });
+                                          }
+
+
+
                                         },
                                       )
                                     ],

@@ -27,7 +27,9 @@ class InnerPackingPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
   InnerPackingPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
@@ -201,13 +203,19 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                                         inactiveTrackColor: MyColor.textColorGrey2,
                                         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                         onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selectedInnerPackList.add("${innerPacking.referenceDataIdentifier},");
-                                            } else {
-                                              selectedInnerPackList.remove("${innerPacking.referenceDataIdentifier},");
-                                            }
-                                          });
+
+                                          if(widget.pageView == 0){
+                                            setState(() {
+                                              if (value) {
+                                                selectedInnerPackList.add("${innerPacking.referenceDataIdentifier},");
+                                              } else {
+                                                selectedInnerPackList.remove("${innerPacking.referenceDataIdentifier},");
+                                              }
+                                            });
+                                          }
+
+
+
                                         },
                                       )
                                     ],

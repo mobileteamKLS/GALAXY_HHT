@@ -29,7 +29,10 @@ class MissingItemAndRemarksPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
+
   MissingItemAndRemarksPage({super.key,
+    required this.pageView,
     required this.damageDetailsModel,
     required this.inactivityTimerManager,
     required this.preclickCallback, required this.nextclickCallback});
@@ -179,9 +182,14 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      missingItems = "Y";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        missingItems = "Y";
+                                      });
+                                    }
+
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -204,9 +212,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      missingItems = "N";
-                                    });
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        missingItems = "N";
+                                      });
+                                    }
+
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -225,9 +237,14 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      missingItems = "N/A";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        missingItems = "N/A";
+                                      });
+                                    }
+
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -292,9 +309,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      verifiedInvoice = "Y";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        verifiedInvoice = "Y";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -317,9 +338,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      verifiedInvoice = "N";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        verifiedInvoice = "N";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -338,9 +363,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      verifiedInvoice = "N/A";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        verifiedInvoice = "N/A";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -404,9 +433,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      packingSufficient = "Y";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        packingSufficient = "Y";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -430,9 +463,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      packingSufficient = "N";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        packingSufficient = "N";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -506,9 +543,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      evidence = "Y";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        evidence = "Y";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -531,9 +572,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                 flex: 1,
                                 child: InkWell(
                                   onTap: () {
-                                    setState(() {
-                                      evidence = "N";
-                                    });
+
+                                    if(widget.pageView == 0){
+                                      setState(() {
+                                        evidence = "N";
+                                      });
+                                    }
+
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
@@ -607,7 +652,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             animatedLabel: true,
                             needOutlineBorder: true,
                             labelText: "Remarks *",
-                            readOnly: false,
+                            readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
                             textInputType: TextInputType.text,

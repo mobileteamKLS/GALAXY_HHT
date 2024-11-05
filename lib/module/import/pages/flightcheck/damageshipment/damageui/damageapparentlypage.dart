@@ -27,7 +27,10 @@ class DamageApparentlyPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
+
   DamageApparentlyPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
@@ -200,13 +203,18 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
                                         inactiveTrackColor: MyColor.textColorGrey2,
                                         trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                         onChanged: (value) {
-                                          setState(() {
-                                            if (value) {
-                                              selecteddamageApparentlyList.add("${damageApparently.referenceDataIdentifier},");
-                                            } else {
-                                              selecteddamageApparentlyList.remove("${damageApparently.referenceDataIdentifier},");
-                                            }
-                                          });
+
+                                          if(widget.pageView == 0){
+                                            setState(() {
+                                              if (value) {
+                                                selecteddamageApparentlyList.add("${damageApparently.referenceDataIdentifier},");
+                                              } else {
+                                                selecteddamageApparentlyList.remove("${damageApparently.referenceDataIdentifier},");
+                                              }
+                                            });
+                                          }
+
+
                                         },
                                       )
                                     ],

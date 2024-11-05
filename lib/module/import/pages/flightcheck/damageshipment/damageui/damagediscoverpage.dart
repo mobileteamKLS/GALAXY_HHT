@@ -27,7 +27,10 @@ class DamageDiscoveredPage extends StatefulWidget {
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
   InactivityTimerManager? inactivityTimerManager;
+  int pageView;
+
   DamageDiscoveredPage({super.key,
+    required this.pageView,
     required this.inactivityTimerManager,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback});
 
@@ -197,13 +200,20 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                                     inactiveTrackColor: MyColor.textColorGrey2,
                                     trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                     onChanged: (value) {
-                                      setState(() {
-                                        if (value) {
-                                          selecteddamageDiscoveredList.add("${damageDiscovered.referenceDataIdentifier},");
-                                        } else {
-                                          selecteddamageDiscoveredList.remove("${damageDiscovered.referenceDataIdentifier},");
-                                        }
-                                      });
+
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          if (value) {
+                                            selecteddamageDiscoveredList.add("${damageDiscovered.referenceDataIdentifier},");
+                                          } else {
+                                            selecteddamageDiscoveredList.remove("${damageDiscovered.referenceDataIdentifier},");
+                                          }
+                                        });
+                                      }
+
+
+
+
                                     },
                                   )
                                 ],
