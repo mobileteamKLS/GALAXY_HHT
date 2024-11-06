@@ -35,11 +35,14 @@ import '../../../../onboarding/sizeconfig.dart';
 import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../model/flightcheck/hawblistmodel.dart';
 import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import 'dart:ui' as ui;
 
 import '../checkawb.dart';
 import '../damageshipment/damageshipment.dart';
+import 'checkhawb.dart';
+import 'hawbremarklistack.dart';
 
 
 class HouseListPage extends StatefulWidget {
@@ -85,11 +88,11 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
   bool _isOpenULDFlagEnable = false;
 
-  List<FlightCheckInAWBBDList> awbItemList = [];
-  List<FlightCheckInAWBBDList> filterAWBDetailsList = [];
+  List<FlightCheckInHAWBBDList> hawbItemList = [];
+  List<FlightCheckInHAWBBDList> filterHAWBDetailsList = [];
 
-  AWBModel? awbModel;
-  int uldProgress = 0;
+  HAWBModel? hAwbModel;
+
   final ScrollController scrollController = ScrollController();
   FocusNode awbFocusNode = FocusNode();
 
@@ -135,7 +138,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
         _splashDefaultData = splashDefaultData;
       });
 
-      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+      context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
       inactivityTimerManager = InactivityTimerManager(
         context: context,
@@ -173,8 +176,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
 
-    print("ULD_PROGRSS == ${uldProgress}");
-
+/*
     if(widget.bDEndStatus == "N"){
       bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress, widget.bDEndStatus);
       if (exitConfirmed == true) {
@@ -214,9 +216,9 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
         Navigator.pop(context, "Done");
       }
     }else{
-      Navigator.pop(context, "Done");
-    }
-
+   //   Navigator.pop(context, "Done");
+    }*/
+    Navigator.pop(context, "Done");
 
     return false; // Stay in the app (Cancel was clicked)
 
@@ -290,7 +292,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                               padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                               child: HeaderWidget(
                                 titleTextColor: MyColor.colorBlack,
-                                title: "${lableModel!.awbListing}",
+                                title: "House Listing",
                                 onBack: () {
                                   _onWillPop();
                                 },
@@ -312,80 +314,37 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
-                                else if(state is AWBListSuccessState){
+                                else if(state is HouseListSuccessState){
                                   print("CHECK_AWB_PAGE______SUCCESS");
                                   DialogUtils.hideLoadingDialog(context);
 
                                   _resumeTimerOnInteraction();
 
-                                  if(state.aWBModel.status == "E"){
-                                    SnackbarUtil.showSnackbar(context, state.aWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  if(state.hAWBModel.status == "E"){
+                                    SnackbarUtil.showSnackbar(context, state.hAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
                                   }else{
 
-                                    awbModel = state.aWBModel;
-                                    uldProgress = awbModel!.ULDProgress!;
+                                    hAwbModel = state.hAWBModel;
 
+                                    hawbItemList = List.from(hAwbModel!.flightCheckInHAWBBDList != null ? hAwbModel!.flightCheckInHAWBBDList! : []);
 
-                                    awbItemList = List.from(awbModel!.flightCheckInAWBBDList != null ? awbModel!.flightCheckInAWBBDList! : []);
+                                    filterHAWBDetailsList = List.from(hawbItemList);
+                                    filterHAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
 
-                                    filterAWBDetailsList = List.from(awbItemList);
-                                    filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
-
-
-                                    print("CHECK_LIST====== ${awbItemList.length}");
                                     setState(() {
 
                                     });
-
                                   }
 
-
                                 }
-                                else if(state is AWBListFailureState){
+                                else if(state is HouseListFailureState){
                                   print("CHECK_AWB_PAGE______FAILURE");
                                   DialogUtils.hideLoadingDialog(context);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
                                 }
-                                else if (state is BDPriorityAWBSuccessState) {
-                                  // responce bdpriority success
 
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if (state.bdPriorityModel.status == "E") {
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.bdPriorityModel.statusMessage!,
-                                        MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  } else {
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.bdPriorityModel.statusMessage!,
-                                        MyColor.colorGreen, icon: Icons.done);
-                                    setState(() {});
-                                    //callFlightCheckApi(context, locationController.text, igmNoEditingController.text, flightNoEditingController.text, dateEditingController.text, _user!.userProfile!.userIdentity!, _company!.companyCode!);
-                                  }
-                                }
-                                else if (state is BDPriorityFailureState) {
-                                  // bd priority fail responce
-                                  DialogUtils.hideLoadingDialog(context);
-                                  Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                }
-                                else if (state is BreakDownEndSaveSuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if(state.breakDownEndModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.breakDownEndModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
-                                    Navigator.pop(context, "true");
-                                  }
-                                }
-                                else if(state is BreakDownEndFailureState){
-                                  Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                }
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -425,7 +384,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                                   CustomeText(
-                                                                      text: "${lableModel.detailsForUldNo} ${widget.uldNo}",
+                                                                      text: "${lableModel!.detailsForAWBNo} ${widget.aWBItem.aWBNo}",
                                                                       fontColor: MyColor.textColorGrey2,
                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                       fontWeight: FontWeight.w500,
@@ -434,16 +393,16 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                               ),
 
 
-                                                              (awbModel != null) ? Container(
+                                                              (hAwbModel != null) ? Container(
                                                                 height : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
                                                                 width : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
                                                                 child: DashedCircularProgressBar.aspectRatio(
                                                                   aspectRatio: 2.1, // width ÷ height
                                                                   valueNotifier: _valueNotifier,
-                                                                  progress: awbModel!.ULDProgress!.toDouble(),
+                                                                  progress: hAwbModel!.aWBProgress!.toDouble(),
                                                                   maxProgress: 100,
                                                                   corners: StrokeCap.butt,
-                                                                  foregroundColor:  (awbModel!.ULDProgress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
+                                                                  foregroundColor:  (hAwbModel!.aWBProgress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
                                                                   backgroundColor: const Color(0xffF2F4F8),
                                                                   foregroundStrokeWidth: 5,
                                                                   backgroundStrokeWidth: 5,
@@ -481,7 +440,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   isIcon: true,
                                                                   isSearch: true,
                                                                   prefixIconcolor: MyColor.colorBlack,
-                                                                  hintText: "${lableModel.scanAWB}",
+                                                                  hintText: "Scan HAWB",
                                                                   readOnly: false,
                                                                   onChanged: (value) {
                                                                     updateSearchList(value);
@@ -556,17 +515,16 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   width: SizeConfig.blockSizeHorizontal,
                                                                 ),
                                                                 CustomeText(
-                                                                    text: "${lableModel.showAllShipments}",
+                                                                    text: "Show completion pending HAWB only",
                                                                     fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                                                     fontWeight: FontWeight.w500,
                                                                     textAlign: TextAlign.start)
                                                               ],
                                                             ),
                                                             Switch(
                                                               value: _isOpenULDFlagEnable,
-                                                              materialTapTargetSize:
-                                                              MaterialTapTargetSize.shrinkWrap,
+                                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                                               activeColor: MyColor.primaryColorblue,
                                                               inactiveThumbColor: MyColor.thumbColor,
                                                               inactiveTrackColor: MyColor.textColorGrey2,
@@ -577,7 +535,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   _isOpenULDFlagEnable = value;
                                                                 });
 
-                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (value == true) ? 1 : 0);
+                                                                context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (value == true) ? 1 : 0);
 
 
                                                               },
@@ -590,20 +548,20 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                             ?
                                                             : SizedBox(),*/
 
-                                                        (awbModel != null) ? (awbItemList.isNotEmpty)
-                                                            ? (filterAWBDetailsList.isNotEmpty) ? Column(
+                                                        (hAwbModel != null) ? (hawbItemList.isNotEmpty)
+                                                            ? (filterHAWBDetailsList.isNotEmpty) ? Column(
                                                           children: [
 
                                                             SizedBox(height: SizeConfig.blockSizeVertical,),
                                                             ListView.builder(
-                                                              itemCount: (awbModel != null)
-                                                                  ? filterAWBDetailsList.length
+                                                              itemCount: (hAwbModel != null)
+                                                                  ? filterHAWBDetailsList.length
                                                                   : 0,
                                                               physics: NeverScrollableScrollPhysics(),
                                                               shrinkWrap: true,
                                                               controller: scrollController,
                                                               itemBuilder: (context, index) {
-                                                                FlightCheckInAWBBDList aWBItem = filterAWBDetailsList![index];
+                                                                FlightCheckInHAWBBDList aWBItem = filterHAWBDetailsList[index];
                                                                 bool isSelected = _selectedIndex == index;
                                                                 bool isExpand = _isExpandedDetails == index;
                                                                 List<String> shcCodes = aWBItem.sHCCode!.split(',');
@@ -623,14 +581,13 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                       if(widget.flightDetailSummary.flightStatus == "A"){
                                                                         if(widget.bDEndStatus == "N"){
                                                                           if(widget.awbRemarkRequires == "Y"){
-                                                                            if(aWBItem.remark == "Y"){
-                                                                              // bool? value = await openDialog(context, aWBItem, widget.mainMenuName);
+                                                                            if(aWBItem.aWBRemarksInd == "Y"){
 
-                                                                              List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                              List<HAWBRemarksList> remarkList = filterAWBRemarksById(hAwbModel!.hAWBRemarksList!, aWBItem.iMPAWBRowId!);
 
-                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => HAWBRemarkListAckPage(
                                                                                   buttonRightsList: widget.buttonRightsList,
-                                                                                  mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
+                                                                                  mainMenuName: widget.mainMenuName, haWBRemarkList: remarkList, haWBItem: aWBItem, menuId: widget.menuId),));
 
                                                                               if(value == "true"){
 
@@ -700,14 +657,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                 damageNop: aWBItem.damageNOP!,
                                                                                 damageWt: aWBItem.damageWeight!,
                                                                                 buttonRightsList: widget.buttonRightsList,
-                                                                                aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
                                                                               if(value == "Done"){
                                                                                 _resumeTimerOnInteraction();
                                                                               }else if(value == "true"){
-                                                                                //Navigator.pop(context, "true");
-
-                                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                               }
 
@@ -768,15 +723,13 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                 damageNop: aWBItem.damageNOP!,
                                                                                 damageWt: aWBItem.damageWeight!,
                                                                                 buttonRightsList: widget.buttonRightsList,
-                                                                                aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
 
                                                                               if(value == "Done"){
                                                                                 _resumeTimerOnInteraction();
                                                                               }else if(value == "true"){
-                                                                                //Navigator.pop(context, "true");
-
-                                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                               }
 
@@ -838,22 +791,18 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                             damageNop: aWBItem.damageNOP!,
                                                                             damageWt: aWBItem.damageWeight!,
                                                                             buttonRightsList: widget.buttonRightsList,
-                                                                            aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                            haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
                                                                           if(value == "Done"){
                                                                             _resumeTimerOnInteraction();
                                                                           }else if(value == "true"){
-                                                                            //Navigator.pop(context, "true");
-
-                                                                            context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                            context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                           }
 
 
                                                                         }
 
-                                                                        /*  SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                        Vibration.vibrate(duration: 500);*/
                                                                       }else if(widget.flightDetailSummary.flightStatus == "N"){
                                                                         SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);
@@ -904,7 +853,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                   children: [
                                                                                     Row(
                                                                                       children: [
-                                                                                        CustomeText(text: AwbFormateNumberUtils.formatAWBNumber(aWBItem.aWBNo!), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                                                        CustomeText(text: aWBItem.houseNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
                                                                                         SizedBox(width: SizeConfig.blockSizeHorizontal),
 
 
@@ -1367,12 +1316,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                             if(widget.flightDetailSummary.flightStatus == "A"){
                                                                                               if(widget.bDEndStatus == "N"){
                                                                                                 if(widget.awbRemarkRequires == "Y"){
-                                                                                                  if(aWBItem.remark == "Y"){
+                                                                                                  if(aWBItem.aWBRemarksInd == "Yes"){
 
-                                                                                                    List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
-                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(
+                                                                                                    List<HAWBRemarksList> remarkList = filterAWBRemarksById(hAwbModel!.hAWBRemarksList!, aWBItem.iMPAWBRowId!);
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => HAWBRemarkListAckPage(
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
+                                                                                                      mainMenuName: widget.mainMenuName, haWBRemarkList:remarkList, haWBItem: aWBItem, menuId: widget.menuId,),));
                                                                                                     if(value == "true"){
                                                                                                       gotoCheckAWBScreen(aWBItem);
                                                                                                     }else if(value == "Done"){
@@ -1442,14 +1391,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                       damageNop: aWBItem.damageNOP!,
                                                                                                       damageWt: aWBItem.damageWeight!,
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                      haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
                                                                                                     if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
                                                                                                     }else if(value == "true"){
-                                                                                                      //Navigator.pop(context, "true");
-
-                                                                                                      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                                      context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                     }
 
@@ -1513,15 +1460,13 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                       damageNop: aWBItem.damageNOP!,
                                                                                                       damageWt: aWBItem.damageWeight!,
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                      haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
 
                                                                                                     if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
                                                                                                     }else if(value == "true"){
-                                                                                                      //Navigator.pop(context, "true");
-
-                                                                                                      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                                      context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                     }
 
@@ -1585,14 +1530,13 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                   damageNop: aWBItem.damageNOP!,
                                                                                                   damageWt: aWBItem.damageWeight!,
                                                                                                   buttonRightsList: widget.buttonRightsList,
-                                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                  haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
                                                                                                 if(value == "Done"){
                                                                                                   _resumeTimerOnInteraction();
                                                                                                 }else if(value == "true"){
-                                                                                                  //Navigator.pop(context, "true");
 
-                                                                                                  context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                                  context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                 }
 
@@ -1720,14 +1664,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
   }
 
 
-  Future<void> gotoCheckAWBScreen(FlightCheckInAWBBDList aWBItem) async {
+  Future<void> gotoCheckAWBScreen(FlightCheckInHAWBBDList haWBItem) async {
     inactivityTimerManager!.stopTimer();
     var value = await Navigator.push(
         context,
         CupertinoPageRoute(
-            builder: (context) => CheckAWBPage(
+            builder: (context) => CheckHAWBPage(
               buttonRightsList: widget.buttonRightsList,
-              aWBItem: aWBItem,
+              haWBItem: haWBItem,
+              aWBItem: widget.aWBItem,
               mainMenuName: widget.mainMenuName,
               flightDetailSummary: widget.flightDetailSummary,
               location: widget.location,
@@ -1741,68 +1686,25 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
     if(value == "Done"){
       _resumeTimerOnInteraction();
     }else if(value == "true"){
-      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+      context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo,  widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
     }
 
   }
 
-
-  // update serch list function
- /* void updateSearchList(String searchText, LableModel lableModel) {
-    setState(() {
-      _selectedIndex = -1;
-      if (searchText.isEmpty) {
-        filterAWBDetailsList = List.from(awbItemList);
-        filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
-      } else {
-        filterAWBDetailsList = List.from(awbItemList);
-        filterAWBDetailsList.sort((a, b) {
-          final aContains = a.aWBNo!
-              .replaceAll(" ", "")
-              .toLowerCase()
-              .contains(searchText.toLowerCase());
-          final bContains = b.aWBNo!
-              .replaceAll(" ", "")
-              .toLowerCase()
-              .contains(searchText.toLowerCase());
-
-          if (aContains && !bContains) {
-            return -1;
-          } else if (!aContains && bContains) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-
-
-        
-      }
-    });
-
-    if (filterAWBDetailsList.isEmpty || !filterAWBDetailsList.any((awb) =>
-        awb.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchText.toLowerCase()))) {
-
-
-      SnackbarUtil.showSnackbar(context, "${lableModel.recordNotFound} $searchText", MyColor.colorRed, icon: FontAwesomeIcons.times);
-
-    }
-  }*/
-
   //update search
   void updateSearchList(String searchString) {
     setState(() {
-      filterAWBDetailsList = _applyFiltersAndSorting(
-        awbItemList,
+      filterHAWBDetailsList = _applyFiltersAndSorting(
+        hawbItemList,
         searchString
       );
     });
   }
 
   //appliying filter for sorting
-  List<FlightCheckInAWBBDList> _applyFiltersAndSorting(List<FlightCheckInAWBBDList> list, String searchString) {
+  List<FlightCheckInHAWBBDList> _applyFiltersAndSorting(List<FlightCheckInHAWBBDList> list, String searchString) {
     // Filter by search string
-    List<FlightCheckInAWBBDList> filteredList = list.where((item) {
+    List<FlightCheckInHAWBBDList> filteredList = list.where((item) {
       return item.aWBNo!.toLowerCase().contains(searchString.toLowerCase());
     }).toList();
 
@@ -1811,7 +1713,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
 
-  List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int iMPAWBRowId) {
+  List<HAWBRemarksList> filterAWBRemarksById(List<HAWBRemarksList> awbRemarkList, int iMPAWBRowId) {
     return awbRemarkList.where((remark) => remark.iMPAWBRowId == iMPAWBRowId).toList();
   }
 
@@ -1875,7 +1777,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
       String awbNo,
       String priority,
       int index,
-      FlightCheckInAWBBDList awbItm,
+      FlightCheckInHAWBBDList awbItm,
       LableModel lableModel,
       ui.TextDirection textDirection) async {
     FocusScope.of(context).unfocus();
@@ -1887,7 +1789,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
         // Call your API to update the priority in the backend
         await callbdPriorityApi(
             context,
-            awbItm.iMPShipRowId!,
+            awbItm.iMPSHIPRowId!,
             newPriority,
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
@@ -1895,10 +1797,10 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
         setState(() {
           // Update the BDPriority for the selected item
-          filterAWBDetailsList[index].bDPriority = newPriority;
+          filterHAWBDetailsList[index].bDPriority = newPriority;
 
           // Sort the list based on BDPriority
-          filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+          filterHAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
         });
       } else {
         Vibration.vibrate(duration: 500);

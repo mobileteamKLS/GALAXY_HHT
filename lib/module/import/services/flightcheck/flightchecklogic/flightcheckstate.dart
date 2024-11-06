@@ -13,6 +13,7 @@ import '../../../model/flightcheck/damagebreakdownsavemodel.dart';
 import '../../../model/flightcheck/damagedetailmodel.dart';
 import '../../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../model/flightcheck/hawblistmodel.dart';
 import '../../../model/flightcheck/mailtypemodel.dart';
 import '../../../model/flightcheck/pageloaddefault.dart';
 import '../../../model/flightcheck/updateawbremarkacknoledge.dart';
@@ -239,4 +240,14 @@ class DamageBreakDownSaveSuccessState extends FlightCheckState {
 class DamageBreakDownSaveFailureState extends FlightCheckState {
   final String error;
   DamageBreakDownSaveFailureState(this.error);
+}
+
+class HouseListSuccessState extends FlightCheckState {
+  final HAWBModel hAWBModel;
+  HouseListSuccessState(this.hAWBModel);
+}
+
+class HouseListFailureState extends FlightCheckState {
+  final String error;
+  HouseListFailureState(this.error);
 }

@@ -240,15 +240,13 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
 
                                     if(widget.pageView == 0){
                                       setState(() {
-                                        missingItems = "N/A";
+                                        missingItems = "A";
                                       });
                                     }
-
-
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: missingItems == "N/A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: missingItems == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         bottomRight: Radius.circular(10),
@@ -257,7 +255,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "N/A", fontColor: missingItems == "N/A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "N/A", fontColor: missingItems == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -366,14 +364,14 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
 
                                     if(widget.pageView == 0){
                                       setState(() {
-                                        verifiedInvoice = "N/A";
+                                        verifiedInvoice = "A";
                                       });
                                     }
 
                                   },
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: verifiedInvoice == "N/A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                      color: verifiedInvoice == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
                                       borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(10),
                                         bottomRight: Radius.circular(10),
@@ -382,7 +380,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "N/A", fontColor: verifiedInvoice == "N/A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "N/A", fontColor: verifiedInvoice == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),

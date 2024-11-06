@@ -36,16 +36,19 @@ import 'package:image/image.dart' as img;
 import '../../../../model/flightcheck/awblistmodel.dart';
 import '../../../../model/flightcheck/damagedetailmodel.dart';
 import '../../../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../../../model/flightcheck/hawblistmodel.dart';
 import '../../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 
 class ImageScreenPage extends StatefulWidget {
 
   List<ButtonRight> buttonRightsList;
   FlightDetailSummary flightDetailSummary;
-  FlightCheckInAWBBDList aWBItem;
+  FlightCheckInAWBBDList? aWBItem;
+  FlightCheckInHAWBBDList? haWBItem;
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
+  final Function(int) curruentCallback;
   int userId;
   int companyCode;
   int menuId;
@@ -57,7 +60,17 @@ class ImageScreenPage extends StatefulWidget {
     required this.pageView,
     required this.buttonRightsList,
     required this.inactivityTimerManager,
-    required this.aWBItem, required this.flightDetailSummary, required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback, required this.userId, required this.companyCode, required this.menuId, required this.groupId});
+    this.aWBItem,
+    this.haWBItem,
+    required this.flightDetailSummary,
+    required this.damageDetailsModel,
+    required this.preclickCallback,
+    required this.nextclickCallback,
+    required this.curruentCallback,
+    required this.userId,
+    required this.companyCode,
+    required this.menuId,
+    required this.groupId});
 
   @override
   State<ImageScreenPage> createState() => _ImageScreenPageState();
@@ -223,7 +236,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
             controller.clear();
           }*/
 
-         // SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+          SnackbarUtil.showSnackbar(context, state.damageBreakDownSaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
           Navigator.pop(context, "true");
         }
       }else if(state is DamageBreakDownSaveFailureState){
@@ -665,6 +678,13 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                       print("IAMGSSS ==== $images");
 
                       if(isButtonEnabled("awbrecorddamage", widget.buttonRightsList)){
+                        if(CommonUtils.REMARKS.isEmpty){
+                          SnackbarUtil.showSnackbar(context, "Please enter remarks.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                          widget.curruentCallback(9);
+                          return;
+                        }
+
+
                         if (ghaController.text.isEmpty) {
                           openValidationDialog("Please enter GHA Representative.", ghaFocusNode, lableModel);
                           return;
@@ -680,6 +700,10 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                           return;
                         }
 
+
+
+
+
                         String exactWording = wordController.text;
                         String ghaRep = ghaController.text;
                         String airlineRep = airlineController.text;
@@ -689,10 +713,13 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         List<String> awb = widget.damageDetailsModel!.damageAWBDetail!.aWBNo!.split(" ");
                         String awbPrefix = awb[0];
                         String awbNumber = awb[1];
-                        int awbId = widget.aWBItem.iMPAWBRowId!;
-                        int shipId = widget.aWBItem.iMPShipRowId!;
+
+
+
+                        int? awbId = (widget.haWBItem == null) ? widget.aWBItem!.iMPAWBRowId : widget.haWBItem!.iMPAWBRowId;
+                        int? shipId = (widget.haWBItem == null) ? widget.aWBItem!.iMPShipRowId! : widget.haWBItem!.iMPSHIPRowId;
                         int flightSeqNo = widget.flightDetailSummary.flightSeqNo!;
-                        String typeOfDiscrepancy = CommonUtils.SELECTEDTYPEOFDISCRPENCY!;
+                        String typeOfDiscrepancy = CommonUtils.SELECTEDTYPEOFDISCRPENCY;
 
                         int shipTotalPcs =  CommonUtils.shipTotalPcs;
                         String ShipTotalWt =  CommonUtils.ShipTotalWt;
@@ -730,7 +757,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
                         context.read<FlightCheckCubit>().damageBreakDownSave(
                             awbPrefix, awbNumber,
-                            awbId, shipId, flightSeqNo,
+                            awbId!, shipId!, flightSeqNo,
                             typeOfDiscrepancy,
                             shipTotalPcs, ShipTotalWt, shipDamagePcs, ShipDamageWt, shipDifferencePcs, shipDifferenceWt,
                             individualWTPerDoc, individualWTActChk, individualWTDifference,

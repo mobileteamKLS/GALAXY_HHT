@@ -250,7 +250,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomeText(
-                            text: "${AwbFormateNumberUtils.formatAWBNumber(widget.damageDetailsModel!.damageAWBDetail!.aWBNo!)}",
+                            text: (widget.damageDetailsModel!.damageAWBDetail!.houseNo!.isEmpty) ? AwbFormateNumberUtils.formatAWBNumber(widget.damageDetailsModel!.damageAWBDetail!.aWBNo!) : widget.damageDetailsModel!.damageAWBDetail!.houseNo!,
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                             fontWeight: FontWeight.bold,

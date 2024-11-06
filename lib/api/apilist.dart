@@ -34,18 +34,27 @@ class Apilist{
   static String recordAtaApi = "/FlightCheckIn/RecordATA";
   static String finalizeFlightApi = "/FlightCheckIn/FlightFinalized";
 
+  // awb list apis
   static String awbListApi = "/FlightCheckIn/GetAWBDetails";
   static String updateBDPriorityAWB = "/FlightCheckIn/UpdateAWBBDPriority";
 
   // remark acknowledge
   static String updateAWBRemarksAcknowledge = "/FlightCheckIn/UpdateAWBRemarksAcknowledge";
 
+  // mail screen apis
   static String getAddMailDetailsApi = "/FlightCheckIn/GetAddMailView";
   static String addMailApi = "/FlightCheckIn/AddMail";
   static String getMailTypeApi = "/FlightCheckIn/GetMailTypeList";
-  static String importManifestSaveApi = "/FlightCheckIn/ImportManifestSave";
   static String checkAirportApi = "/AirportCode/AirportCodeValidate";
-  static String breakDownEndApi = "/FlightCheckIn/BreakDownEnd";
+
+  // breakdown save - damage and end api
+  static String importManifestSaveApi = "/FlightCheckIn/ImportManifestSave";
   static String getDamageDetailsApi = "/FlightCheckIn/GetDamageDetails";
   static String damageDetailsSaveApi = "/FlightCheckIn/DamageSave";
+  static String breakDownEndApi = "/FlightCheckIn/BreakDownEnd";
+
+  // house list apis
+  static String houseListApi = "/FlightCheckIn/GetHAWBDetails";
+
+
 }

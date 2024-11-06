@@ -3495,39 +3495,46 @@ class _FlightCheckState extends State<FlightCheck>
     if (checkNextOrNot == 2) {
       if (flightDetails.uldAcceptStatus == "D") {
         inactivityTimerManager!.stopTimer();
-       var value = await Navigator.push(
-            context,
-            CupertinoPageRoute(
-                builder: (context) => AWBListPage(
-                  buttonRightsList: buttonRightsList,
-                  mainMenuName: mainMenuName,
-                  uldNo: uldNo,
-                  flightDetailSummary: flightCheckULDListModel!.flightDetailSummary!,
-                  uldSeqNo: flightDetails.uLDId!,
-                  menuId: widget.menuId,
-                  location: locationController.text,
-                  awbRemarkRequires: awbRemarkRequires,
-                  lableModel: lableModel,
-                  groupIDRequires: groupIDRequires,
-                  groupIDCharSize: groupIDCharSize,
-                  bDEndStatus: flightDetails.bDEndStatus!,
-                )));
-        if(value == "true"){
-          _resumeTimerOnInteraction();
-          callFlightCheckULDListApi(
+
+        if(flightDetails.shipment == 0){
+          SnackbarUtil.showSnackbar(context, "No shipment found.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        }else{
+          var value = await Navigator.push(
               context,
-              locationController.text,
-              igmNoEditingController.text,
-              flightNoEditingController.text,
-              dateEditingController.text,
-              _user!.userProfile!.userIdentity!,
-              _splashDefaultData!.companyCode!,
-              widget.menuId,
-              (_isOpenULDFlagEnable == true) ? 1 : 0);
+              CupertinoPageRoute(
+                  builder: (context) => AWBListPage(
+                    buttonRightsList: buttonRightsList,
+                    mainMenuName: mainMenuName,
+                    uldNo: uldNo,
+                    flightDetailSummary: flightCheckULDListModel!.flightDetailSummary!,
+                    uldSeqNo: flightDetails.uLDId!,
+                    menuId: widget.menuId,
+                    location: locationController.text,
+                    awbRemarkRequires: awbRemarkRequires,
+                    lableModel: lableModel,
+                    groupIDRequires: groupIDRequires,
+                    groupIDCharSize: groupIDCharSize,
+                    bDEndStatus: flightDetails.bDEndStatus!,
+                  )));
+          if(value == "true"){
+            _resumeTimerOnInteraction();
+            callFlightCheckULDListApi(
+                context,
+                locationController.text,
+                igmNoEditingController.text,
+                flightNoEditingController.text,
+                dateEditingController.text,
+                _user!.userProfile!.userIdentity!,
+                _splashDefaultData!.companyCode!,
+                widget.menuId,
+                (_isOpenULDFlagEnable == true) ? 1 : 0);
+          }
+          else if(value == "Done"){
+            _resumeTimerOnInteraction();
+          }
         }
-        else if(value == "Done"){
-          _resumeTimerOnInteraction();
-        }
+
+     
 
       } else {}
     }

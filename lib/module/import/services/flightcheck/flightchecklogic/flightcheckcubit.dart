@@ -135,7 +135,6 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
-
   Future<void> getMailType(int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
@@ -146,7 +145,6 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       emit(GetMailTypeFailureState(e.toString()));
     }
   }
-
 
   Future<void> getMailDetail(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
@@ -170,7 +168,6 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
-
   Future<void> checkOAirportCity(String airportCity, int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
@@ -192,7 +189,6 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       emit(CheckDAirportCityFailureState(e.toString()));
     }
   }
-
 
   Future<void> importShipmentSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput,  int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
@@ -226,7 +222,6 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       emit(GetDamageDetailFailureState(e.toString()));
     }
   }
-
 
   Future<void> damageBreakDownSave(
       String awbPrefix, String awbNumber,
@@ -297,6 +292,19 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       emit(GetDamageDetailFailureState(e.toString()));
     }
   }
+
+
+  Future<void> getHouseList(int flightSeqNo, int uldSeqNo, int iMPAWBRowId, int userId, int companyCode, int menuId, int showAll) async {
+    emit(MainLoadingState());
+    try {
+      final awbModelData = await flightCheckRepository.getListOfHouses(flightSeqNo, uldSeqNo, iMPAWBRowId, userId, companyCode, menuId, showAll);
+
+      emit(HouseListSuccessState(awbModelData));
+    } catch (e) {
+      emit(HouseListFailureState(e.toString()));
+    }
+  }
+
 
 
 

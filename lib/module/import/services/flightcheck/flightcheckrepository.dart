@@ -17,6 +17,7 @@ import '../../model/flightcheck/damagedetailmodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../model/flightcheck/hawblistmodel.dart';
 import '../../model/flightcheck/importshipmentmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
 import '../../model/flightcheck/mailtypemodel.dart';
@@ -744,7 +745,6 @@ class FlightCheckRepository{
     }
   }
 
-
   Future<BreakDownEndModel> breakDownEnd(int flightSeqNo, int uLDSeqNo, String isConfirm, int userId, int companyCode, int menuId) async {
 
     try {
@@ -831,7 +831,6 @@ class FlightCheckRepository{
     }
   }
 
-
   Future<DamageBreakDownSaveModel> damageBreakDownSave(
       String awbPrefix, String awbNumber,
       int AWBId, int SHIPId, int flightSeqNo,
@@ -864,7 +863,6 @@ class FlightCheckRepository{
       int userId, int companyCode, int menuId) async {
 
     try {
-
       var payload = {
         "AwbPrefix" : awbPrefix,
         "AwbNumber" : awbNumber,
@@ -943,6 +941,50 @@ class FlightCheckRepository{
     }
   }
 
+  // list HOUSE api call
+  Future<HAWBModel> getListOfHouses(int flightSeqNo, int uldSeqNo, int IMPAWBRowId, int userId, int companyCode, int menuId, int showAll) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo": flightSeqNo,
+        "ULDSeqNo": uldSeqNo,
+        "IMPAWBRowId": IMPAWBRowId,
+        "ShowAll": showAll,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('getListOfAwb: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.houseListApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        HAWBModel hAWBModel = HAWBModel.fromJson(response.data);
+        return hAWBModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 
 }

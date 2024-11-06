@@ -674,60 +674,60 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                             }
                                                                             else{
 
-                                                                              CommonUtils.SELECTEDWHETHER = "";
+                                                                              if(aWBItem.mAWBInd != "M"){
+                                                                                CommonUtils.SELECTEDWHETHER = "";
+                                                                                CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                                CommonUtils.shipTotalPcs = 0;
+                                                                                CommonUtils.ShipTotalWt = "0.00";
+                                                                                CommonUtils.shipDamagePcs = 0;
+                                                                                CommonUtils.ShipDamageWt = "0.00";
+                                                                                CommonUtils.shipDifferencePcs = 0;
+                                                                                CommonUtils.shipDifferenceWt = "0.00";
+                                                                                CommonUtils.individualWTPerDoc = "0.00";
+                                                                                CommonUtils.individualWTActChk = "0.00";
+                                                                                CommonUtils.individualWTDifference = "0.00";
+                                                                                CommonUtils.SELECTEDMATERIAL = "";
+                                                                                CommonUtils.SELECTEDTYPE = "";
+                                                                                CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                                CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                                CommonUtils.SELECTEDINNERPACKING = "";
+                                                                                CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                                CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                                CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                                CommonUtils.SELECTEDDISPOSITION = "";
+                                                                                CommonUtils.MISSINGITEM = "Y";
+                                                                                CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                                CommonUtils.SUFFICIENT = "Y";
+                                                                                CommonUtils.EVIDENCE = "Y";
+                                                                                CommonUtils.REMARKS = "";
+                                                                                CommonUtils.SELECTEDCONTENT = "";
+                                                                                CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                              CommonUtils.SELECTEDIMAGELIST.clear();
-
-                                                                              CommonUtils.shipTotalPcs = 0;
-                                                                              CommonUtils.ShipTotalWt = "0.00";
-                                                                              CommonUtils.shipDamagePcs = 0;
-                                                                              CommonUtils.ShipDamageWt = "0.00";
-                                                                              CommonUtils.shipDifferencePcs = 0;
-                                                                              CommonUtils.shipDifferenceWt = "0.00";
-                                                                              CommonUtils.individualWTPerDoc = "0.00";
-                                                                              CommonUtils.individualWTActChk = "0.00";
-                                                                              CommonUtils.individualWTDifference = "0.00";
-                                                                              CommonUtils.SELECTEDMATERIAL = "";
-                                                                              CommonUtils.SELECTEDTYPE = "";
-                                                                              CommonUtils.SELECTEDMARKANDLABLE = "";
-                                                                              CommonUtils.SELECTEDOUTRERPACKING = "";
-                                                                              CommonUtils.SELECTEDINNERPACKING = "";
-                                                                              CommonUtils.SELECTEDDAMAGEDISCOVER = "";
-                                                                              CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
-                                                                              CommonUtils.SELECTEDSALVAGEACTION = "";
-                                                                              CommonUtils.SELECTEDDISPOSITION = "";
-                                                                              CommonUtils.MISSINGITEM = "Y";
-                                                                              CommonUtils.VERIFIEDINVOICE = "Y";
-                                                                              CommonUtils.SUFFICIENT = "Y";
-                                                                              CommonUtils.EVIDENCE = "Y";
-                                                                              CommonUtils.REMARKS = "";
-
-                                                                              CommonUtils.SELECTEDCONTENT = "";
-
-                                                                              CommonUtils.SELECTEDCONTAINER = "";
-
-
-                                                                              int npxPices = aWBItem.nPR!;
-                                                                              double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+                                                                                int npxPices = aWBItem.nPR!;
+                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
 
 
-                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                                                pageView: 0,
-                                                                                enterDamageNop: 0,
-                                                                                enterDamageWt: 0.00,
-                                                                                damageNop: aWBItem.damageNOP!,
-                                                                                damageWt: aWBItem.damageWeight!,
-                                                                                buttonRightsList: widget.buttonRightsList,
-                                                                                aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                  pageView: 0,
+                                                                                  enterDamageNop: 0,
+                                                                                  enterDamageWt: 0.00,
+                                                                                  damageNop: aWBItem.damageNOP!,
+                                                                                  damageWt: aWBItem.damageWeight!,
+                                                                                  buttonRightsList: widget.buttonRightsList,
+                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
-                                                                              if(value == "Done"){
-                                                                                _resumeTimerOnInteraction();
-                                                                              }else if(value == "true"){
-                                                                                //Navigator.pop(context, "true");
+                                                                                if(value == "Done"){
+                                                                                  _resumeTimerOnInteraction();
+                                                                                }else if(value == "true"){
+                                                                                  context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
-                                                                                context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                }
 
                                                                               }
+                                                                              else{
+                                                                                gotoHouseListScreen(aWBItem);
+                                                                              }
+
 
 
                                                                             }
@@ -742,10 +742,63 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                             else{
 
 
-                                                                              CommonUtils.SELECTEDWHETHER = "";
+                                                                              if(aWBItem.mAWBInd != "M"){
+                                                                                CommonUtils.SELECTEDWHETHER = "";
+                                                                                CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                                CommonUtils.shipTotalPcs = 0;
+                                                                                CommonUtils.ShipTotalWt = "0.00";
+                                                                                CommonUtils.shipDamagePcs = 0;
+                                                                                CommonUtils.ShipDamageWt = "0.00";
+                                                                                CommonUtils.shipDifferencePcs = 0;
+                                                                                CommonUtils.shipDifferenceWt = "0.00";
+                                                                                CommonUtils.individualWTPerDoc = "0.00";
+                                                                                CommonUtils.individualWTActChk = "0.00";
+                                                                                CommonUtils.individualWTDifference = "0.00";
+                                                                                CommonUtils.SELECTEDMATERIAL = "";
+                                                                                CommonUtils.SELECTEDTYPE = "";
+                                                                                CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                                CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                                CommonUtils.SELECTEDINNERPACKING = "";
+                                                                                CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                                CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                                CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                                CommonUtils.SELECTEDDISPOSITION = "";
+                                                                                CommonUtils.MISSINGITEM = "Y";
+                                                                                CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                                CommonUtils.SUFFICIENT = "Y";
+                                                                                CommonUtils.EVIDENCE = "Y";
+                                                                                CommonUtils.REMARKS = "";
+                                                                                CommonUtils.SELECTEDCONTENT = "";
+                                                                                CommonUtils.SELECTEDCONTAINER = "";
 
+                                                                                int npxPices = aWBItem.nPR!;
+                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+
+
+                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                  pageView: 0,
+                                                                                  enterDamageNop: 0,
+                                                                                  enterDamageWt: 0.00,
+                                                                                  damageNop: aWBItem.damageNOP!,
+                                                                                  damageWt: aWBItem.damageWeight!,
+                                                                                  buttonRightsList: widget.buttonRightsList,
+                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+                                                                                if(value == "Done"){
+                                                                                  _resumeTimerOnInteraction();
+                                                                                }else if(value == "true"){
+                                                                                  context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                                }
+
+                                                                              }
+                                                                              else{
+                                                                                gotoHouseListScreen(aWBItem);
+                                                                              }
+
+
+                                                                              /*CommonUtils.SELECTEDWHETHER = "";
                                                                               CommonUtils.SELECTEDIMAGELIST.clear();
-
                                                                               CommonUtils.shipTotalPcs = 0;
                                                                               CommonUtils.ShipTotalWt = "0.00";
                                                                               CommonUtils.shipDamagePcs = 0;
@@ -769,9 +822,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                               CommonUtils.SUFFICIENT = "Y";
                                                                               CommonUtils.EVIDENCE = "Y";
                                                                               CommonUtils.REMARKS = "";
-
                                                                               CommonUtils.SELECTEDCONTENT = "";
-
                                                                               CommonUtils.SELECTEDCONTAINER = "";
 
 
@@ -792,12 +843,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                               if(value == "Done"){
                                                                                 _resumeTimerOnInteraction();
                                                                               }else if(value == "true"){
-                                                                                //Navigator.pop(context, "true");
-
                                                                                 context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
-
                                                                               }
-
+*/
                                                                             }
                                                                           }
 
@@ -809,63 +857,68 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         }
                                                                         else{
 
+                                                                          if(aWBItem.mAWBInd != "M"){
+                                                                            CommonUtils.SELECTEDWHETHER = "";
 
-                                                                          CommonUtils.SELECTEDWHETHER = "";
+                                                                            CommonUtils.SELECTEDIMAGELIST.clear();
 
-                                                                          CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                            CommonUtils.shipTotalPcs = 0;
+                                                                            CommonUtils.ShipTotalWt = "0.00";
+                                                                            CommonUtils.shipDamagePcs = 0;
+                                                                            CommonUtils.ShipDamageWt = "0.00";
+                                                                            CommonUtils.shipDifferencePcs = 0;
+                                                                            CommonUtils.shipDifferenceWt = "0.00";
+                                                                            CommonUtils.individualWTPerDoc = "0.00";
+                                                                            CommonUtils.individualWTActChk = "0.00";
+                                                                            CommonUtils.individualWTDifference = "0.00";
+                                                                            CommonUtils.SELECTEDMATERIAL = "";
+                                                                            CommonUtils.SELECTEDTYPE = "";
+                                                                            CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                            CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                            CommonUtils.SELECTEDINNERPACKING = "";
+                                                                            CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                            CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                            CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                            CommonUtils.SELECTEDDISPOSITION = "";
+                                                                            CommonUtils.MISSINGITEM = "Y";
+                                                                            CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                            CommonUtils.SUFFICIENT = "Y";
+                                                                            CommonUtils.EVIDENCE = "Y";
+                                                                            CommonUtils.REMARKS = "";
 
-                                                                          CommonUtils.shipTotalPcs = 0;
-                                                                          CommonUtils.ShipTotalWt = "0.00";
-                                                                          CommonUtils.shipDamagePcs = 0;
-                                                                          CommonUtils.ShipDamageWt = "0.00";
-                                                                          CommonUtils.shipDifferencePcs = 0;
-                                                                          CommonUtils.shipDifferenceWt = "0.00";
-                                                                          CommonUtils.individualWTPerDoc = "0.00";
-                                                                          CommonUtils.individualWTActChk = "0.00";
-                                                                          CommonUtils.individualWTDifference = "0.00";
-                                                                          CommonUtils.SELECTEDMATERIAL = "";
-                                                                          CommonUtils.SELECTEDTYPE = "";
-                                                                          CommonUtils.SELECTEDMARKANDLABLE = "";
-                                                                          CommonUtils.SELECTEDOUTRERPACKING = "";
-                                                                          CommonUtils.SELECTEDINNERPACKING = "";
-                                                                          CommonUtils.SELECTEDDAMAGEDISCOVER = "";
-                                                                          CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
-                                                                          CommonUtils.SELECTEDSALVAGEACTION = "";
-                                                                          CommonUtils.SELECTEDDISPOSITION = "";
-                                                                          CommonUtils.MISSINGITEM = "Y";
-                                                                          CommonUtils.VERIFIEDINVOICE = "Y";
-                                                                          CommonUtils.SUFFICIENT = "Y";
-                                                                          CommonUtils.EVIDENCE = "Y";
-                                                                          CommonUtils.REMARKS = "";
+                                                                            CommonUtils.SELECTEDCONTENT = "";
 
-                                                                          CommonUtils.SELECTEDCONTENT = "";
+                                                                            CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                          CommonUtils.SELECTEDCONTAINER = "";
-
-
-
-
-                                                                          int npxPices = aWBItem.nPR!;
-                                                                          double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+                                                                            int npxPices = aWBItem.nPR!;
+                                                                            double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
 
 
-                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                                            pageView: 1,
-                                                                            enterDamageNop: 0,
-                                                                            enterDamageWt: 0.00,
-                                                                            damageNop: aWBItem.damageNOP!,
-                                                                            damageWt: aWBItem.damageWeight!,
-                                                                            buttonRightsList: widget.buttonRightsList,
-                                                                            aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                            var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                              pageView: 1,
+                                                                              enterDamageNop: 0,
+                                                                              enterDamageWt: 0.00,
+                                                                              damageNop: aWBItem.damageNOP!,
+                                                                              damageWt: aWBItem.damageWeight!,
+                                                                              buttonRightsList: widget.buttonRightsList,
+                                                                              aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
-                                                                          if(value == "Done"){
-                                                                            _resumeTimerOnInteraction();
-                                                                          }else if(value == "true"){
-                                                                            //Navigator.pop(context, "true");
+                                                                            if(value == "Done"){
+                                                                              _resumeTimerOnInteraction();
+                                                                            }else if(value == "true"){
+                                                                              //Navigator.pop(context, "true");
 
-                                                                            context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                              context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                            }
 
                                                                           }
+                                                                          else{
+                                                                            gotoHouseListScreen(aWBItem);
+                                                                          }
+
+
+
 
 
                                                                         }
@@ -1425,6 +1478,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   }
                                                                                                   else{
 
+                                                                                                    if(aWBItem.mAWBInd != "M"){
+
+
+
 
                                                                                                     CommonUtils.SELECTEDWHETHER = "";
 
@@ -1482,7 +1539,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                     }
-
+                                                                                                    }else{
+                                                                                                      gotoHouseListScreen(aWBItem);
+                                                                                                    }
 
                                                                                                   }
 
@@ -1496,6 +1555,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   }
                                                                                                   else{
 
+                                                                                                    if(aWBItem.mAWBInd != "M"){
+
+
+
 
                                                                                                     CommonUtils.SELECTEDWHETHER = "";
 
@@ -1554,6 +1617,11 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                     }
+                                                                                                    }else{
+
+                                                                                                      gotoHouseListScreen(aWBItem);
+                                                                                                    }
+
 
                                                                                                   }
                                                                                                 }
@@ -1569,62 +1637,67 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               }
                                                                                               else{
 
+                                                                                                if(aWBItem.mAWBInd != "M"){
+                                                                                                  CommonUtils.SELECTEDWHETHER = "";
 
-                                                                                                CommonUtils.SELECTEDWHETHER = "";
+                                                                                                  CommonUtils.SELECTEDIMAGELIST.clear();
 
-                                                                                                CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                                                  CommonUtils.shipTotalPcs = 0;
+                                                                                                  CommonUtils.ShipTotalWt = "0.00";
+                                                                                                  CommonUtils.shipDamagePcs = 0;
+                                                                                                  CommonUtils.ShipDamageWt = "0.00";
+                                                                                                  CommonUtils.shipDifferencePcs = 0;
+                                                                                                  CommonUtils.shipDifferenceWt = "0.00";
+                                                                                                  CommonUtils.individualWTPerDoc = "0.00";
+                                                                                                  CommonUtils.individualWTActChk = "0.00";
+                                                                                                  CommonUtils.individualWTDifference = "0.00";
+                                                                                                  CommonUtils.SELECTEDMATERIAL = "";
+                                                                                                  CommonUtils.SELECTEDTYPE = "";
+                                                                                                  CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                                                  CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                                                  CommonUtils.SELECTEDINNERPACKING = "";
+                                                                                                  CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                                                  CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                                                  CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                                                  CommonUtils.SELECTEDDISPOSITION = "";
+                                                                                                  CommonUtils.MISSINGITEM = "Y";
+                                                                                                  CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                                                  CommonUtils.SUFFICIENT = "Y";
+                                                                                                  CommonUtils.EVIDENCE = "Y";
+                                                                                                  CommonUtils.REMARKS = "";
 
-                                                                                                CommonUtils.shipTotalPcs = 0;
-                                                                                                CommonUtils.ShipTotalWt = "0.00";
-                                                                                                CommonUtils.shipDamagePcs = 0;
-                                                                                                CommonUtils.ShipDamageWt = "0.00";
-                                                                                                CommonUtils.shipDifferencePcs = 0;
-                                                                                                CommonUtils.shipDifferenceWt = "0.00";
-                                                                                                CommonUtils.individualWTPerDoc = "0.00";
-                                                                                                CommonUtils.individualWTActChk = "0.00";
-                                                                                                CommonUtils.individualWTDifference = "0.00";
-                                                                                                CommonUtils.SELECTEDMATERIAL = "";
-                                                                                                CommonUtils.SELECTEDTYPE = "";
-                                                                                                CommonUtils.SELECTEDMARKANDLABLE = "";
-                                                                                                CommonUtils.SELECTEDOUTRERPACKING = "";
-                                                                                                CommonUtils.SELECTEDINNERPACKING = "";
-                                                                                                CommonUtils.SELECTEDDAMAGEDISCOVER = "";
-                                                                                                CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
-                                                                                                CommonUtils.SELECTEDSALVAGEACTION = "";
-                                                                                                CommonUtils.SELECTEDDISPOSITION = "";
-                                                                                                CommonUtils.MISSINGITEM = "Y";
-                                                                                                CommonUtils.VERIFIEDINVOICE = "Y";
-                                                                                                CommonUtils.SUFFICIENT = "Y";
-                                                                                                CommonUtils.EVIDENCE = "Y";
-                                                                                                CommonUtils.REMARKS = "";
+                                                                                                  CommonUtils.SELECTEDCONTENT = "";
 
-                                                                                                CommonUtils.SELECTEDCONTENT = "";
-
-                                                                                                CommonUtils.SELECTEDCONTAINER = "";
-
-
-
-                                                                                                int npxPices = aWBItem.nPR!;
-                                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+                                                                                                  CommonUtils.SELECTEDCONTAINER = "";
 
 
-                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                                                                  pageView: 1,
-                                                                                                  enterDamageNop: 0,
-                                                                                                  enterDamageWt: 0.00,
-                                                                                                  damageNop: aWBItem.damageNOP!,
-                                                                                                  damageWt: aWBItem.damageWeight!,
-                                                                                                  buttonRightsList: widget.buttonRightsList,
-                                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
 
-                                                                                                if(value == "Done"){
-                                                                                                  _resumeTimerOnInteraction();
-                                                                                                }else if(value == "true"){
-                                                                                                  //Navigator.pop(context, "true");
+                                                                                                  int npxPices = aWBItem.nPR!;
+                                                                                                  double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
 
-                                                                                                  context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
+                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    pageView: 1,
+                                                                                                    enterDamageNop: 0,
+                                                                                                    enterDamageWt: 0.00,
+                                                                                                    damageNop: aWBItem.damageNOP!,
+                                                                                                    damageWt: aWBItem.damageWeight!,
+                                                                                                    buttonRightsList: widget.buttonRightsList,
+                                                                                                    aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+
+                                                                                                  if(value == "Done"){
+                                                                                                    _resumeTimerOnInteraction();
+                                                                                                  }else if(value == "true"){
+                                                                                                    //Navigator.pop(context, "true");
+
+                                                                                                    context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                                                  }
+                                                                                                }else{
+                                                                                                  gotoHouseListScreen(aWBItem);
                                                                                                 }
+
+
 
 
                                                                                               }
@@ -1800,6 +1873,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
     if(value == "Done"){
       _resumeTimerOnInteraction();
+      context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
     }else if(value == "true"){
       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
     }
@@ -1864,7 +1938,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
   List<FlightCheckInAWBBDList> _applyFiltersAndSorting(List<FlightCheckInAWBBDList> list, String searchString) {
     // Filter by search string
     List<FlightCheckInAWBBDList> filteredList = list.where((item) {
-      return item.aWBNo!.toLowerCase().contains(searchString.toLowerCase());
+      return item.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchString.toLowerCase());
     }).toList();
 
     return filteredList;
@@ -1894,19 +1968,22 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
       if(specialCharAllow == true){
+        scanNoEditingController.clear();
+        updateSearchList("");
         SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        scanNoEditingController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanAwbFocusNode);
         });
       }else{
 
         if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
+          scanNoEditingController.clear();
+          updateSearchList("");
           // Show invalid message if alphabet characters are present
           SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
           Vibration.vibrate(duration: 500);
-          scanNoEditingController.clear();
+
           WidgetsBinding.instance.addPostFrameCallback((_) {
             FocusScope.of(context).requestFocus(scanAwbFocusNode);
           });
@@ -1917,7 +1994,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
               : result;
 
           scanNoEditingController.text = truncatedResult.toString();
-          updateSearchList(scanNoEditingController.text);
+          updateSearchList(truncatedResult);
         }
 
 
