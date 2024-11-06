@@ -99,8 +99,6 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
       selectedDiscrepancy = typesOfDiscrepancy[0];
     }else{
 
-
-
       bool isDMGPresent = typesOfDiscrepancy.any((item) => item.referenceDataIdentifier == widget.damageDetailsModel!.damageDetail!.typeDiscrepancy!);
       if (isDMGPresent) {
         selectedDiscrepancy = typesOfDiscrepancy.firstWhere(
@@ -980,88 +978,5 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     setState(() {});
   }
 
-
-/*  void checkLimits() {
-    bool pieceLimitExceeded = false;
-    bool weightLimitExceeded = false;
-
-    int enteredNpx = totalDamageNop;
-    double enteredWeight = totalDamageWt;
-
-    // Check pieces
-    if (enteredNpx > npx) {
-      pieceLimitExceeded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(nopFocusNode);
-      });
-      SnackbarUtil.showSnackbar(
-        context,
-        "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx",
-        MyColor.colorRed,
-        icon: FontAwesomeIcons.times,
-      );
-      differenceNpx = 0;
-    } else {
-      differenceNpx = npx - totalDamageNop;
-    }
-
-    // Check weight
-    if (enteredWeight > weight) {
-      weightLimitExceeded = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(weightFocusNode);
-      });
-      SnackbarUtil.showSnackbar(
-        context,
-        "Damage weight $enteredWeight cannot be greater than Shipment Rcvd weight - $weight",
-        MyColor.colorRed,
-        icon: FontAwesomeIcons.times,
-      );
-      differenceWeight = 0.00;
-    } else {
-      differenceWeight = weight - totalDamageWt;
-    }
-
-    // Update state only if there are no exceeded limits
-    if (!pieceLimitExceeded && !weightLimitExceeded) {
-      setState(() {});
-    }
-  }*/
-
-
-  void checkPiecesGreterOrNot() {
-    int enteredNpx = totalDamageNop;
-    if (enteredNpx > npx) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(nopFocusNode);
-      });
-      SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx", MyColor.colorRed, icon: FontAwesomeIcons.times);
-      //  showSnackBar(context, "Entered pieces exceed the limit!");
-      //  nopController.clear(); // Clear the TextField
-      differenceNpx = 0;
-
-    }else{
-      setState(() {
-        differenceNpx = npx - totalDamageNop;
-      });
-    }
-  }
-
-  void checkWeightGreterOrNot() {
-    double enteredWeight = totalDamageWt;
-    if (enteredWeight > weight) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(weightFocusNode);
-      });
-      SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weight", MyColor.colorRed, icon: FontAwesomeIcons.times);
-      //weightController.clear(); // Clear the TextField
-      differenceWeight = 0.00;
-    }else{
-      setState(() {
-        differenceWeight = weight - totalDamageWt;
-      });
-
-    }
-  }
 
 }
