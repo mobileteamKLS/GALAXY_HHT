@@ -114,7 +114,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -166,7 +166,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                       children: [
 
                         CustomeText(
-                            text: "15.a) Any Space For Missing Items",
+                            text: "${lableModel.s15a} ${lableModel.anySpaceForMissingItems}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -202,7 +202,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: missingItems == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: missingItems == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -227,7 +227,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "NO", fontColor: missingItems == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: missingItems == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -291,7 +291,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                       children: [
 
                         CustomeText(
-                            text: "b) Is Shortage Verified By Invoice",
+                            text: "${lableModel.b} ${lableModel.isShortageVerifiedByInvoice}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -326,7 +326,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: verifiedInvoice == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: verifiedInvoice == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -351,7 +351,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "NO", fontColor: verifiedInvoice == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: verifiedInvoice == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -415,7 +415,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                       children: [
 
                         CustomeText(
-                            text: "16) Is Packing Sufficient?",
+                            text: "${lableModel.s16} ${lableModel.isPackingSufficient}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -450,7 +450,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: packingSufficient == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: packingSufficient == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
 
                                     ),
                                   ),
@@ -480,7 +480,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "NO", fontColor: packingSufficient == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: packingSufficient == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -526,7 +526,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                       children: [
 
                         CustomeText(
-                            text: "17) Any Evidence Of Pilferage",
+                            text: "${lableModel.s17} ${lableModel.anyEvidenceOfPilferage}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -560,7 +560,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "YES", fontColor: evidence == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: evidence == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -589,7 +589,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                                     ),
                                     padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                     child: Center(
-                                        child: CustomeText(text: "NO", fontColor: evidence == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: evidence == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
@@ -632,7 +632,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                       children: [
 
                         CustomeText(
-                            text: "18) Remarks (In Case of Irregularity of Live Animal Type of Injury and Reason as Diagnosed by the Veterinarian)",
+                            text: "${lableModel.s18} ${lableModel.remarks} (In Case of Irregularity of Live Animal Type of Injury and Reason as Diagnosed by the Veterinarian)",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -649,7 +649,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             hastextcolor: true,
                             animatedLabel: true,
                             needOutlineBorder: true,
-                            labelText: "Remarks *",
+                            labelText: "${lableModel.remarks} *",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
@@ -700,7 +700,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     FocusManager.instance.primaryFocus?.unfocus();
                     CommonUtils.MISSINGITEM = missingItems;
@@ -718,7 +718,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
 
                     if (remarkController.text.isEmpty) {

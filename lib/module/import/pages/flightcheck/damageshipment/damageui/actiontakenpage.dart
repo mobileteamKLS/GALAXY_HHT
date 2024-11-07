@@ -123,7 +123,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager?.stopTimer();
             Navigator.pop(context, "Done");
@@ -175,7 +175,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                       children: [
 
                         CustomeText(
-                            text: "E) ACTION TAKEN",
+                            text: "${lableModel.e} ${lableModel.actionTaken}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -186,7 +186,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
                         CustomeText(
-                            text: "20) Salvage Action",
+                            text: "${lableModel.s20} ${lableModel.salvageAction}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -288,7 +288,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                       children: [
 
                         CustomeText(
-                            text: "21) Disposition",
+                            text: "${lableModel.s21} ${lableModel.disposition}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -394,7 +394,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDSALVAGEACTION = selectedsalvageActionList.join('').toString();
                     CommonUtils.SELECTEDDISPOSITION = selecteddispositionList.join('').toString();
@@ -408,7 +408,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDSALVAGEACTION = selectedsalvageActionList.join('').toString();
                     CommonUtils.SELECTEDDISPOSITION = selecteddispositionList.join('').toString();

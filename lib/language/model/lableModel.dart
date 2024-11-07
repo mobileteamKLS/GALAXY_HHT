@@ -279,6 +279,147 @@ class LableModel {
   String? representative;
 
 
+  String? cLT;
+  String? cRB;
+  String? cRG;
+  String? mET;
+  String? sTR;
+  String? wOD;
+  String? bOX;
+  String? bRL;
+  String? cAN;
+  String? cRT;
+  String? pCH;
+  String? sTK;
+  String? cIC;
+  String? fRG;
+  String? hWC;
+  String? kIS;
+  String? kPD;
+  String? nON;
+  String? tSU;
+  String? bAL;
+  String? bHA;
+  String? bUN;
+  String? dRU;
+  String? fBD;
+  String? fFH;
+  String? fWC;
+  String? hPN;
+  String? kCC;
+  String? kZS;
+  String? mEB;
+  String? oTH;
+  String? pOU;
+  String? rOL;
+  String? sCL;
+  String? sPA;
+  String? sUI;
+  String? uPK;
+  String? wOB;
+  String? bBP;
+  String? cRD;
+  String? cSM;
+  String? cWP;
+  String? eGO;
+  String? fDC;
+  String? fUS;
+  String? fWB;
+  String? fWS;
+  String? iND;
+  String? sTD;
+  String? sTP;
+  String? uAN;
+  String? uKB;
+  String? vGC;
+  String? wDB;
+  String? aAC;
+  String? aML;
+  String? bSS;
+  String? bUE;
+  String? cRS;
+  String? cSR;
+  String? dET;
+  String? lKG;
+  String? lPC;
+  String? oCD;
+  String? oND;
+  String? oSS;
+  String? oTE;
+  String? pRR;
+  String? rET;
+  String? rWT;
+  String? sAA;
+  String? sBK;
+  String? sLB;
+  String? tOB;
+  String? tUO;
+  String? wOL;
+  String? wSL;
+  String? wTD;
+  String? wTV;
+  String? wVB;
+  String? aSB;
+  String? bRO;
+  String? cRU;
+  String? iFS;
+  String? oPE;
+  String? tAP;
+  String? tOR;
+  String? wET;
+  String? zKE;
+  String? bUC;
+  String? dBU;
+  String? dCC;
+  String? iWH;
+  String? kSU;
+  String? pBD;
+  String? rBW;
+  String? rCS;
+  String? rKD;
+  String? rKW;
+  String? tAC;
+  String? wUA;
+  String? explainInRemarkBox;
+  String? inCaseLiveAnimal;
+  String? enterRemarkMsg;
+  String? aEC;
+  String? bKM;
+  String? iDP;
+  String? nME;
+  String? nMF;
+  String? nMK;
+  String? oPN;
+  String? oUT;
+  String? pIL;
+  String? pNM;
+  String? tHF;
+  String? uNK;
+  String? iCD;
+  String? oWR;
+  String? pTC;
+  String? uJR;
+  String? cFS;
+  String? dAC;
+  String? dAR;
+  String? dWM;
+  String? sAH;
+  String? sTH;
+  String? wVC;
+  String? cLR;
+  String? fOG;
+  String? rIN;
+  String? exactWording;
+  String? ghaRep;
+  String? airlineRep;
+  String? securityRep;
+  String? enterGhaRepMsg;
+  String? enterAirlineRepMsg;
+  String? enterSecurityRepMsg;
+
+
+
+
 
   String? s654;
   String? s655;
@@ -553,6 +694,144 @@ class LableModel {
         this.anyDamageRemarks,
         this.weatherCondition,
         this.representative,
+
+        this.cLT,
+        this.cRB,
+        this.cRG,
+        this.mET,
+        this.sTR,
+        this.wOD,
+        this.bOX,
+        this.bRL,
+        this.cAN,
+        this.cRT,
+        this.pCH,
+        this.sTK,
+        this.cIC,
+        this.fRG,
+        this.hWC,
+        this.kIS,
+        this.kPD,
+        this.nON,
+        this.tSU,
+        this.bAL,
+        this.bHA,
+        this.bUN,
+        this.dRU,
+        this.fBD,
+        this.fFH,
+        this.fWC,
+        this.hPN,
+        this.kCC,
+        this.kZS,
+        this.mEB,
+        this.oTH,
+        this.pOU,
+        this.rOL,
+        this.sCL,
+        this.sPA,
+        this.sUI,
+        this.uPK,
+        this.wOB,
+        this.bBP,
+        this.cRD,
+        this.cSM,
+        this.cWP,
+        this.eGO,
+        this.fDC,
+        this.fUS,
+        this.fWB,
+        this.fWS,
+        this.iND,
+        this.sTD,
+        this.sTP,
+        this.uAN,
+        this.uKB,
+        this.vGC,
+        this.wDB,
+        this.aAC,
+        this.aML,
+        this.bSS,
+        this.bUE,
+        this.cRS,
+        this.cSR,
+        this.dET,
+        this.lKG,
+        this.lPC,
+        this.oCD,
+        this.oND,
+        this.oSS,
+        this.oTE,
+        this.pRR,
+        this.rET,
+        this.rWT,
+        this.sAA,
+        this.sBK,
+        this.sLB,
+        this.tOB,
+        this.tUO,
+        this.wOL,
+        this.wSL,
+        this.wTD,
+        this.wTV,
+        this.wVB,
+        this.aSB,
+        this.bRO,
+        this.cRU,
+        this.iFS,
+        this.oPE,
+        this.tAP,
+        this.tOR,
+        this.wET,
+        this.zKE,
+        this.bUC,
+        this.dBU,
+        this.dCC,
+        this.iWH,
+        this.kSU,
+        this.pBD,
+        this.rBW,
+        this.rCS,
+        this.rKD,
+        this.rKW,
+        this.tAC,
+        this.wUA,
+        this.explainInRemarkBox,
+        this.inCaseLiveAnimal,
+        this.enterRemarkMsg,
+        this.aEC,
+        this.bKM,
+        this.iDP,
+        this.nME,
+        this.nMF,
+        this.nMK,
+        this.oPN,
+        this.oUT,
+        this.pIL,
+        this.pNM,
+        this.tHF,
+        this.uNK,
+        this.iCD,
+        this.oWR,
+        this.pTC,
+        this.uJR,
+        this.cFS,
+        this.dAC,
+        this.dAR,
+        this.dWM,
+        this.sAH,
+        this.sTH,
+        this.wVC,
+        this.cLR,
+        this.fOG,
+        this.rIN,
+        this.exactWording,
+        this.ghaRep,
+        this.airlineRep,
+        this.securityRep,
+        this.enterGhaRepMsg,
+        this.enterAirlineRepMsg,
+        this.enterSecurityRepMsg,
 
 
         this.save,
@@ -845,6 +1124,144 @@ class LableModel {
     weatherCondition = json['WeatherCondition'];
     representative = json['Representative'];
 
+    cLT = json['CLT'];
+    cRB = json['CRB'];
+    cRG = json['CRG'];
+    mET = json['MET'];
+    sTR = json['STR'];
+    wOD = json['WOD'];
+    bOX = json['BOX'];
+    bRL = json['BRL'];
+    cAN = json['CAN'];
+    cRT = json['CRT'];
+    pCH = json['PCH'];
+    sTK = json['STK'];
+    cIC = json['CIC'];
+    fRG = json['FRG'];
+    hWC = json['HWC'];
+    kIS = json['KIS'];
+    kPD = json['KPD'];
+    nON = json['NON'];
+    tSU = json['TSU'];
+    bAL = json['BAL'];
+    bHA = json['BHA'];
+    bUN = json['BUN'];
+    dRU = json['DRU'];
+    fBD = json['FBD'];
+    fFH = json['FFH'];
+    fWC = json['FWC'];
+    hPN = json['HPN'];
+    kCC = json['KCC'];
+    kZS = json['KZS'];
+    mEB = json['MEB'];
+    oTH = json['OTH'];
+    pOU = json['POU'];
+    rOL = json['ROL'];
+    sCL = json['SCL'];
+    sPA = json['SPA'];
+    sUI = json['SUI'];
+    uPK = json['UPK'];
+    wOB = json['WOB'];
+    bBP = json['BBP'];
+    cRD = json['CRD'];
+    cSM = json['CSM'];
+    cWP = json['CWP'];
+    eGO = json['EGO'];
+    fDC = json['FDC'];
+    fUS = json['FUS'];
+    fWB = json['FWB'];
+    fWS = json['FWS'];
+    iND = json['IND'];
+    sTD = json['STD'];
+    sTP = json['STP'];
+    uAN = json['UAN'];
+    uKB = json['UKB'];
+    vGC = json['VGC'];
+    wDB = json['WDB'];
+    aAC = json['AAC'];
+    aML = json['AML'];
+    bSS = json['BSS'];
+    bUE = json['BUE'];
+    cRS = json['CRS'];
+    cSR = json['CSR'];
+    dET = json['DET'];
+    lKG = json['LKG'];
+    lPC = json['LPC'];
+    oCD = json['OCD'];
+    oND = json['OND'];
+    oSS = json['OSS'];
+    oTE = json['OTE'];
+    pRR = json['PRR'];
+    rET = json['RET'];
+    rWT = json['RWT'];
+    sAA = json['SAA'];
+    sBK = json['SBK'];
+    sLB = json['SLB'];
+    tOB = json['TOB'];
+    tUO = json['TUO'];
+    wOL = json['WOL'];
+    wSL = json['WSL'];
+    wTD = json['WTD'];
+    wTV = json['WTV'];
+    wVB = json['WVB'];
+    aSB = json['ASB'];
+    bRO = json['BRO'];
+    cRU = json['CRU'];
+    iFS = json['IFS'];
+    oPE = json['OPE'];
+    tAP = json['TAP'];
+    tOR = json['TOR'];
+    wET = json['WET'];
+    zKE = json['ZKE'];
+    bUC = json['BUC'];
+    dBU = json['DBU'];
+    dCC = json['DCC'];
+    iWH = json['IWH'];
+    kSU = json['KSU'];
+    pBD = json['PBD'];
+    rBW = json['RBW'];
+    rCS = json['RCS'];
+    rKD = json['RKD'];
+    rKW = json['RKW'];
+    tAC = json['TAC'];
+    wUA = json['WUA'];
+    explainInRemarkBox = json['explainInRemarkBox'];
+    inCaseLiveAnimal = json['inCaseLiveAnimal'];
+    enterRemarkMsg = json['enterRemarkMsg'];
+    aEC = json['AEC'];
+    bKM = json['BKM'];
+    iDP = json['IDP'];
+    nME = json['NME'];
+    nMF = json['NMF'];
+    nMK = json['NMK'];
+    oPN = json['OPN'];
+    oUT = json['OUT'];
+    pIL = json['PIL'];
+    pNM = json['PNM'];
+    tHF = json['THF'];
+    uNK = json['UNK'];
+    iCD = json['ICD'];
+    oWR = json['OWR'];
+    pTC = json['PTC'];
+    uJR = json['UJR'];
+    cFS = json['CFS'];
+    dAC = json['DAC'];
+    dAR = json['DAR'];
+    dWM = json['DWM'];
+    sAH = json['SAH'];
+    sTH = json['STH'];
+    wVC = json['WVC'];
+    cLR = json['CLR'];
+    fOG = json['FOG'];
+    rIN = json['RIN'];
+    exactWording = json['exactWording'];
+    ghaRep = json['ghaRep'];
+    airlineRep = json['airlineRep'];
+    securityRep = json['securityRep'];
+    enterGhaRepMsg = json['enterGhaRepMsg'];
+    enterAirlineRepMsg = json['enterAirlineRepMsg'];
+    enterSecurityRepMsg = json['enterSecurityRepMsg'];
+
 
     s654 = json['654'];
     s655 = json['655'];
@@ -1134,6 +1551,146 @@ class LableModel {
     data['anyDamageRemarks'] = this.anyDamageRemarks;
     data['WeatherCondition'] = this.weatherCondition;
     data['Representative'] = this.representative;
+
+
+    data['CLT'] = this.cLT;
+    data['CRB'] = this.cRB;
+    data['CRG'] = this.cRG;
+    data['MET'] = this.mET;
+    data['STR'] = this.sTR;
+    data['WOD'] = this.wOD;
+    data['BOX'] = this.bOX;
+    data['BRL'] = this.bRL;
+    data['CAN'] = this.cAN;
+    data['CRT'] = this.cRT;
+    data['PCH'] = this.pCH;
+    data['STK'] = this.sTK;
+    data['CIC'] = this.cIC;
+    data['FRG'] = this.fRG;
+    data['HWC'] = this.hWC;
+    data['KIS'] = this.kIS;
+    data['KPD'] = this.kPD;
+    data['NON'] = this.nON;
+    data['TSU'] = this.tSU;
+    data['BAL'] = this.bAL;
+    data['BHA'] = this.bHA;
+    data['BUN'] = this.bUN;
+    data['DRU'] = this.dRU;
+    data['FBD'] = this.fBD;
+    data['FFH'] = this.fFH;
+    data['FWC'] = this.fWC;
+    data['HPN'] = this.hPN;
+    data['KCC'] = this.kCC;
+    data['KZS'] = this.kZS;
+    data['MEB'] = this.mEB;
+    data['OTH'] = this.oTH;
+    data['POU'] = this.pOU;
+    data['ROL'] = this.rOL;
+    data['SCL'] = this.sCL;
+    data['SPA'] = this.sPA;
+    data['SUI'] = this.sUI;
+    data['UPK'] = this.uPK;
+    data['WOB'] = this.wOB;
+    data['BBP'] = this.bBP;
+    data['CRD'] = this.cRD;
+    data['CSM'] = this.cSM;
+    data['CWP'] = this.cWP;
+    data['EGO'] = this.eGO;
+    data['FDC'] = this.fDC;
+    data['FUS'] = this.fUS;
+    data['FWB'] = this.fWB;
+    data['FWS'] = this.fWS;
+    data['IND'] = this.iND;
+    data['STD'] = this.sTD;
+    data['STP'] = this.sTP;
+    data['UAN'] = this.uAN;
+    data['UKB'] = this.uKB;
+    data['VGC'] = this.vGC;
+    data['WDB'] = this.wDB;
+    data['AAC'] = this.aAC;
+    data['AML'] = this.aML;
+    data['BSS'] = this.bSS;
+    data['BUE'] = this.bUE;
+    data['CRS'] = this.cRS;
+    data['CSR'] = this.cSR;
+    data['DET'] = this.dET;
+    data['LKG'] = this.lKG;
+    data['LPC'] = this.lPC;
+    data['OCD'] = this.oCD;
+    data['OND'] = this.oND;
+    data['OSS'] = this.oSS;
+    data['OTE'] = this.oTE;
+    data['PRR'] = this.pRR;
+    data['RET'] = this.rET;
+    data['RWT'] = this.rWT;
+    data['SAA'] = this.sAA;
+    data['SBK'] = this.sBK;
+    data['SLB'] = this.sLB;
+    data['TOB'] = this.tOB;
+    data['TUO'] = this.tUO;
+    data['WOL'] = this.wOL;
+    data['WSL'] = this.wSL;
+    data['WTD'] = this.wTD;
+    data['WTV'] = this.wTV;
+    data['WVB'] = this.wVB;
+    data['ASB'] = this.aSB;
+    data['BRO'] = this.bRO;
+    data['CRU'] = this.cRU;
+    data['IFS'] = this.iFS;
+    data['OPE'] = this.oPE;
+    data['TAP'] = this.tAP;
+    data['TOR'] = this.tOR;
+    data['WET'] = this.wET;
+    data['ZKE'] = this.zKE;
+    data['BUC'] = this.bUC;
+    data['DBU'] = this.dBU;
+    data['DCC'] = this.dCC;
+    data['IWH'] = this.iWH;
+    data['KSU'] = this.kSU;
+    data['PBD'] = this.pBD;
+    data['RBW'] = this.rBW;
+    data['RCS'] = this.rCS;
+    data['RKD'] = this.rKD;
+    data['RKW'] = this.rKW;
+    data['TAC'] = this.tAC;
+    data['WUA'] = this.wUA;
+    data['explainInRemarkBox'] = this.explainInRemarkBox;
+    data['inCaseLiveAnimal'] = this.inCaseLiveAnimal;
+    data['enterRemarkMsg'] = this.enterRemarkMsg;
+    data['AEC'] = this.aEC;
+    data['BKM'] = this.bKM;
+    data['IDP'] = this.iDP;
+    data['NME'] = this.nME;
+    data['NMF'] = this.nMF;
+    data['NMK'] = this.nMK;
+    data['OPN'] = this.oPN;
+    data['OUT'] = this.oUT;
+    data['PIL'] = this.pIL;
+    data['PNM'] = this.pNM;
+    data['THF'] = this.tHF;
+    data['UNK'] = this.uNK;
+    data['ICD'] = this.iCD;
+    data['OWR'] = this.oWR;
+    data['PTC'] = this.pTC;
+    data['UJR'] = this.uJR;
+    data['CFS'] = this.cFS;
+    data['DAC'] = this.dAC;
+    data['DAR'] = this.dAR;
+    data['DWM'] = this.dWM;
+    data['SAH'] = this.sAH;
+    data['STH'] = this.sTH;
+    data['WVC'] = this.wVC;
+    data['CLR'] = this.cLR;
+    data['FOG'] = this.fOG;
+    data['RIN'] = this.rIN;
+    data['exactWording'] = this.exactWording;
+    data['ghaRep'] = this.ghaRep;
+    data['airlineRep'] = this.airlineRep;
+    data['securityRep'] = this.securityRep;
+    data['enterGhaRepMsg'] = this.enterGhaRepMsg;
+    data['enterAirlineRepMsg'] = this.enterAirlineRepMsg;
+    data['enterSecurityRepMsg'] = this.enterSecurityRepMsg;
+
 
     data['654'] = this.s654;
     data['655'] = this.s655;

@@ -249,7 +249,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -309,7 +309,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                       children: [
 
                         CustomeText(
-                            text: "22) Any damage remarked in : a) The AWB. b) The Manifest",
+                            text: "${lableModel.s22} ${lableModel.anyDamageRemarks}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -380,7 +380,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
 
                         CustomeText(
-                            text: "23) Weather Condition ?",
+                            text: "${lableModel.s23} ${lableModel.weatherCondition}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -469,7 +469,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                       children: [
 
                         CustomeText(
-                            text: "24) Representative",
+                            text: "${lableModel.s24} ${lableModel.representative}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -656,7 +656,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDWHETHER = selectedWhetherList.join('').toString();
                     widget.preclickCallback();
@@ -669,7 +669,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Record Damage",
+                  text: "${lableModel.recordDamage}",
                   press: () async {
 
                     if(widget.flightDetailSummary.flightStatus == "A"){
@@ -793,10 +793,10 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         Vibration.vibrate(duration: 500);
                       }
                     }else if(widget.flightDetailSummary.flightStatus == "F"){
-                      SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                       Vibration.vibrate(duration: 500);
                     }else if(widget.flightDetailSummary.flightStatus == "N"){
-                      SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                       Vibration.vibrate(duration: 500);
                     }
 
@@ -1175,8 +1175,6 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                     "images" : images,
                                     "imageCount" : count
                                   });
-
-
                                 },
                               ),
                             ),

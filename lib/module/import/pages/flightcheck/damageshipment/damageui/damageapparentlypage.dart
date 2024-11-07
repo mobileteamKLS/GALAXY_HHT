@@ -104,7 +104,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -152,7 +152,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
                       children: [
 
                         CustomeText(
-                            text: "19) The Damage Apparently Caused By",
+                            text: "${lableModel.s19} ${lableModel.theDamageApparentlyCausedBy}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -282,7 +282,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDDAMAGEAPPARENTLY = selecteddamageApparentlyList.join('').toString();
                     widget.preclickCallback();
@@ -295,7 +295,7 @@ class _DamageApparentlyPageState extends State<DamageApparentlyPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDDAMAGEAPPARENTLY = selecteddamageApparentlyList.join('').toString();
                     widget.nextclickCallback();
