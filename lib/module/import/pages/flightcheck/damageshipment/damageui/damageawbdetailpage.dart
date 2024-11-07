@@ -76,6 +76,11 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
   int npx = 0;
   double weight = 0.00;
+
+  int npr = 0;
+  double weightRec = 0.00;
+
+
   int differenceNpx = 0;
   double differenceWeight = 0.00;
 
@@ -92,6 +97,10 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
     npx = widget.damageDetailsModel!.damageAWBDetail!.nPX!;
     weight = widget.damageDetailsModel!.damageAWBDetail!.wtExp!;
+
+    npr = widget.damageDetailsModel!.damageAWBDetail!.nPR!;
+    weightRec = widget.damageDetailsModel!.damageAWBDetail!.wtRec!;
+
 
     typesOfDiscrepancy = List.of(widget.damageDetailsModel!.referenceDataTypeOfDiscrepancyList!);
 
@@ -526,23 +535,50 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
                                       int enteredNpx = int.tryParse(value) ?? 0;
-                                      if (enteredNpx > npx) {
-                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          FocusScope.of(context).requestFocus(nopFocusNode);
-                                        });
-                                        SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                      //  showSnackBar(context, "Entered pieces exceed the limit!");
-                                      //  nopController.clear(); // Clear the TextField
-                                        setState(() {
-                                          differenceNpx = 0;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          differenceNpx = npx - enteredNpx; // Calculate difference
-                                        });
+
+                                      if(npr <= npx){
+                                        if (enteredNpx > npx) {
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(nopFocusNode);
+                                          });
+                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          //  showSnackBar(context, "Entered pieces exceed the limit!");
+                                          //  nopController.clear(); // Clear the TextField
+                                          setState(() {
+                                            differenceNpx = 0;
+                                          });
+                                        }
+                                        else {
+                                          setState(() {
+                                            differenceNpx = npx - enteredNpx; // Calculate difference
+                                          });
 
 
+                                        }
+                                      }else{
+                                        if (enteredNpx > npr) {
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(nopFocusNode);
+                                          });
+                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npr.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          //  showSnackBar(context, "Entered pieces exceed the limit!");
+                                          //  nopController.clear(); // Clear the TextField
+                                          setState(() {
+                                            differenceNpx = 0;
+                                          });
+                                        }
+                                        else {
+                                          setState(() {
+                                            differenceNpx = npx - enteredNpx; // Calculate difference
+                                          });
+
+
+                                        }
                                       }
+
+
+
+
                                     }else{
                                       setState(() {
                                         differenceNpx = 0;
@@ -591,21 +627,44 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
                                       double enteredWeight = double.tryParse(value) ?? 0.00;
-                                      if (enteredWeight > weight) {
-                                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          FocusScope.of(context).requestFocus(weightFocusNode);
-                                        });
-                                        SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weight", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                        //weightController.clear(); // Clear the TextField
-                                        setState(() {
-                                          differenceWeight = 0.00;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          differenceWeight = weight - enteredWeight; // Calculate difference
-                                        });
 
+                                      if(weightRec <= weight){
+                                        if (enteredWeight > weight) {
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weight.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          //weightController.clear(); // Clear the TextField
+                                          setState(() {
+                                            differenceWeight = 0.00;
+                                          });
+                                        }
+                                        else {
+                                          setState(() {
+                                            differenceWeight = weight - enteredWeight; // Calculate difference
+                                          });
+
+                                        }
+                                      }else{
+                                        if (enteredWeight > weightRec) {
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weightRec.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          //weightController.clear(); // Clear the TextField
+                                          setState(() {
+                                            differenceWeight = 0.00;
+                                          });
+                                        }
+                                        else {
+                                          setState(() {
+                                            differenceWeight = weight - enteredWeight; // Calculate difference
+                                          });
+
+                                        }
                                       }
+
+
                                     }else{
                                       setState(() {
                                         differenceWeight = 0.00;
@@ -841,20 +900,20 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
               }
 
               int enteredNpx = int.tryParse(nopController.text) ?? 0;
-              if (enteredNpx > npx) {
+              if (enteredNpx > npr) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   FocusScope.of(context).requestFocus(nopFocusNode);
                 });
-                SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npr.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                 return;
               }
 
               double enteredWeight = double.tryParse(weightController.text) ?? 0.00;
-              if (enteredWeight > weight) {
+              if (enteredWeight > weightRec) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   FocusScope.of(context).requestFocus(weightFocusNode);
                 });
-                SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weight", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weightRec.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                 //weightController.clear(); // Clear the TextField
                return;
               }
@@ -940,39 +999,86 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     double enteredWeight = totalDamageWt;
 
     // Check piece limit first
-    if (enteredNpx > npx) {
-      // Focus on piece input and show message for pieces if limit is exceeded
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(nopFocusNode);
-      });
-      SnackbarUtil.showSnackbar(
-        context,
-        "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx",
-        MyColor.colorRed,
-        icon: FontAwesomeIcons.times,
-      );
-      differenceNpx = 0;
-      return; // Exit the function if the piece limit is exceeded
-    } else {
-      differenceNpx = npx - totalDamageNop;
+    if(npr <= npx){
+      if (enteredNpx > npx) {
+        // Focus on piece input and show message for pieces if limit is exceeded
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(nopFocusNode);
+        });
+        SnackbarUtil.showSnackbar(
+          context,
+          "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx.",
+          MyColor.colorRed,
+          icon: FontAwesomeIcons.times,
+        );
+        differenceNpx = 0;
+        return; // Exit the function if the piece limit is exceeded
+      }
+      else {
+        differenceNpx = npx - totalDamageNop;
+      }
+    }
+    else{
+      if (enteredNpx > npr) {
+        // Focus on piece input and show message for pieces if limit is exceeded
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(nopFocusNode);
+        });
+        SnackbarUtil.showSnackbar(
+          context,
+          "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npr.",
+          MyColor.colorRed,
+          icon: FontAwesomeIcons.times,
+        );
+        differenceNpx = 0;
+        return; // Exit the function if the piece limit is exceeded
+      }
+      else {
+        differenceNpx = npx - totalDamageNop;
+      }
     }
 
+
     // If piece limit is within range, proceed to check weight limit
-    if (enteredWeight > weight) {
-      // Focus on weight input and show message for weight if limit is exceeded
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(weightFocusNode);
-      });
-      SnackbarUtil.showSnackbar(
-        context,
-        "Damage weight $enteredWeight cannot be greater than Shipment Rcvd weight - $weight",
-        MyColor.colorRed,
-        icon: FontAwesomeIcons.times,
-      );
-      differenceWeight = 0.00;
-    } else {
-      differenceWeight = weight - totalDamageWt;
+
+    if(weightRec <= weight){
+      if (enteredWeight > weight) {
+        // Focus on weight input and show message for weight if limit is exceeded
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(weightFocusNode);
+        });
+        SnackbarUtil.showSnackbar(
+          context,
+          "Damage weight $enteredWeight cannot be greater than Shipment Rcvd weight - $weight",
+          MyColor.colorRed,
+          icon: FontAwesomeIcons.times,
+        );
+        differenceWeight = 0.00;
+      }
+      else {
+        differenceWeight = weight - totalDamageWt;
+      }
     }
+    else{
+      if (enteredWeight > weightRec) {
+        // Focus on weight input and show message for weight if limit is exceeded
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(weightFocusNode);
+        });
+        SnackbarUtil.showSnackbar(
+          context,
+          "Damage weight $enteredWeight cannot be greater than Shipment Rcvd weight - $weightRec",
+          MyColor.colorRed,
+          icon: FontAwesomeIcons.times,
+        );
+        differenceWeight = 0.00;
+      }
+      else {
+        differenceWeight = weight - totalDamageWt;
+      }
+    }
+
+
 
     // Update state if both limits are within range
     setState(() {});

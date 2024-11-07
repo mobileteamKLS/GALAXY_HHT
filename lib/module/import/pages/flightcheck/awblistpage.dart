@@ -425,17 +425,21 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             children: [
-                                                              Row(
-                                                                children: [
-                                                                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                  CustomeText(
-                                                                      text: "${lableModel.detailsForUldNo} ${widget.uldNo}",
-                                                                      fontColor: MyColor.textColorGrey2,
-                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                      fontWeight: FontWeight.w500,
-                                                                      textAlign: TextAlign.start),
-                                                                ],
+                                                              Flexible(
+                                                                child: Row(
+                                                                  children: [
+                                                                    SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                    Expanded(
+                                                                      child: CustomeText(
+                                                                          text: "${lableModel.detailsForUldNo} ${widget.uldNo}",
+                                                                          fontColor: MyColor.textColorGrey2,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                          fontWeight: FontWeight.w500,
+                                                                          textAlign: TextAlign.start),
+                                                                    ),
+                                                                  ],
+                                                                ),
                                                               ),
 
 

@@ -847,7 +847,6 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
 
                                                                           if(isButtonEnabled("save", widget.buttonRightsList!)){
                                                                             String typesOfDamage = "${selectedDamageServices.join('').toString()}";
-                                                                            print("CHECK_IMAGE++++++++++++ ${images}");
 
                                                                             if (selectedDamageServices.isNotEmpty) {
                                                                               context.read<UldAcceptanceCubit>().uldDamage(

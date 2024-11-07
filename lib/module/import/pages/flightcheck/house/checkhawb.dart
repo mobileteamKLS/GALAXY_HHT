@@ -73,6 +73,8 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
   SplashDefaultModel? _splashDefaultData;
 
 
+  String Clicks = "";
+
 
 
   TextEditingController piecesController = TextEditingController();
@@ -161,7 +163,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
-    Navigator.pop(context, "Done");
+    Navigator.pop(context, "true");
     return false; // Prevents the default back button action
   }
 
@@ -253,7 +255,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                           ),
 
                           BlocListener<FlightCheckCubit, FlightCheckState>(
-                            listener: (context, state) {
+                            listener: (context, state) async {
                               if(state is MainLoadingState){
                                 DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                               }
@@ -264,7 +266,35 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }else{
-                                  Navigator.pop(context, "true");
+
+                                  if(Clicks == "S"){
+                                    Navigator.pop(context, "true");
+                                  }else if(Clicks == "D"){
+                                    int damageNop = widget.haWBItem.damageNOP!;
+                                    double damageWt = widget.haWBItem.damageWeight!;
+
+
+                                    int npxPices = widget.haWBItem.nPR!;
+                                    double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
+
+                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                      pageView: 0,
+                                      enterDamageNop: int.parse(piecesController.text),
+                                      enterDamageWt: double.parse(weightController.text),
+                                      damageNop: damageNop,
+                                      damageWt: damageWt,
+                                      buttonRightsList: widget.buttonRightsList,
+                                      haWBItem: widget.haWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+
+                                    if(value == "Done"){
+                                      _resumeTimerOnInteraction();
+                                      Navigator.pop(context, "true");
+                                    }else if(value == "true"){
+                                      Navigator.pop(context, "true");
+                                    }
+                                  }
+
+
                                 }
 
                               }else if(state is ImportShipmentSaveFailureState){
@@ -714,12 +744,6 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                     if(isButtonEnabled("awbdamageandsave", widget.buttonRightsList)){
 
-                                                      int damageNop = widget.haWBItem.damageNOP!;
-                                                      double damageWt = widget.haWBItem.damageWeight!;
-
-
-                                                      int npxPices = widget.haWBItem.nPR!;
-                                                      double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
 
                                                       if(widget.groupIDRequires == "Y"){
                                                         if (groupIdController.text.isEmpty) {
@@ -768,22 +792,9 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                       CommonUtils.SELECTEDCONTAINER = "";
 
+                                                      Clicks = "D";
+                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
-                                                      var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                        pageView: 0,
-                                                        enterDamageNop: int.parse(piecesController.text),
-                                                        enterDamageWt: double.parse(weightController.text),
-                                                        damageNop: damageNop,
-                                                        damageWt: damageWt,
-                                                        buttonRightsList: widget.buttonRightsList,
-                                                        haWBItem: widget.haWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
-
-                                                      if(value == "Done"){
-                                                        _resumeTimerOnInteraction();
-                                                      }else if(value == "true"){
-                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-                                                      }
                                                     }
                                                     else{
                                                       SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -846,6 +857,8 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                         }
 
                                                       }
+
+                                                      Clicks = "S";
 
                                                       context.read<FlightCheckCubit>().importShipmentSave(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 

@@ -446,7 +446,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                     updateSearchList(value);
                                                                   },
                                                                   fillColor: MyColor.colorWhite,
-                                                                  textInputType: TextInputType.number,
+                                                                  textInputType: TextInputType.text,
                                                                   inputAction: TextInputAction.next,
                                                                   hintTextcolor: MyColor.colorBlack.withOpacity(0.7),
                                                                   verticalPadding: 0,
@@ -454,7 +454,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                                   circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
                                                                   boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
-                                                                  isDigitsOnly: true,
+                                                                  isDigitsOnly: false,
                                                                   validator: (value) {
                                                                     if (value!.isEmpty) {
                                                                       return "Please fill out this field";
@@ -1705,7 +1705,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
   List<FlightCheckInHAWBBDList> _applyFiltersAndSorting(List<FlightCheckInHAWBBDList> list, String searchString) {
     // Filter by search string
     List<FlightCheckInHAWBBDList> filteredList = list.where((item) {
-      return item.aWBNo!.toLowerCase().contains(searchString.toLowerCase());
+      return item.houseNo!.replaceAll(" ", "").toLowerCase().contains(searchString.toLowerCase());
     }).toList();
 
     return filteredList;
@@ -1735,7 +1735,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "Invalid HAWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanNoEditingController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1743,7 +1743,16 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
         });
       }else{
 
-        if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
+        String result = barcodeScanResult.replaceAll(" ", "");
+        String truncatedResult = result.length > 11
+            ? result.substring(0, 11)
+            : result;
+
+        scanNoEditingController.text = truncatedResult.toString();
+        updateSearchList(scanNoEditingController.text);
+
+
+       /* if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
           // Show invalid message if alphabet characters are present
           SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
           Vibration.vibrate(duration: 500);
@@ -1752,14 +1761,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
             FocusScope.of(context).requestFocus(scanAwbFocusNode);
           });
         } else {
-          String result = barcodeScanResult.replaceAll(" ", "");
-          String truncatedResult = result.length > 11
-              ? result.substring(0, 11)
-              : result;
 
-          scanNoEditingController.text = truncatedResult.toString();
-          updateSearchList(scanNoEditingController.text);
-        }
+        }*/
 
 
 
