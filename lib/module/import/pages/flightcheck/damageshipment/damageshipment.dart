@@ -74,8 +74,11 @@ class DamageShimentPage extends StatefulWidget {
   double enterDamageWt;
   int pageView;
 
+  LableModel? lableModel;
+
 
   DamageShimentPage({super.key,
+    required this.lableModel,
     required this.enterDamageNop,
     required this.enterDamageWt,
     required this.damageNop,
@@ -182,6 +185,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     return [
 
       (damageDetailsModel != null) ? DamageAwbDetailPage(
+        lableModel: widget.lableModel!,
         pageView: widget.pageView,
         enterDamageNop: widget.enterDamageNop,
         enterDamageWt: widget.enterDamageWt,

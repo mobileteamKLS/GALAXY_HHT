@@ -74,7 +74,7 @@ class _PointListingPageState extends State<PointListingPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -129,7 +129,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                 Row(
                                   children: [
                                     CustomeText(
-                                        text: "C)",
+                                        text: "${lableModel.c}",
                                         fontColor: MyColor.textColorGrey3,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                         fontWeight: FontWeight.w600,
@@ -138,7 +138,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                     SizedBox(width: 5,),
 
                                     CustomeText(
-                                        text: "PACKING DETAILS",
+                                        text: "${lableModel.packingDetails}",
                                         fontColor: MyColor.textColorGrey3,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                         fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "9)",
+                                          text: "${lableModel.s9}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -190,7 +190,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Container",
+                                          text: "${lableModel.container}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -233,7 +233,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "a)",
+                                          text: "${lableModel.a}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -242,7 +242,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Material",
+                                          text: "${lableModel.material}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -283,7 +283,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "b)",
+                                          text: "${lableModel.b}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -292,7 +292,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Type",
+                                          text: "${lableModel.type}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -333,7 +333,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "10)",
+                                          text: "${lableModel.s10}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -342,7 +342,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Mark & Label",
+                                          text:"${lableModel.markAndLabel}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -383,7 +383,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "11)",
+                                          text: "${lableModel.s11}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -392,7 +392,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Outer Packing",
+                                          text: "${lableModel.outerPacking}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -433,7 +433,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "12)",
+                                          text: "${lableModel.s12}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -442,7 +442,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Inner Packing",
+                                          text: "${lableModel.innerPacking}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -481,7 +481,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                 Row(
                                   children: [
                                     CustomeText(
-                                        text: "D)",
+                                        text: "${lableModel.d}",
                                         fontColor: MyColor.textColorGrey3,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                         fontWeight: FontWeight.w600,
@@ -490,7 +490,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                     SizedBox(width: 5,),
 
                                     CustomeText(
-                                        text: "DETAILS OF DAMAGE OBSERVED",
+                                        text: "${lableModel.detailsOfDamageObserved}",
                                         fontColor: MyColor.textColorGrey3,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                         fontWeight: FontWeight.w600,
@@ -530,7 +530,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "13.a)",
+                                          text: "${lableModel.s13a}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -539,7 +539,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Content",
+                                          text: "${lableModel.content}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -580,7 +580,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "13.b)",
+                                          text: "${lableModel.s13b}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -589,7 +589,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Containers",
+                                          text: "${lableModel.containers}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -630,7 +630,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "14)",
+                                          text: "${lableModel.s14}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -639,7 +639,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Damage Discovered",
+                                          text: "${lableModel.damageDiscovered}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -681,7 +681,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "15.a)",
+                                          text: "${lableModel.s15a}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -690,7 +690,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width:5,),
 
                                       CustomeText(
-                                          text: "Any Space For Missing Items",
+                                          text: "${lableModel.anySpaceForMissingItems}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -717,7 +717,7 @@ class _PointListingPageState extends State<PointListingPage> {
                         CustomDivider(space: 0, color: Colors.black, hascolor: true,),
 
                         Padding(
-                          padding: const EdgeInsets.all(8.0),
+                          padding: const EdgeInsets.only(left: 40.0, bottom: 8, top: 8, right: 8),
                           child: InkWell(
                             onTap: () {
                               widget.curruentCallback(9);
@@ -726,12 +726,11 @@ class _PointListingPageState extends State<PointListingPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
 
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 32),
+                                Flexible(
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "b)",
+                                          text: "${lableModel.b}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -739,68 +738,17 @@ class _PointListingPageState extends State<PointListingPage> {
 
                                       SizedBox(width: 5,),
 
-                                      CustomeText(
-                                          text: "Is Shortage Verified By Invoice",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w600,
-                                          textAlign: TextAlign.start),
+                                      Flexible(
+                                        child: CustomeText(
+                                            text: "${lableModel.isShortageVerifiedByInvoice}",
+                                            fontColor: MyColor.textColorGrey3,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start),
+                                      ),
                                     ],
                                   ),
                                 ),
-
-
-                                Container(
-                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                  decoration: BoxDecoration(
-                                      color: MyColor.dropdownColor,
-                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                  ),
-                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-
-                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-
-
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: InkWell(
-                            onTap: () {
-                              widget.curruentCallback(9);
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 24),
-                                  child: Row(
-                                    children: [
-                                      CustomeText(
-                                          text: "16)",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w600,
-                                          textAlign: TextAlign.start),
-
-                                      SizedBox(width: 5,),
-
-                                      CustomeText(
-                                          text: "Is Packing Sufficient?",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w600,
-                                          textAlign: TextAlign.start),
-                                    ],
-                                  ),
-                                ),
-
-
 
 
                                 Container(
@@ -835,7 +783,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "17)",
+                                          text: "${lableModel.s16}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -844,7 +792,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Any Evidence Of Pilferage",
+                                          text: "${lableModel.isPackingSufficient}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -852,6 +800,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                     ],
                                   ),
                                 ),
+
 
 
 
@@ -887,7 +836,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "18)",
+                                          text: "${lableModel.s17}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -896,7 +845,59 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Remarks",
+                                          text: "${lableModel.anyEvidenceOfPilferage}",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+                                    ],
+                                  ),
+                                ),
+
+
+
+                                Container(
+                                  padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                  decoration: BoxDecoration(
+                                      color: MyColor.dropdownColor,
+                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                  ),
+                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+
+                        CustomDivider(space: 0, color: Colors.black, hascolor: true,),
+
+
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: InkWell(
+                            onTap: () {
+                              widget.curruentCallback(9);
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24),
+                                  child: Row(
+                                    children: [
+                                      CustomeText(
+                                          text: "${lableModel.s18}",
+                                          fontColor: MyColor.textColorGrey3,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start),
+
+                                      SizedBox(width: 5,),
+
+                                      CustomeText(
+                                          text: "${lableModel.remarks}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -937,7 +938,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "19)",
+                                          text: "${lableModel.s19}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -947,7 +948,7 @@ class _PointListingPageState extends State<PointListingPage> {
 
                                       Flexible(
                                         child: CustomeText(
-                                            text: "The Damage Apparently Caused By",
+                                            text: "${lableModel.theDamageApparentlyCausedBy}",
                                             fontColor: MyColor.textColorGrey3,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                             fontWeight: FontWeight.w600,
@@ -990,7 +991,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                 Row(
                                   children: [
                                     CustomeText(
-                                        text: "E)",
+                                        text: "${lableModel.e}",
                                         fontColor: MyColor.textColorGrey3,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                         fontWeight: FontWeight.w600,
@@ -999,7 +1000,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                     SizedBox(width: 8,),
 
                                     CustomeText(
-                                        text: "ACTION TAKEN",
+                                        text: "${lableModel.actionTaken}",
                                         fontColor: MyColor.textColorGrey3,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                         fontWeight: FontWeight.w600,
@@ -1041,7 +1042,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "20)",
+                                          text: "${lableModel.s20}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1050,7 +1051,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Salvage Action",
+                                          text: "${lableModel.salvageAction}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1090,7 +1091,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "21)",
+                                          text: "${lableModel.s21}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1099,7 +1100,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Disposition",
+                                          text: "${lableModel.disposition}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1139,7 +1140,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "22)",
+                                          text: "${lableModel.s22}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1149,7 +1150,7 @@ class _PointListingPageState extends State<PointListingPage> {
 
                                       Flexible(
                                         child: CustomeText(
-                                            text: "Any damage remarked in : a) The AWB. b) The Manifest",
+                                            text: "${lableModel.anyDamageRemarks}",
                                             fontColor: MyColor.textColorGrey3,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                             fontWeight: FontWeight.w600,
@@ -1192,7 +1193,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "23)",
+                                          text: "${lableModel.s23}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1201,7 +1202,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Weather Condition ?",
+                                          text: "${lableModel.weatherCondition}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1241,7 +1242,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                   child: Row(
                                     children: [
                                       CustomeText(
-                                          text: "24)",
+                                          text:  "${lableModel.s24}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1250,7 +1251,7 @@ class _PointListingPageState extends State<PointListingPage> {
                                       SizedBox(width: 5,),
 
                                       CustomeText(
-                                          text: "Representative",
+                                          text:  "${lableModel.representative}",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                           fontWeight: FontWeight.w600,
@@ -1309,7 +1310,7 @@ class _PointListingPageState extends State<PointListingPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text:  "${lableModel.previous}",
                   press: () async {
                     widget.preclickCallback();
                   },
@@ -1321,7 +1322,7 @@ class _PointListingPageState extends State<PointListingPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text:  "${lableModel.next}",
                   press: () async {
                     widget.nextclickCallback();
                   },

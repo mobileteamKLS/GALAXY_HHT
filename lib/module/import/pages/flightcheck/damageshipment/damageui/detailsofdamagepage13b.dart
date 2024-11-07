@@ -127,7 +127,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -167,7 +167,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                   children: [
 
                     CustomeText(
-                        text: "13.b) Containers",
+                        text: "${lableModel.s13b} ${lableModel.containers}",
                         fontColor: MyColor.textColorGrey3,
                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                         fontWeight: FontWeight.w600,
@@ -275,7 +275,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDCONTAINER = selectedContainersList.join(',').toString();
                     widget.preclickCallback();
@@ -288,7 +288,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDCONTAINER = selectedContainersList.join(',').toString();
                     widget.nextclickCallback();

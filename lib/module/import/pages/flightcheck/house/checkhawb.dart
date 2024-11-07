@@ -234,7 +234,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                             padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                             child: HeaderWidget(
                               titleTextColor: MyColor.colorBlack,
-                              title: "Check-In HAWB",
+                              title: "${lableModel!.checkInHAWB}",
                               onBack: () {
                                 _onWillPop();
                               },
@@ -278,6 +278,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                     double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
 
                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                      lableModel: lableModel,
                                       pageView: 0,
                                       enterDamageNop: int.parse(piecesController.text),
                                       enterDamageWt: double.parse(weightController.text),
@@ -338,7 +339,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                   SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                   CustomeText(
-                                                      text: "Details for HAWB No. ${widget.haWBItem.houseNo}",
+                                                      text: "${lableModel.detailsforHAWBNo} ${widget.haWBItem.houseNo}",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -733,12 +734,12 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                     }
 
                                                     if(int.parse(piecesController.text) == 0){
-                                                      openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
+                                                      openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
                                                       return;
                                                     }
 
                                                     if(double.parse(weightController.text) == 0){
-                                                      openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
+                                                      openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
                                                       return;
                                                     }
 
@@ -753,7 +754,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                         // Check if the groupId length is between 14 (min and max 14 characters)
                                                         if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                          openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                          openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
                                                           return;
                                                         }
 
@@ -801,10 +802,10 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                       Vibration.vibrate(duration: 500);
                                                     }
                                                   }else if(widget.flightDetailSummary.flightStatus == "F"){
-                                                    SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                    SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }
 
@@ -834,12 +835,12 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                       }
 
                                                       if(int.parse(piecesController.text) == 0){
-                                                        openValidationDialog("Please enter pieces greater than 0.", piecesFocusNode);
+                                                        openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
                                                         return;
                                                       }
 
                                                       if(double.parse(weightController.text) == 0){
-                                                        openValidationDialog("Please enter weight greater than 0.", weightFocusNode);
+                                                        openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
                                                         return;
                                                       }
 
@@ -852,7 +853,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                         // Check if the groupId length is between 14 (min and max 14 characters)
                                                         if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                          openValidationDialog("Group ID must be exactly ${widget.groupIDCharSize} characters long.", groupIdFocusNode);
+                                                          openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
                                                           return;
                                                         }
 
@@ -869,10 +870,10 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                     }
 
                                                   }else if(widget.flightDetailSummary.flightStatus == "F"){
-                                                    SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                    SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }
 
@@ -910,6 +911,13 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
     );
   }
 
+  String formatMessage(String template, List<String> values) {
+    String formattedMessage = template;
+    for (int i = 0; i < values.length; i++) {
+      formattedMessage = formattedMessage.replaceAll('{$i}', values[i]);
+    }
+    return formattedMessage;
+  }
 
   // validation dialog
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {

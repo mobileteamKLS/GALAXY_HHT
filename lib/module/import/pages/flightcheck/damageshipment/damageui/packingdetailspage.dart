@@ -119,7 +119,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -170,7 +170,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                       children: [
 
                         CustomeText(
-                            text: "C) PACKING DETAILS",
+                            text: "${lableModel.c} ${lableModel.packingDetails}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -181,7 +181,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 
                         CustomeText(
-                            text: "9) Container",
+                            text: "${lableModel.s9} ${lableModel.container}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -192,7 +192,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomeText(
-                                text: "a) Material",
+                                text: "${lableModel.a} ${lableModel.material}",
                                 fontColor: MyColor.textColorGrey3,
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                 fontWeight: FontWeight.w600,
@@ -295,7 +295,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             CustomeText(
-                                text: "b) Type",
+                                text: "${lableModel.b} ${lableModel.type}",
                                 fontColor: MyColor.textColorGrey3,
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                 fontWeight: FontWeight.w600,
@@ -403,7 +403,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDMATERIAL = selectedMaterialList.join('').toString();
                     CommonUtils.SELECTEDTYPE = selectedTypeList.join('').toString();
@@ -417,7 +417,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDMATERIAL = selectedMaterialList.join('').toString();
                     CommonUtils.SELECTEDTYPE = selectedTypeList.join('').toString();

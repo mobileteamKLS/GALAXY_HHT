@@ -673,7 +673,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                           if(widget.uldNo == "BULK"){
 
                                                                             if(aWBItem.damageNOP == 0){
-                                                                              SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                              SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                               Vibration.vibrate(duration: 500);
                                                                             }
                                                                             else{
@@ -712,6 +712,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                  lableModel: lableModel,
                                                                                   pageView: 0,
                                                                                   enterDamageNop: 0,
                                                                                   enterDamageWt: 0.00,
@@ -740,7 +741,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                           }else{
                                                                             if(aWBItem.damageNOP == 0){
-                                                                              SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                              SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                               Vibration.vibrate(duration: 500);
                                                                             }
                                                                             else{
@@ -780,6 +781,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                  lableModel: lableModel,
                                                                                   pageView: 0,
                                                                                   enterDamageNop: 0,
                                                                                   enterDamageWt: 0.00,
@@ -856,7 +858,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         }
                                                                       }else if(widget.flightDetailSummary.flightStatus == "F"){
                                                                         if(aWBItem.damageNOP == 0){
-                                                                          SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                           Vibration.vibrate(duration: 500);
                                                                         }
                                                                         else{
@@ -899,6 +901,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                             var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                              lableModel: lableModel,
                                                                               pageView: 1,
                                                                               enterDamageNop: 0,
                                                                               enterDamageWt: 0.00,
@@ -930,7 +933,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         /*  SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);*/
                                                                       }else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                                        SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);
                                                                       }
 
@@ -1477,7 +1480,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                 if(widget.uldNo == "BULK"){
 
                                                                                                   if(aWBItem.damageNOP == 0){
-                                                                                                    SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                     Vibration.vibrate(duration: 500);
                                                                                                   }
                                                                                                   else{
@@ -1527,6 +1530,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
                                                                                                       enterDamageWt: 0.00,
@@ -1554,7 +1558,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                 }
                                                                                                 else{
                                                                                                   if(aWBItem.damageNOP == 0){
-                                                                                                    SnackbarUtil.showSnackbar(context, "Breakdown already completed.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                     Vibration.vibrate(duration: 500);
                                                                                                   }
                                                                                                   else{
@@ -1604,6 +1608,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
                                                                                                       enterDamageWt: 0.00,
@@ -1636,7 +1641,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               Vibration.vibrate(duration: 500);*/
 
                                                                                               if(aWBItem.damageNOP == 0){
-                                                                                                SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                 Vibration.vibrate(duration: 500);
                                                                                               }
                                                                                               else{
@@ -1681,6 +1686,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                                   var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    lableModel: lableModel,
                                                                                                     pageView: 1,
                                                                                                     enterDamageNop: 0,
                                                                                                     enterDamageWt: 0.00,
@@ -1707,7 +1713,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               }
 
                                                                                             }else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                                                              SnackbarUtil.showSnackbar(context, "Flight is not arrived", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                              SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                               Vibration.vibrate(duration: 500);
                                                                                             }
 
@@ -1963,18 +1969,16 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       ScanMode.DEFAULT, // Scan mode
     );
 
-    print("barcode scann ==== ${barcodeScanResult}");
     if(barcodeScanResult == "-1"){
     }else{
 
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
 
-      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
       if(specialCharAllow == true){
         scanNoEditingController.clear();
         updateSearchList("");
-        SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanAwbFocusNode);
@@ -1985,7 +1989,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
           scanNoEditingController.clear();
           updateSearchList("");
           // Show invalid message if alphabet characters are present
-          SnackbarUtil.showSnackbar(context, "Invalid AWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+          SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
           Vibration.vibrate(duration: 500);
 
           WidgetsBinding.instance.addPostFrameCallback((_) {

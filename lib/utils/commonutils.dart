@@ -117,5 +117,13 @@ class CommonUtils{
     return value.toStringAsFixed(2);
   }
 
+  static String formatMessage(String template, List<String> values) {
+    String formattedMessage = template;
+    for (int i = 0; i < values.length; i++) {
+      formattedMessage = formattedMessage.replaceAll('{$i}', values[i]);
+    }
+    return formattedMessage;
+  }
+
 
 }

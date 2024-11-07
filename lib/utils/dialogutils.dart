@@ -180,6 +180,14 @@ class DialogUtils {
     }
   }
 
+  static String formatMessage(String template, List<String> values) {
+    String formattedMessage = template;
+    for (int i = 0; i < values.length; i++) {
+      formattedMessage = formattedMessage.replaceAll('{$i}', values[i]);
+    }
+    return formattedMessage;
+  }
+
   static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo, int uldProgress, String bdEndStatus) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
@@ -189,9 +197,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
-          title: CustomeText(text: "Breakdown",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          title: CustomeText(text: "${lableModel.breakdown}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
-          content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed." : (uldNo.contains("BULK")) ? "Are you sure you want to complete ${uldNo} breakdown ?" : "Are you sure you want to complete ULD ${uldNo} breakdown ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: CustomeText(text: (bdEndStatus == "Y") ? "${lableModel.breakdownAlreadyCompleted}" : (uldNo.contains("BULK")) ? formatMessage(lableModel.breakdownMsgBulk!, [uldNo]) : formatMessage(lableModel.breakdownMsgUld!, [uldNo]),fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
             InkWell(
                 onTap: () {

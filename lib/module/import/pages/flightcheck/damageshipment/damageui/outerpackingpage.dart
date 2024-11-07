@@ -102,12 +102,12 @@ class _Damageuipart2State extends State<OuterPackingPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
           },
-          clearText: "${lableModel!.clear}",
+          clearText: "${lableModel.clear}",
           onClear: () {
             CommonUtils.SELECTEDOUTRERPACKING = "";
             selectedOuterPackingList.clear();
@@ -150,7 +150,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                       children: [
 
                         CustomeText(
-                            text: "11) Outer Packing",
+                            text: "${lableModel.s11} ${lableModel.outerPacking}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -280,7 +280,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDOUTRERPACKING = selectedOuterPackingList.join('').toString();
                     widget.preclickCallback();
@@ -293,7 +293,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDOUTRERPACKING = selectedOuterPackingList.join('').toString();
                     widget.nextclickCallback();

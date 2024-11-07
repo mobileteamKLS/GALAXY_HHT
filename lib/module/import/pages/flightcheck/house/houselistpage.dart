@@ -440,7 +440,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   isIcon: true,
                                                                   isSearch: true,
                                                                   prefixIconcolor: MyColor.colorBlack,
-                                                                  hintText: "Scan HAWB",
+                                                                  hintText: "${lableModel.scanHAWB}",
                                                                   readOnly: false,
                                                                   onChanged: (value) {
                                                                     updateSearchList(value);
@@ -515,7 +515,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                   width: SizeConfig.blockSizeHorizontal,
                                                                 ),
                                                                 CustomeText(
-                                                                    text: "Show completion pending HAWB only",
+                                                                    text: "${lableModel.showCompletionPendingHAWB}",
                                                                     fontColor: MyColor.textColorGrey2,
                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                                                     fontWeight: FontWeight.w500,
@@ -651,6 +651,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                lableModel: lableModel,
                                                                                 pageView: 0,
                                                                                 enterDamageNop: 0,
                                                                                 enterDamageWt: 0.00,
@@ -717,6 +718,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                lableModel: lableModel,
                                                                                 pageView: 0,
                                                                                 enterDamageNop: 0,
                                                                                 enterDamageWt: 0.00,
@@ -785,6 +787,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                           var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                            lableModel: lableModel,
                                                                             pageView: 1,
                                                                             enterDamageNop: 0,
                                                                             enterDamageWt: 0.00,
@@ -1385,6 +1388,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
                                                                                                       enterDamageWt: 0.00,
@@ -1454,6 +1458,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
                                                                                                       enterDamageWt: 0.00,
@@ -1524,6 +1529,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                  lableModel: lableModel,
                                                                                                   pageView: 1,
                                                                                                   enterDamageNop: 0,
                                                                                                   enterDamageWt: 0.00,
@@ -1735,7 +1741,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Invalid HAWB No.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${lableModel.invalidHAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanNoEditingController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {

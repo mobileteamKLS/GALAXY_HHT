@@ -101,12 +101,12 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
           },
-          clearText: "${lableModel!.clear}",
+          clearText: "${lableModel.clear}",
           onClear: () {
             CommonUtils.SELECTEDMARKANDLABLE = "";
             selectedMarkLableList.clear();
@@ -149,7 +149,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                       children: [
 
                         CustomeText(
-                            text: "10) Mark & Label",
+                            text: "${lableModel.s10} ${lableModel.markAndLabel}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -257,7 +257,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDMARKANDLABLE = selectedMarkLableList.join('').toString();
                     widget.preclickCallback();
@@ -270,7 +270,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDMARKANDLABLE = selectedMarkLableList.join('').toString();
                     widget.nextclickCallback();

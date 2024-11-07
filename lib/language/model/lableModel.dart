@@ -101,6 +101,7 @@ class LableModel {
   String? short;
   String? excess;
   String? next;
+  String? previous;
   String? start;
 
   String? shipment;
@@ -199,6 +200,85 @@ class LableModel {
   String? mail;
   String? breakdownCompleted;
   String? groupIdCharSizeMsg;
+
+  String? breakdown;
+  String? breakdownMsgUld;
+  String? breakdownMsgBulk;
+  String? noShipmentFound;
+  String? invalidAWBNo;
+  String? breakdownAlreadyCompleted;
+  String? scanHAWB;
+  String? showCompletionPendingHAWB;
+  String? invalidHAWBNo;
+  String? checkInHAWB;
+  String? detailsforHAWBNo;
+
+  String? flightisFinalizedMsg;
+  String? flightisNotArrivedMsg;
+  String? enterPiecesGrtMsg;
+  String? enterWeightGrtMsg;
+
+  String? typeOfDiscrepancy;
+  String? dMG;
+  String? sOP;
+  String? tOL;
+  String? kg;
+  String? shipmentWeightDetails;
+  String? totalWtShipped;
+  String? totalWtAsPerActualCheck;
+  String? difference;
+  String? individualWtOfEachDamagePkg;
+  String? asPerDocumentKG;
+  String? asPerActualWeightKG;
+  String? damagePcsGrtMsg;
+  String? damageWeightGrtMsg;
+  String? actualWtCannotGrtDocumentWt;
+
+  String? s9;
+  String? s10;
+  String? s11;
+  String? s12;
+  String? s14;
+  String? s16;
+  String? s17;
+  String? s18;
+  String? s19;
+  String? s20;
+  String? s21;
+  String? s22;
+  String? s23;
+  String? s24;
+  String? c;
+  String? packingDetails;
+  String? container;
+  String? a;
+  String? material;
+  String? b;
+  String? markAndLabel;
+  String? outerPacking;
+  String? innerPacking;
+  String? d;
+  String? detailsOfDamageObserved;
+  String? s13a;
+  String? content;
+  String? s13b;
+  String? containers;
+  String? damageDiscovered;
+  String? s15a;
+  String? anySpaceForMissingItems;
+  String? isShortageVerifiedByInvoice;
+  String? isPackingSufficient;
+  String? anyEvidenceOfPilferage;
+  String? theDamageApparentlyCausedBy;
+  String? e;
+  String? actionTaken;
+  String? salvageAction;
+  String? disposition;
+  String? anyDamageRemarks;
+  String? weatherCondition;
+  String? representative;
+
+
 
   String? s654;
   String? s655;
@@ -301,6 +381,7 @@ class LableModel {
         this.short,
         this.excess,
         this.next,
+        this.previous,
         this.start,
         this.shipment,
         this.scanned,
@@ -396,6 +477,83 @@ class LableModel {
         this.mail,
         this.breakdownCompleted,
         this.groupIdCharSizeMsg,
+
+        this.breakdown,
+        this.breakdownMsgUld,
+        this.breakdownMsgBulk,
+        this.noShipmentFound,
+        this.invalidAWBNo,
+        this.breakdownAlreadyCompleted,
+        this.scanHAWB,
+        this.showCompletionPendingHAWB,
+        this.invalidHAWBNo,
+        this.checkInHAWB,
+        this.detailsforHAWBNo,
+
+        this.flightisFinalizedMsg,
+        this.flightisNotArrivedMsg,
+        this.enterPiecesGrtMsg,
+        this.enterWeightGrtMsg,
+
+        this.typeOfDiscrepancy,
+        this.dMG,
+        this.sOP,
+        this.tOL,
+        this.kg,
+        this.shipmentWeightDetails,
+        this.totalWtShipped,
+        this.totalWtAsPerActualCheck,
+        this.difference,
+        this.individualWtOfEachDamagePkg,
+        this.asPerDocumentKG,
+        this.asPerActualWeightKG,
+        this.damagePcsGrtMsg,
+        this.damageWeightGrtMsg,
+        this.actualWtCannotGrtDocumentWt,
+        this.s9,
+        this.s10,
+        this.s11,
+        this.s12,
+        this.s14,
+        this.s16,
+        this.s17,
+        this.s18,
+        this.s19,
+        this.s20,
+        this.s21,
+        this.s22,
+        this.s23,
+        this.s24,
+        this.c,
+        this.packingDetails,
+        this.container,
+        this.a,
+        this.material,
+        this.b,
+        this.markAndLabel,
+        this.outerPacking,
+        this.innerPacking,
+        this.d,
+        this.detailsOfDamageObserved,
+        this.s13a,
+        this.content,
+        this.s13b,
+        this.containers,
+        this.damageDiscovered,
+        this.s15a,
+        this.anySpaceForMissingItems,
+        this.isShortageVerifiedByInvoice,
+        this.isPackingSufficient,
+        this.anyEvidenceOfPilferage,
+        this.theDamageApparentlyCausedBy,
+        this.e,
+        this.actionTaken,
+        this.salvageAction,
+        this.disposition,
+        this.anyDamageRemarks,
+        this.weatherCondition,
+        this.representative,
+
 
         this.save,
         this.s654,
@@ -509,6 +667,7 @@ class LableModel {
     short = json['short'];
     excess = json['excess'];
     next = json['next'];
+    previous = json['previous'];
     start = json['start'];
     shipment = json['shipment'];
     scanned = json['scanned'];
@@ -608,6 +767,84 @@ class LableModel {
     mail = json['mail'];
     breakdownCompleted = json['breakdownCompleted'];
     groupIdCharSizeMsg = json['groupIdCharSizeMsg'];
+
+    breakdown = json['breakdown'];
+    breakdownMsgUld = json['breakdownMsgUld'];
+    breakdownMsgBulk = json['breakdownMsgBulk'];
+    noShipmentFound = json['noShipmentFound'];
+    invalidAWBNo = json['invalidAWBNo'];
+    breakdownAlreadyCompleted = json['breakdownAlreadyCompleted'];
+    scanHAWB = json['scanHAWB'];
+    showCompletionPendingHAWB = json['showCompletionPendingHAWB'];
+    invalidHAWBNo = json['invalidHAWBNo'];
+    checkInHAWB = json['checkInHAWB'];
+    detailsforHAWBNo = json['detailsforHAWBNo'];
+
+    flightisFinalizedMsg = json['flightisFinalizedMsg'];
+    flightisNotArrivedMsg = json['flightisNotArrivedMsg'];
+    enterPiecesGrtMsg = json['enterPiecesGrtMsg'];
+    enterWeightGrtMsg = json['enterWeightGrtMsg'];
+
+    typeOfDiscrepancy = json['typeOfDiscrepancy'];
+    dMG = json['DMG'];
+    sOP = json['SOP'];
+    tOL = json['TOL'];
+    kg = json['kg'];
+    shipmentWeightDetails = json['shipmentWeightDetails'];
+    totalWtShipped = json['totalWtShipped'];
+    totalWtAsPerActualCheck = json['totalWtAsPerActualCheck'];
+    difference = json['difference'];
+    individualWtOfEachDamagePkg = json['individualWtOfEachDamagePkg'];
+    asPerDocumentKG = json['asPerDocumentKG'];
+    asPerActualWeightKG = json['asPerActualWeightKG'];
+    damagePcsGrtMsg = json['damagePcsGrtMsg'];
+    damageWeightGrtMsg = json['damageWeightGrtMsg'];
+    actualWtCannotGrtDocumentWt = json['actualWtCannotGrtDocumentWt'];
+
+    s9 = json['9'];
+    s10 = json['10'];
+    s11 = json['11'];
+    s12 = json['12'];
+    s14 = json['14'];
+    s16 = json['16'];
+    s17 = json['17'];
+    s18 = json['18'];
+    s19 = json['19'];
+    s20 = json['20'];
+    s21 = json['21'];
+    s22 = json['22'];
+    s23 = json['23'];
+    s24 = json['24'];
+    c = json['c'];
+    packingDetails = json['packingDetails'];
+    container = json['Container'];
+    a = json['a'];
+    material = json['Material'];
+    b = json['b'];
+    markAndLabel = json['MarkAndLabel'];
+    outerPacking = json['OuterPacking'];
+    innerPacking = json['InnerPacking'];
+    d = json['d'];
+    detailsOfDamageObserved = json['detailsOfDamageObserved'];
+    s13a = json['13a'];
+    content = json['Content'];
+    s13b = json['13b'];
+    containers = json['Containers'];
+    damageDiscovered = json['DamageDiscovered'];
+    s15a = json['15a'];
+    anySpaceForMissingItems = json['anySpaceForMissingItems'];
+    isShortageVerifiedByInvoice = json['isShortageVerifiedByInvoice'];
+    isPackingSufficient = json['IsPackingSufficient?'];
+    anyEvidenceOfPilferage = json['AnyEvidenceOfPilferage'];
+    theDamageApparentlyCausedBy = json['TheDamageApparentlyCausedBy'];
+    e = json['E'];
+    actionTaken = json['ActionTaken'];
+    salvageAction = json['SalvageAction'];
+    disposition = json['Disposition'];
+    anyDamageRemarks = json['anyDamageRemarks'];
+    weatherCondition = json['WeatherCondition'];
+    representative = json['Representative'];
+
 
     s654 = json['654'];
     s655 = json['655'];
@@ -722,6 +959,7 @@ class LableModel {
     data['short'] = this.short;
     data['excess'] = this.excess;
     data['next'] = this.next;
+    data['previous'] = this.previous;
     data['start'] = this.start;
 
     data['shipment'] = this.shipment;
@@ -821,6 +1059,82 @@ class LableModel {
     data['breakdownCompleted'] = this.breakdownCompleted;
     data['groupIdCharSizeMsg'] = this.groupIdCharSizeMsg;
 
+    data['breakdown'] = this.breakdown;
+    data['breakdownMsgUld'] = this.breakdownMsgUld;
+    data['breakdownMsgBulk'] = this.breakdownMsgBulk;
+    data['noShipmentFound'] = this.noShipmentFound;
+    data['invalidAWBNo'] = this.invalidAWBNo;
+    data['breakdownAlreadyCompleted'] = this.breakdownAlreadyCompleted;
+    data['scanHAWB'] = this.scanHAWB;
+    data['showCompletionPendingHAWB'] = this.showCompletionPendingHAWB;
+    data['invalidHAWBNo'] = this.invalidHAWBNo;
+    data['checkInHAWB'] = this.checkInHAWB;
+    data['detailsforHAWBNo'] = this.detailsforHAWBNo;
+
+    data['flightisFinalizedMsg'] = this.flightisFinalizedMsg;
+    data['flightisNotArrivedMsg'] = this.flightisNotArrivedMsg;
+    data['enterPiecesGrtMsg'] = this.enterPiecesGrtMsg;
+    data['enterWeightGrtMsg'] = this.enterWeightGrtMsg;
+
+    data['typeOfDiscrepancy'] = this.typeOfDiscrepancy;
+    data['DMG'] = this.dMG;
+    data['SOP'] = this.sOP;
+    data['TOL'] = this.tOL;
+    data['kg'] = this.kg;
+    data['shipmentWeightDetails'] = this.shipmentWeightDetails;
+    data['totalWtShipped'] = this.totalWtShipped;
+    data['totalWtAsPerActualCheck'] = this.totalWtAsPerActualCheck;
+    data['difference'] = this.difference;
+    data['individualWtOfEachDamagePkg'] = this.individualWtOfEachDamagePkg;
+    data['asPerDocumentKG'] = this.asPerDocumentKG;
+    data['asPerActualWeightKG'] = this.asPerActualWeightKG;
+    data['damagePcsGrtMsg'] = this.damagePcsGrtMsg;
+    data['damageWeightGrtMsg'] = this.damageWeightGrtMsg;
+    data['actualWtCannotGrtDocumentWt'] = this.actualWtCannotGrtDocumentWt;
+    data['9'] = this.s9;
+    data['10'] = this.s10;
+    data['11'] = this.s11;
+    data['12'] = this.s12;
+    data['14'] = this.s14;
+    data['16'] = this.s16;
+    data['17'] = this.s17;
+    data['18'] = this.s18;
+    data['19'] = this.s19;
+    data['20'] = this.s20;
+    data['21'] = this.s21;
+    data['22'] = this.s22;
+    data['23'] = this.s23;
+    data['24'] = this.s24;
+    data['c'] = this.c;
+    data['packingDetails'] = this.packingDetails;
+    data['Container'] = this.container;
+    data['a'] = this.a;
+    data['Material'] = this.material;
+    data['b'] = this.b;
+    data['MarkAndLabel'] = this.markAndLabel;
+    data['OuterPacking'] = this.outerPacking;
+    data['InnerPacking'] = this.innerPacking;
+    data['d'] = this.d;
+    data['detailsOfDamageObserved'] = this.detailsOfDamageObserved;
+    data['13a'] = this.s13a;
+    data['Content'] = this.content;
+    data['13b'] = this.s13b;
+    data['Containers'] = this.containers;
+    data['DamageDiscovered'] = this.damageDiscovered;
+    data['15a'] = this.s15a;
+    data['anySpaceForMissingItems'] = this.anySpaceForMissingItems;
+    data['isShortageVerifiedByInvoice'] = this.isShortageVerifiedByInvoice;
+    data['IsPackingSufficient?'] = this.isPackingSufficient;
+    data['AnyEvidenceOfPilferage'] = this.anyEvidenceOfPilferage;
+    data['TheDamageApparentlyCausedBy'] = this.theDamageApparentlyCausedBy;
+    data['E'] = this.e;
+    data['ActionTaken'] = this.actionTaken;
+    data['SalvageAction'] = this.salvageAction;
+    data['Disposition'] = this.disposition;
+    data['anyDamageRemarks'] = this.anyDamageRemarks;
+    data['WeatherCondition'] = this.weatherCondition;
+    data['Representative'] = this.representative;
+
     data['654'] = this.s654;
     data['655'] = this.s655;
     data['656'] = this.s656;
@@ -862,6 +1176,12 @@ class LableModel {
         return s2540;
       case '2541':
         return s2541;
+      case 'DMG' :
+        return dMG;
+      case 'SOP' :
+        return sOP;
+      case 'TOL' :
+        return tOL;
       default:
         return null;
     }

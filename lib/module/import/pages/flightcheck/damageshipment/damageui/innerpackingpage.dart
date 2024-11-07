@@ -105,7 +105,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -152,7 +152,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                       children: [
 
                         CustomeText(
-                            text: "12) Inner Packing",
+                            text: "${lableModel.s12} ${lableModel.innerPacking}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -284,7 +284,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDINNERPACKING = selectedInnerPackList.join('').toString();
                     widget.preclickCallback();
@@ -297,7 +297,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDINNERPACKING = selectedInnerPackList.join('').toString();
                     widget.nextclickCallback();

@@ -198,7 +198,9 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                 shrinkWrap: true,
                                 itemBuilder: (BuildContext context, int index) {
                                   SubMenuName subMenuName = state.subMenuModel.subMenuName![index];
-                                  String subMenuTitle = "${subMenuModelLang!.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
+                                  print("CHECK_TITIITTITI ==== ${localizations.locale.languageCode} === ${subMenuName.menuName!}");
+
+                                  String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang!.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
 
 
 
@@ -215,6 +217,8 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                       // navigate to next page using submenu refrelcode
 
                                       NextScreen(FlightCheck(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName), isEnable);
+                                    }else if(menuId == SubMenuCodeUtils.Binning){
+                                      NextScreen(Container(), isEnable);
                                     }else if(menuId == SubMenuCodeUtils.Segration){
 
                                       NextScreen(Container(), isEnable);

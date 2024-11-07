@@ -6,7 +6,9 @@
     "HHT005" : "Flight Check",
     "HHT006" : "Segregation",
 
-    "HHT007" : "Vehicle Tracking",
+    "HHT007" : "Binning",
+
+
     "HHT008" : "TDG Acceptance",
     "HHT009" : "VCT Check",
     "HHT010" : "Document Upload",

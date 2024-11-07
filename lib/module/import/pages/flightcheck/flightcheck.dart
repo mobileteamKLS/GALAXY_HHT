@@ -3497,7 +3497,7 @@ class _FlightCheckState extends State<FlightCheck>
         inactivityTimerManager!.stopTimer();
 
         if(flightDetails.shipment == 0){
-          SnackbarUtil.showSnackbar(context, "No shipment found.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+          SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         }else{
           var value = await Navigator.push(
               context,

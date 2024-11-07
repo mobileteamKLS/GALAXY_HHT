@@ -126,7 +126,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -170,7 +170,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                       children: [
 
                         CustomeText(
-                            text: "D) DETAILS OF DAMAGE OBSERVED",
+                            text: "${lableModel.d} ${lableModel.detailsOfDamageObserved}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -182,7 +182,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
 
 
                         CustomeText(
-                            text: "13.a) Content",
+                            text: "${lableModel.s13a} ${lableModel.content}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -299,7 +299,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Previous",
+                  text: "${lableModel.previous}",
                   press: () async {
                     CommonUtils.SELECTEDCONTENT = selectedContentList.join(',').toString();
                     widget.preclickCallback();
@@ -312,7 +312,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
               Expanded(
                 flex: 1,
                 child: RoundedButtonBlue(
-                  text: "Next",
+                  text: "${lableModel.next}",
                   press: () async {
                     CommonUtils.SELECTEDCONTENT = selectedContentList.join(',').toString();
                     widget.nextclickCallback();

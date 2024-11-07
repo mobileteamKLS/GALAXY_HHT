@@ -41,8 +41,11 @@ class DamageAwbDetailPage extends StatefulWidget {
   int enterDamageNop;
   double enterDamageWt;
   int pageView;
+  LableModel lableModel;
+
 
   DamageAwbDetailPage({super.key,
+    required this.lableModel,
     required this.enterDamageNop,
     required this.enterDamageWt,
     required this.damageNop,
@@ -142,7 +145,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
 
-      checkLimits();
+      checkLimits(widget.lableModel);
       //checkPiecesGreterOrNot();
     });
 
@@ -186,7 +189,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
       children: [
         HeaderWidget(
           titleTextColor: MyColor.colorBlack,
-          title: "Damage & Save",
+          title: "${lableModel!.damageAndSave}",
           onBack: () {
             widget.inactivityTimerManager!.stopTimer();
             Navigator.pop(context, "Done");
@@ -410,7 +413,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                       children: [
 
                         CustomeText(
-                            text: "B) TYPE OF DISCREPANCY",
+                            text: "${lableModel.typeOfDiscrepancy}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -430,6 +433,9 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                           ),
                           itemCount: typesOfDiscrepancy.length,
                           itemBuilder: (context, index) {
+
+                            String typesOfDiscrepancyTitle = "${lableModel.getValueFromKey("${typesOfDiscrepancy[index].referenceDataIdentifier}")}";
+
                             return Row(
                               children: [
                                 Radio<ReferenceDataTypeOfDiscrepancyList>(
@@ -446,7 +452,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   },
                                 ),
                                 CustomeText(
-                                  text: typesOfDiscrepancy[index].referenceDescription!,
+                                  text: typesOfDiscrepancyTitle,
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w600,
@@ -483,7 +489,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                       children: [
 
                         CustomeText(
-                            text: "7) Shipment weight Details",
+                            text: "${lableModel.shipmentWeightDetails}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -494,7 +500,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             CustomeText(
-                                text: "a) Total wt. Shipped (Per AWB)",
+                                text: "${lableModel.totalWtShipped}",
                                 fontColor: MyColor.textColorGrey3,
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                 fontWeight: FontWeight.w500,
@@ -509,7 +515,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                         ),
                         SizedBox(height: SizeConfig.blockSizeVertical,),
                         CustomeText(
-                            text: "b) Total Wt. As Per Actual Check",
+                            text: "${lableModel.totalWtAsPerActualCheck}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                             fontWeight: FontWeight.w500,
@@ -530,7 +536,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   hastextcolor: true,
                                   animatedLabel: true,
                                   needOutlineBorder: true,
-                                  labelText: "Pieces",
+                                  labelText: "${lableModel.pieces}",
                                   readOnly: (widget.pageView == 0) ? false : true,
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
@@ -541,7 +547,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(nopFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredNpx", "$npx"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //  showSnackBar(context, "Entered pieces exceed the limit!");
                                           //  nopController.clear(); // Clear the TextField
                                           setState(() {
@@ -560,7 +566,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(nopFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npr.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context,  CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredNpx", "$npr"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //  showSnackBar(context, "Entered pieces exceed the limit!");
                                           //  nopController.clear(); // Clear the TextField
                                           setState(() {
@@ -622,7 +628,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                   hastextcolor: true,
                                   animatedLabel: true,
                                   needOutlineBorder: true,
-                                  labelText: "Weight",
+                                  labelText: "${lableModel.weight}",
                                   readOnly: (widget.pageView == 0) ? false : true,
                                   onChanged: (value) {
                                     if (value.isNotEmpty) {
@@ -633,7 +639,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weight.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weight"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //weightController.clear(); // Clear the TextField
                                           setState(() {
                                             differenceWeight = 0.00;
@@ -650,7 +656,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weightRec.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //weightController.clear(); // Clear the TextField
                                           setState(() {
                                             differenceWeight = 0.00;
@@ -705,13 +711,13 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               CustomeText(
-                                  text: "c) Difference",
+                                  text: "${lableModel.difference}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w500,
                                   textAlign: TextAlign.start),
                               CustomeText(
-                                  text: "$differenceNpx/${differenceWeight.toStringAsFixed(2)} kg",
+                                  text: "$differenceNpx/${differenceWeight.toStringAsFixed(2)} ${lableModel.kg}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w800,
@@ -744,7 +750,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                       children: [
 
                         CustomeText(
-                            text: "8) Individual Wt. Of Each Damage Pkg./Pcs.",
+                            text: "${lableModel.individualWtOfEachDamagePkg}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -763,7 +769,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             hastextcolor: true,
                             animatedLabel: true,
                             needOutlineBorder: true,
-                            labelText: "a) As Per Document (Kg)",
+                            labelText: "${lableModel.asPerDocumentKG}",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {
 
@@ -813,10 +819,10 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                               hastextcolor: true,
                               animatedLabel: true,
                               needOutlineBorder: true,
-                              labelText: "b) As Per Actual Weight Check (Kg)",
+                              labelText: "${lableModel.asPerActualWeightKG}",
                               readOnly: (widget.pageView == 0) ? false : true,
                               onChanged: (value) {
-                                calculateDifference();
+                                calculateDifference(lableModel);
                               },
                               fillColor:  Colors.grey.shade100,
                               textInputType: TextInputType.number,
@@ -851,13 +857,13 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               CustomeText(
-                                  text: "c) Difference",
+                                  text: "${lableModel.difference}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w500,
                                   textAlign: TextAlign.start),
                               CustomeText(
-                                  text: "${actuleDifferenceWeight.toStringAsFixed(2)} kg",
+                                  text: "${actuleDifferenceWeight.toStringAsFixed(2)} ${lableModel.kg}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w800,
@@ -891,11 +897,11 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
             ],
           ),
           child: RoundedButtonBlue(
-            text: "Next",
+            text: "${lableModel.next}",
             press: () async {
 
               if (nopController.text.isEmpty) {
-                openValidationDialog("${lableModel!.piecesMsg}", nopFocusNode, lableModel);
+                openValidationDialog("${lableModel.piecesMsg}", nopFocusNode, lableModel);
                 return;
               }
 
@@ -904,7 +910,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   FocusScope.of(context).requestFocus(nopFocusNode);
                 });
-                SnackbarUtil.showSnackbar(context, "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npr.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredNpx", "$npr"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                 return;
               }
 
@@ -913,7 +919,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   FocusScope.of(context).requestFocus(weightFocusNode);
                 });
-                SnackbarUtil.showSnackbar(context, "Damage pcs $enteredWeight cannot be greater than Shipment Rcvd pcs - $weightRec.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                SnackbarUtil.showSnackbar(context,  CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]) , MyColor.colorRed, icon: FontAwesomeIcons.times);
                 //weightController.clear(); // Clear the TextField
                return;
               }
@@ -921,17 +927,17 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
 
               if(int.parse(nopController.text) == 0){
-                openValidationDialog("Please enter pieces greater than 0.", nopFocusNode, lableModel!);
+                openValidationDialog("${lableModel.enterPiecesGrtMsg}", nopFocusNode, lableModel!);
                 return;
               }
 
               if(double.parse(weightController.text) == 0){
-                openValidationDialog("Please enter weight greater than 0.", weightFocusNode, lableModel!);
+                openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode, lableModel!);
                 return;
               }
 
               if (weightController.text.isEmpty) {
-                openValidationDialog("${lableModel!.weightMsg}", weightFocusNode, lableModel!);
+                openValidationDialog("${lableModel.weightMsg}", weightFocusNode, lableModel!);
                 return;
               }
 
@@ -961,13 +967,13 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     );
   }
 
-  void calculateDifference() {
+  void calculateDifference(LableModel lableModel) {
     double documentWeight = double.tryParse(documentweightController.text) ?? 0.0;
     double actualWeight = double.tryParse(actualDocumentweightController.text) ?? 0.0;
 
     // If actual weight exceeds document weight, show snackbar and clear the text
     if (actualWeight > documentWeight) {
-      SnackbarUtil.showSnackbar(context, "Actual weight cannot be greater than document weight!", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      SnackbarUtil.showSnackbar(context, "${lableModel.actualWtCannotGrtDocumentWt}", MyColor.colorRed, icon: FontAwesomeIcons.times);
       Vibration.vibrate(duration: 500);
       actualDocumentweightController.clear();
       setState(() {
@@ -994,7 +1000,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     }
   }
 
-  void checkLimits() {
+  void checkLimits(LableModel lableModel) {
     int enteredNpx = totalDamageNop;
     double enteredWeight = totalDamageWt;
 
@@ -1007,7 +1013,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npx.",
+          CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredNpx", "$npx"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
@@ -1026,7 +1032,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          "Damage pcs $enteredNpx cannot be greater than Shipment Rcvd pcs - $npr.",
+          CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredNpx", "$npr"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
@@ -1049,7 +1055,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          "Damage weight $enteredWeight cannot be greater than Shipment Rcvd weight - $weight",
+          CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weight"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
@@ -1067,7 +1073,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          "Damage weight $enteredWeight cannot be greater than Shipment Rcvd weight - $weightRec",
+          CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
