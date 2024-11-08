@@ -165,6 +165,11 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
 
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
+                            String markLableTitle = (localizations.locale.languageCode == "en") ? markLable.referenceDescription! : "${lableModel.getValueFromKey("${markLable.referenceDataIdentifier}")}";
+
+                            print("CHECK_MARKLABLETITLE==== ${markLableTitle}");
+
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -184,7 +189,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: markLable.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: markLableTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),

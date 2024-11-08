@@ -169,6 +169,11 @@ class _Damageuipart2State extends State<OuterPackingPage> {
 
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
+                            String outerPackingTitle = (localizations.locale.languageCode == "en")
+                                ? outerPacking.referenceDescription!
+                                : "${lableModel.getValueFromKey("${outerPacking.referenceDataIdentifier}")}";
+
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -188,7 +193,7 @@ class _Damageuipart2State extends State<OuterPackingPage> {
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: outerPacking.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: outerPackingTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),

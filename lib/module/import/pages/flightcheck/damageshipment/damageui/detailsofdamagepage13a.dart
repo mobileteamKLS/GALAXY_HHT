@@ -199,6 +199,12 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                             TextEditingController controller = CommonUtils.CONTENTCONTROLLER[index];
                             FocusNode focusNode = focusNodes[index];
 
+                            String contentTitle = (localizations.locale.languageCode == "en")
+                                ? content.referenceDescription!
+                                : "${lableModel.getValueFromKey("${content.referenceDataIdentifier}")}";
+
+
+
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Directionality(

@@ -195,7 +195,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
             Navigator.pop(context, "Done");
 
           },
-          clearText: (widget.pageView == 0) ? "${lableModel!.clear}" : "",
+          clearText: (widget.pageView == 0) ? "${lableModel.clear}" : "",
           onClear: () {
             selectedDiscrepancy = typesOfDiscrepancy[0];
             documentweightController.clear();
@@ -434,7 +434,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                           itemCount: typesOfDiscrepancy.length,
                           itemBuilder: (context, index) {
 
-                            String typesOfDiscrepancyTitle = "${lableModel.getValueFromKey("${typesOfDiscrepancy[index].referenceDataIdentifier}")}";
+                            String typesOfDiscrepancyTitle = (localizations.locale.languageCode == "en") ? typesOfDiscrepancy[index].referenceDescription! : "${lableModel.getValueFromKey("${typesOfDiscrepancy[index].referenceDataIdentifier}")}";
 
                             return Row(
                               children: [

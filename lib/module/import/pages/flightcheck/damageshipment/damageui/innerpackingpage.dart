@@ -171,6 +171,11 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
 
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
+                            String innerPackingTitle = (localizations.locale.languageCode == "en")
+                                ? innerPacking.referenceDescription!
+                                : "${lableModel.getValueFromKey("${innerPacking.referenceDataIdentifier}")}";
+
+
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -190,7 +195,7 @@ class _InnerPackingPageState extends State<InnerPackingPage> {
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: innerPacking.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: innerPackingTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),

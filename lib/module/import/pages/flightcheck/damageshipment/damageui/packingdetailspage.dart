@@ -207,6 +207,10 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
 
                                 Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
+                                String materialTitle = (localizations.locale.languageCode == "en") ? material.referenceDescription! : "${lableModel.getValueFromKey("${material.referenceDataIdentifier}")}";
+
+
+
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -226,7 +230,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                                 SizedBox(
                                                   width: 15,
                                                 ),
-                                                Flexible(child: CustomeText(text: material.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                Flexible(child: CustomeText(text: materialTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                               ],
                                             ),
                                           ),
@@ -310,6 +314,12 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
 
                                 Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
+                                String typeTitle = (localizations.locale.languageCode == "en")
+                                    ? type.referenceDescription!
+                                    : "${lableModel.getValueFromKey("${type.referenceDataIdentifier}")}";
+
+
+
                                 return Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -329,7 +339,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                                 SizedBox(
                                                   width: 15,
                                                 ),
-                                                Flexible(child: CustomeText(text: type.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                Flexible(child: CustomeText(text: typeTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                               ],
                                             ),
                                           ),
