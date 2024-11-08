@@ -23,6 +23,7 @@ import '../../../widget/customdivider.dart';
 import '../../../widget/customeuiwidgets/footer.dart';
 import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
+import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
 import '../../import/pages/uldacceptance/uldacceptancepage.dart';
 import '../../login/pages/signinscreenmethods.dart';
@@ -218,7 +219,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
 
                                       NextScreen(FlightCheck(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName), isEnable);
                                     }else if(menuId == SubMenuCodeUtils.Binning){
-                                      NextScreen(Container(), isEnable);
+                                      NextScreen(Binning(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName), "Y");
                                     }else if(menuId == SubMenuCodeUtils.Segration){
 
                                       NextScreen(Container(), isEnable);

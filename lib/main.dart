@@ -11,6 +11,7 @@ import 'package:galaxy/module/splash/page/splashscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'language/appLocalizations.dart';
+import 'module/import/services/binning/binninglogic/binningcubit.dart';
 import 'module/splash/service/splashrepository.dart';
 import 'module/import/services/uldacceptance/uldacceptancelogic/uldacceptancecubit.dart';
 import 'module/onboarding/onboardscreen.dart';
@@ -75,6 +76,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => SubMenuCubit(),),
         BlocProvider(create: (context) => UldAcceptanceCubit(),),
         BlocProvider(create: (context) => FlightCheckCubit(),),
+        BlocProvider(create: (context) => BinningCubit(),),
       ],
       child: MaterialApp(
 

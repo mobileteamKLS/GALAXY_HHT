@@ -57,4 +57,8 @@ class Apilist{
   static String houseListApi = "/FlightCheckIn/GetHAWBDetails";
 
 
+  // Binning list details
+  static String binningDetailListApi = "/Binning/GetDetails";
+
+
 }
