@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:typed_data';
+
 
 import 'package:flutter/material.dart';
 import 'package:galaxy/core/mycolor.dart';
@@ -8,10 +7,10 @@ import 'package:galaxy/widget/custometext.dart';
 
 import '../../language/appLocalizations.dart';
 import '../../language/model/lableModel.dart';
-import '../../module/import/model/uldacceptance/ulddamgeupdatemodel.dart';
-import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/commonutils.dart';
 import '../customdivider.dart';
 import 'header.dart';
+import 'dart:ui' as ui;
 
 class EnlargedBinaryImageScreen extends StatefulWidget {
   final String binaryFile;
@@ -45,17 +44,27 @@ class _EnlargedBinaryImageScreenState extends State<EnlargedBinaryImageScreen> {
     AppLocalizations? localizations = AppLocalizations.of(context);
     LableModel? lableModel = localizations!.lableModel;
 
+    //ui direction not change for arabic
+    ui.TextDirection uiDirection =
+    localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE
+        ? ui.TextDirection.ltr
+        : ui.TextDirection.ltr;
+
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: MyColor.colorWhite,
         body: Column(
           children: [
-            HeaderWidget(
-              title:lableModel!.imagePreview!,
-              onBack: () {
-                Navigator.pop(context);
-              },
-              clearText: "",
+            Directionality(
+              textDirection: uiDirection,
+              child: HeaderWidget(
+                title:lableModel!.imagePreview!,
+                onBack: () {
+                  Navigator.pop(context);
+                },
+                clearText: "",
+              ),
             ),
             CustomDivider(
               space: 0,

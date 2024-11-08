@@ -112,25 +112,28 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
-            missingItems = CommonUtils.MISSINGITEM = "Y";
-            verifiedInvoice = CommonUtils.VERIFIEDINVOICE = "Y";
-            packingSufficient = CommonUtils.SUFFICIENT = "Y";
-            evidence = CommonUtils.EVIDENCE = "Y";
-            remarkController.clear();
-            CommonUtils.REMARKS = "";
-            setState(() {
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel!.clear}",
+            onClear: () {
+              missingItems = CommonUtils.MISSINGITEM = "Y";
+              verifiedInvoice = CommonUtils.VERIFIEDINVOICE = "Y";
+              packingSufficient = CommonUtils.SUFFICIENT = "Y";
+              evidence = CommonUtils.EVIDENCE = "Y";
+              remarkController.clear();
+              CommonUtils.REMARKS = "";
+              setState(() {
 
-            });
-          },
+              });
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -174,94 +177,97 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
 
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              // Yes Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
+                        Directionality(
+                          textDirection: uiDirection,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              children: [
+                                // Yes Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        missingItems = "Y";
-                                      });
-                                    }
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          missingItems = "Y";
+                                        });
+                                      }
 
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: missingItems == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: missingItems == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10),
+                                        ),
+                                        border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
                                       ),
-                                      border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: missingItems == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // No Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        missingItems = "N";
-                                      });
-                                    }
-
-
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: missingItems == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: missingItems == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        missingItems = "A";
-                                      });
-                                    }
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: missingItems == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: missingItems == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                       ),
-                                      border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "N/A", fontColor: missingItems == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
-                              ),
+                                // No Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          missingItems = "N";
+                                        });
+                                      }
 
-                            ],
+
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: missingItems == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                      ),
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: missingItems == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
+
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          missingItems = "A";
+                                        });
+                                      }
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: missingItems == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
+                                        border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                      ),
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "N/A", fontColor: missingItems == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -299,94 +305,97 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
 
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              // Yes Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
+                        Directionality(
+                          textDirection: uiDirection,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              children: [
+                                // Yes Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        verifiedInvoice = "Y";
-                                      });
-                                    }
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          verifiedInvoice = "Y";
+                                        });
+                                      }
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: verifiedInvoice == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: verifiedInvoice == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10),
+                                        ),
+                                        border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
                                       ),
-                                      border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: verifiedInvoice == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              // No Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        verifiedInvoice = "N";
-                                      });
-                                    }
-
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: verifiedInvoice == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: verifiedInvoice == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                    ),
-                                  ),
-                                ),
-                              ),
-
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
-
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        verifiedInvoice = "A";
-                                      });
-                                    }
-
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: verifiedInvoice == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: verifiedInvoice == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                       ),
-                                      border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "N/A", fontColor: verifiedInvoice == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                     ),
                                   ),
                                 ),
-                              ),
+                                // No Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                            ],
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          verifiedInvoice = "N";
+                                        });
+                                      }
+
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: verifiedInvoice == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                      ),
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: verifiedInvoice == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
+
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          verifiedInvoice = "A";
+                                        });
+                                      }
+
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: verifiedInvoice == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
+                                        border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                      ),
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "N/A", fontColor: verifiedInvoice == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
+                                    ),
+                                  ),
+                                ),
+
+                              ],
+                            ),
                           ),
                         )
                       ],
@@ -423,77 +432,80 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
 
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              // Yes Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
+                        Directionality(
+                          textDirection: uiDirection,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              children: [
+                                // Yes Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        packingSufficient = "Y";
-                                      });
-                                    }
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          packingSufficient = "Y";
+                                        });
+                                      }
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: packingSufficient == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: packingSufficient == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10),
+                                        ),
+                                        border: Border.all(color: MyColor.primaryColorblue), // Border color
                                       ),
-                                      border: Border.all(color: MyColor.primaryColorblue), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: packingSufficient == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: packingSufficient == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
 
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              // No Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
+                                // No Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        packingSufficient = "N";
-                                      });
-                                    }
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          packingSufficient = "N";
+                                        });
+                                      }
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: packingSufficient == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: packingSufficient == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
+                                        border: Border.all(color:MyColor.primaryColorblue), // Border color
                                       ),
-                                      border: Border.all(color:MyColor.primaryColorblue), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: packingSufficient == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: packingSufficient == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
 
 
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
                         CustomeText(
-                            text: "Explain in remark box (#18)",
+                            text: "${lableModel.explainInRemarkBox} (#18)",
                             fontColor: MyColor.textColorGrey2,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -533,75 +545,78 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
-                        IntrinsicHeight(
-                          child: Row(
-                            children: [
-                              // Yes Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
+                        Directionality(
+                          textDirection: uiDirection,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              children: [
+                                // Yes Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        evidence = "Y";
-                                      });
-                                    }
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          evidence = "Y";
+                                        });
+                                      }
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: evidence == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(10),
-                                        bottomLeft: Radius.circular(10),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: evidence == "Y" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(10),
+                                          bottomLeft: Radius.circular(10),
+                                        ),
+                                        border: Border.all(color: MyColor.primaryColorblue), // Border color
                                       ),
-                                      border: Border.all(color: MyColor.primaryColorblue), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: evidence == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.yes!.toUpperCase()}", fontColor: evidence == "Y" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              // No Option
-                              Expanded(
-                                flex: 1,
-                                child: InkWell(
-                                  onTap: () {
+                                // No Option
+                                Expanded(
+                                  flex: 1,
+                                  child: InkWell(
+                                    onTap: () {
 
-                                    if(widget.pageView == 0){
-                                      setState(() {
-                                        evidence = "N";
-                                      });
-                                    }
+                                      if(widget.pageView == 0){
+                                        setState(() {
+                                          evidence = "N";
+                                        });
+                                      }
 
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: evidence == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                      borderRadius: BorderRadius.only(
-                                        topRight: Radius.circular(10),
-                                        bottomRight: Radius.circular(10),
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: evidence == "N" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(10),
+                                          bottomRight: Radius.circular(10),
+                                        ),
+                                        border: Border.all(color:MyColor.primaryColorblue), // Border color
                                       ),
-                                      border: Border.all(color:MyColor.primaryColorblue), // Border color
-                                    ),
-                                    padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
-                                    child: Center(
-                                        child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: evidence == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      padding: EdgeInsets.symmetric(vertical:16, horizontal: 10),
+                                      child: Center(
+                                          child: CustomeText(text: "${lableModel.no!.toUpperCase()}", fontColor: evidence == "N" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
 
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
                         CustomeText(
-                            text: "Explain in remark box (#18)",
+                            text: "${lableModel.explainInRemarkBox} (#18)",
                             fontColor: MyColor.textColorGrey2,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -632,7 +647,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                       children: [
 
                         CustomeText(
-                            text: "${lableModel.s18} ${lableModel.remarks} (In Case of Irregularity of Live Animal Type of Injury and Reason as Diagnosed by the Veterinarian)",
+                            text: "${lableModel.s18} ${lableModel.remarks} ${lableModel.inCaseLiveAnimal}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -640,8 +655,9 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
 
                         Directionality(
-                          textDirection: uiDirection,
+                          textDirection: textDirection,
                           child: RemarkCustomTextField(
+                            textDirection: textDirection,
                             controller: remarkController,
                             focusNode: remarkFocusNode,
                             onPress: () {},
@@ -722,7 +738,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                   press: () async {
 
                     if (remarkController.text.isEmpty) {
-                      openValidationDialog("Please enter remarks.", remarkFocusNode, lableModel);
+                      openValidationDialog("${lableModel.enterRemarkMsg}", remarkFocusNode, lableModel);
                       return;
                     }
 

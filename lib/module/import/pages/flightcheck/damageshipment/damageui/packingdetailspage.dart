@@ -117,25 +117,28 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
-            CommonUtils.SELECTEDMATERIAL = "";
-            CommonUtils.SELECTEDTYPE = "";
-            selectedMaterialList.clear();
-            selectedTypeList.clear();
-            setState(() {
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel!.clear}",
+            onClear: () {
+              CommonUtils.SELECTEDMATERIAL = "";
+              CommonUtils.SELECTEDTYPE = "";
+              selectedMaterialList.clear();
+              selectedTypeList.clear();
+              setState(() {
 
-            });
+              });
 
 
-          },
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -225,7 +228,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                                 CircleAvatar(
                                                   radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                                   backgroundColor: backgroundColor,
-                                                  child: CustomeText(text: "${material.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                  child: CustomeText(text: materialTitle.substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                                 ),
                                                 SizedBox(
                                                   width: 15,
@@ -334,7 +337,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                                 CircleAvatar(
                                                   radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                                   backgroundColor: backgroundColor,
-                                                  child: CustomeText(text: "${type.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                  child: CustomeText(text: typeTitle.substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                                 ),
                                                 SizedBox(
                                                   width: 15,

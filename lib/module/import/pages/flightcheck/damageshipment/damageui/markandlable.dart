@@ -99,21 +99,24 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel.clear}",
-          onClear: () {
-            CommonUtils.SELECTEDMARKANDLABLE = "";
-            selectedMarkLableList.clear();
-            setState(() {
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel.clear}",
+            onClear: () {
+              CommonUtils.SELECTEDMARKANDLABLE = "";
+              selectedMarkLableList.clear();
+              setState(() {
 
-            });
-          },
+              });
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -184,7 +187,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                                             CircleAvatar(
                                               radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                               backgroundColor: backgroundColor,
-                                              child: CustomeText(text: "${markLable.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                              child: CustomeText(text: markLableTitle.substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                             ),
                                             SizedBox(
                                               width: 15,

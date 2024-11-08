@@ -121,25 +121,28 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager?.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager?.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel!.clear}",
+            onClear: () {
 
-            CommonUtils.SELECTEDSALVAGEACTION = "";
-            selectedsalvageActionList.clear();
-            CommonUtils.SELECTEDDISPOSITION = "";
-            selecteddispositionList.clear();
-            setState(() {
+              CommonUtils.SELECTEDSALVAGEACTION = "";
+              selectedsalvageActionList.clear();
+              CommonUtils.SELECTEDDISPOSITION = "";
+              selecteddispositionList.clear();
+              setState(() {
 
-            });
+              });
 
-          },
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -200,6 +203,11 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                           itemBuilder: (context, index) {
                             ReferenceData21List salvageAction = salvageActionList[index];
 
+                            String salvageActionTitle = (localizations.locale.languageCode == "en")
+                                ? salvageAction.referenceDescription!
+                                : "${lableModel.getValueFromKey("${salvageAction.referenceDataIdentifier}")}";
+
+
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
                             return Column(
@@ -216,12 +224,12 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                             CircleAvatar(
                                               radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                               backgroundColor: backgroundColor,
-                                              child: CustomeText(text: "${salvageAction.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                              child: CustomeText(text: salvageActionTitle.substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                             ),
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: salvageAction.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: salvageActionTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),
@@ -302,6 +310,11 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                           itemBuilder: (context, index) {
                             ReferenceData22List disposition = dispositionList[index];
 
+                            String dispositionTitle = (localizations.locale.languageCode == "en")
+                                ? disposition.referenceDescription!
+                                : "${lableModel.getValueFromKey("${disposition.referenceDataIdentifier}")}";
+
+
                             Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
                             return Column(
@@ -318,12 +331,12 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                                             CircleAvatar(
                                               radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                               backgroundColor: backgroundColor,
-                                              child: CustomeText(text: "${disposition.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                              child: CustomeText(text: dispositionTitle.substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                             ),
                                             SizedBox(
                                               width: 15,
                                             ),
-                                            Flexible(child: CustomeText(text: disposition.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                            Flexible(child: CustomeText(text: dispositionTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                           ],
                                         ),
                                       ),

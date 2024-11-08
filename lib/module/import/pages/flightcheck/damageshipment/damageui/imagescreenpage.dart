@@ -247,34 +247,37 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
     },
     child: Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel!.clear}",
+            onClear: () {
 
-            CommonUtils.SELECTEDWHETHER = "";
-            selectedWhetherList.clear();
+              CommonUtils.SELECTEDWHETHER = "";
+              selectedWhetherList.clear();
 
-            wordController.clear();
-            ghaController.clear();
-            airlineController.clear();
-            securityController.clear();
+              wordController.clear();
+              ghaController.clear();
+              airlineController.clear();
+              securityController.clear();
 
-            images = "";
-            selectImageBase64List.clear();
-            CommonUtils.SELECTEDIMAGELIST.clear();
-            imageCount = "0";
+              images = "";
+              selectImageBase64List.clear();
+              CommonUtils.SELECTEDIMAGELIST.clear();
+              imageCount = "0";
 
-            setState(() {
+              setState(() {
 
-            });
+              });
 
-          },
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -319,8 +322,9 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
 
                         Directionality(
-                          textDirection: uiDirection,
+                          textDirection: textDirection,
                           child: CustomTextField(
+                            textDirection: textDirection,
                             controller: wordController,
                             focusNode: wordFocusNode,
                             onPress: () {},
@@ -328,7 +332,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             hastextcolor: true,
                             animatedLabel: true,
                             needOutlineBorder: true,
-                            labelText: "Exact Wording",
+                            labelText: "${lableModel.exactWording}",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
@@ -396,17 +400,23 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             crossAxisCount: 3, // Number of columns
                             crossAxisSpacing: 5, // Spacing between columns
                             mainAxisSpacing: 0, // Spacing between rows
-                            childAspectRatio: 3, // Adjust based on your desired width/height ratio
+                            childAspectRatio: 2, // Adjust based on your desired width/height ratio
                           ),
                           itemBuilder: (context, index) {
                             ReferenceData17List whetherCondition = whetherConditionList[index];
+
+                            String whetherConditionTitle = (localizations.locale.languageCode == "en")
+                                ? whetherCondition.referenceDescription!
+                                : "${lableModel.getValueFromKey("${whetherCondition.referenceDataIdentifier}")}";
+
+
 
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Flexible(
                                   child: CustomeText(
-                                    text: whetherCondition.referenceDescription!,
+                                    text: whetherConditionTitle,
                                     fontColor: MyColor.textColorGrey3,
                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5,
                                     fontWeight: FontWeight.w500,
@@ -478,8 +488,9 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
 
                         Directionality(
-                          textDirection: uiDirection,
+                          textDirection: textDirection,
                           child: CustomTextField(
+                            textDirection: textDirection,
                             controller: ghaController,
                             focusNode: ghaFocusNode,
                             nextFocus: airlineFocusNode,
@@ -488,7 +499,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             hastextcolor: true,
                             animatedLabel: true,
                             needOutlineBorder: true,
-                            labelText: "GHA Rep.",
+                            labelText: "${lableModel.ghaRep}",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
@@ -513,8 +524,9 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         ),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                         Directionality(
-                          textDirection: uiDirection,
+                          textDirection: textDirection,
                           child: CustomTextField(
+                            textDirection: textDirection,
                             controller: airlineController,
                             focusNode: airlineFocusNode,
                             nextFocus: securityFocusNode,
@@ -523,7 +535,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             hastextcolor: true,
                             animatedLabel: true,
                             needOutlineBorder: true,
-                            labelText: "Airline Rep.",
+                            labelText: "${lableModel.airlineRep}",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
@@ -548,8 +560,9 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         ),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                         Directionality(
-                          textDirection: uiDirection,
+                          textDirection: textDirection,
                           child: CustomTextField(
+                            textDirection: textDirection,
                             controller: securityController,
                             focusNode: securityFocusNode,
                             onPress: () {},
@@ -557,7 +570,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             hastextcolor: true,
                             animatedLabel: true,
                             needOutlineBorder: true,
-                            labelText: "Security Rep.",
+                            labelText: "${lableModel.securityRep}",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {},
                             fillColor:  Colors.grey.shade100,
@@ -679,24 +692,24 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
                       if(isButtonEnabled("awbrecorddamage", widget.buttonRightsList)){
                         if(CommonUtils.REMARKS.isEmpty){
-                          SnackbarUtil.showSnackbar(context, "Please enter remarks.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                          SnackbarUtil.showSnackbar(context, "${lableModel.enterRemarkMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                           widget.curruentCallback(9);
                           return;
                         }
 
 
                         if (ghaController.text.isEmpty) {
-                          openValidationDialog("Please enter GHA Representative.", ghaFocusNode, lableModel);
+                          openValidationDialog("${lableModel.enterGhaRepMsg}", ghaFocusNode, lableModel);
                           return;
                         }
 
                         if (airlineController.text.isEmpty) {
-                          openValidationDialog("Please enter Airline Representative.", airlineFocusNode, lableModel);
+                          openValidationDialog("${lableModel.enterAirlineRepMsg}", airlineFocusNode, lableModel);
                           return;
                         }
 
                         if (securityController.text.isEmpty) {
-                          openValidationDialog("Please enter Security Representative.", airlineFocusNode, lableModel);
+                          openValidationDialog("${lableModel.enterSecurityRepMsg}", airlineFocusNode, lableModel);
                           return;
                         }
 

@@ -1950,6 +1950,8 @@ class LableModel {
         return iDP;
       case 'NME' :
         return nME;
+      case 'NMF' :
+        return nMF;
       case 'NMK' :
         return nMK;
       case 'OPN' :

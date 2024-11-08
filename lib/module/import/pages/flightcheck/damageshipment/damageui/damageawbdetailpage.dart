@@ -187,47 +187,50 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
 
-          },
-          clearText: (widget.pageView == 0) ? "${lableModel.clear}" : "",
-          onClear: () {
-            selectedDiscrepancy = typesOfDiscrepancy[0];
-            documentweightController.clear();
-            actualDocumentweightController.clear();
-            actuleDifferenceWeight = 0.00;
+            },
+            clearText: (widget.pageView == 0) ? "${lableModel.clear}" : "",
+            onClear: () {
+              selectedDiscrepancy = typesOfDiscrepancy[0];
+              documentweightController.clear();
+              actualDocumentweightController.clear();
+              actuleDifferenceWeight = 0.00;
 
-            /*nopController.text = "${widget.damageNop}";
-            weightController.text = widget.damageWt.toStringAsFixed(2);
+              /*nopController.text = "${widget.damageNop}";
+              weightController.text = widget.damageWt.toStringAsFixed(2);
 
-            differenceNpx = npx - widget.damageNop;
-            differenceWeight = weight - widget.damageWt;*/
+              differenceNpx = npx - widget.damageNop;
+              differenceWeight = weight - widget.damageWt;*/
 
-            totalDamageNop = (int.parse("${widget.damageNop}") + int.parse("${widget.enterDamageNop}"));
-            totalDamageWt = (double.parse("${widget.damageWt}") + double.parse("${widget.enterDamageWt}"));
+              totalDamageNop = (int.parse("${widget.damageNop}") + int.parse("${widget.enterDamageNop}"));
+              totalDamageWt = (double.parse("${widget.damageWt}") + double.parse("${widget.enterDamageWt}"));
 
 
-            nopController.text = totalDamageNop.toString();
-            weightController.text = totalDamageWt.toStringAsFixed(2);
+              nopController.text = totalDamageNop.toString();
+              weightController.text = totalDamageWt.toStringAsFixed(2);
 
-            differenceNpx = npx - totalDamageNop;
-            differenceWeight = weight - totalDamageWt;
+              differenceNpx = npx - totalDamageNop;
+              differenceWeight = weight - totalDamageWt;
 
-            if(widget.pageView == 1){
-              documentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtPerDocument!.toStringAsFixed(2);
-              actualDocumentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtActualCheck!.toStringAsFixed(2);
-              actuleDifferenceWeight = widget.damageDetailsModel!.damageDetail!.indWtDifference!;
-            }
+              if(widget.pageView == 1){
+                documentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtPerDocument!.toStringAsFixed(2);
+                actualDocumentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtActualCheck!.toStringAsFixed(2);
+                actuleDifferenceWeight = widget.damageDetailsModel!.damageDetail!.indWtDifference!;
+              }
 
-            setState(() {
+              setState(() {
 
-            });
-          },
+              });
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -526,8 +529,9 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             Expanded(
                               flex:1,
                               child: Directionality(
-                                textDirection: uiDirection,
+                                textDirection: textDirection,
                                 child: CustomTextField(
+                                  textDirection: textDirection,
                                   controller: nopController,
                                   focusNode: nopFocusNode,
                                   onPress: () {},
@@ -618,8 +622,9 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             Expanded(
                               flex: 1,
                               child: Directionality(
-                                textDirection: uiDirection,
+                                textDirection: textDirection,
                                 child: CustomTextField(
+                                  textDirection: textDirection,
                                   controller: weightController,
                                   focusNode: weightFocusNode,
                                   nextFocus: documentweightFocusNode,
@@ -759,8 +764,9 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
 
                         Directionality(
-                          textDirection: uiDirection,
+                          textDirection: textDirection,
                           child: CustomTextField(
+                            textDirection: textDirection,
                             controller: documentweightController,
                             focusNode: documentweightFocusNode,
                             nextFocus: actualDocumentweightFocusNode,
@@ -810,8 +816,9 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
 
                         Directionality(
-                            textDirection: uiDirection,
+                            textDirection: textDirection,
                             child: CustomTextField(
+                              textDirection: textDirection,
                               controller: actualDocumentweightController,
                               focusNode: actualDocumentweightFocusNode,
                               onPress: () {},

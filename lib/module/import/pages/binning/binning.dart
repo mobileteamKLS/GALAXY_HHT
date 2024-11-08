@@ -346,7 +346,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Directionality(
-                                                textDirection: uiDirection,
+                                                textDirection: textDirection,
                                                 child: Row(
                                                   children: [
                                                     SvgPicture.asset(info,
@@ -368,8 +368,9 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                   height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                               // text manifest and recived in pices text counter
                                               Directionality(
-                                                textDirection: uiDirection,
+                                                textDirection: textDirection,
                                                 child: CustomTextField(
+                                                  textDirection: textDirection,
                                                   controller: groupIdController,
                                                   focusNode: groupIdFocusNode,
                                                   onPress: () {},
@@ -399,151 +400,157 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                 ),
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                                              IntrinsicHeight(
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Column(
-                                                        children: [
-                                                          CustomeEditTextWithBorder(
-                                                            lablekey: "LOCATION",
-                                                            textDirection: textDirection,
-                                                            controller: locationController,
-                                                            focusNode: locationFocusNode,
-                                                            hasIcon: false,
-                                                            hastextcolor: true,
-                                                            animatedLabel: true,
-                                                            needOutlineBorder: true,
-                                                            labelText: "${lableModel.location} *",
-                                                            readOnly: false,
-                                                            maxLength: 15,
-                                                            isShowSuffixIcon: _isvalidateLocation,
-                                                            onChanged: (value, validate) {
-                                                              setState(() {
-                                                                _isvalidateLocation = value.isEmpty;
-                                                              });
-                                                            },
-                                                            fillColor: Colors.grey.shade100,
-                                                            textInputType: TextInputType.text,
-                                                            inputAction: TextInputAction.next,
-                                                            hintTextcolor: MyColor.colorBlack,
-                                                            verticalPadding: 0,
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                            validator: (value) {
-                                                              if (value!.isEmpty) {
-                                                                return "Please fill out this field";
-                                                              } else {
-                                                                return null;
-                                                              }
-                                                            },
-                                                          ),
-                                                          SizedBox(height:  SizeConfig.blockSizeVertical,),
-                                                          RoundedButtonBlue(
-                                                            text: "${lableModel.cancel}",
-                                                            press: () async {
-                                                              _onWillPop();
-                                                            },
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                                    Expanded(
-                                                      flex:1,
-                                                      child: Container(
-                                                        height: double.infinity,
-                                                        child: RoundedButtonBlue(
-                                                          text: "Move",
-                                                          press: () async {
-                                                            // Add your cancel action here
-                                                          },
+                                              Directionality(
+                                                textDirection: textDirection,
+                                                child: IntrinsicHeight(
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Column(
+                                                          children: [
+                                                            CustomeEditTextWithBorder(
+                                                              lablekey: "LOCATION",
+                                                              textDirection: textDirection,
+                                                              controller: locationController,
+                                                              focusNode: locationFocusNode,
+                                                              hasIcon: false,
+                                                              hastextcolor: true,
+                                                              animatedLabel: true,
+                                                              needOutlineBorder: true,
+                                                              labelText: "${lableModel.location} *",
+                                                              readOnly: false,
+                                                              maxLength: 15,
+                                                              isShowSuffixIcon: _isvalidateLocation,
+                                                              onChanged: (value, validate) {
+                                                                setState(() {
+                                                                  _isvalidateLocation = value.isEmpty;
+                                                                });
+                                                              },
+                                                              fillColor: Colors.grey.shade100,
+                                                              textInputType: TextInputType.text,
+                                                              inputAction: TextInputAction.next,
+                                                              hintTextcolor: MyColor.colorBlack,
+                                                              verticalPadding: 0,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                              validator: (value) {
+                                                                if (value!.isEmpty) {
+                                                                  return "Please fill out this field";
+                                                                } else {
+                                                                  return null;
+                                                                }
+                                                              },
+                                                            ),
+                                                            SizedBox(height:  SizeConfig.blockSizeVertical,),
+                                                            RoundedButtonBlue(
+                                                              text: "${lableModel.cancel}",
+                                                              press: () async {
+                                                                _onWillPop();
+                                                              },
+                                                            ),
+                                                          ],
                                                         ),
                                                       ),
-                                                    ),
-                                                  ],
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                                      Expanded(
+                                                        flex:1,
+                                                        child: Container(
+                                                          height: double.infinity,
+                                                          child: RoundedButtonBlue(
+                                                            text: "Move",
+                                                            press: () async {
+                                                              // Add your cancel action here
+                                                            },
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                         SizedBox(height: SizeConfig.blockSizeVertical),
-                                        Container(
-                                          width: double.infinity,
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: MyColor.colorWhite,
-                                            borderRadius: BorderRadius.circular(8),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: MyColor.colorBlack.withOpacity(0.09),
-                                                spreadRadius: 2,
-                                                blurRadius: 15,
-                                                offset: Offset(0, 3), // changes position of shadow
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
+                                        Directionality(
+                                          textDirection: textDirection,
+                                          child: Container(
+                                            width: double.infinity,
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: MyColor.colorWhite,
+                                              borderRadius: BorderRadius.circular(8),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 15,
+                                                  offset: Offset(0, 3), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
 
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex :1,
-                                                    child: CustomeText(
-                                                        text: "Currunt Location : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w400,
-                                                        textAlign: TextAlign.start),
-                                                  ),
-                                                  Expanded(
-                                                    flex:1,
-                                                    child: Row(
-                                                      children: [
-                                                        SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                        SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                        CustomeText(
-                                                          text: (binningDetailListModel != null) ? binningDetailListModel!.binningSummary!.currentLocationCode! : "-",
-                                                          fontColor: MyColor.colorBlack,
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex :1,
+                                                      child: CustomeText(
+                                                          text: "Currunt Location : ",
+                                                          fontColor: MyColor.textColorGrey2,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                          fontWeight: FontWeight.w600,
-                                                          textAlign: TextAlign.start,
-                                                        ),
-                                                      ],
+                                                          fontWeight: FontWeight.w400,
+                                                          textAlign: TextAlign.start),
                                                     ),
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: CustomeText(
-                                                        text: "Suggestion : ",
-                                                        fontColor: MyColor.textColorGrey3,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: CustomeText(
-                                                        text: (binningDetailListModel != null) ? (binningDetailListModel!.binningSummary!.suggestion!.isNotEmpty) ? binningDetailListModel!.binningSummary!.suggestion! : "-" : "-",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start),
-                                                  )
-                                                ],
-                                              )
+                                                    Expanded(
+                                                      flex:1,
+                                                      child: Row(
+                                                        children: [
+                                                          SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                          SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                          CustomeText(
+                                                            text: (binningDetailListModel != null) ? binningDetailListModel!.binningSummary!.currentLocationCode! : "-",
+                                                            fontColor: MyColor.colorBlack,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                            fontWeight: FontWeight.w600,
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: SizeConfig.blockSizeVertical),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: CustomeText(
+                                                          text: "Suggestion : ",
+                                                          fontColor: MyColor.textColorGrey3,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.start),
+                                                    ),
+                                                    Expanded(
+                                                      flex: 1,
+                                                      child: CustomeText(
+                                                          text: (binningDetailListModel != null) ? (binningDetailListModel!.binningSummary!.suggestion!.isNotEmpty) ? binningDetailListModel!.binningSummary!.suggestion! : "-" : "-",
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.start),
+                                                    )
+                                                  ],
+                                                )
 
-                                            ],
+                                              ],
+                                            ),
                                           ),
                                         ),
                                         SizedBox(height: SizeConfig.blockSizeVertical),

@@ -125,17 +125,20 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
-            clearAllTextFields();
-          },
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel!.clear}",
+            onClear: () {
+              clearAllTextFields();
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -183,11 +186,17 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                         TextEditingController controller = CommonUtils.CONTAINERCONTROLLER[index];
                         FocusNode focusNode = focusNodes[index];
 
+
+                        String contentTitle = (localizations.locale.languageCode == "en")
+                            ? content.referenceDescription!
+                            : "${lableModel.getValueFromKey("${content.referenceDataIdentifier}")}";
+
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: Directionality(
-                            textDirection: uiDirection,
+                            textDirection: textDirection,
                             child: CustomTextField(
+                              textDirection: textDirection,
                               controller: controller,
                               focusNode: focusNode,
                               onPress: () {},
@@ -196,7 +205,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                               hastextcolor: true,
                               animatedLabel: true,
                               needOutlineBorder: true,
-                              labelText: "${content.referenceDescription}",
+                              labelText: contentTitle,
                               readOnly: (widget.pageView == 0) ? false : true,
                               onChanged: (value) {
                                 updateSelectedContainersList(index, value);

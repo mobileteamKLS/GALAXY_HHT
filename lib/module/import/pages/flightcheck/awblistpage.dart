@@ -421,7 +421,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                       children: [
 
                                                         Directionality(
-                                                          textDirection: uiDirection,
+                                                          textDirection: textDirection,
                                                           child: Row(
                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                             children: [
@@ -443,7 +443,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                               ),
 
 
-                                                              (awbModel != null) ? Container(
+                                                              (awbModel != null)
+                                                                  ? Container(
                                                                 height : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
                                                                 width : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
                                                                 child: DashedCircularProgressBar.aspectRatio(
@@ -468,7 +469,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                 ),
-                                                              ) : SizedBox(),
+                                                              )
+                                                                  : SizedBox(),
 
 
                                                             ],
@@ -1732,7 +1734,44 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                       ],)
                                                                                   ],
                                                                                 ),
-                                                                                Positioned(
+                                                                                (localizations.locale.languageCode == CommonUtils.ARABICCULTURECODE)
+                                                                                    ? Positioned(
+                                                                                  left: 0,
+                                                                                  top: 0,
+                                                                                  child: Column(
+                                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                    children: [
+                                                                                      Container(
+                                                                                        height : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                                                                                        width : SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
+                                                                                        child: DashedCircularProgressBar.aspectRatio(
+                                                                                          aspectRatio: 2.1, // width ÷ height
+                                                                                          valueNotifier: _valueNotifier1,
+                                                                                          progress: aWBItem.progress!.toDouble(),
+                                                                                          maxProgress: 100,
+                                                                                          corners: StrokeCap.butt,
+                                                                                          foregroundColor: (aWBItem.progress!.toDouble() == 100) ? MyColor.colorgreenProgress  : MyColor.colorOrangeProgress,
+                                                                                          backgroundColor: const Color(0xffF2F4F8),
+                                                                                          foregroundStrokeWidth: 5,
+                                                                                          backgroundStrokeWidth: 5,
+                                                                                          animation: true,
+                                                                                          child: Center(
+                                                                                            child: ValueListenableBuilder(
+                                                                                              valueListenable: _valueNotifier1,
+                                                                                              builder: (_, double value, __) {
+                                                                                                return CustomeText(text: '${value.toInt()}%', fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w500, textAlign: TextAlign.center);
+                                                                                              },
+                                                                                            ),
+                                                                                          ),
+
+
+                                                                                        ),
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                )
+                                                                                    : Positioned(
                                                                                   right: 0,
                                                                                   top: 0,
                                                                                   child: Column(

@@ -124,17 +124,20 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
-            clearAllTextFields();
-          },
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel!.clear}",
+            onClear: () {
+              clearAllTextFields();
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -208,8 +211,9 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                             return Padding(
                               padding: const EdgeInsets.symmetric(vertical: 8),
                               child: Directionality(
-                                textDirection: uiDirection,
+                                textDirection: textDirection,
                                 child: CustomTextField(
+                                  textDirection: textDirection,
                                   controller: controller,
                                   focusNode: focusNode,
                                   onPress: () {
@@ -220,7 +224,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                                   hastextcolor: true,
                                   animatedLabel: true,
                                   needOutlineBorder: true,
-                                  labelText: "${content.referenceDescription}",
+                                  labelText: contentTitle,
                                   readOnly: (widget.pageView == 0) ? false : true,
                                   onChanged: (value) {
                                     updateSelectedContentList(index, value);

@@ -103,21 +103,24 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
 
     return Column(
       children: [
-        HeaderWidget(
-          titleTextColor: MyColor.colorBlack,
-          title: "${lableModel!.damageAndSave}",
-          onBack: () {
-            widget.inactivityTimerManager!.stopTimer();
-            Navigator.pop(context, "Done");
-          },
-          clearText: "${lableModel!.clear}",
-          onClear: () {
-            CommonUtils.SELECTEDDAMAGEDISCOVER = "";
-            selecteddamageDiscoveredList.clear();
-            setState(() {
+        Directionality(
+          textDirection: uiDirection,
+          child: HeaderWidget(
+            titleTextColor: MyColor.colorBlack,
+            title: "${lableModel!.damageAndSave}",
+            onBack: () {
+              widget.inactivityTimerManager!.stopTimer();
+              Navigator.pop(context, "Done");
+            },
+            clearText: "${lableModel.clear}",
+            onClear: () {
+              CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+              selecteddamageDiscoveredList.clear();
+              setState(() {
 
-            });
-          },
+              });
+            },
+          ),
         ),
         SizedBox(height: SizeConfig.blockSizeVertical),
         Expanded(
@@ -166,6 +169,10 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                       itemBuilder: (context, index) {
                         ReferenceData15List damageDiscovered = damageDiscoveredList[index];
 
+                        String damageDiscoveredTitle = (localizations.locale.languageCode == "en")
+                            ? damageDiscovered.referenceDescription!
+                            : "${lableModel.getValueFromKey("${damageDiscovered.referenceDataIdentifier}")}";
+
                         Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
                         return Column(
@@ -182,12 +189,12 @@ class _DamageDiscoveredPageState extends State<DamageDiscoveredPage> {
                                         CircleAvatar(
                                           radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                           backgroundColor: backgroundColor,
-                                          child: CustomeText(text: "${damageDiscovered.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                          child: CustomeText(text: damageDiscoveredTitle.substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                         ),
                                         SizedBox(
                                           width: 15,
                                         ),
-                                        Flexible(child: CustomeText(text: damageDiscovered.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                        Flexible(child: CustomeText(text: damageDiscoveredTitle, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                       ],
                                     ),
                                   ),

@@ -227,25 +227,28 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                         children: [
                           Padding(
                             padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
-                            child: HeaderWidget(
-                              titleTextColor: MyColor.colorBlack,
-                              title: "${lableModel!.checkAWb}",
-                              onBack: () {
-                                _onWillPop();
-                              },
-                              clearText: lableModel.clear,
-                              onClear: () {
-                                piecesController.clear();
-                                weightController.clear();
-                                groupIdController.clear();
+                            child: Directionality(
+                              textDirection: uiDirection,
+                              child: HeaderWidget(
+                                titleTextColor: MyColor.colorBlack,
+                                title: "${lableModel!.checkAWb}",
+                                onBack: () {
+                                  _onWillPop();
+                                },
+                                clearText: lableModel.clear,
+                                onClear: () {
+                                  piecesController.clear();
+                                  weightController.clear();
+                                  groupIdController.clear();
 
-                                weightCount = 0.00;
-                                weightController.text = "${weightCount.toStringAsFixed(2)}";
+                                  weightCount = 0.00;
+                                  weightController.text = "${weightCount.toStringAsFixed(2)}";
 
-                                WidgetsBinding.instance.addPostFrameCallback((_) {
-                                  FocusScope.of(context).requestFocus(piecesFocusNode);
-                                });
-                              },
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(piecesFocusNode);
+                                  });
+                                },
+                              ),
                             ),
                           ),
 
@@ -329,7 +332,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Directionality(
-                                              textDirection: uiDirection,
+                                              textDirection: textDirection,
                                               child: Row(
                                                 children: [
                                                   SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
@@ -350,8 +353,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 Expanded(
                                                   flex:1,
                                                   child: Directionality(
-                                                    textDirection: uiDirection,
+                                                    textDirection: textDirection,
                                                     child: CustomTextField(
+                                                      textDirection: textDirection,
                                                       controller: piecesController,
                                                       focusNode: piecesFocusNode,
                                                       nextFocus: groupIdFocusNode,
@@ -400,8 +404,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 Expanded(
                                                   flex:1,
                                                   child: Directionality(
-                                                    textDirection: uiDirection,
+                                                    textDirection: textDirection,
                                                     child: CustomTextField(
+                                                      textDirection: textDirection,
                                                       controller: weightController,
                                                       focusNode: weightFocusNode,
                                                       onPress: () {},
@@ -443,8 +448,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                             // text manifest and recived in pices text counter
                                             Directionality(
-                                              textDirection: uiDirection,
+                                              textDirection: textDirection,
                                               child: CustomTextField(
+                                                textDirection: textDirection,
                                                 controller: groupIdController,
                                                 focusNode: groupIdFocusNode,
                                                 onPress: () {},
