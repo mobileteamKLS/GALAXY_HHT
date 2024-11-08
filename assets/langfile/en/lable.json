@@ -217,7 +217,7 @@
     "groupIdCharSizeMsg" : "Group ID must be exactly {0} characters long.",
 
     "breakdown" : "Breakdown",
-    "breakdownMsgUld" : "Are you sure you want to complete ULD {0} breakdown {1}?",
+    "breakdownMsgUld" : "Are you sure you want to complete ULD {0} breakdown ?",
     "breakdownMsgBulk" : "Are you sure you want to complete {0} breakdown ?",
     "noShipmentFound" : "No shipment found.",
     "invalidAWBNo" : "Invalid AWB No.",

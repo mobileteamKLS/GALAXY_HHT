@@ -163,6 +163,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
   }
 
   Future<void> _handleInactivityTimeout() async {
+    groupIdFocusNode.unfocus();
     bool? activateORNot = await DialogUtils.showingActivateTimerDialog(
         context, _user!.userProfile!.userId!, _splashDefaultData!.companyCode!);
     if (activateORNot == true) {
@@ -290,12 +291,21 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                     SnackbarUtil.showSnackbar(context, state.binningDetailListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
                                     binningDetailListModel = null;
+
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
                                     setState(() {
 
                                     });
                                   }else{
 
                                     binningDetailListModel = state.binningDetailListModel;
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(locationFocusNode);
+                                    },
+                                    );
                                     setState(() {
 
                                     });
@@ -369,7 +379,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                   needOutlineBorder: true,
                                                   labelText: "${lableModel.groupId} *",
                                                   readOnly: false,
-                                                  maxLength: 14,
+                                                  maxLength: 40,
                                                   onChanged: (value) {},
                                                   fillColor: Colors.grey.shade100,
                                                   textInputType: TextInputType.text,
