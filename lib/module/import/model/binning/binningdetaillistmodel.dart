@@ -46,7 +46,7 @@ class BinningDetailList {
   String? hAWBNo;
   int? nOP;
   double? weight;
-  int? volume;
+  double? volume;
   String? nOG;
   String? sHCCode;
   String? commodity;

@@ -340,8 +340,7 @@ class _FlightCheckState extends State<FlightCheck>
 
       _tabController.animateTo(0);
       _pageIndex = 0;
-      WidgetsBinding.instance.addPostFrameCallback(
-            (_) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(locationFocusNode);
         },
       );

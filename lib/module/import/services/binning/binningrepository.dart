@@ -62,7 +62,7 @@ class BinningRepository{
 
 
       Response response = await api.sendRequest.get(Apilist.binningDetailListApi,
-          data: payload
+          queryParameters: payload
       );
 
       if (response.statusCode == 200) {
