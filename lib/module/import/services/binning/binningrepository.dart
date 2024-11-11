@@ -42,6 +42,50 @@ class BinningRepository{
   SavedPrefrence savedPrefrence = SavedPrefrence();
 
 
+  // call binning locationValidate api call
+  Future<LocationValidationModel> locationValidate(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
+
+    try {
+
+      var payload = {
+        'LocationCode' : locationCode,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "ProcessCode" : processCode,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('locationValidationModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.validateLocationsApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        LocationValidationModel locationValidationModel = LocationValidationModel.fromJson(response.data);
+        return locationValidationModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
   // page load api
   Future<BinningPageLoadDefaultModel> getPageLoadDefault(int menuId, int userId, int companyCode) async {
 
@@ -125,6 +169,55 @@ class BinningRepository{
       }
     }
   }
+
+  // binning detail list api
+  Future<BinningDetailListModel> getBinningDetailSave(String groupId, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "GroupId": groupId,
+        "AWBNo": "12586868681",
+        "HouseNo": "HAWB 4",
+        "IGMNo": "~11191",
+        "LocCode": "EH002",
+        "LocId": 3601,
+        "NOP": 5,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('BinningDetailListModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.binningDetailListApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        BinningDetailListModel binningDetailListModel = BinningDetailListModel.fromJson(response.data);
+        return binningDetailListModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
 
 }

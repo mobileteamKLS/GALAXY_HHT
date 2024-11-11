@@ -86,7 +86,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
-
+  bool _isLocationSearchBtnEnable = false;
   @override
   void initState() {
     super.initState();
@@ -102,6 +102,17 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
       end: Colors.transparent,
     ).animate(_blinkController);
 
+    locationFocusNode.addListener(() {
+      if (!locationFocusNode.hasFocus) {
+        leaveLocationFocus();
+      }
+    });
+
+
+    locationController.addListener(_validateLocationSearchBtn);
+
+
+
     groupIdFocusNode.addListener(() {
       if (!groupIdFocusNode.hasFocus && !isBackPressed) {
         leaveGroupIdFocus();
@@ -111,6 +122,26 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
 
   }
+
+
+  Future<void> leaveLocationFocus() async {
+    if (locationController.text.isNotEmpty) {
+      //call location validation api
+      await context.read<BinningCubit>().getValidateLocation(
+          locationController.text,
+          _user!.userProfile!.userIdentity!,
+          _splashDefaultData!.companyCode!,
+          widget.menuId,
+          "a");
+    }
+  }
+
+  void _validateLocationSearchBtn() {
+    setState(() {
+      _isLocationSearchBtnEnable = locationController.text.isNotEmpty;
+    });
+  }
+
 
   Future<void> leaveGroupIdFocus() async {
 
@@ -140,6 +171,10 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
     }
   }
 
+
+
+
+
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
         context, message, widget.lableModel!);
@@ -156,6 +191,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
     super.dispose();
     //all controller and focus node dispose
     groupIdFocusNode.dispose();
+    locationController.dispose();
+    locationFocusNode.dispose();
     inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
   }
 
@@ -315,6 +352,41 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
+                                else if (state is ValidateLocationSuccessState) {
+                                  if (state.validateLocationModel.status == "E") {
+                                    setState(() {
+                                      _isvalidateLocation = false;
+                                    });
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.validateLocationModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(locationFocusNode);
+                                    },
+                                    );
+                                  } else {
+                                    // DialogUtils.hideLoadingDialog(context);
+                                    _isvalidateLocation = true;
+                                    setState(() {});
+                                    /*WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(igmNoFocusNode);
+                                    },
+                                    );*/
+                                  }
+                                }
+                                else if (state is ValidateLocationFailureState) {
+                                  // validate location failure
+                                  DialogUtils.hideLoadingDialog(context);
+                                  _isvalidateLocation = false;
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+
                                 else if(state is PageLoadDefaultSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.binningPageLoadDefaultModel.status == "E"){
@@ -472,8 +544,11 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                               isShowSuffixIcon: _isvalidateLocation,
                                                               onChanged: (value, validate) {
                                                                 setState(() {
-                                                                  _isvalidateLocation = value.isEmpty;
+                                                                  _isvalidateLocation = false;
                                                                 });
+                                                                if (value.toString().isEmpty) {
+                                                                  _isvalidateLocation = false;
+                                                                }
                                                               },
                                                               fillColor: Colors.grey.shade100,
                                                               textInputType: TextInputType.text,

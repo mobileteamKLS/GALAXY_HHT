@@ -1,12 +1,24 @@
 
 import '../../../model/binning/binningdetaillistmodel.dart';
 import '../../../model/binning/binningpageloaddefault.dart';
+import '../../../model/uldacceptance/locationvalidationmodel.dart';
 
 class BinningState {}
 
 
 class MainInitialState extends BinningState {}
 class MainLoadingState extends BinningState {}
+
+class ValidateLocationSuccessState extends BinningState {
+  final LocationValidationModel validateLocationModel;
+  ValidateLocationSuccessState(this.validateLocationModel);
+}
+
+class ValidateLocationFailureState extends BinningState {
+  final String error;
+  ValidateLocationFailureState(this.error);
+}
+
 
 class PageLoadDefaultSuccessState extends BinningState{
   final BinningPageLoadDefaultModel binningPageLoadDefaultModel;

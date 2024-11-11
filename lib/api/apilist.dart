@@ -60,6 +60,7 @@ class Apilist{
   // Binning list details
   static String getBinningPageLoadApi = "/Binning/GetPageLoad";
   static String binningDetailListApi = "/Binning/GetDetails";
+  static String binningSaveApi = "/Binning/Save";
 
 
 }

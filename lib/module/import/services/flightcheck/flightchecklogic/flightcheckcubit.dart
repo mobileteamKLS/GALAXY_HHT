@@ -14,7 +14,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
 
 // getValidateLocation api call repo
   Future<void> getValidateLocation(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
-    // emit(MainLoadingState());
+    emit(MainLoadingState());
     try {
       final validateLocationModelData = await flightCheckRepository.locationValidate(locationCode, userId, companyCode, menuId, processCode);
       emit(ValidateLocationSuccessState(validateLocationModelData));
