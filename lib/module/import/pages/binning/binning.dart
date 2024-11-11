@@ -103,7 +103,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
     ).animate(_blinkController);
 
     locationFocusNode.addListener(() {
-      if (!locationFocusNode.hasFocus) {
+      if (!locationFocusNode.hasFocus && !isBackPressed) {
         leaveLocationFocus();
       }
     });
@@ -155,7 +155,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
         return;
       }
 
-      //call location validation api
+      // call binning details api
       await context.read<BinningCubit>().getBinningDetailListApi(
           groupIdController.text,
           _user!.userProfile!.userIdentity!,
@@ -345,14 +345,15 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
                             // start api responcer
                             BlocListener<BinningCubit, BinningState>(
-                              listener: (context, state) {
+                              listener: (context, state) async {
                                 if (state is MainInitialState) {
                                 }
                                 else if (state is MainLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
-                                else if (state is ValidateLocationSuccessState) {
+                                else if (state is BinningValidateLocationSuccessState) {
+                                  DialogUtils.hideLoadingDialog(context);
                                   if (state.validateLocationModel.status == "E") {
                                     setState(() {
                                       _isvalidateLocation = false;
@@ -378,7 +379,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                     );*/
                                   }
                                 }
-                                else if (state is ValidateLocationFailureState) {
+                                else if (state is BinningValidateLocationFailureState) {
                                   // validate location failure
                                   DialogUtils.hideLoadingDialog(context);
                                   _isvalidateLocation = false;
@@ -387,7 +388,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                       context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
 
-                                else if(state is PageLoadDefaultSuccessState){
+                                else if(state is BinningPageLoadDefaultSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.binningPageLoadDefaultModel.status == "E"){
                                     _onWillPop();
@@ -401,7 +402,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                     },
                                     );
                                   }
-                                }else if (state is PageLoadDefaultFailureState){
+                                }
+                                else if (state is BinningPageLoadDefaultFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   _onWillPop();
                                 }
@@ -432,7 +434,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                   }
 
 
-                                }else if (state is BinningDetailListFailureState){
+                                }
+                                else if (state is BinningDetailListFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   Vibration.vibrate(duration: 500);
@@ -440,6 +443,32 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
                                   });
                                 }
+                                else if (state is BinningSaveSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+
+                                  if(state.binningSaveModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.binningSaveModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.binningSaveModel.statusMessage!,
+                                        MyColor.colorGreen,
+                                        icon: Icons.done);
+
+                                    await context.read<BinningCubit>().getBinningDetailListApi(
+                                        groupIdController.text,
+                                        _user!.userProfile!.userIdentity!,
+                                        _splashDefaultData!.companyCode!,
+                                        widget.menuId);
+                                  }
+
+                                }
+
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -585,6 +614,46 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                             text: "Move",
                                                             press: () async {
                                                               // Add your cancel action here
+
+                                                              /*if(widget.groupIDRequires == "Y"){
+                                                                if (groupIdController.text.isEmpty) {
+                                                                  openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                                  return;
+                                                                }
+
+                                                                // Check if the groupId length is between 14 (min and max 14 characters)
+
+
+                                                              }*/
+
+                                                              if (groupIdController.text.isEmpty) {
+                                                                openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                                return;
+                                                              }
+
+                                                              if (groupIdController.text.length != groupIDCharSize) {
+                                                                openValidationDialog(CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIDCharSize"]), groupIdFocusNode);
+                                                                return;
+                                                              }
+
+                                                              if (locationController.text.isEmpty) {
+                                                                openValidationDialog("${lableModel.enterLocationMsg}", locationFocusNode);
+                                                                return;
+                                                              }
+
+
+
+                                                              context.read<BinningCubit>().getBinningSaveApi(groupIdController.text,
+                                                                  binningDetailListModel!.binningDetailList![0].aWBNo!.replaceAll(" ", ""),
+                                                                  binningDetailListModel!.binningDetailList![0].hAWBNo!,
+                                                                  11191,
+                                                                  0,
+                                                                  locationController.text,
+                                                                  binningDetailListModel!.binningSummary!.currentLocationId!,
+                                                                  binningDetailListModel!.binningDetailList![0].nOP!,
+                                                                  _user!.userProfile!.userIdentity!,
+                                                                  _splashDefaultData!.companyCode!,
+                                                                  widget.menuId);
                                                             },
                                                           ),
                                                         ),

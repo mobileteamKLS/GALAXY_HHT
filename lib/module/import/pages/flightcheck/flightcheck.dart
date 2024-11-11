@@ -519,6 +519,7 @@ class _FlightCheckState extends State<FlightCheck>
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
                                 else if (state is ValidateLocationSuccessState) {
+                                  DialogUtils.hideLoadingDialog(context);
                                   if (state.validateLocationModel.status == "E") {
                                     setState(() {
                                       _isvalidateLocation = false;

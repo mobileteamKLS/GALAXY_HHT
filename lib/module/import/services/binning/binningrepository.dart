@@ -9,6 +9,7 @@ import 'package:galaxy/utils/commonutils.dart';
 import 'package:path_provider/path_provider.dart';
 
 import '../../model/binning/binningpageloaddefault.dart';
+import '../../model/binning/binningsavemodel.dart';
 import '../../model/flightcheck/addMailModel.dart';
 import '../../model/flightcheck/airportcitymodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
@@ -170,19 +171,19 @@ class BinningRepository{
     }
   }
 
-  // binning detail list api
-  Future<BinningDetailListModel> getBinningDetailSave(String groupId, int userId, int companyCode, int menuId) async {
+  // binning save api
+  Future<BinningSaveModel> getBinningDetailSave(String groupId, String awbNo, String houseNo, int flightSeqNo, int igmNo, String locationCode, int locId, int nop, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
         "GroupId": groupId,
-        "AWBNo": "12586868681",
-        "HouseNo": "HAWB 4",
-        "IGMNo": "~11191",
-        "LocCode": "EH002",
-        "LocId": 3601,
-        "NOP": 5,
+        "AWBNo": awbNo,
+        "HouseNo": houseNo,
+        "IGMNo": "$flightSeqNo~$igmNo",
+        "LocCode": locationCode,
+        "LocId": locId,
+        "NOP": nop,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -191,16 +192,16 @@ class BinningRepository{
       };
 
       // Print payload for debugging
-      print('BinningDetailListModel: $payload --- $payload');
+      print('binningSaveModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.binningDetailListApi,
+      Response response = await api.sendRequest.post(Apilist.binningSaveApi,
           data: payload
       );
 
       if (response.statusCode == 200) {
-        BinningDetailListModel binningDetailListModel = BinningDetailListModel.fromJson(response.data);
-        return binningDetailListModel;
+        BinningSaveModel binningSaveModel = BinningSaveModel.fromJson(response.data);
+        return binningSaveModel;
       } else {
         // Handle non-200 response
         throw DioException(

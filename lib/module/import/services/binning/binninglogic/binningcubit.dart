@@ -13,20 +13,20 @@ class BinningCubit extends Cubit<BinningState>{
     emit(MainLoadingState());
     try {
       final pageLoadDefaultModelData = await binningRepository.getPageLoadDefault(menuId, userId, companyCode);
-      emit(PageLoadDefaultSuccessState(pageLoadDefaultModelData));
+      emit(BinningPageLoadDefaultSuccessState(pageLoadDefaultModelData));
     } catch (e) {
-      emit(PageLoadDefaultFailureState(e.toString()));
+      emit(BinningPageLoadDefaultFailureState(e.toString()));
     }
   }
 
   // getValidateLocation api call repo
   Future<void> getValidateLocation(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
-    // emit(MainLoadingState());
+     emit(MainLoadingState());
     try {
       final validateLocationModelData = await binningRepository.locationValidate(locationCode, userId, companyCode, menuId, processCode);
-      emit(ValidateLocationSuccessState(validateLocationModelData));
+      emit(BinningValidateLocationSuccessState(validateLocationModelData));
     } catch (e) {
-      emit(ValidateLocationFailureState(e.toString()));
+      emit(BinningValidateLocationFailureState(e.toString()));
     }
   }
 
@@ -39,6 +39,17 @@ class BinningCubit extends Cubit<BinningState>{
       emit(BinningDetailListSuccessState(binningDetailListModel));
     } catch (e) {
       emit(BinningDetailListFailureState(e.toString()));
+    }
+  }
+
+  // binning api call repo
+  Future<void> getBinningSaveApi(String groupId, String awbNo, String houseNo, int flightSeqNo, int igmNo, String locationCode, int locId, int nop, int userId, int companyCode, int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final binningDetailListModel = await binningRepository.getBinningDetailSave(groupId, awbNo, houseNo, flightSeqNo, igmNo, locationCode, locId, nop, userId, companyCode, menuId);
+      emit(BinningSaveSuccessState(binningDetailListModel));
+    } catch (e) {
+      emit(BinningSaveFailureState(e.toString()));
     }
   }
 

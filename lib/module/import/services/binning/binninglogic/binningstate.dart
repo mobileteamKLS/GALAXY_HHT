@@ -1,4 +1,6 @@
 
+import 'package:galaxy/module/import/model/binning/binningsavemodel.dart';
+
 import '../../../model/binning/binningdetaillistmodel.dart';
 import '../../../model/binning/binningpageloaddefault.dart';
 import '../../../model/uldacceptance/locationvalidationmodel.dart';
@@ -9,27 +11,26 @@ class BinningState {}
 class MainInitialState extends BinningState {}
 class MainLoadingState extends BinningState {}
 
-class ValidateLocationSuccessState extends BinningState {
+class BinningValidateLocationSuccessState extends BinningState {
   final LocationValidationModel validateLocationModel;
-  ValidateLocationSuccessState(this.validateLocationModel);
+  BinningValidateLocationSuccessState(this.validateLocationModel);
 }
 
-class ValidateLocationFailureState extends BinningState {
+class BinningValidateLocationFailureState extends BinningState {
   final String error;
-  ValidateLocationFailureState(this.error);
+  BinningValidateLocationFailureState(this.error);
 }
 
 
-class PageLoadDefaultSuccessState extends BinningState{
+class BinningPageLoadDefaultSuccessState extends BinningState{
   final BinningPageLoadDefaultModel binningPageLoadDefaultModel;
-  PageLoadDefaultSuccessState(this.binningPageLoadDefaultModel);
+  BinningPageLoadDefaultSuccessState(this.binningPageLoadDefaultModel);
 }
 
-class PageLoadDefaultFailureState extends BinningState{
+class BinningPageLoadDefaultFailureState extends BinningState{
   final String error;
-  PageLoadDefaultFailureState(this.error);
+  BinningPageLoadDefaultFailureState(this.error);
 }
-
 
 
 
@@ -41,5 +42,15 @@ class BinningDetailListSuccessState extends BinningState {
 class BinningDetailListFailureState extends BinningState {
   final String error;
   BinningDetailListFailureState(this.error);
+}
+
+class BinningSaveSuccessState extends BinningState {
+  final BinningSaveModel binningSaveModel;
+  BinningSaveSuccessState(this.binningSaveModel);
+}
+
+class BinningSaveFailureState extends BinningState {
+  final String error;
+  BinningSaveFailureState(this.error);
 }
 
