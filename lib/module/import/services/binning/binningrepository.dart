@@ -8,6 +8,7 @@ import 'package:galaxy/prefrence/savedprefrence.dart';
 import 'package:galaxy/utils/commonutils.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../../model/binning/binningpageloaddefault.dart';
 import '../../model/flightcheck/addMailModel.dart';
 import '../../model/flightcheck/airportcitymodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
@@ -41,10 +42,50 @@ class BinningRepository{
   SavedPrefrence savedPrefrence = SavedPrefrence();
 
 
+  // page load api
+  Future<BinningPageLoadDefaultModel> getPageLoadDefault(int menuId, int userId, int companyCode) async {
+
+    try {
+
+      var payload = {
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('pageLoadDefaultModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.getBinningPageLoadApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        BinningPageLoadDefaultModel binningPageLoadDefaultModel = BinningPageLoadDefaultModel.fromJson(response.data);
+        return binningPageLoadDefaultModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
   // binning detail list api
-  Future<BinningDetailListModel> getBinningDetailListModel(
-      String groupId, int userId, int companyCode, int menuId) async {
+  Future<BinningDetailListModel> getBinningDetailListModel(String groupId, int userId, int companyCode, int menuId) async {
 
     try {
 

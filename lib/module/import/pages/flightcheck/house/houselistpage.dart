@@ -739,7 +739,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                           }
 
                                                                         }
-                                                                      }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                                      }
+                                                                      else if(widget.flightDetailSummary.flightStatus == "F"){
                                                                         if(aWBItem.damageNOP == 0){
                                                                           SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                           Vibration.vibrate(duration: 500);
@@ -806,15 +807,11 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                         }
 
-                                                                      }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                                      }
+                                                                      else if(widget.flightDetailSummary.flightStatus == "N"){
                                                                         SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);
                                                                       }
-
-
-
-
-
                                                                       setState(() {
                                                                         _selectedIndex = index; // Update the selected index
                                                                       });
@@ -1308,25 +1305,21 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                         InkWell(
                                                                                           onTap: () async {
 
-                                                                                            setState(() {
-                                                                                              _selectedIndex = index; // Update the selected index
-                                                                                            });
-
-
-
-
-
                                                                                             if(widget.flightDetailSummary.flightStatus == "A"){
                                                                                               if(widget.bDEndStatus == "N"){
                                                                                                 if(widget.awbRemarkRequires == "Y"){
-                                                                                                  if(aWBItem.aWBRemarksInd == "Yes"){
+                                                                                                  if(aWBItem.aWBRemarksInd == "Y"){
 
                                                                                                     List<HAWBRemarksList> remarkList = filterAWBRemarksById(hAwbModel!.hAWBRemarksList!, aWBItem.iMPAWBRowId!);
+
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => HAWBRemarkListAckPage(
-                                                                                                      buttonRightsList: widget.buttonRightsList,
-                                                                                                      mainMenuName: widget.mainMenuName, haWBRemarkList:remarkList, haWBItem: aWBItem, menuId: widget.menuId,),));
+                                                                                                        buttonRightsList: widget.buttonRightsList,
+                                                                                                        mainMenuName: widget.mainMenuName, haWBRemarkList: remarkList, haWBItem: aWBItem, menuId: widget.menuId),));
+
                                                                                                     if(value == "true"){
+
                                                                                                       gotoCheckAWBScreen(aWBItem);
+
                                                                                                     }else if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
                                                                                                     }
@@ -1347,7 +1340,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                   }
                                                                                                   else{
 
-
                                                                                                     CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                     CommonUtils.SELECTEDIMAGELIST.clear();
@@ -1381,8 +1373,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
 
 
-
-
                                                                                                     int npxPices = aWBItem.nPR!;
                                                                                                     double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
 
@@ -1409,8 +1399,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
 
-                                                                                                }
-                                                                                                else{
+                                                                                                }else{
                                                                                                   if(aWBItem.damageNOP == 0){
                                                                                                     SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                     Vibration.vibrate(duration: 500);
@@ -1451,10 +1440,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
 
 
-
                                                                                                     int npxPices = aWBItem.nPR!;
                                                                                                     double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
@@ -1471,7 +1458,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
                                                                                                     }else if(value == "true"){
-                                                                                                      context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                                      context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                     }
 
@@ -1479,10 +1466,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                 }
 
                                                                                               }
-                                                                                            }else if(widget.flightDetailSummary.flightStatus == "F"){
-                                                                                             /* SnackbarUtil.showSnackbar(context, "Flight is finalized", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                                              Vibration.vibrate(duration: 500);*/
-
+                                                                                            }
+                                                                                            else if(widget.flightDetailSummary.flightStatus == "F"){
                                                                                               if(aWBItem.damageNOP == 0){
                                                                                                 SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                 Vibration.vibrate(duration: 500);
@@ -1524,6 +1509,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
 
+
                                                                                                 int npxPices = aWBItem.nPR!;
                                                                                                 double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
 
@@ -1541,18 +1527,22 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                 if(value == "Done"){
                                                                                                   _resumeTimerOnInteraction();
                                                                                                 }else if(value == "true"){
-
-                                                                                                  context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                                                  context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                 }
 
 
                                                                                               }
 
-                                                                                            }else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                                                              SnackbarUtil.showSnackbar(context, "Flight is not arrived", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                            }
+                                                                                            else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                                                              SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                               Vibration.vibrate(duration: 500);
                                                                                             }
+                                                                                            setState(() {
+                                                                                              _selectedIndex = index; // Update the selected index
+                                                                                            });
+
 
 
 

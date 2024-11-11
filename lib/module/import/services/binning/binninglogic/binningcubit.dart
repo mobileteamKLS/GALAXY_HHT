@@ -8,6 +8,16 @@ class BinningCubit extends Cubit<BinningState>{
 
   BinningRepository binningRepository = BinningRepository();
 
+// getButtonsRoles & Rights api call repo
+  Future<void> getPageLoadDefault(int menuId, int userId, int companyCode) async {
+    emit(MainLoadingState());
+    try {
+      final pageLoadDefaultModelData = await binningRepository.getPageLoadDefault(menuId, userId, companyCode);
+      emit(PageLoadDefaultSuccessState(pageLoadDefaultModelData));
+    } catch (e) {
+      emit(PageLoadDefaultFailureState(e.toString()));
+    }
+  }
 
 // binning api call repo
   Future<void> getBinningDetailListApi(String groupId, int userId, int companyCode, int menuId) async {

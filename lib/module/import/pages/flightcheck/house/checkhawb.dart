@@ -731,6 +731,14 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
 
+                                                    print("widget.aWBItem.iMPAWBRowId ========= ${widget.aWBItem.iMPAWBRowId}");
+                                                    print("widget.aWBItem.iMPShipRowId ========= ${widget.aWBItem.iMPShipRowId}");
+                                                    print("widget.aWBItem.uSeqNo ========= ${widget.aWBItem.uSeqNo}");
+                                                    print("widget.haWBItem.iMPAWBRowId ========= ${widget.haWBItem.iMPAWBRowId}");
+                                                    print("widget.haWBItem.iMPSHIPRowId ========= ${widget.haWBItem.iMPSHIPRowId}");
+
+
+
                                                     String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
                                                     String hawbId = "${widget.haWBItem.iMPAWBRowId}~${widget.haWBItem.iMPSHIPRowId}";
 
@@ -829,6 +837,15 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
                                                     if(isButtonEnabled("awbsave", widget.buttonRightsList)){
+
+
+                                                      print("widget.aWBItem.iMPAWBRowId ========= ${widget.aWBItem.iMPAWBRowId}");
+                                                      print("widget.aWBItem.iMPShipRowId ========= ${widget.aWBItem.iMPShipRowId}");
+                                                      print("widget.aWBItem.uSeqNo ========= ${widget.aWBItem.uSeqNo}");
+                                                      print("widget.haWBItem.iMPAWBRowId ========= ${widget.haWBItem.iMPAWBRowId}");
+                                                      print("widget.haWBItem.iMPSHIPRowId ========= ${widget.haWBItem.iMPSHIPRowId}");
+
+
 
                                                       String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
 

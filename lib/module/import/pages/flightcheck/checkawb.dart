@@ -290,11 +290,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                     }else if(value == "true"){
                                       Navigator.pop(context, "true");
                                     }
-
                                   }
-
-
-
                                 }
 
                               }else if(state is ImportShipmentSaveFailureState){
@@ -369,17 +365,12 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       maxLength: 4,
                                                       onChanged: (value) {
                                                         int piecesCount = int.tryParse(value) ?? 0;
-
                                                         // Calculate the weight count using the formula
                                                         setState(() {
-
                                                           weightCount = double.parse(((piecesCount * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-
-
                                                          // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
                                                           weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
                                                         });
-
                                                       },
                                                       fillColor:  Colors.grey.shade100,
                                                       textInputType: TextInputType.number,
@@ -512,13 +503,13 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 Row(
                                                   children: [
                                                     CustomeText(
-                                                      text: "${widget.flightDetailSummary.flightNo!}",
+                                                      text: widget.flightDetailSummary.flightNo!,
                                                       fontColor: MyColor.colorBlack,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w600,
                                                       textAlign: TextAlign.start,
                                                     ),
-                                                    SizedBox(width: 5),
+                                                    const SizedBox(width: 5),
                                                     CustomeText(
                                                       text: " ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",
                                                       fontColor: MyColor.textColorGrey2,

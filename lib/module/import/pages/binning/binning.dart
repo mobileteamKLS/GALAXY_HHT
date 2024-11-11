@@ -55,7 +55,7 @@ class Binning extends StatefulWidget {
 }
 
 class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
-  int groupIDCharSize = 14;
+  int groupIDCharSize = 1;
 
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
@@ -84,6 +84,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
   late AnimationController _blinkController;
   late Animation<Color?> _colorAnimation;
 
+  bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
+
 
   @override
   void initState() {
@@ -111,7 +113,17 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
   }
 
   Future<void> leaveGroupIdFocus() async {
+
+    // Skip the focus leave logic if inactivity dialog is open
+    if (isInactivityDialogOpen) return;
+
     if (groupIdController.text.isNotEmpty) {
+
+      if (groupIdController.text.length != groupIDCharSize) {
+        openValidationDialog(CommonUtils.formatMessage("${widget.lableModel!.groupIdCharSizeMsg}", ["$groupIDCharSize"]), groupIdFocusNode);
+        return;
+      }
+
       //call location validation api
       await context.read<BinningCubit>().getBinningDetailListApi(
           groupIdController.text,
@@ -128,6 +140,16 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
     }
   }
 
+  Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
+    bool? empty = await DialogUtils.showDataNotFoundDialogbot(
+        context, message, widget.lableModel!);
+
+    if (empty == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(focuseNode);
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -139,10 +161,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
   Future<void> _loadUser() async {
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(groupIdFocusNode);
-    },
-    );
+
 
     final user = await savedPrefrence.getUserData();
     final splashDefaultData = await savedPrefrence.getSplashDefaultData();
@@ -152,6 +171,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
         _splashDefaultData = splashDefaultData;
       });
     }
+
+    context.read<BinningCubit>().getPageLoadDefault(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -164,10 +185,19 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
   Future<void> _handleInactivityTimeout() async {
     groupIdFocusNode.unfocus();
+    isInactivityDialogOpen = true; // Set flag before showing dialog
+
     bool? activateORNot = await DialogUtils.showingActivateTimerDialog(
         context, _user!.userProfile!.userId!, _splashDefaultData!.companyCode!);
+
+    isInactivityDialogOpen = false; // Reset flag after dialog closes
+
     if (activateORNot == true) {
       inactivityTimerManager!.resetTimer();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(groupIdFocusNode);
+      },
+      );
     } else {
       _logoutUser();
     }
@@ -285,6 +315,24 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
+                                else if(state is PageLoadDefaultSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.binningPageLoadDefaultModel.status == "E"){
+                                    _onWillPop();
+                                  }else{
+                                    groupIDCharSize = state.binningPageLoadDefaultModel.IsGroupBasedAcceptNumber!;
+                                    setState(() {
+
+                                    });
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
+                                  }
+                                }else if (state is PageLoadDefaultFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  _onWillPop();
+                                }
                                 else if (state is BinningDetailListSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.binningDetailListModel.status == "E"){
@@ -380,7 +428,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                   needOutlineBorder: true,
                                                   labelText: "${lableModel.groupId} *",
                                                   readOnly: false,
-                                                  maxLength: 40,
+                                                  maxLength: groupIDCharSize,
                                                   onChanged: (value) {},
                                                   fillColor: Colors.grey.shade100,
                                                   textInputType: TextInputType.text,
@@ -515,7 +563,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                           SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                           CustomeText(
                                                             text: (binningDetailListModel != null) ? binningDetailListModel!.binningSummary!.currentLocationCode! : "-",
-                                                            fontColor: MyColor.colorBlack,
+                                                            fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w600,
                                                             textAlign: TextAlign.start,
@@ -532,7 +580,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                       flex: 1,
                                                       child: CustomeText(
                                                           text: "Suggestion : ",
-                                                          fontColor: MyColor.textColorGrey3,
+                                                          fontColor: MyColor.textColorGrey2,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w500,
                                                           textAlign: TextAlign.start),
@@ -541,7 +589,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                       flex: 1,
                                                       child: CustomeText(
                                                           text: (binningDetailListModel != null) ? (binningDetailListModel!.binningSummary!.suggestion!.isNotEmpty) ? binningDetailListModel!.binningSummary!.suggestion! : "-" : "-",
-                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w500,
                                                           textAlign: TextAlign.start),

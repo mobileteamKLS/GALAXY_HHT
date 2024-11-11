@@ -16,7 +16,7 @@ class InactivityTimerManager {
   // Start the inactivity timer
   void startTimer() {
     _inactivityTimer?.cancel(); // Cancel any existing timer
-    _inactivityTimer = Timer(Duration(minutes: timeoutMinutes), _handleTimeout);
+    _inactivityTimer = Timer(Duration(minutes:20), _handleTimeout);
   }
 
   // Reset the inactivity timer
