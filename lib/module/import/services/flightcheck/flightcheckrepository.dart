@@ -697,11 +697,12 @@ class FlightCheckRepository{
     }
   }
 
-  Future<ImportShipmentModel> importManifestSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput, int userId, int companyCode, int menuId) async {
+  Future<ImportShipmentModel> importManifestSave(String locationCode, int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
+        "LocationCode" : locationCode,
         "FlightSeqNo" : flightSeqNo,
         "ULDSeqNo" : uLDSeqNo,
         "GroupId" : groupId,

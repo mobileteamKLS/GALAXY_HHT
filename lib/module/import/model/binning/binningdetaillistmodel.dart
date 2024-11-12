@@ -40,6 +40,8 @@ class BinningDetailListModel {
 }
 
 class BinningDetailList {
+  int? flightSeqNo;
+  String? iGMNo;
   String? flightNo;
   String? flightDate;
   String? aWBNo;
@@ -55,7 +57,10 @@ class BinningDetailList {
   int? locationId;
 
   BinningDetailList(
-      {this.flightNo,
+      {
+        this.flightSeqNo,
+        this.iGMNo,
+        this.flightNo,
         this.flightDate,
         this.aWBNo,
         this.hAWBNo,
@@ -70,6 +75,8 @@ class BinningDetailList {
         this.locationId});
 
   BinningDetailList.fromJson(Map<String, dynamic> json) {
+    flightSeqNo = json['FlightSeqNo'];
+    iGMNo = json['IGMNo'];
     flightNo = json['FlightNo'];
     flightDate = json['FlightDate'];
     aWBNo = json['AWBNo'];
@@ -87,6 +94,8 @@ class BinningDetailList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FlightSeqNo'] = this.flightSeqNo;
+    data['IGMNo'] = this.iGMNo;
     data['FlightNo'] = this.flightNo;
     data['FlightDate'] = this.flightDate;
     data['AWBNo'] = this.aWBNo;

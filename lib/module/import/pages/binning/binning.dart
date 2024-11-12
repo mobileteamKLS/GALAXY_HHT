@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,6 +26,7 @@ import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/roundbutton.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -332,6 +334,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                   binningDetailListModel = null;
                                   groupIdController.clear();
                                   locationController.clear();
+                                  _isvalidateLocation = false;
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
                                   },
@@ -424,12 +427,14 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                   }else{
 
                                     binningDetailListModel = state.binningDetailListModel;
+                                    locationController.clear();
+
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                     );
                                     setState(() {
-
+                                      _isvalidateLocation = false;
                                     });
                                   }
 
@@ -518,34 +523,61 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                               // text manifest and recived in pices text counter
                                               Directionality(
                                                 textDirection: textDirection,
-                                                child: CustomTextField(
-                                                  textDirection: textDirection,
-                                                  controller: groupIdController,
-                                                  focusNode: groupIdFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: "${lableModel.groupId} *",
-                                                  readOnly: false,
-                                                  maxLength: groupIDCharSize,
-                                                  onChanged: (value) {},
-                                                  fillColor: Colors.grey.shade100,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
-                                                  },
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      flex :1,
+                                                      child: CustomTextField(
+                                                        textDirection: textDirection,
+                                                        controller: groupIdController,
+                                                        focusNode: groupIdFocusNode,
+                                                        onPress: () {},
+                                                        hasIcon: false,
+                                                        hastextcolor: true,
+                                                        animatedLabel: true,
+                                                        needOutlineBorder: true,
+                                                        labelText: "${lableModel.groupId} *",
+                                                        readOnly: false,
+                                                        maxLength: groupIDCharSize,
+                                                        onChanged: (value) {
+                                                          binningDetailListModel = null;
+                                                          locationController.clear();
+                                                          _isvalidateLocation = false;
+                                                          setState(() {
+
+                                                          });
+                                                        },
+                                                        fillColor: Colors.grey.shade100,
+                                                        textInputType: TextInputType.text,
+                                                        inputAction: TextInputAction.next,
+                                                        hintTextcolor: Colors.black45,
+                                                        verticalPadding: 0,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                        validator: (value) {
+                                                          if (value!.isEmpty) {
+                                                            return "Please fill out this field";
+                                                          } else {
+                                                            return null;
+                                                          }
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      width: SizeConfig.blockSizeHorizontal,
+                                                    ),
+                                                    // click search button to validate location
+                                                    InkWell(
+                                                      onTap: () {
+                                                        scanGroupQR();
+                                                      },
+                                                      child: Padding(padding: const EdgeInsets.all(8.0),
+                                                        child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+                                                      ),
+
+                                                    )
+                                                  ],
                                                 ),
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
@@ -610,50 +642,59 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                         flex:1,
                                                         child: Container(
                                                           height: double.infinity,
-                                                          child: RoundedButtonBlue(
+                                                          child: RoundedButton(
+                                                            color: (_isvalidateLocation) ? MyColor.primaryColorblue : MyColor.colorGrey.withOpacity(0.3),
                                                             text: "Move",
                                                             press: () async {
-                                                              // Add your cancel action here
 
-                                                              /*if(widget.groupIDRequires == "Y"){
-                                                                if (groupIdController.text.isEmpty) {
-                                                                  openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                                  return;
+
+                                                              if(_isvalidateLocation){
+
+                                                                if(binningDetailListModel != null) {
+                                                                  if (groupIdController.text.isEmpty) {
+                                                                    openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                                    return;
+                                                                  }
+
+                                                                  if (groupIdController.text.length != groupIDCharSize) {
+                                                                    openValidationDialog(
+                                                                        CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIDCharSize"]),
+                                                                        groupIdFocusNode);
+                                                                    return;
+                                                                  }
+
+                                                                  if (locationController.text.isEmpty) {
+                                                                    openValidationDialog("${lableModel.enterLocationMsg}", locationFocusNode);
+                                                                    return;
+                                                                  }
+
+
+
+                                                                  context.read<BinningCubit>().getBinningSaveApi(groupIdController.text,
+                                                                      binningDetailListModel!.binningDetailList![0].aWBNo!.replaceAll(" ", ""),
+                                                                      binningDetailListModel!.binningDetailList![0].hAWBNo!,
+                                                                      binningDetailListModel!.binningDetailList![0].flightSeqNo!,
+                                                                      binningDetailListModel!.binningDetailList![0].iGMNo!,
+                                                                      locationController.text,
+                                                                      binningDetailListModel!.binningSummary!.currentLocationId!,
+                                                                      binningDetailListModel!.binningDetailList![0].nOP!,
+                                                                      _user!.userProfile!.userIdentity!,
+                                                                      _splashDefaultData!.companyCode!,
+                                                                      widget.menuId);
+
+
+
                                                                 }
+                                                              }else{
 
-                                                                // Check if the groupId length is between 14 (min and max 14 characters)
 
-
-                                                              }*/
-
-                                                              if (groupIdController.text.isEmpty) {
-                                                                openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                                return;
-                                                              }
-
-                                                              if (groupIdController.text.length != groupIDCharSize) {
-                                                                openValidationDialog(CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIDCharSize"]), groupIdFocusNode);
-                                                                return;
-                                                              }
-
-                                                              if (locationController.text.isEmpty) {
-                                                                openValidationDialog("${lableModel.enterLocationMsg}", locationFocusNode);
-                                                                return;
                                                               }
 
 
 
-                                                              context.read<BinningCubit>().getBinningSaveApi(groupIdController.text,
-                                                                  binningDetailListModel!.binningDetailList![0].aWBNo!.replaceAll(" ", ""),
-                                                                  binningDetailListModel!.binningDetailList![0].hAWBNo!,
-                                                                  11191,
-                                                                  0,
-                                                                  locationController.text,
-                                                                  binningDetailListModel!.binningSummary!.currentLocationId!,
-                                                                  binningDetailListModel!.binningDetailList![0].nOP!,
-                                                                  _user!.userProfile!.userIdentity!,
-                                                                  _splashDefaultData!.companyCode!,
-                                                                  widget.menuId);
+
+
+
                                                             },
                                                           ),
                                                         ),
@@ -726,7 +767,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                           text: "Suggestion : ",
                                                           fontColor: MyColor.textColorGrey2,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                          fontWeight: FontWeight.w500,
+                                                          fontWeight: FontWeight.w400,
                                                           textAlign: TextAlign.start),
                                                     ),
                                                     Expanded(
@@ -1134,6 +1175,50 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
       ),
     );
   }
+
+  Future<void> scanGroupQR() async{
+    String groupcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Color for the scanner overlay
+      'Cancel', // Text for the cancel button
+      true, // Enable flash option
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    if(groupcodeScanResult == "-1"){
+
+    }else{
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
+
+      if(specialCharAllow == true){
+        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        locationController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(locationFocusNode);
+        });
+      }else{
+
+        String result = groupcodeScanResult.replaceAll(" ", "");
+
+        String truncatedResult = result.length > 15
+            ? result.substring(0, 15)
+            : result;
+
+        groupIdController.text = truncatedResult;
+        // Call searchLocation api to validate or not
+        // call binning details api
+        await context.read<BinningCubit>().getBinningDetailListApi(
+            groupIdController.text,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);
+      }
+
+    }
+
+
+  }
+
 }
 
 class TickerProviders extends TickerProvider {

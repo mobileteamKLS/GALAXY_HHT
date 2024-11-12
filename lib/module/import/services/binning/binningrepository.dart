@@ -172,7 +172,7 @@ class BinningRepository{
   }
 
   // binning save api
-  Future<BinningSaveModel> getBinningDetailSave(String groupId, String awbNo, String houseNo, int flightSeqNo, int igmNo, String locationCode, int locId, int nop, int userId, int companyCode, int menuId) async {
+  Future<BinningSaveModel> getBinningDetailSave(String groupId, String awbNo, String houseNo, int flightSeqNo, String igmNo, String locationCode, int locId, int nop, int userId, int companyCode, int menuId) async {
 
     try {
 
@@ -180,7 +180,7 @@ class BinningRepository{
         "GroupId": groupId,
         "AWBNo": awbNo,
         "HouseNo": houseNo,
-        "IGMNo": "$flightSeqNo~$igmNo",
+        "IGMNo": "$igmNo~$flightSeqNo",
         "LocCode": locationCode,
         "LocId": locId,
         "NOP": nop,

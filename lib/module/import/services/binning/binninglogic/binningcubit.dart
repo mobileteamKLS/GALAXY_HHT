@@ -43,7 +43,7 @@ class BinningCubit extends Cubit<BinningState>{
   }
 
   // binning api call repo
-  Future<void> getBinningSaveApi(String groupId, String awbNo, String houseNo, int flightSeqNo, int igmNo, String locationCode, int locId, int nop, int userId, int companyCode, int menuId) async {
+  Future<void> getBinningSaveApi(String groupId, String awbNo, String houseNo, int flightSeqNo, String igmNo, String locationCode, int locId, int nop, int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
       final binningDetailListModel = await binningRepository.getBinningDetailSave(groupId, awbNo, houseNo, flightSeqNo, igmNo, locationCode, locId, nop, userId, companyCode, menuId);

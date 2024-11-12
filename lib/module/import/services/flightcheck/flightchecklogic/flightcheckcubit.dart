@@ -190,10 +190,10 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
     }
   }
 
-  Future<void> importShipmentSave(int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput,  int userId, int companyCode, int menuId) async {
+  Future<void> importShipmentSave(String locationCode, int flightSeqNo, int uLDSeqNo, String groupId, String awbId, String hawbid, int nopInput, String wtInput,  int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
-      final importManifestModel = await flightCheckRepository.importManifestSave(flightSeqNo,uLDSeqNo, groupId, awbId, hawbid, nopInput, wtInput, userId, companyCode, menuId);
+      final importManifestModel = await flightCheckRepository.importManifestSave(locationCode, flightSeqNo,uLDSeqNo, groupId, awbId, hawbid, nopInput, wtInput, userId, companyCode, menuId);
 
       emit(ImportShipmentSaveSuccessState(importManifestModel));
     } catch (e) {

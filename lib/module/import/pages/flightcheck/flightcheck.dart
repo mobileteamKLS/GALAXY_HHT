@@ -3000,6 +3000,16 @@ class _FlightCheckState extends State<FlightCheck>
           }
           else if(value == "Done"){
             _resumeTimerOnInteraction();
+            callFlightCheckULDListApi(
+                context,
+                locationController.text,
+                igmNoEditingController.text,
+                flightNoEditingController.text,
+                dateEditingController.text,
+                _user!.userProfile!.userIdentity!,
+                _splashDefaultData!.companyCode!,
+                widget.menuId,
+                (_isOpenULDFlagEnable == true) ? 1 : 0);
           }
         }
 

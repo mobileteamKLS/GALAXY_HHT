@@ -56,7 +56,7 @@ class _RoundedButtonState extends State<RoundedButton> {
       child: Container(
           padding: EdgeInsets.symmetric(vertical: widget.verticalPadding),
           decoration: BoxDecoration(borderRadius: BorderRadius.circular(SizeUtils.BORDERRADIOUS), color: widget.color),
-          child: CustomeText(text:  widget.text, fontColor: widget.textColor!, fontSize: widget.textSize, fontWeight: FontWeight.w500, textAlign: TextAlign.center, textDirection: widget.textDirection,)
+          child: Center(child: CustomeText(text:  widget.text, fontColor: widget.textColor!, fontSize: widget.textSize, fontWeight: FontWeight.w500, textAlign: TextAlign.center, textDirection: widget.textDirection,))
       ),
     );
   }
