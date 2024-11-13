@@ -261,7 +261,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                                   activeColor: MyColor.primaryColorblue,
                                   inactiveThumbColor: MyColor.thumbColor,
                                   inactiveTrackColor: MyColor.textColorGrey2,
-                                  trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                  trackOutlineColor: MaterialStateProperty.all(Colors.transparent),
                                   onChanged: (value) {
                                     setState(() {
                                       if (value) {

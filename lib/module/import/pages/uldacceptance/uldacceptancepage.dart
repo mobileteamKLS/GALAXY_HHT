@@ -427,7 +427,6 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                 },
                 child: Stack(
                   children: [
-
                     MainHeadingWidget(mainMenuName: widget.mainMenuName),
                     Positioned(
                         top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,

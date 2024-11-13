@@ -318,7 +318,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                       SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                       RoundedButtonBlueGradient(text: (state is LoginLoading)
                                           ? '${loginModel.loading}'
-                                          : '${loginModel.login!.toUpperCase()}', isborderButton: false, textDirection: textDirection ,press: () {
+                                          : loginModel.login!.toUpperCase(), isborderButton: false, textDirection: textDirection ,press: () {
 
                                         bool isValid = true;
 

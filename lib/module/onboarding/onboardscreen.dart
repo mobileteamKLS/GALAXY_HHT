@@ -5,6 +5,7 @@ import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/custometext.dart';
 import 'package:galaxy/widget/roundbutton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../Ipad/screen/ImportShipmentListing.dart';
 import '../splash/page/splashscreen.dart';
 import '../../utils/sizeutils.dart';
 import 'sizeconfig.dart';
@@ -59,7 +60,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     await prefs.setBool('onboardingSeen', true);
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => SplashScreen()),
+      MaterialPageRoute(builder: (_) => const SplashScreen()),
     );
   }
 
@@ -92,9 +93,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-
-
-
                       Image.asset(
                         contents[i].image,
                         height:  SizeConfig.blockSizeVertical * 25,
@@ -113,7 +111,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                           fontWeight: FontWeight.w300,
                           textAlign: TextAlign.center),
-
                     ],
                   ),
                 );

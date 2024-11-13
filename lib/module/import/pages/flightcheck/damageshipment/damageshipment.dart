@@ -94,10 +94,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         _user = user;
         _splashDefaultData = splashDefaultData;
       });
-
       context.read<FlightCheckCubit>().getDamageDetails(widget.flightDetailSummary.flightSeqNo!, "${widget.aWBItem.iMPAWBRowId!}", "${widget.aWBItem.iMPShipRowId!}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-
       inactivityTimerManager = InactivityTimerManager(
         context: context,
         timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
