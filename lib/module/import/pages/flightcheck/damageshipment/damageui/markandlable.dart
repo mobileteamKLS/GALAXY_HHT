@@ -155,7 +155,7 @@ class _MarkAndLablePageState extends State<MarkAndLablePage> {
                             text: "${lableModel.s10} ${lableModel.markAndLabel}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * 0.3),
 

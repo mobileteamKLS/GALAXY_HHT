@@ -234,13 +234,14 @@
     "enterWeightGrtMsg" : "Please enter weight greater than 0.",
 
 
+    "airWaybillDetail": "A) AIR WAYBILL DETAILS",
     "typeOfDiscrepancy" : "B) TYPE OF DISCREPANCY",
     "DMG" : "Damage",
     "SOP" : "Shortage / Partial",
     "TOL" : "Total Loss",
     "kg" : "kg",
     "shipmentWeightDetails" : "7) Shipment weight Details",
-    "totalWtShipped" : "a) Total wt. Shipped (Per AWB)",
+    "totalWtShipped" : "a) Total Wt. Shipped (Per AWB)",
     "totalWtAsPerActualCheck" : "b) Total Wt. As Per Actual Check",
     "difference" : "c) Difference",
     "individualWtOfEachDamagePkg" : "8) Individual Wt. Of Each Damage Pkg./Pcs.",
@@ -248,7 +249,7 @@
     "asPerActualWeightKG" : "b) As Per Actual Weight Check (Kg)",
     "damagePcsGrtMsg" : "Damage pcs {0} cannot be greater than Shipment Rcvd pcs - {1}",
     "damageWeightGrtMsg" : "Damage weight {0} cannot be greater than Shipment Rcvd weight - {1}",
-    "actualWtCannotGrtDocumentWt" : "Actual weight cannot be greater than document weight!.",
+    "actualWtCannotGrtDocumentWt" : "Actual weight cannot be greater than document weight.",
 
     "c" : "C)",
     "packingDetails" : "PACKING DETAILS",

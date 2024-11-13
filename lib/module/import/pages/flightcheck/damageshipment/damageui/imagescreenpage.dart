@@ -25,6 +25,7 @@ import '../../../../../../utils/sizeutils.dart';
 import '../../../../../../utils/validationmsgcodeutils.dart';
 import '../../../../../../widget/customdivider.dart';
 import '../../../../../../widget/customebuttons/roundbuttonblue.dart';
+import '../../../../../../widget/customeedittext/remarkedittextfeild.dart';
 import '../../../../../../widget/custometext.dart';
 import '../../../../../../widget/customeuiwidgets/enlargedbinaryimagescreen.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
@@ -315,7 +316,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             text: "${lableModel.s22} ${lableModel.anyDamageRemarks}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
 
@@ -323,7 +324,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
                         Directionality(
                           textDirection: textDirection,
-                          child: CustomTextField(
+                          child: RemarkCustomTextField(
                             textDirection: textDirection,
                             controller: wordController,
                             focusNode: wordFocusNode,
@@ -340,7 +341,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             inputAction: TextInputAction.next,
                             hintTextcolor: Colors.black45,
                             verticalPadding: 0,
-                            maxLength: 12,
+                            maxLength: 100,
                             digitsOnly: false,
                             doubleDigitOnly: false,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
@@ -387,7 +388,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             text: "${lableModel.s23} ${lableModel.weatherCondition}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
 
 
@@ -482,14 +483,14 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             text: "${lableModel.s24} ${lableModel.representative}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
 
 
                         Directionality(
                           textDirection: textDirection,
-                          child: CustomTextField(
+                          child: RemarkCustomTextField(
                             textDirection: textDirection,
                             controller: ghaController,
                             focusNode: ghaFocusNode,
@@ -507,7 +508,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             inputAction: TextInputAction.next,
                             hintTextcolor: Colors.black45,
                             verticalPadding: 0,
-                            maxLength: 12,
+                            maxLength: 200,
                             digitsOnly: false,
                             doubleDigitOnly: false,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
@@ -525,7 +526,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                         Directionality(
                           textDirection: textDirection,
-                          child: CustomTextField(
+                          child: RemarkCustomTextField(
                             textDirection: textDirection,
                             controller: airlineController,
                             focusNode: airlineFocusNode,
@@ -543,7 +544,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             inputAction: TextInputAction.next,
                             hintTextcolor: Colors.black45,
                             verticalPadding: 0,
-                            maxLength: 12,
+                            maxLength: 200,
                             digitsOnly: false,
                             doubleDigitOnly: false,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
@@ -561,7 +562,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                         Directionality(
                           textDirection: textDirection,
-                          child: CustomTextField(
+                          child: RemarkCustomTextField(
                             textDirection: textDirection,
                             controller: securityController,
                             focusNode: securityFocusNode,
@@ -578,7 +579,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             inputAction: TextInputAction.next,
                             hintTextcolor: Colors.black45,
                             verticalPadding: 0,
-                            maxLength: 12,
+                            maxLength: 200,
                             digitsOnly: false,
                             doubleDigitOnly: false,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,

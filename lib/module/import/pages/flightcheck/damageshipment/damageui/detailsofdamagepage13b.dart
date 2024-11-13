@@ -173,7 +173,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                         text: "${lableModel.s13b} ${lableModel.containers}",
                         fontColor: MyColor.textColorGrey3,
                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                         textAlign: TextAlign.start),
                     SizedBox(height: SizeConfig.blockSizeVertical),
 
@@ -201,7 +201,7 @@ class _DetailsOfDamagePage13bState extends State<DetailsOfDamagePage13b> {
                               focusNode: focusNode,
                               onPress: () {},
                               hasIcon: false,
-                              maxLength: 4,
+                              maxLength: 5,
                               hastextcolor: true,
                               animatedLabel: true,
                               needOutlineBorder: true,

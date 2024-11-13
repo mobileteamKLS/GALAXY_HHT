@@ -1705,15 +1705,12 @@ class DialogUtils {
     );
   }
 
-
   static bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
     ButtonRight? button = buttonList.firstWhere(
           (button) => button.buttonId == buttonId,
     );
     return button.isEnable == 'Y';
   }
-
-
 
   static Future<bool?> confirmationDialog(BuildContext context, LableModel lableModel) {
     return showDialog<bool>(
@@ -1746,7 +1743,6 @@ class DialogUtils {
       },
     );
   }
-
 
   static Future<bool?> showULDDamageDialog(BuildContext context, String message) {
     return showDialog<bool>(
@@ -1784,5 +1780,396 @@ class DialogUtils {
       },
     );
   }
+
+  static Future<Map<String, String>?> showFoundCargoAWBDialog(BuildContext context, String awbNo, LableModel lableModel, ui.TextDirection textDirection, int userIdentity, int companyCode, int menuId, String title,  List<ButtonRight> buttonRightsList, String groupIdRequired, int groupIDCharSize) {
+    TextEditingController piecesController = TextEditingController();
+    TextEditingController weightController = TextEditingController();
+    TextEditingController dmgpiecesController = TextEditingController();
+    TextEditingController dmgweightController = TextEditingController();
+    TextEditingController groupIdController = TextEditingController();
+    FocusNode piecesFocusNode = FocusNode();
+    FocusNode weightFocusNode = FocusNode();
+    FocusNode dmgpiecesFocusNode = FocusNode();
+    FocusNode dmgweightFocusNode = FocusNode();
+    FocusNode groupIdFocusNode = FocusNode();
+    String errorText = "";
+
+    return showModalBottomSheet<Map<String, String>>(
+      backgroundColor: MyColor.colorWhite,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext newContext) {
+
+        return StatefulBuilder(
+            builder:(BuildContext context, StateSetter setState) {
+              // Only set focus once after the widget is built
+
+              return Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(newContext).viewInsets.bottom,  // Adjust for keyboard
+                ),
+                child: FractionallySizedBox(
+                  widthFactor: 1,  // Adjust the width to 90% of the screen width
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: SizeConfig.blockSizeVertical * 2,
+                        horizontal: SizeConfig.blockSizeHorizontal * 4,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomeText(text: title, fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                              InkWell(
+                                  onTap: () {
+                                    /*Navigator.pop(context, null);*/
+                                    Navigator.pop(context, {
+                                      "status": "N",
+                                    });
+                                  },
+                                  child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                            ],
+                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical),
+                          CustomDivider(
+                            space: 0,
+                            color: Colors.black,
+                            hascolor: true,
+                            thickness: 1,
+                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical),
+                          Row(
+                            children: [
+                              SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                              CustomeText(
+                                text: "${lableModel.detailsForAWBNo} ${awbNo}",
+                                fontColor: MyColor.textColorGrey2,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                fontWeight: FontWeight.w400,
+                                textAlign: TextAlign.start,
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+
+                          Row(
+                            children: [
+                              Expanded(
+                                flex:1,
+                                child: Directionality(
+                                  textDirection: textDirection,
+                                  child: CustomTextField(
+                                    textDirection: textDirection,
+                                    controller: piecesController,
+                                    focusNode: piecesFocusNode,
+                                    onPress: () {},
+                                    hasIcon: false,
+                                    hastextcolor: true,
+                                    animatedLabel: true,
+                                    needOutlineBorder: true,
+                                    labelText: "${lableModel.pieces} *",
+                                    readOnly: false,
+                                    maxLength: 3,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        errorText = "";
+                                      });
+                                    },
+                                    fillColor:  Colors.grey.shade100,
+                                    textInputType: TextInputType.number,
+                                    inputAction: TextInputAction.next,
+                                    hintTextcolor: Colors.black45,
+                                    verticalPadding: 0,
+                                    digitsOnly: true,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please fill out this field";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                              Expanded(
+                                flex:1,
+                                child: Directionality(
+                                  textDirection: textDirection,
+                                  child: CustomTextField(
+                                    textDirection: textDirection,
+                                    controller: weightController,
+                                    focusNode: weightFocusNode,
+                                    onPress: () {},
+                                    hasIcon: false,
+                                    hastextcolor: true,
+                                    animatedLabel: true,
+                                    needOutlineBorder: true,
+                                    labelText: "${lableModel.weight}",
+                                    readOnly: false,
+                                    maxLength: 10,
+                                    digitsOnly: false,
+                                    doubleDigitOnly: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(value)}";
+                                       // weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
+                                      });
+
+                                    },
+                                    fillColor:  Colors.grey.shade100,
+                                    textInputType: TextInputType.number,
+                                    inputAction: TextInputAction.next,
+                                    hintTextcolor: Colors.black45,
+                                    verticalPadding: 0,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please fill out this field";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex:1,
+                                child: Directionality(
+                                  textDirection: textDirection,
+                                  child: CustomTextField(
+                                    textDirection: textDirection,
+                                    controller: dmgpiecesController,
+                                    focusNode: dmgpiecesFocusNode,
+                                    onPress: () {},
+                                    hasIcon: false,
+                                    hastextcolor: true,
+                                    animatedLabel: true,
+                                    needOutlineBorder: true,
+                                    labelText: "${lableModel.damagedPCS}",
+                                    readOnly: false,
+                                    maxLength: 3,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        errorText = "";
+                                      });
+                                    },
+                                    fillColor:  Colors.grey.shade100,
+                                    textInputType: TextInputType.number,
+                                    inputAction: TextInputAction.next,
+                                    hintTextcolor: Colors.black45,
+                                    verticalPadding: 0,
+                                    digitsOnly: true,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please fill out this field";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                              Expanded(
+                                flex:1,
+                                child: Directionality(
+                                  textDirection: textDirection,
+                                  child: CustomTextField(
+                                    textDirection: textDirection,
+                                    controller: dmgweightController,
+                                    focusNode: dmgweightFocusNode,
+                                    onPress: () {},
+                                    hasIcon: false,
+                                    hastextcolor: true,
+                                    animatedLabel: true,
+                                    needOutlineBorder: true,
+                                    labelText: "Damage Weight",
+                                    readOnly: false,
+                                    maxLength: 10,
+                                    digitsOnly: false,
+                                    doubleDigitOnly: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        dmgweightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(value)}";
+                                        // weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
+                                      });
+
+                                    },
+                                    fillColor:  Colors.grey.shade100,
+                                    textInputType: TextInputType.number,
+                                    inputAction: TextInputAction.next,
+                                    hintTextcolor: Colors.black45,
+                                    verticalPadding: 0,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                    validator: (value) {
+                                      if (value!.isEmpty) {
+                                        return "Please fill out this field";
+                                      } else {
+                                        return null;
+                                      }
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                          // text manifest and recived in pices text counter
+                          Directionality(
+                            textDirection: textDirection,
+                            child: CustomTextField(
+                              textDirection: textDirection,
+                              controller: groupIdController,
+                              focusNode: groupIdFocusNode,
+                              onPress: () {},
+                              hasIcon: false,
+                              hastextcolor: true,
+                              animatedLabel: true,
+                              needOutlineBorder: true,
+                              labelText: groupIdRequired == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
+                              readOnly: false,
+                              maxLength: groupIDCharSize,
+                              onChanged: (value) {
+                                setState(() {
+                                  errorText = "";
+                                });
+                              },
+                              fillColor: Colors.grey.shade100,
+                              textInputType: TextInputType.text,
+                              inputAction: TextInputAction.next,
+                              hintTextcolor: Colors.black45,
+                              verticalPadding: 0,
+                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please fill out this field";
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                          ),
+                          (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                          if (errorText.isNotEmpty)  // Show error text if not empty
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: CustomeText(
+                                text: errorText,
+                                fontColor: MyColor.colorRed,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                fontWeight: FontWeight.w500,
+                                textAlign: TextAlign.start,
+                              ),
+                            ),
+                          CustomDivider(
+                            space: 0,
+                            color: Colors.black,
+                            hascolor: true,
+                            thickness: 1,
+                          ),
+                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                          Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: RoundedButtonBlue(
+                                  isborderButton: true,
+                                  text: "${lableModel.cancel}",
+                                  press: () {
+                                    Navigator.pop(context, {
+                                      "status": "N",
+                                    });
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                flex: 1,
+                                child: RoundedButtonBlue(
+                                  text: "${lableModel.accept}",
+                                  press: () {
+
+                                    if (piecesController.text.isEmpty) {
+                                      setState(() {
+                                        errorText = "Please enter no. of pcs.";
+                                      });
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(piecesFocusNode);
+                                      });
+                                      Vibration.vibrate(duration: 500);
+                                      return;
+                                    }
+
+                                    if(groupIdRequired == "Y"){
+                                      if (groupIdController.text.isEmpty) {
+                                        setState(() {
+                                          errorText = "${lableModel.enterGropIdMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+                                        return;
+                                      }
+                                      // Check if the groupId length is between 14 (min and max 14 characters)
+                                      if (groupIdController.text.length != groupIDCharSize) {
+                                        setState(() {
+                                          errorText = formatMessage("${lableModel.groupIdCharSizeMsg}", ["${groupIDCharSize}"]);
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+                                        return;
+                                      }
+
+                                    }
+
+
+
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+
+
+
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+        );
+      },
+    );
+  }
+
 
 }

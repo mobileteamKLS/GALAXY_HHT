@@ -56,11 +56,16 @@ class Apilist{
   // house list apis
   static String houseListApi = "/FlightCheckIn/GetHAWBDetails";
 
+  // found cargo save
+  static String foundCargoSaveApi = "/FlightCheckIn/FoundCargoSave";
+
 
   // Binning list details
   static String getBinningPageLoadApi = "/Binning/GetPageLoad";
   static String binningDetailListApi = "/Binning/GetDetails";
   static String binningSaveApi = "/Binning/Save";
+
+
 
 
 }

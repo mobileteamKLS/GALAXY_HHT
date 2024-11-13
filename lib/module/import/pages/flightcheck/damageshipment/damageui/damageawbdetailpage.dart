@@ -262,11 +262,22 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+
+                        CustomeText(
+                            text: "A) AIR WAYBILL DETAILS",
+                            fontColor: MyColor.textColorGrey3,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                            fontWeight: FontWeight.bold,
+                            textAlign: TextAlign.start),
+
+                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9),
+
+
                         CustomeText(
                             text: (widget.damageDetailsModel!.damageAWBDetail!.houseNo!.isEmpty) ? AwbFormateNumberUtils.formatAWBNumber(widget.damageDetailsModel!.damageAWBDetail!.aWBNo!) : widget.damageDetailsModel!.damageAWBDetail!.houseNo!,
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w800,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
                         Row(
@@ -419,7 +430,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             text: "${lableModel.typeOfDiscrepancy}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
 
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9),
@@ -495,7 +506,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             text: "${lableModel.shipmentWeightDetails}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical,),
 
@@ -758,7 +769,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             text: "${lableModel.individualWtOfEachDamagePkg}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
 
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),

@@ -172,7 +172,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             text: "${lableModel.s15a} ${lableModel.anySpaceForMissingItems}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
@@ -300,7 +300,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             text: "${lableModel.b} ${lableModel.isShortageVerifiedByInvoice}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
@@ -427,7 +427,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             text: "${lableModel.s16} ${lableModel.isPackingSufficient}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
@@ -541,7 +541,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             text: "${lableModel.s17} ${lableModel.anyEvidenceOfPilferage}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
 
@@ -650,7 +650,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             text: "${lableModel.s18} ${lableModel.remarks} ${lableModel.inCaseLiveAnimal}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
 
@@ -673,7 +673,7 @@ class _MissingItemAndRemarksPageState extends State<MissingItemAndRemarksPage> {
                             inputAction: TextInputAction.next,
                             hintTextcolor: Colors.black45,
                             verticalPadding: 0,
-                            maxLength: 30,
+                            maxLength: 500,
                             digitsOnly: false,
                             doubleDigitOnly: false,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,

@@ -218,6 +218,7 @@ class LableModel {
   String? enterPiecesGrtMsg;
   String? enterWeightGrtMsg;
 
+  String? airWaybillDetail;
   String? typeOfDiscrepancy;
   String? dMG;
   String? sOP;
@@ -636,6 +637,7 @@ class LableModel {
         this.enterPiecesGrtMsg,
         this.enterWeightGrtMsg,
 
+        this.airWaybillDetail,
         this.typeOfDiscrepancy,
         this.dMG,
         this.sOP,
@@ -1064,6 +1066,7 @@ class LableModel {
     enterPiecesGrtMsg = json['enterPiecesGrtMsg'];
     enterWeightGrtMsg = json['enterWeightGrtMsg'];
 
+    airWaybillDetail = json['airWaybillDetail'];
     typeOfDiscrepancy = json['typeOfDiscrepancy'];
     dMG = json['DMG'];
     sOP = json['SOP'];
@@ -1493,6 +1496,7 @@ class LableModel {
     data['enterPiecesGrtMsg'] = this.enterPiecesGrtMsg;
     data['enterWeightGrtMsg'] = this.enterWeightGrtMsg;
 
+    data['airWaybillDetail'] = this.airWaybillDetail;
     data['typeOfDiscrepancy'] = this.typeOfDiscrepancy;
     data['DMG'] = this.dMG;
     data['SOP'] = this.sOP;

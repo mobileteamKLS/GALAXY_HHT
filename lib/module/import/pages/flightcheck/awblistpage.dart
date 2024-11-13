@@ -14,6 +14,7 @@ import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/fligh
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customdivider.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:vibration/vibration.dart';
 
 import '../../../../core/images.dart';
@@ -484,6 +485,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                               Expanded(
                                                                 child: GroupIdCustomTextField(
                                                                   controller: scanNoEditingController,
+                                                                  focusNode: scanAwbFocusNode,
                                                                   textDirection: textDirection,
                                                                   hasIcon: true,
                                                                   hastextcolor: true,
@@ -494,8 +496,17 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                   prefixIconcolor: MyColor.colorBlack,
                                                                   hintText: "${lableModel.scanAWB}",
                                                                   readOnly: false,
-                                                                  onChanged: (value) {
+                                                                  onChanged: (value) async {
+                                                                    if(_isOpenULDFlagEnable == false){
+                                                                      _isOpenULDFlagEnable = true;
+                                                                      await context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                      setState(() {
+
+                                                                      });
+                                                                    }
+
                                                                     updateSearchList(value);
+
                                                                   },
                                                                   fillColor: MyColor.colorWhite,
                                                                   textInputType: TextInputType.number,
@@ -1817,14 +1828,27 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                             ),
                                                           ],
                                                         )
-                                                            : Padding(
-                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                              child: Center(
-                                                                child: CustomeText(text: "${lableModel.recordNotFound}", fontColor:
-                                                                MyColor.textColorGrey,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                                fontWeight: FontWeight.w500,
-                                                                textAlign: TextAlign.center),),
+                                                            : Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                                  child: Center(
+                                                                    child: CustomeText(text: "${lableModel.recordNotFound}", fontColor:
+                                                                    MyColor.textColorGrey,
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    textAlign: TextAlign.center),),
+                                                                ),
+                                                                RoundedButtonBlue(text: "Add found cargo", press: () async {
+                                                                  if (scanNoEditingController.text.length != 11) {
+                                                                    openValidationDialog("${lableModel.invalidAWBNo}", scanAwbFocusNode);
+                                                                    return;
+                                                                  }
+
+                                                                  var result = await DialogUtils.showFoundCargoAWBDialog(context, scanNoEditingController.text, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Add found cargo", widget.buttonRightsList, widget.groupIDRequires, widget.groupIDCharSize);
+
+                                                                },)
+                                                              ],
                                                             )
                                                             : Padding(
                                                               padding: const EdgeInsets.symmetric(vertical: 10.0),
@@ -1835,14 +1859,19 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                 fontWeight: FontWeight.w500,
                                                                 textAlign: TextAlign.center),),
                                                             )
-                                                            : Padding(
-                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                              child: Center(
-                                                                child: CustomeText(text: "${lableModel.recordNotFound}",
-                                                                fontColor: MyColor.textColorGrey,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                                fontWeight: FontWeight.w500,
-                                                                textAlign: TextAlign.center),),
+                                                            : Column(
+                                                              children: [
+                                                                Padding(
+                                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                                  child: Center(
+                                                                    child: CustomeText(text: "${lableModel.recordNotFound}",
+                                                                    fontColor: MyColor.textColorGrey,
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    textAlign: TextAlign.center),),
+                                                                ),
+
+                                                              ],
                                                             )
                                                       ],
                                                     ),
@@ -2102,6 +2131,18 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       int companyCode,
       int menuId) async {
     await context.read<FlightCheckCubit>().bdPriorityAWB(iMPShipRowId, bdPriority, userId, companyCode, menuId);
+  }
+
+
+  Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
+    bool? empty = await DialogUtils.showDataNotFoundDialogbot(
+        context, "${message}", widget.lableModel);
+
+    if (empty == true) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(focuseNode);
+      });
+    }
   }
 
 }

@@ -98,7 +98,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
     // TODO: implement initState
     super.initState();
     _loadUser();
-    weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
+   // weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
     _blinkController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: TickerProviders(), // Manually providing Ticker
@@ -242,7 +242,11 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                   groupIdController.clear();
 
                                   weightCount = 0.00;
-                                  weightController.text = "${weightCount.toStringAsFixed(2)}";
+
+                                  /*weightCount = 0.00;
+                                  weightController.text = "${weightCount.toStringAsFixed(2)}";*/
+
+                                  weightController.clear();
 
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(piecesFocusNode);
@@ -265,7 +269,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                   SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }else{
 
-                                  SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                 // SnackbarUtil.showSnackbar(context, state.importShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
 
                                   if(Clicks == "S"){
                                     Navigator.pop(context, "true");
@@ -721,43 +725,23 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
 
 
-                                                    if (piecesController.text.isEmpty) {
-                                                      openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
+                                                    /*if (piecesController.text.isNotEmpty) {
+                                                      if(int.parse(piecesController.text) == 0){
+                                                        openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
+                                                        return;
+                                                      }
                                                       return;
                                                     }
+*/
 
-                                                    if(int.parse(piecesController.text) == 0){
-                                                      openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
-                                                      return;
-                                                    }
 
-                                                    if(double.parse(weightController.text) == 0){
-                                                      openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
-                                                      return;
-                                                    }
+
 
                                                     if(isButtonEnabled("awbdamageandsave", widget.buttonRightsList)){
                                                       String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
 
 
                                                       Clicks = "D";
-
-
-
-
-                                                      if(widget.groupIDRequires == "Y"){
-                                                        if (groupIdController.text.isEmpty) {
-                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                          return;
-                                                        }
-
-                                                        // Check if the groupId length is between 14 (min and max 14 characters)
-                                                        if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                          openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
-                                                          return;
-                                                        }
-
-                                                      }
 
 
                                                       CommonUtils.SELECTEDWHETHER = "";
@@ -791,9 +775,101 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       CommonUtils.SELECTEDCONTENT = "";
                                                       CommonUtils.SELECTEDCONTAINER = "";
 
-                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      if(widget.groupIDRequires == "Y"){
+                                                        if (groupIdController.text.isEmpty) {
+                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                        // Check if the groupId length is between 14 (min and max 14 characters)
+                                                        if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                          openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                      }
 
 
+                                                      if(piecesController.text.isNotEmpty){
+                                                        print("PICES Not EMPTY");
+                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }
+                                                      else{
+
+                                                        print("PICES EMPTY");
+                                                        int damageNop = widget.aWBItem.damageNOP!;
+                                                        double damageWt = widget.aWBItem.damageWeight!;
+
+                                                        int npxPices = widget.aWBItem.nPR!;
+                                                        double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+
+                                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                          lableModel: lableModel,
+                                                          pageView: 0,
+                                                          enterDamageNop: (piecesController.text.isEmpty) ? 0 : int.parse(piecesController.text),
+                                                          enterDamageWt: (weightController.text.isEmpty) ? 0.00 : double.parse(weightController.text),
+                                                          damageNop: damageNop,
+                                                          damageWt: damageWt,
+                                                          buttonRightsList: widget.buttonRightsList,
+                                                          aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+
+
+                                                      }
+
+
+
+                                                      /*if(piecesController.text.isNotEmpty){
+                                                        
+
+
+
+                                                        int damageNop = widget.aWBItem.damageNOP!;
+                                                        double damageWt = widget.aWBItem.damageWeight!;
+
+                                                        int npxPices = widget.aWBItem.nPR!;
+                                                        double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+
+                                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                          lableModel: lableModel,
+                                                          pageView: 0,
+                                                          enterDamageNop: (piecesController.text.isEmpty) ? 0 : int.parse(piecesController.text),
+                                                          enterDamageWt: (weightController.text.isEmpty) ? 0.00 : double.parse(weightController.text),
+                                                          damageNop: damageNop,
+                                                          damageWt: damageWt,
+                                                          buttonRightsList: widget.buttonRightsList,
+                                                          aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+
+                                                      }
+                                                      else{
+
+                                                        if (weightController.text.isNotEmpty) {
+                                                          if(double.parse(weightController.text) == 0){
+                                                            openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
+                                                            return;
+                                                          }
+                                                          return;
+                                                        }
+
+                                                        if(widget.groupIDRequires == "Y"){
+                                                          if (groupIdController.text.isEmpty) {
+                                                            openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                            return;
+                                                          }
+
+                                                          // Check if the groupId length is between 14 (min and max 14 characters)
+                                                          if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                            openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
+                                                            return;
+                                                          }
+
+                                                        }
+
+
+                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }*/
 
                                                     }
                                                     else{

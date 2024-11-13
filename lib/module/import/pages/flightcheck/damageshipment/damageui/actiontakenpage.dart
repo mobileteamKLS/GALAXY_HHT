@@ -181,7 +181,7 @@ class _ActionTakenPageState extends State<ActionTakenPage> {
                             text: "${lableModel.e} ${lableModel.actionTaken}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
                         CustomDivider(space: 0, color: Colors.black, hascolor: true,),

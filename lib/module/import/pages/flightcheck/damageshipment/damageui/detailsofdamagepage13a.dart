@@ -176,7 +176,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
                             text: "${lableModel.d} ${lableModel.detailsOfDamageObserved}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.bold,
                             textAlign: TextAlign.start),
                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,),
                         CustomDivider(space: 0, color: Colors.black, hascolor: true,),
@@ -220,7 +220,7 @@ class _DetailsOfDamage13aPageState extends State<DetailsOfDamage13aPage> {
 
                                   },
                                   hasIcon: false,
-                                  maxLength: 4,
+                                  maxLength: 5,
                                   hastextcolor: true,
                                   animatedLabel: true,
                                   needOutlineBorder: true,

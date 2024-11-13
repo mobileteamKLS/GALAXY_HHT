@@ -233,6 +233,7 @@
     "enterPiecesGrtMsg" : "الرجاء إدخال قطع أكبر من 0.",
     "enterWeightGrtMsg" : "الرجاء إدخال وزن أكبر من 0.",
 
+    "airWaybillDetail": "أ) تفاصيل بوليصة الشحن الجوي",
     "typeOfDiscrepancy" : "ب) نوع التناقض",
     "DMG" : "الضرر",
     "SOP" : "نقص / جزئي",
