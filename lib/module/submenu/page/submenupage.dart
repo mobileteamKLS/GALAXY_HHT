@@ -23,6 +23,7 @@ import '../../../widget/customdivider.dart';
 import '../../../widget/customeuiwidgets/footer.dart';
 import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
+import '../../dashboard/model/menumodel.dart';
 import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
 import '../../import/pages/uldacceptance/uldacceptancepage.dart';
@@ -50,7 +51,8 @@ class _SubMenuPageState extends State<SubMenuPage> {
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
   InactivityTimerManager? inactivityTimerManager;
-
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   @override
   void initState() {
@@ -181,6 +183,15 @@ class _SubMenuPageState extends State<SubMenuPage> {
                             if(state is SubMenuStateLoading){
                               DialogUtils.showLoadingDialog(context, message: subMenuModelLang!.loading);
                             }else if(state is SubMenuStateSuccess){
+                              if(widget.menuId == "1001"){
+                                importSubMenuList =  state.subMenuModel.subMenuName!;
+                              }else if(widget.menuId == "1002"){
+                                exportSubMenuList =  state.subMenuModel.subMenuName!;
+                              }
+
+                              setState(() {
+
+                              });
                               DialogUtils.hideLoadingDialog(context);
                             }else if(state is SubMenuStateFailure){
                               DialogUtils.hideLoadingDialog(context);
@@ -219,7 +230,14 @@ class _SubMenuPageState extends State<SubMenuPage> {
 
                                       NextScreen(FlightCheck(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName), isEnable);
                                     }else if(menuId == SubMenuCodeUtils.Binning){
-                                      NextScreen(Binning(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName), "Y");
+                                      NextScreen(Binning(
+                                          importSubMenuList: importSubMenuList,
+                                          exportSubMenuList: exportSubMenuList,
+                                          title: subMenuTitle,
+                                          refrelCode: refrelCode,
+                                          lableModel: lableModel,
+                                          menuId: menuId,
+                                          mainMenuName: widget.menuName), "Y");
                                     }else if(menuId == SubMenuCodeUtils.Segration){
 
                                       NextScreen(Container(), isEnable);

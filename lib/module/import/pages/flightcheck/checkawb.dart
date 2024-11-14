@@ -11,6 +11,7 @@ import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/custometext.dart';
 import 'package:vibration/vibration.dart';
 
@@ -169,6 +170,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
     super.dispose();
     inactivityTimerManager!.stopTimer();
   }
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
   @override
@@ -200,11 +202,21 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
               onTap: _resumeTimerOnInteraction,  // Resuming on any tap
               onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
               child: Scaffold(
-                        backgroundColor: MyColor.colorWhite,
-                        body: Stack(
-              children: [
+                key: _scaffoldKey,
+                drawer: BuildCustomeDrawer(
+                  user: _user!,
+                  splashDefaultData: _splashDefaultData!,
+                  onDrawerCloseIcon: () {
+                    _scaffoldKey.currentState?.closeDrawer();
+                  },
+                ),
+                backgroundColor: MyColor.colorWhite,
+                body: Stack(
+                children: [
 
-                MainHeadingWidget(mainMenuName: widget.mainMenuName!),
+                MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                  onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                ),
                 Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                     bottom: 0,
@@ -815,61 +827,14 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                           buttonRightsList: widget.buttonRightsList,
                                                           aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
 
+                                                        if(value == "true"){
+                                                          Navigator.pop(context, "true");
+                                                        }else {
+                                                          _resumeTimerOnInteraction();
+                                                        }
 
                                                       }
 
-
-
-                                                      /*if(piecesController.text.isNotEmpty){
-                                                        
-
-
-
-                                                        int damageNop = widget.aWBItem.damageNOP!;
-                                                        double damageWt = widget.aWBItem.damageWeight!;
-
-                                                        int npxPices = widget.aWBItem.nPR!;
-                                                        double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-
-                                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                          lableModel: lableModel,
-                                                          pageView: 0,
-                                                          enterDamageNop: (piecesController.text.isEmpty) ? 0 : int.parse(piecesController.text),
-                                                          enterDamageWt: (weightController.text.isEmpty) ? 0.00 : double.parse(weightController.text),
-                                                          damageNop: damageNop,
-                                                          damageWt: damageWt,
-                                                          buttonRightsList: widget.buttonRightsList,
-                                                          aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
-
-                                                      }
-                                                      else{
-
-                                                        if (weightController.text.isNotEmpty) {
-                                                          if(double.parse(weightController.text) == 0){
-                                                            openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
-                                                            return;
-                                                          }
-                                                          return;
-                                                        }
-
-                                                        if(widget.groupIDRequires == "Y"){
-                                                          if (groupIdController.text.isEmpty) {
-                                                            openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                            return;
-                                                          }
-
-                                                          // Check if the groupId length is between 14 (min and max 14 characters)
-                                                          if (groupIdController.text.length != widget.groupIDCharSize) {
-                                                            openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
-                                                            return;
-                                                          }
-
-                                                        }
-
-
-                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-                                                      }*/
 
                                                     }
                                                     else{

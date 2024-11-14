@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:galaxy/module/onboarding/sizeconfig.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../core/images.dart';
 import '../core/mycolor.dart';
 
 
@@ -20,6 +21,7 @@ class GroupIdCustomTextField extends StatefulWidget {
   final bool isEnable;
   final bool isPassword;
   final bool isShowSuffixIcon;
+  final bool isShowPrefixIcon;
   final bool isIcon;
   final VoidCallback? onSuffixTap;
   final bool isSearch;
@@ -65,6 +67,7 @@ class GroupIdCustomTextField extends StatefulWidget {
         this.isEnable = true,
         this.isPassword = false,
         this.isShowSuffixIcon = false,
+        this.isShowPrefixIcon = false,
         this.isIcon = false,
         this.onSuffixTap,
         this.fontSize = 10,
@@ -272,6 +275,25 @@ class _CustomTextFieldState extends State<GroupIdCustomTextField> {
                               )
                             : null
                     : null,
+
+                prefixIcon: widget.isShowPrefixIcon
+                    ? widget.isPassword
+                    ? IconButton(
+                    icon: Icon(
+                        obscureText
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        color: MyColor.hintTextColor,
+                        size: 20),
+                    onPressed: _toggle)
+                    : widget.isIcon
+                    ? IconButton(
+                  onPressed: widget.onSuffixTap,
+                  icon: SvgPicture.asset(search_scan, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_6 ,)
+                )
+                    : null
+                    : null,
+
               ),
               onFieldSubmitted: (text) => widget.nextFocus != null
                   ? FocusScope.of(context).requestFocus(widget.nextFocus)

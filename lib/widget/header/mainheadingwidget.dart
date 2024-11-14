@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../core/images.dart';
@@ -9,7 +10,8 @@ import '../custometext.dart';
 
 class MainHeadingWidget extends StatefulWidget {
   String mainMenuName;
-  MainHeadingWidget({super.key, required this.mainMenuName});
+  final VoidCallback onDrawerIconTap;
+  MainHeadingWidget({super.key, required this.mainMenuName, required this.onDrawerIconTap});
 
   @override
   State<MainHeadingWidget> createState() => _MainHeadingWidgetState();
@@ -44,7 +46,9 @@ class _MainHeadingWidgetState extends State<MainHeadingWidget> {
             children: [
               Row(
                 children: [
-                  SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+                  InkWell(onTap: widget.onDrawerIconTap,
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,), // Trigger the callback here
+                  ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
                   CustomeText(text: widget.mainMenuName, fontColor: MyColor.colorWhite, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start)
                 ],

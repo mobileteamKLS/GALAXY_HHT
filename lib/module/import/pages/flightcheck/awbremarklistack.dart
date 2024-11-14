@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../core/images.dart';
 import '../../../../core/mycolor.dart';
@@ -150,7 +151,7 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
     super.dispose();
     inactivityTimerManager!.stopTimer();
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     // localize value form assets
@@ -181,9 +182,19 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
           textDirection: uiDirection,
           child: SafeArea(
             child: Scaffold(
+              key: _scaffoldKey,
+              drawer: BuildCustomeDrawer(
+                user: _user!,
+                splashDefaultData: _splashDefaultData!,
+                onDrawerCloseIcon: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                },
+              ),
               body: Stack(
                 children: [
-                  MainHeadingWidget(mainMenuName: widget.mainMenuName),
+                  MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                    onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                  ),
                   Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                     bottom: 0,

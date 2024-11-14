@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/custometext.dart';
 import 'package:vibration/vibration.dart';
 
@@ -204,7 +205,7 @@ class _AddMailPageState extends State<AddMailPage> {
     Navigator.pop(context, "Done");
     return false; // Prevents the default back button action
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -229,11 +230,20 @@ class _AddMailPageState extends State<AddMailPage> {
         textDirection: uiDirection,
         child: SafeArea(
             child: Scaffold(
+              key: _scaffoldKey,
+              drawer: BuildCustomeDrawer(
+                user: _user!,
+                splashDefaultData: _splashDefaultData!,
+                onDrawerCloseIcon: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                },),
           backgroundColor: MyColor.colorWhite,
           body: Stack(
             children: [
 
-              MainHeadingWidget(mainMenuName: widget.mainMenuName!),
+              MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+              ),
               Positioned(
                   top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                   bottom: 0,

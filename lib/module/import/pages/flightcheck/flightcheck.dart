@@ -30,6 +30,7 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
 import '../../../../utils/validationmsgcodeutils.dart';
+import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
@@ -348,7 +349,7 @@ class _FlightCheckState extends State<FlightCheck>
     return false; // Prevents the default back button action
   }
 
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -378,9 +379,19 @@ class _FlightCheckState extends State<FlightCheck>
           textDirection: uiDirection,
           child: SafeArea(
             child: Scaffold(
+              key: _scaffoldKey,
+              drawer: BuildCustomeDrawer(
+                user: _user!,
+                splashDefaultData: _splashDefaultData!,
+                onDrawerCloseIcon: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                },
+              ),
               body: Stack(
                 children: [
-                  MainHeadingWidget(mainMenuName: widget.mainMenuName),
+                  MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                    onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                    ),
                   Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                     bottom: 0,
@@ -1363,6 +1374,8 @@ class _FlightCheckState extends State<FlightCheck>
                                                                         builder: (
                                                                             context) =>
                                                                             AwbRemarkListpage(
+                                                                              user: _user!,
+                                                                              splashDefaultData: _splashDefaultData!,
                                                                               aWBRemarkList: flightCheckULDListModel!
                                                                                   .aWBRemarkList, mainMenuName: widget.mainMenuName,
                                                                             ),

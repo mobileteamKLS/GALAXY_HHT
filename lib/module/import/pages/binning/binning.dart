@@ -22,6 +22,7 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
+import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
@@ -33,6 +34,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/binning/binningdetaillistmodel.dart';
 import '../../services/binning/binninglogic/binningcubit.dart';
 import '../../services/binning/binninglogic/binningstate.dart';
@@ -43,9 +45,13 @@ class Binning extends StatefulWidget {
   String refrelCode;
   LableModel? lableModel;
   int menuId;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   Binning(
       {super.key,
+      required this.importSubMenuList,
+      required this.exportSubMenuList,
       required this.title,
       required this.refrelCode,
       this.lableModel,
@@ -92,6 +98,10 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
+
+    print("CHECK_IMPORTLIST==== ${widget.importSubMenuList.length}");
+    print("CHECK_IMPORTLIST==== ${widget.exportSubMenuList.length}");
+
     _loadUser(); //load user data
 
     _blinkController = AnimationController(
@@ -267,6 +277,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
     return false; // Prevents the default back button action
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     // localize value form assets
@@ -297,9 +309,27 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
           textDirection: uiDirection,
           child: SafeArea(
             child: Scaffold(
+              key: _scaffoldKey,
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
+                user: _user!,
+                splashDefaultData: _splashDefaultData!,
+              onDrawerCloseIcon: () {
+                isBackPressed = false; // Set to true to avoid showing snackbar on back press
+                _scaffoldKey.currentState?.closeDrawer();
+              },) : null, // Add custom drawer widget here
               body: Stack(
                 children: [
-                  MainHeadingWidget(mainMenuName: widget.mainMenuName),
+                  MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                  onDrawerIconTap: () {
+                    isBackPressed = true; // Set to true to avoid showing snackbar on back press
+                    _scaffoldKey.currentState?.openDrawer();
+                  },
+
+                  /*  onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),*/
+                  ),
                   Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                     bottom: 0,

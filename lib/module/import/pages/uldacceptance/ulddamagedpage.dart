@@ -6,6 +6,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/validationmsgcodeutils.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/header/mainheadingwidget.dart';
 import 'package:image/image.dart' as img; // Import the image package
 
@@ -166,6 +167,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
     print('Activity detected, timer reset');
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
 
@@ -196,6 +198,14 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
             onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
             child: SafeArea(
                 child: Scaffold(
+                  key: _scaffoldKey,
+                  drawer: BuildCustomeDrawer(
+                    user: _user!,
+                    splashDefaultData: _splashDefaultData!,
+                    onDrawerCloseIcon: () {
+                      _scaffoldKey.currentState?.closeDrawer();
+                    },
+                  ),
                     resizeToAvoidBottomInset: true,
                     body: NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification scroll) {
@@ -204,7 +214,9 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                       },
                       child: Stack(
                         children: [
-                          MainHeadingWidget(mainMenuName: widget.mainMenuName!),
+                          MainHeadingWidget(mainMenuName: widget.mainMenuName!,
+                            onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                          ),
                           Positioned(
                             top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                             bottom: 0,

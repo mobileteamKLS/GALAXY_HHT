@@ -710,7 +710,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         }
 
                         if (securityController.text.isEmpty) {
-                          openValidationDialog("${lableModel.enterSecurityRepMsg}", airlineFocusNode, lableModel);
+                          openValidationDialog("${lableModel.enterSecurityRepMsg}", securityFocusNode, lableModel);
                           return;
                         }
 

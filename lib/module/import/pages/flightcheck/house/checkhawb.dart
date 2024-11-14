@@ -11,6 +11,7 @@ import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/custometext.dart';
 import 'package:vibration/vibration.dart';
 
@@ -174,6 +175,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
     super.dispose();
     inactivityTimerManager!.stopTimer();
   }
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 
   @override
@@ -205,11 +207,21 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
               onTap: _resumeTimerOnInteraction,  // Resuming on any tap
               onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
               child: Scaffold(
+                key: _scaffoldKey,
+                drawer: BuildCustomeDrawer(
+                  user: _user!,
+                  splashDefaultData: _splashDefaultData!,
+                  onDrawerCloseIcon: () {
+                    _scaffoldKey.currentState?.closeDrawer();
+                  },
+                ),
                         backgroundColor: MyColor.colorWhite,
                         body: Stack(
               children: [
 
-                MainHeadingWidget(mainMenuName: widget.mainMenuName!),
+                MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                  onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                ),
                 Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                     bottom: 0,
@@ -849,35 +861,14 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                           buttonRightsList: widget.buttonRightsList,
                                                           haWBItem: widget.haWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
 
+
+                                                        if(value == "true"){
+                                                          Navigator.pop(context, "true");
+                                                        }else {
+                                                          _resumeTimerOnInteraction();
+                                                        }
                                                       }
 
-
-
-
-                                                      /*if(piecesController.text.isEmpty){
-                                                        int damageNop = widget.haWBItem.damageNOP!;
-                                                        double damageWt = widget.haWBItem.damageWeight!;
-
-
-                                                        int npxPices = widget.haWBItem.nPR!;
-                                                        double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
-
-                                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
-                                                          lableModel: lableModel,
-                                                          pageView: 0,
-                                                          enterDamageNop: (piecesController.text.isEmpty) ? 0 : int.parse(piecesController.text),
-                                                          enterDamageWt: (weightController.text.isEmpty) ? 0.00 :  double.parse(weightController.text),
-                                                          damageNop: damageNop,
-                                                          damageWt: damageWt,
-                                                          buttonRightsList: widget.buttonRightsList,
-                                                          haWBItem: widget.haWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
-
-
-                                                      }
-                                                      else{
-                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-                                                      }*/
 
                                                     }
                                                     else{

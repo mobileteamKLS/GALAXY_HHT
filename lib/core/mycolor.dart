@@ -25,6 +25,7 @@ class MyColor {
   static const Color btCountColor =Color(0xFFccf1f6);
   static const Color thumbColor =Color(0xFFe4e7eb);
   static const Color switchTreckColor =Color(0xFFe4e7eb);
+  static const Color pinkColor =Color(0xFF5e35b1);
 
 
   static const Color flightFinalize =Color(0xFFb3d8b4);

@@ -275,7 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     // next to submenu page from dashboard page
                                     if(menuName.IsEnable == "Y"){
                                         inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
-                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => SubMenuPage(menuId: menuName.menuId!, menuName: menuTitle,),));
+                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => SubMenuPage(menuId: menuName.menuId!, menuName: menuTitle),));
                                         if(value == "Done"){
                                           _resumeTimerOnInteraction();
                                         }

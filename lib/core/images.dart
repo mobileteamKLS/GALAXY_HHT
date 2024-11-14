@@ -90,6 +90,17 @@ const right = 'assets/svgImages/right.svg';
 const arrowUp = 'assets/svgImages/arrowup.svg';
 const arrowDown = 'assets/svgImages/arrowdown.svg';
 const map = 'assets/svgImages/map.svg';
+const more = 'assets/svgImages/more.svg';
+const logout = 'assets/svgImages/logout.svg';
+const search_scan = 'assets/svgImages/search_scan.svg';
+const dashboard = 'assets/svgImages/dashboard.svg';
+const importSvg = 'assets/svgImages/import.svg';
+const exportSvg = 'assets/svgImages/export.svg';
+const courrierSvg = 'assets/svgImages/courrier.svg';
+const manual = 'assets/svgImages/manual.svg';
+const comments = 'assets/svgImages/comments.svg';
+const circleDown = 'assets/svgImages/circle_down.svg';
+const circleUp = 'assets/svgImages/circleup.svg';
 
 
 

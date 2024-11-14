@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/custometext.dart';
 
 import '../../../../core/mycolor.dart';
@@ -12,15 +13,19 @@ import '../../../../widget/customdivider.dart';
 import '../../../../widget/customeuiwidgets/footer.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../login/model/userlogindatamodel.dart';
 import '../../../onboarding/sizeconfig.dart';
+import '../../../splash/model/splashdefaultmodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import 'dart:ui' as ui;
 
 class AwbRemarkListpage extends StatefulWidget {
   String mainMenuName;
   List<AWBRemarkList>? aWBRemarkList;
+  UserDataModel user;
+  SplashDefaultModel splashDefaultData;
 
-  AwbRemarkListpage({super.key, required this.aWBRemarkList, required this.mainMenuName});
+  AwbRemarkListpage({super.key, required this.user, required this.splashDefaultData, required this.aWBRemarkList, required this.mainMenuName});
 
   @override
   State<AwbRemarkListpage> createState() => _AwbRemarkListpageState();
@@ -48,6 +53,8 @@ class _AwbRemarkListpageState extends State<AwbRemarkListpage> {
 
   }
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
 
@@ -70,11 +77,20 @@ class _AwbRemarkListpageState extends State<AwbRemarkListpage> {
       textDirection: uiDirection,
       child: SafeArea(
         child: Scaffold(
-
+          key: _scaffoldKey,
+          drawer: BuildCustomeDrawer(
+            user: widget.user,
+            splashDefaultData: widget.splashDefaultData,
+            onDrawerCloseIcon: () {
+              _scaffoldKey.currentState?.closeDrawer();
+            },
+          ),
           body: Stack(
 
             children: [
-              MainHeadingWidget(mainMenuName: widget.mainMenuName),
+              MainHeadingWidget(mainMenuName: widget.mainMenuName,
+                onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+              ),
               Positioned(
                 top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
                 bottom: 0,

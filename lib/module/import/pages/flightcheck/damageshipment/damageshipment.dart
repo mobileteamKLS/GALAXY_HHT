@@ -12,6 +12,7 @@ import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/custometext.dart';
 import 'package:vibration/vibration.dart';
 
@@ -468,7 +469,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     }
   }
 
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -498,11 +499,21 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               onTap: _resumeTimerOnInteraction,  // Resuming on any tap
               onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
               child: Scaffold(
+                key: _scaffoldKey,
+                drawer: BuildCustomeDrawer(
+                  user: _user!,
+                  splashDefaultData: _splashDefaultData!,
+                  onDrawerCloseIcon: () {
+                    _scaffoldKey.currentState?.closeDrawer();
+                  },
+                ),
                 backgroundColor: MyColor.colorWhite,
                 body: Stack(
                   children: [
 
-                    MainHeadingWidget(mainMenuName: "${widget.mainMenuName}"),
+                    MainHeadingWidget(mainMenuName: "${widget.mainMenuName}",
+                      onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                    ),
 
                     BlocListener<FlightCheckCubit, FlightCheckState>(
                       listener: (context, state) {
