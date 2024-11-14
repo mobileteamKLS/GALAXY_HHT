@@ -124,3 +124,73 @@ class _CustomeEditTextWithBorderDatePickerState extends State<CustomeEditTextWit
     );
   }
 }
+
+class RoundedIconButton extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Widget targetPage;
+  final Color containerColor;
+  final Color iconColor;
+  final Color textColor;
+
+  const RoundedIconButton({
+    Key? key,
+    required this.icon,
+    required this.text,
+    required this.targetPage,
+    this.containerColor = Colors.blue,
+    this.iconColor = Colors.white,
+    this.textColor = Colors.black,
+  }) : super(key: key);
+
+  void _navigate(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => targetPage),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _navigate(context),
+      child: Container(
+        width: MediaQuery.sizeOf(context).width*0.22,
+        height:MediaQuery.sizeOf(context).height*0.18 ,
+        decoration: BoxDecoration(
+          color: containerColor,
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 2,
+              offset: const Offset(
+                  0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(20),
+        child:Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              color: iconColor,
+              size: 48,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              text,
+              style: TextStyle(color: textColor, fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
+

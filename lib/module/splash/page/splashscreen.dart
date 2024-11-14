@@ -12,6 +12,7 @@ import 'package:galaxy/utils/commonutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../Ipad/screen/ImportShipmentListing.dart';
+import '../../../Ipad/screen/IpadDashBoard.dart';
 import '../../login/pages/signinscreenmethods.dart';
 import '../model/splashdefaultmodel.dart';
 import '../service/splashlogic/splashcubit.dart';
@@ -65,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Timer(
                 const Duration(seconds: 3),
                     () => Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const ImportShipmentListing(),
+                  builder: (BuildContext context) => const IpadDashboard(),
                 )),
               );
             }else{

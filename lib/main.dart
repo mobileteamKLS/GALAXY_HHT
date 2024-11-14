@@ -11,6 +11,7 @@ import 'package:galaxy/module/splash/page/splashscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'Ipad/screen/ImportShipmentListing.dart';
+import 'Ipad/screen/IpadDashBoard.dart';
 import 'language/appLocalizations.dart';
 import 'module/splash/service/splashrepository.dart';
 import 'module/import/services/uldacceptance/uldacceptancelogic/uldacceptancecubit.dart';
@@ -145,7 +146,7 @@ class MyApp extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else {
                 // when
-                return snapshot.data == true ? const SplashScreen() : const ImportShipmentListing();
+                return snapshot.data == true ? const SplashScreen() : const IpadDashboard();
               }
             }
         ),

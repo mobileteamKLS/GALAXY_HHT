@@ -311,10 +311,10 @@ class _CreateShipmentState extends State<CreateShipment> {
                                   height:
                                       MediaQuery.sizeOf(context).height * 0.02,
                                 ),
-                                modeSelected == 0
-                                    ? SizedBox(
+                                 SizedBox(
                                         child: Column(
                                           children: [
+                                            modeSelected == 0?
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceAround,
@@ -383,7 +383,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               true,
                                                           labelText: "AWB No*",
                                                           readOnly: false,
-                                                          maxLength: 15,
+                                                          maxLength: 8,
                                                           fontSize: 18,
                                                           onChanged:
                                                               (String, bool) {},
@@ -423,7 +423,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           textInputType:
                                                               TextInputType
                                                                   .number,
-                                                          maxLength: 15,
+                                                          maxLength: 4,
                                                           fontSize: 18,
                                                           onChanged:
                                                               (String, bool) {},
@@ -457,7 +457,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           textInputType:
                                                               TextInputType
                                                                   .number,
-                                                          maxLength: 15,
+                                                          maxLength: 4,
                                                           fontSize: 18,
                                                           onChanged:
                                                               (String, bool) {},
@@ -467,7 +467,206 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                   ),
                                                 ),
                                               ],
+                                            ): Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.spaceAround,
+                                  children: [
+                                    SizedBox(
+                                      width:
+                                      MediaQuery.sizeOf(context)
+                                          .width *
+                                          0.44,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            height:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .height *
+                                                0.04,
+                                            width:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .width *
+                                                0.1,
+                                            child:
+                                            CustomeEditTextWithBorder(
+                                              lablekey: 'MAWB',
+                                              hasIcon: false,
+                                              hastextcolor: true,
+                                              animatedLabel: true,
+                                              needOutlineBorder:
+                                              true,
+                                              labelText: "Prefix*",
+                                              readOnly: false,
+                                              maxLength: 15,
+                                              fontSize: 18,
+                                              onChanged:
+                                                  (String, bool) {},
                                             ),
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          SizedBox(
+                                            height:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .height *
+                                                0.04,
+                                            width:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .width *
+                                                0.32,
+                                            child: Row(
+                                              mainAxisAlignment:
+                                              MainAxisAlignment
+                                                  .spaceBetween,
+                                              children: [
+                                                SizedBox(
+                                                  height: MediaQuery
+                                                      .sizeOf(
+                                                      context)
+                                                      .height *
+                                                      0.04,
+                                                  width: MediaQuery
+                                                      .sizeOf(
+                                                      context)
+                                                      .width *
+                                                      0.15,
+                                                  child:
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey:
+                                                    'MAWB',
+                                                    hasIcon: false,
+                                                    hastextcolor:
+                                                    true,
+                                                    animatedLabel:
+                                                    true,
+                                                    needOutlineBorder:
+                                                    true,
+                                                    labelText:
+                                                    "AWB No*",
+                                                    readOnly: false,
+                                                    maxLength: 15,
+                                                    fontSize: 18,
+                                                    onChanged:
+                                                        (String,
+                                                        bool) {},
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                SizedBox(
+                                                  height: MediaQuery
+                                                      .sizeOf(
+                                                      context)
+                                                      .height *
+                                                      0.04,
+                                                  width: MediaQuery
+                                                      .sizeOf(
+                                                      context)
+                                                      .width *
+                                                      0.15,
+                                                  child:
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey:
+                                                    'MAWB',
+                                                    hasIcon: false,
+                                                    hastextcolor:
+                                                    true,
+                                                    animatedLabel:
+                                                    true,
+                                                    needOutlineBorder:
+                                                    true,
+                                                    labelText:
+                                                    "HAWB No*",
+                                                    readOnly: false,
+                                                    maxLength: 15,
+                                                    fontSize: 18,
+                                                    onChanged:
+                                                        (String,
+                                                        bool) {},
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width:
+                                      MediaQuery.sizeOf(context)
+                                          .width *
+                                          0.45,
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            height:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .height *
+                                                0.04,
+                                            width:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .width *
+                                                0.22,
+                                            child:
+                                            CustomeEditTextWithBorder(
+                                              lablekey: 'MAWB',
+                                              hasIcon: false,
+                                              hastextcolor: true,
+                                              animatedLabel: true,
+                                              needOutlineBorder:
+                                              true,
+                                              labelText: "NoP*",
+                                              readOnly: false,
+                                              maxLength: 15,
+                                              fontSize: 18,
+                                              onChanged:
+                                                  (String, bool) {},
+                                            ),
+                                          ),
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          SizedBox(
+                                            height:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .height *
+                                                0.04,
+                                            width:
+                                            MediaQuery.sizeOf(
+                                                context)
+                                                .width *
+                                                0.20,
+                                            child:
+                                            CustomeEditTextWithBorder(
+                                              lablekey: 'MAWB',
+                                              hasIcon: false,
+                                              hastextcolor: true,
+                                              animatedLabel: true,
+                                              needOutlineBorder:
+                                              true,
+                                              labelText:
+                                              "Gross Weight*",
+                                              readOnly: false,
+                                              maxLength: 15,
+                                              fontSize: 18,
+                                              onChanged:
+                                                  (String, bool) {},
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
                                             SizedBox(
                                               height: MediaQuery.sizeOf(context)
                                                       .height *
@@ -792,540 +991,540 @@ class _CreateShipmentState extends State<CreateShipment> {
                                           ],
                                         ),
                                       )
-                                    : SizedBox(
-                                        child: Column(
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.44,
-                                                  child: Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.1,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText: "Prefix*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.32,
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            SizedBox(
-                                                              height: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .height *
-                                                                  0.04,
-                                                              width: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .width *
-                                                                  0.15,
-                                                              child:
-                                                                  CustomeEditTextWithBorder(
-                                                                lablekey:
-                                                                    'MAWB',
-                                                                hasIcon: false,
-                                                                hastextcolor:
-                                                                    true,
-                                                                animatedLabel:
-                                                                    true,
-                                                                needOutlineBorder:
-                                                                    true,
-                                                                labelText:
-                                                                    "AWB No*",
-                                                                readOnly: false,
-                                                                maxLength: 15,
-                                                                fontSize: 18,
-                                                                onChanged:
-                                                                    (String,
-                                                                        bool) {},
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .height *
-                                                                  0.04,
-                                                              width: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .width *
-                                                                  0.15,
-                                                              child:
-                                                                  CustomeEditTextWithBorder(
-                                                                lablekey:
-                                                                    'MAWB',
-                                                                hasIcon: false,
-                                                                hastextcolor:
-                                                                    true,
-                                                                animatedLabel:
-                                                                    true,
-                                                                needOutlineBorder:
-                                                                    true,
-                                                                labelText:
-                                                                    "HAWB No*",
-                                                                readOnly: false,
-                                                                maxLength: 15,
-                                                                fontSize: 18,
-                                                                onChanged:
-                                                                    (String,
-                                                                        bool) {},
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.45,
-                                                  child: Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.22,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText: "NoP*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.20,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText:
-                                                              "Gross Weight*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: MediaQuery.sizeOf(context)
-                                                      .height *
-                                                  0.02,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.44,
-                                                  child:
-                                                      CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Origin*",
-                                                    readOnly: false,
-                                                    maxLength: 15,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.44,
-                                                  child:
-                                                      CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Destination*",
-                                                    readOnly: false,
-                                                    maxLength: 15,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: MediaQuery.sizeOf(context)
-                                                      .height *
-                                                  0.02,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.44,
-                                                  child: Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.1,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText: "Code*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.32,
-                                                        child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            SizedBox(
-                                                              height: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .height *
-                                                                  0.04,
-                                                              width: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .width *
-                                                                  0.15,
-                                                              child:
-                                                                  CustomeEditTextWithBorder(
-                                                                lablekey:
-                                                                    'MAWB',
-                                                                hasIcon: false,
-                                                                hastextcolor:
-                                                                    true,
-                                                                animatedLabel:
-                                                                    true,
-                                                                needOutlineBorder:
-                                                                    true,
-                                                                labelText:
-                                                                    "Flight No*",
-                                                                readOnly: false,
-                                                                maxLength: 15,
-                                                                fontSize: 18,
-                                                                onChanged:
-                                                                    (String,
-                                                                        bool) {},
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: 10,
-                                                            ),
-                                                            SizedBox(
-                                                              height: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .height *
-                                                                  0.04,
-                                                              width: MediaQuery
-                                                                          .sizeOf(
-                                                                              context)
-                                                                      .width *
-                                                                  0.15,
-                                                              child:
-                                                                  CustomeEditTextWithBorder(
-                                                                lablekey:
-                                                                    'MAWB',
-                                                                hasIcon: false,
-                                                                hastextcolor:
-                                                                    true,
-                                                                animatedLabel:
-                                                                    true,
-                                                                needOutlineBorder:
-                                                                    true,
-                                                                labelText:
-                                                                    "Flight Date*",
-                                                                readOnly: false,
-                                                                maxLength: 15,
-                                                                fontSize: 18,
-                                                                onChanged:
-                                                                    (String,
-                                                                        bool) {},
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.45,
-                                                  child: Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.22,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText: "ULD*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(
-                                              height: MediaQuery.sizeOf(context)
-                                                      .height *
-                                                  0.02,
-                                            ),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceAround,
-                                              children: [
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.44,
-                                                  child:
-                                                      CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Commodity Type",
-                                                    readOnly: false,
-                                                    maxLength: 15,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.45,
-                                                  child: Row(
-                                                    children: [
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.22,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText:
-                                                              "FIRMS Code",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                        width: 15,
-                                                      ),
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.20,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText:
-                                                              "Disposition Weight*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
+                                    // : SizedBox(
+                                    //     child: Column(
+                                    //       children: [
+                                    //         Row(
+                                    //           mainAxisAlignment:
+                                    //               MainAxisAlignment.spaceAround,
+                                    //           children: [
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.44,
+                                    //               child: Row(
+                                    //                 children: [
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.1,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText: "Prefix*",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   ),
+                                    //                   const SizedBox(
+                                    //                     width: 15,
+                                    //                   ),
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.32,
+                                    //                     child: Row(
+                                    //                       mainAxisAlignment:
+                                    //                           MainAxisAlignment
+                                    //                               .spaceBetween,
+                                    //                       children: [
+                                    //                         SizedBox(
+                                    //                           height: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .height *
+                                    //                               0.04,
+                                    //                           width: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .width *
+                                    //                               0.15,
+                                    //                           child:
+                                    //                               CustomeEditTextWithBorder(
+                                    //                             lablekey:
+                                    //                                 'MAWB',
+                                    //                             hasIcon: false,
+                                    //                             hastextcolor:
+                                    //                                 true,
+                                    //                             animatedLabel:
+                                    //                                 true,
+                                    //                             needOutlineBorder:
+                                    //                                 true,
+                                    //                             labelText:
+                                    //                                 "AWB No*",
+                                    //                             readOnly: false,
+                                    //                             maxLength: 15,
+                                    //                             fontSize: 18,
+                                    //                             onChanged:
+                                    //                                 (String,
+                                    //                                     bool) {},
+                                    //                           ),
+                                    //                         ),
+                                    //                         const SizedBox(
+                                    //                           width: 10,
+                                    //                         ),
+                                    //                         SizedBox(
+                                    //                           height: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .height *
+                                    //                               0.04,
+                                    //                           width: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .width *
+                                    //                               0.15,
+                                    //                           child:
+                                    //                               CustomeEditTextWithBorder(
+                                    //                             lablekey:
+                                    //                                 'MAWB',
+                                    //                             hasIcon: false,
+                                    //                             hastextcolor:
+                                    //                                 true,
+                                    //                             animatedLabel:
+                                    //                                 true,
+                                    //                             needOutlineBorder:
+                                    //                                 true,
+                                    //                             labelText:
+                                    //                                 "HAWB No*",
+                                    //                             readOnly: false,
+                                    //                             maxLength: 15,
+                                    //                             fontSize: 18,
+                                    //                             onChanged:
+                                    //                                 (String,
+                                    //                                     bool) {},
+                                    //                           ),
+                                    //                         ),
+                                    //                       ],
+                                    //                     ),
+                                    //                   )
+                                    //                 ],
+                                    //               ),
+                                    //             ),
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.45,
+                                    //               child: Row(
+                                    //                 children: [
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.22,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText: "NoP*",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   ),
+                                    //                   const SizedBox(
+                                    //                     width: 15,
+                                    //                   ),
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.20,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText:
+                                    //                           "Gross Weight*",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   )
+                                    //                 ],
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //         SizedBox(
+                                    //           height: MediaQuery.sizeOf(context)
+                                    //                   .height *
+                                    //               0.02,
+                                    //         ),
+                                    //         Row(
+                                    //           mainAxisAlignment:
+                                    //               MainAxisAlignment.spaceAround,
+                                    //           children: [
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.44,
+                                    //               child:
+                                    //                   CustomeEditTextWithBorder(
+                                    //                 lablekey: 'MAWB',
+                                    //                 hasIcon: false,
+                                    //                 hastextcolor: true,
+                                    //                 animatedLabel: true,
+                                    //                 needOutlineBorder: true,
+                                    //                 labelText: "Origin*",
+                                    //                 readOnly: false,
+                                    //                 maxLength: 15,
+                                    //                 fontSize: 18,
+                                    //                 onChanged:
+                                    //                     (String, bool) {},
+                                    //               ),
+                                    //             ),
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.44,
+                                    //               child:
+                                    //                   CustomeEditTextWithBorder(
+                                    //                 lablekey: 'MAWB',
+                                    //                 hasIcon: false,
+                                    //                 hastextcolor: true,
+                                    //                 animatedLabel: true,
+                                    //                 needOutlineBorder: true,
+                                    //                 labelText: "Destination*",
+                                    //                 readOnly: false,
+                                    //                 maxLength: 15,
+                                    //                 fontSize: 18,
+                                    //                 onChanged:
+                                    //                     (String, bool) {},
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //         SizedBox(
+                                    //           height: MediaQuery.sizeOf(context)
+                                    //                   .height *
+                                    //               0.02,
+                                    //         ),
+                                    //         Row(
+                                    //           mainAxisAlignment:
+                                    //               MainAxisAlignment.spaceAround,
+                                    //           children: [
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.44,
+                                    //               child: Row(
+                                    //                 children: [
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.1,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText: "Code*",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   ),
+                                    //                   const SizedBox(
+                                    //                     width: 15,
+                                    //                   ),
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.32,
+                                    //                     child: Row(
+                                    //                       mainAxisAlignment:
+                                    //                           MainAxisAlignment
+                                    //                               .spaceBetween,
+                                    //                       children: [
+                                    //                         SizedBox(
+                                    //                           height: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .height *
+                                    //                               0.04,
+                                    //                           width: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .width *
+                                    //                               0.15,
+                                    //                           child:
+                                    //                               CustomeEditTextWithBorder(
+                                    //                             lablekey:
+                                    //                                 'MAWB',
+                                    //                             hasIcon: false,
+                                    //                             hastextcolor:
+                                    //                                 true,
+                                    //                             animatedLabel:
+                                    //                                 true,
+                                    //                             needOutlineBorder:
+                                    //                                 true,
+                                    //                             labelText:
+                                    //                                 "Flight No*",
+                                    //                             readOnly: false,
+                                    //                             maxLength: 15,
+                                    //                             fontSize: 18,
+                                    //                             onChanged:
+                                    //                                 (String,
+                                    //                                     bool) {},
+                                    //                           ),
+                                    //                         ),
+                                    //                         SizedBox(
+                                    //                           width: 10,
+                                    //                         ),
+                                    //                         SizedBox(
+                                    //                           height: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .height *
+                                    //                               0.04,
+                                    //                           width: MediaQuery
+                                    //                                       .sizeOf(
+                                    //                                           context)
+                                    //                                   .width *
+                                    //                               0.15,
+                                    //                           child:
+                                    //                               CustomeEditTextWithBorder(
+                                    //                             lablekey:
+                                    //                                 'MAWB',
+                                    //                             hasIcon: false,
+                                    //                             hastextcolor:
+                                    //                                 true,
+                                    //                             animatedLabel:
+                                    //                                 true,
+                                    //                             needOutlineBorder:
+                                    //                                 true,
+                                    //                             labelText:
+                                    //                                 "Flight Date*",
+                                    //                             readOnly: false,
+                                    //                             maxLength: 15,
+                                    //                             fontSize: 18,
+                                    //                             onChanged:
+                                    //                                 (String,
+                                    //                                     bool) {},
+                                    //                           ),
+                                    //                         ),
+                                    //                       ],
+                                    //                     ),
+                                    //                   )
+                                    //                 ],
+                                    //               ),
+                                    //             ),
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.45,
+                                    //               child: Row(
+                                    //                 children: [
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.22,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText: "ULD*",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   ),
+                                    //                   const SizedBox(
+                                    //                     width: 15,
+                                    //                   ),
+                                    //                 ],
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //         SizedBox(
+                                    //           height: MediaQuery.sizeOf(context)
+                                    //                   .height *
+                                    //               0.02,
+                                    //         ),
+                                    //         Row(
+                                    //           mainAxisAlignment:
+                                    //               MainAxisAlignment.spaceAround,
+                                    //           children: [
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.44,
+                                    //               child:
+                                    //                   CustomeEditTextWithBorder(
+                                    //                 lablekey: 'MAWB',
+                                    //                 hasIcon: false,
+                                    //                 hastextcolor: true,
+                                    //                 animatedLabel: true,
+                                    //                 needOutlineBorder: true,
+                                    //                 labelText: "Commodity Type",
+                                    //                 readOnly: false,
+                                    //                 maxLength: 15,
+                                    //                 fontSize: 18,
+                                    //                 onChanged:
+                                    //                     (String, bool) {},
+                                    //               ),
+                                    //             ),
+                                    //             SizedBox(
+                                    //               width:
+                                    //                   MediaQuery.sizeOf(context)
+                                    //                           .width *
+                                    //                       0.45,
+                                    //               child: Row(
+                                    //                 children: [
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.22,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText:
+                                    //                           "FIRMS Code",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   ),
+                                    //                   const SizedBox(
+                                    //                     width: 15,
+                                    //                   ),
+                                    //                   SizedBox(
+                                    //                     height:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .height *
+                                    //                             0.04,
+                                    //                     width:
+                                    //                         MediaQuery.sizeOf(
+                                    //                                     context)
+                                    //                                 .width *
+                                    //                             0.20,
+                                    //                     child:
+                                    //                         CustomeEditTextWithBorder(
+                                    //                       lablekey: 'MAWB',
+                                    //                       hasIcon: false,
+                                    //                       hastextcolor: true,
+                                    //                       animatedLabel: true,
+                                    //                       needOutlineBorder:
+                                    //                           true,
+                                    //                       labelText:
+                                    //                           "Disposition Weight*",
+                                    //                       readOnly: false,
+                                    //                       maxLength: 15,
+                                    //                       fontSize: 18,
+                                    //                       onChanged:
+                                    //                           (String, bool) {},
+                                    //                     ),
+                                    //                   )
+                                    //                 ],
+                                    //               ),
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ],
+                                    //     ),
+                                    //   ),
                               ],
                             ),
                           ),
