@@ -36,6 +36,7 @@ import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
 import '../../model/flightcheck/mailtypemodel.dart';
@@ -53,7 +54,13 @@ class AddMailPage extends StatefulWidget {
   String mainMenuName;
   int menuId;
   String uldNo;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
+
+
   AddMailPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.uldNo, required this.mainMenuName, required this.uldSeqNo, required this.flightSeqNo, required this.menuId, required this.lableModel});
 
@@ -231,12 +238,15 @@ class _AddMailPageState extends State<AddMailPage> {
         child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
-                },),
+                },) : null,
           backgroundColor: MyColor.colorWhite,
           body: Stack(
             children: [

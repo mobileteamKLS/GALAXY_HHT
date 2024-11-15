@@ -205,13 +205,13 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                     ),
                                   ),
                                   SizedBox(height: 10,),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: (isImportExpanded) ? MyColor.textColorBlueHigh : MyColor.bgColorGrey,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: (isImportExpanded) ? MyColor.textColorBlueHigh : MyColor.bgColorGrey,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
                                       child: _buildMenuItem(
                                         icon: importSvg,
                                         title: "Import (${widget.importSubMenuList!.length})",
@@ -223,37 +223,37 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                         },
                                         subMenuList: isImportExpanded ? widget.importSubMenuList : null,
                                       ),
+
+
+                                      /*Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+
+                                          Row(
+                                            children: [
+                                              SvgPicture.asset(importSvg, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
+                                              SizedBox(width: 20,),
+                                              InkWell(
+                                                onTap: () {
+                                                 widget.onDrawerCloseIcon();
+                                                // Navigator.push(context, CupertinoPageRoute(builder: (context) => SubMenuPage(menuId: "1001", menuName: "Import"),));
+
+                                                },
+                                                child: CustomeText(
+                                                  text: "Import (${widget.importSubMenuList!.length})",
+                                                  textAlign: TextAlign.center,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontColor:  MyColor.textColorGrey3,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
+                                              ),
+                                            ],
+                                          ),
+
+
+                                          SvgPicture.asset(circleDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
+                                        ],
+                                      ),*/
                                     ),
-
-
-                                    /*Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-
-                                        Row(
-                                          children: [
-                                            SvgPicture.asset(importSvg, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
-                                            SizedBox(width: 20,),
-                                            InkWell(
-                                              onTap: () {
-                                               widget.onDrawerCloseIcon();
-                                              // Navigator.push(context, CupertinoPageRoute(builder: (context) => SubMenuPage(menuId: "1001", menuName: "Import"),));
-
-                                              },
-                                              child: CustomeText(
-                                                text: "Import (${widget.importSubMenuList!.length})",
-                                                textAlign: TextAlign.center,
-                                                fontWeight: FontWeight.w500,
-                                                fontColor:  MyColor.textColorGrey3,
-                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
-                                            ),
-                                          ],
-                                        ),
-
-
-                                        SvgPicture.asset(circleDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
-                                      ],
-                                    ),*/
                                   ),
                                   SizedBox(height: 10,),
                                   Padding(
@@ -426,18 +426,21 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
     List<SubMenuName>? subMenuList,
   }) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               children: [
-                SvgPicture.asset(icon, height: SizeConfig.blockSizeVertical *
-                    SizeUtils.ICONSIZE3),
+                SvgPicture.asset(icon,
+                    height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3, color: (isExpanded) ? MyColor.colorWhite : MyColor.colorBlack,),
                 SizedBox(width: 20),
-                Text(title, style: TextStyle(fontWeight: FontWeight.w500,
-                    fontSize: SizeConfig.textMultiplier *
-                        SizeUtils.TEXTSIZE_1_5)),
+                CustomeText(text: title,
+                  textAlign: TextAlign.center,
+                  fontWeight: FontWeight.w500,
+                  fontColor: (isExpanded) ? MyColor.colorWhite : MyColor.textColorGrey3,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,)
               ],
             ),
             InkWell(
@@ -447,23 +450,38 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
             ),
           ],
         ),
-        if (subMenuList != null)
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
 
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: subMenuList.map((subMenu) {
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Text(subMenu.menuName!, style: TextStyle(
-                      color: MyColor.colorWhite,
-                      fontSize: SizeConfig.textMultiplier *
-                          SizeUtils.TEXTSIZE_1_5)),
-                );
-              }).toList(),
-            ),
-          ),
+        AnimatedSize(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          child: (subMenuList != null && isExpanded) ? Row(
+              children: [
+                Container(
+                  width: 1, // Adjust the width of the vertical line
+                  height: subMenuList.length * 35.0, // Adjust height based on number of items
+                  color: MyColor.colorWhite,
+                  margin: const EdgeInsets.only(left: 12, top: 8, right: 30), // Align the line with items
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: subMenuList.map((subMenu) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        child:    CustomeText(text: subMenu.menuName!,
+                          textAlign: TextAlign.center,
+                          fontWeight: FontWeight.w400,
+                          fontColor: (isExpanded) ? MyColor.colorWhite : MyColor.textColorGrey3,
+                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
+                      );
+                    }).toList(),
+                  ),
+                ),
+              ],
+            ) : Container(),
+        ),
+
       ],
     );
   }

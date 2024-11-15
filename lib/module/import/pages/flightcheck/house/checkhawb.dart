@@ -34,6 +34,7 @@ import '../../../../login/model/userlogindatamodel.dart';
 import '../../../../login/pages/signinscreenmethods.dart';
 import '../../../../onboarding/sizeconfig.dart';
 import '../../../../splash/model/splashdefaultmodel.dart';
+import '../../../../submenu/model/submenumodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../../model/flightcheck/hawblistmodel.dart';
@@ -54,8 +55,12 @@ class CheckHAWBPage extends StatefulWidget {
   LableModel lableModel;
   String groupIDRequires;
   int groupIDCharSize;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   CheckHAWBPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.haWBItem,
     required this.aWBItem,
@@ -208,13 +213,16 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
               onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
               child: Scaffold(
                 key: _scaffoldKey,
-                drawer: BuildCustomeDrawer(
+                drawer: _user != null && _splashDefaultData != null
+                    ? BuildCustomeDrawer(
+                  importSubMenuList: widget.importSubMenuList,
+                  exportSubMenuList: widget.exportSubMenuList,
                   user: _user!,
                   splashDefaultData: _splashDefaultData!,
                   onDrawerCloseIcon: () {
                     _scaffoldKey.currentState?.closeDrawer();
                   },
-                ),
+                ) : null,
                         backgroundColor: MyColor.colorWhite,
                         body: Stack(
               children: [
@@ -294,6 +302,8 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                     double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
 
                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                      importSubMenuList: widget.importSubMenuList,
+                                      exportSubMenuList: widget.exportSubMenuList,
                                       lableModel: lableModel,
                                       pageView: 0,
                                       enterDamageNop: int.parse(piecesController.text),
@@ -852,6 +862,8 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                         double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
 
                                                         var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
                                                           lableModel: lableModel,
                                                           pageView: 0,
                                                           enterDamageNop: (piecesController.text.isEmpty) ? 0 : int.parse(piecesController.text),

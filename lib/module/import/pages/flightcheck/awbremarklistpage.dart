@@ -16,6 +16,7 @@ import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../onboarding/sizeconfig.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import 'dart:ui' as ui;
 
@@ -24,8 +25,13 @@ class AwbRemarkListpage extends StatefulWidget {
   List<AWBRemarkList>? aWBRemarkList;
   UserDataModel user;
   SplashDefaultModel splashDefaultData;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
-  AwbRemarkListpage({super.key, required this.user, required this.splashDefaultData, required this.aWBRemarkList, required this.mainMenuName});
+  AwbRemarkListpage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
+    required this.user, required this.splashDefaultData, required this.aWBRemarkList, required this.mainMenuName});
 
   @override
   State<AwbRemarkListpage> createState() => _AwbRemarkListpageState();
@@ -79,12 +85,14 @@ class _AwbRemarkListpageState extends State<AwbRemarkListpage> {
         child: Scaffold(
           key: _scaffoldKey,
           drawer: BuildCustomeDrawer(
+            importSubMenuList: widget.importSubMenuList,
+            exportSubMenuList: widget.exportSubMenuList,
             user: widget.user,
             splashDefaultData: widget.splashDefaultData,
             onDrawerCloseIcon: () {
               _scaffoldKey.currentState?.closeDrawer();
             },
-          ),
+          ) ,
           body: Stack(
 
             children: [

@@ -40,6 +40,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
 import '../../../splash/model/splashdefaultmodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
@@ -61,8 +62,12 @@ class AWBListPage extends StatefulWidget {
   String groupIDRequires;
   int groupIDCharSize;
   String bDEndStatus;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   AWBListPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.uldNo,
     required this.mainMenuName,
@@ -270,13 +275,16 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
           child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },
-              ),
+              ) : null,
               body: Stack(
                 children: [
                   MainHeadingWidget(mainMenuName: widget.mainMenuName,
@@ -663,6 +671,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                               List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(
+                                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                                  exportSubMenuList: widget.exportSubMenuList,
                                                                                   buttonRightsList: widget.buttonRightsList,
                                                                                   mainMenuName: widget.mainMenuName, aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
 
@@ -737,6 +747,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                                  exportSubMenuList: widget.exportSubMenuList,
                                                                                   lableModel: lableModel,
                                                                                   pageView: 0,
                                                                                   enterDamageNop: 0,
@@ -806,6 +818,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                                  exportSubMenuList: widget.exportSubMenuList,
                                                                                   lableModel: lableModel,
                                                                                   pageView: 0,
                                                                                   enterDamageNop: 0,
@@ -926,6 +940,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                             var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                              importSubMenuList: widget.importSubMenuList,
+                                                                              exportSubMenuList: widget.exportSubMenuList,
                                                                               lableModel: lableModel,
                                                                               pageView: 1,
                                                                               enterDamageNop: 0,
@@ -1474,6 +1490,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                                                     List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.iMPAWBRowId!);
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AWBRemarkListAckPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
                                                                                                       buttonRightsList: widget.buttonRightsList,
                                                                                                       mainMenuName: widget.mainMenuName, aWBRemarkList:remarkList, aWBItem: aWBItem, menuId: widget.menuId,),));
                                                                                                     if(value == "true"){
@@ -1555,6 +1573,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
@@ -1633,6 +1653,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
@@ -1711,6 +1733,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                                                   var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    importSubMenuList: widget.importSubMenuList,
+                                                                                                    exportSubMenuList: widget.exportSubMenuList,
                                                                                                     lableModel: lableModel,
                                                                                                     pageView: 1,
                                                                                                     enterDamageNop: 0,
@@ -1919,6 +1943,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
         context,
         CupertinoPageRoute(
             builder: (context) => CheckAWBPage(
+              importSubMenuList: widget.importSubMenuList,
+              exportSubMenuList: widget.exportSubMenuList,
               buttonRightsList: widget.buttonRightsList,
               aWBItem: aWBItem,
               mainMenuName: widget.mainMenuName,
@@ -1946,6 +1972,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
         context,
         CupertinoPageRoute(
             builder: (context) => HouseListPage(
+              importSubMenuList: widget.importSubMenuList,
+              exportSubMenuList: widget.exportSubMenuList,
               buttonRightsList: widget.buttonRightsList,
               aWBItem: aWBItem,
               uldNo: widget.uldNo,

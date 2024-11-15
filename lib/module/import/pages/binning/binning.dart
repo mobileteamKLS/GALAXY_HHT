@@ -540,7 +540,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                       width: SizeConfig.blockSizeHorizontal,
                                                     ),
                                                     CustomeText(
-                                                        text: "Details for binning",
+                                                        text: "${lableModel.scanOrManual}",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w500,
@@ -777,7 +777,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                           SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                           SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                           CustomeText(
-                                                            text: (binningDetailListModel != null) ? binningDetailListModel!.binningSummary!.currentLocationCode! : "-",
+                                                            text: (binningDetailListModel != null) ? binningDetailListModel!.binningSummary!.currentLocationCode! : "",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w600,
@@ -1222,9 +1222,9 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
       if(specialCharAllow == true){
         SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        locationController.clear();
+        groupIdController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(locationFocusNode);
+          FocusScope.of(context).requestFocus(groupIdFocusNode);
         });
       }else{
 
@@ -1237,11 +1237,21 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
         groupIdController.text = truncatedResult;
         // Call searchLocation api to validate or not
         // call binning details api
-        await context.read<BinningCubit>().getBinningDetailListApi(
-            groupIdController.text,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+
+        if (groupIdController.text.length != groupIDCharSize) {
+          openValidationDialog(
+              CommonUtils.formatMessage("${widget.lableModel!.groupIdCharSizeMsg}", ["$groupIDCharSize"]),
+              groupIdFocusNode);
+
+        }else{
+          await context.read<BinningCubit>().getBinningDetailListApi(
+              groupIdController.text,
+              _user!.userProfile!.userIdentity!,
+              _splashDefaultData!.companyCode!,
+              widget.menuId);
+        }
+
+
       }
 
     }

@@ -32,6 +32,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
 import '../../../splash/model/splashdefaultmodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 
@@ -45,8 +46,12 @@ class AWBRemarkListAckPage extends StatefulWidget {
   List<AWBRemarksList>? aWBRemarkList = [];
   FlightCheckInAWBBDList aWBItem;
   int menuId;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   AWBRemarkListAckPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.mainMenuName, required this.aWBRemarkList, required this.aWBItem, required this.menuId});
 
@@ -183,13 +188,16 @@ class _AWBRemarkListAckPageState extends State<AWBRemarkListAckPage> with Single
           child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },
-              ),
+              ) : null,
               body: Stack(
                 children: [
                   MainHeadingWidget(mainMenuName: widget.mainMenuName,

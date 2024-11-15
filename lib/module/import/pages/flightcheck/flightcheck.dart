@@ -40,6 +40,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
@@ -51,9 +52,13 @@ class FlightCheck extends StatefulWidget {
   String refrelCode;
   LableModel? lableModel;
   int menuId;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   FlightCheck(
       {super.key,
+      required this.importSubMenuList,
+      required this.exportSubMenuList,
       required this.title,
       required this.refrelCode,
       this.lableModel,
@@ -380,13 +385,16 @@ class _FlightCheckState extends State<FlightCheck>
           child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },
-              ),
+              ) : null,
               body: Stack(
                 children: [
                   MainHeadingWidget(mainMenuName: widget.mainMenuName,
@@ -1374,6 +1382,8 @@ class _FlightCheckState extends State<FlightCheck>
                                                                         builder: (
                                                                             context) =>
                                                                             AwbRemarkListpage(
+                                                                              importSubMenuList: widget.importSubMenuList,
+                                                                              exportSubMenuList: widget.exportSubMenuList,
                                                                               user: _user!,
                                                                               splashDefaultData: _splashDefaultData!,
                                                                               aWBRemarkList: flightCheckULDListModel!
@@ -2985,6 +2995,8 @@ class _FlightCheckState extends State<FlightCheck>
               context,
               CupertinoPageRoute(
                   builder: (context) => AWBListPage(
+                    importSubMenuList: widget.importSubMenuList,
+                    exportSubMenuList: widget.exportSubMenuList,
                     buttonRightsList: buttonRightsList,
                     mainMenuName: mainMenuName,
                     uldNo: uldNo,
@@ -3037,6 +3049,8 @@ class _FlightCheckState extends State<FlightCheck>
             context,
             CupertinoPageRoute(
               builder: (context) => UldDamagedPage(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 locationCode: locationController.text,
                 menuId: widget.menuId,
                 ULDNo: flightDetails.uLDNo!,
@@ -3087,6 +3101,8 @@ class _FlightCheckState extends State<FlightCheck>
             context,
             CupertinoPageRoute(
                 builder: (context) => AddMailPage(
+                  importSubMenuList: widget.importSubMenuList,
+                  exportSubMenuList: widget.exportSubMenuList,
                   buttonRightsList: buttonRightsList,
                   uldNo: flightDetails.uLDNo!,
                   mainMenuName: mainMenuName,

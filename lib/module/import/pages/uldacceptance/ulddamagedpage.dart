@@ -38,6 +38,7 @@ import '../../../login/pages/signinscreenmethods.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../onboarding/sizeconfig.dart';
 import '../../../login/model/userlogindatamodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../model/uldacceptance/ulddamagelistmodel.dart';
 import '../../model/uldacceptance/ulddamgeupdatemodel.dart';
@@ -56,9 +57,13 @@ class UldDamagedPage extends StatefulWidget {
   String menuCode;
   int isRecordView;
   List<ButtonRight>? buttonRightsList = [];
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   UldDamagedPage(
       {super.key,
+      required this.importSubMenuList,
+      required this.exportSubMenuList,
       required this.locationCode,
       required this.menuId,
       required this.ULDNo,
@@ -199,13 +204,16 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
             child: SafeArea(
                 child: Scaffold(
                   key: _scaffoldKey,
-                  drawer: BuildCustomeDrawer(
+                  drawer: _user != null && _splashDefaultData != null
+                      ? BuildCustomeDrawer(
+                    importSubMenuList: widget.importSubMenuList,
+                    exportSubMenuList: widget.exportSubMenuList,
                     user: _user!,
                     splashDefaultData: _splashDefaultData!,
                     onDrawerCloseIcon: () {
                       _scaffoldKey.currentState?.closeDrawer();
                     },
-                  ),
+                  ) : null,
                     resizeToAvoidBottomInset: true,
                     body: NotificationListener<ScrollNotification>(
                       onNotification: (ScrollNotification scroll) {

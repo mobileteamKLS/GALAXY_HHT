@@ -223,12 +223,26 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     if(menuId == SubMenuCodeUtils.ULDAcceptance){
                                       // navigate to next page using submenu refrelcode
 
-                                      NextScreen(UldAcceptancePage(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName,), isEnable);
+                                      NextScreen(UldAcceptancePage(
+                                        importSubMenuList: importSubMenuList,
+                                        exportSubMenuList: exportSubMenuList,
+                                        title: subMenuTitle,
+                                        refrelCode: refrelCode,
+                                        lableModel: lableModel,
+                                        menuId: menuId,
+                                        mainMenuName: widget.menuName,), isEnable);
                                      // NextScreen(DemoCodePage(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName,), isEnable);
                                     } else if(menuId == SubMenuCodeUtils.FlightCheck){
                                       // navigate to next page using submenu refrelcode
 
-                                      NextScreen(FlightCheck(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName), isEnable);
+                                      NextScreen(FlightCheck(
+                                          importSubMenuList: importSubMenuList,
+                                          exportSubMenuList: exportSubMenuList,
+                                          title: subMenuTitle,
+                                          refrelCode: refrelCode,
+                                          lableModel: lableModel,
+                                          menuId: menuId,
+                                          mainMenuName: widget.menuName), isEnable);
                                     }else if(menuId == SubMenuCodeUtils.Binning){
                                       NextScreen(Binning(
                                           importSubMenuList: importSubMenuList,

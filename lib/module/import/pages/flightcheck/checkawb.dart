@@ -37,6 +37,7 @@ import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
@@ -53,8 +54,12 @@ class CheckAWBPage extends StatefulWidget {
   LableModel lableModel;
   String groupIDRequires;
   int groupIDCharSize;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   CheckAWBPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.aWBItem, required this.mainMenuName, required this.flightDetailSummary, required this.location, required this.uldSeqNo, required this.menuId, required this.lableModel, required this.groupIDRequires, required this.groupIDCharSize});
 
@@ -203,13 +208,16 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
               onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
               child: Scaffold(
                 key: _scaffoldKey,
-                drawer: BuildCustomeDrawer(
+                drawer: _user != null && _splashDefaultData != null
+                    ? BuildCustomeDrawer(
+                  importSubMenuList: widget.importSubMenuList,
+                  exportSubMenuList: widget.exportSubMenuList,
                   user: _user!,
                   splashDefaultData: _splashDefaultData!,
                   onDrawerCloseIcon: () {
                     _scaffoldKey.currentState?.closeDrawer();
                   },
-                ),
+                ) : null,
                 backgroundColor: MyColor.colorWhite,
                 body: Stack(
                 children: [
@@ -294,6 +302,8 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                     double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
 
                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                      importSubMenuList: widget.importSubMenuList,
+                                      exportSubMenuList: widget.exportSubMenuList,
                                       lableModel: lableModel,
                                       pageView: 0,
                                       enterDamageNop: int.parse(piecesController.text),
@@ -818,6 +828,8 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                         double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
 
                                                         var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
                                                           lableModel: lableModel,
                                                           pageView: 0,
                                                           enterDamageNop: (piecesController.text.isEmpty) ? 0 : int.parse(piecesController.text),

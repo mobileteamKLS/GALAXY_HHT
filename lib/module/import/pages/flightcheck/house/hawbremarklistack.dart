@@ -33,6 +33,7 @@ import '../../../../login/model/userlogindatamodel.dart';
 import '../../../../login/pages/signinscreenmethods.dart';
 import '../../../../onboarding/sizeconfig.dart';
 import '../../../../splash/model/splashdefaultmodel.dart';
+import '../../../../submenu/model/submenumodel.dart';
 import '../../../model/flightcheck/hawblistmodel.dart';
 import '../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 
@@ -47,8 +48,12 @@ class HAWBRemarkListAckPage extends StatefulWidget {
   List<HAWBRemarksList>? haWBRemarkList = [];
   FlightCheckInHAWBBDList haWBItem;
   int menuId;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   HAWBRemarkListAckPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.mainMenuName, required this.haWBRemarkList, required this.haWBItem, required this.menuId});
 
@@ -188,13 +193,16 @@ class _HAWBRemarkListAckPageState extends State<HAWBRemarkListAckPage> with Sing
           child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer:  _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },
-              ),
+              ) : null,
               body: Stack(
                 children: [
                   MainHeadingWidget(mainMenuName: widget.mainMenuName,

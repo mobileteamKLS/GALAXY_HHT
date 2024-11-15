@@ -34,6 +34,7 @@ import '../../../../login/model/userlogindatamodel.dart';
 import '../../../../login/pages/signinscreenmethods.dart';
 import '../../../../onboarding/sizeconfig.dart';
 import '../../../../splash/model/splashdefaultmodel.dart';
+import '../../../../submenu/model/submenumodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
 import '../../../model/flightcheck/hawblistmodel.dart';
@@ -61,8 +62,12 @@ class HouseListPage extends StatefulWidget {
   int groupIDCharSize;
   String bDEndStatus;
   FlightCheckInAWBBDList aWBItem;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
   HouseListPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.buttonRightsList,
     required this.uldNo,
     required this.aWBItem,
@@ -267,13 +272,16 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
           child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },
-              ),
+              ) : null,
               body: Stack(
                 children: [
                   MainHeadingWidget(mainMenuName: widget.mainMenuName,
@@ -599,6 +607,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                               List<HAWBRemarksList> remarkList = filterAWBRemarksById(hAwbModel!.hAWBRemarksList!, aWBItem.iMPAWBRowId!);
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => HAWBRemarkListAckPage(
+                                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                                  exportSubMenuList: widget.exportSubMenuList,
                                                                                   buttonRightsList: widget.buttonRightsList,
                                                                                   mainMenuName: widget.mainMenuName, haWBRemarkList: remarkList, haWBItem: aWBItem, menuId: widget.menuId),));
 
@@ -664,6 +674,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                importSubMenuList: widget.importSubMenuList,
+                                                                                exportSubMenuList: widget.exportSubMenuList,
                                                                                 lableModel: lableModel,
                                                                                 pageView: 0,
                                                                                 enterDamageNop: 0,
@@ -731,6 +743,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                importSubMenuList: widget.importSubMenuList,
+                                                                                exportSubMenuList: widget.exportSubMenuList,
                                                                                 lableModel: lableModel,
                                                                                 pageView: 0,
                                                                                 enterDamageNop: 0,
@@ -801,6 +815,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                           var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                            importSubMenuList: widget.importSubMenuList,
+                                                                            exportSubMenuList: widget.exportSubMenuList,
                                                                             lableModel: lableModel,
                                                                             pageView: 1,
                                                                             enterDamageNop: 0,
@@ -1326,6 +1342,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     List<HAWBRemarksList> remarkList = filterAWBRemarksById(hAwbModel!.hAWBRemarksList!, aWBItem.iMPAWBRowId!);
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => HAWBRemarkListAckPage(
+                                                                                                        importSubMenuList: widget.importSubMenuList,
+                                                                                                        exportSubMenuList: widget.exportSubMenuList,
                                                                                                         buttonRightsList: widget.buttonRightsList,
                                                                                                         mainMenuName: widget.mainMenuName, haWBRemarkList: remarkList, haWBItem: aWBItem, menuId: widget.menuId),));
 
@@ -1391,6 +1409,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
@@ -1458,6 +1478,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
                                                                                                       pageView: 0,
                                                                                                       enterDamageNop: 0,
@@ -1528,6 +1550,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
                                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                                                  exportSubMenuList: widget.exportSubMenuList,
                                                                                                   lableModel: lableModel,
                                                                                                   pageView: 1,
                                                                                                   enterDamageNop: 0,
@@ -1716,6 +1740,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
         context,
         CupertinoPageRoute(
             builder: (context) => CheckHAWBPage(
+              importSubMenuList: widget.importSubMenuList,
+              exportSubMenuList: widget.exportSubMenuList,
               buttonRightsList: widget.buttonRightsList,
               haWBItem: haWBItem,
               aWBItem: widget.aWBItem,

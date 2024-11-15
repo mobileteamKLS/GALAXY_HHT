@@ -36,6 +36,7 @@ import '../../../../login/pages/signinscreenmethods.dart';
 import '../../../../onboarding/sizeconfig.dart';
 
 import '../../../../splash/model/splashdefaultmodel.dart';
+import '../../../../submenu/model/submenumodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
 import '../../../model/flightcheck/damagedetailmodel.dart';
 import '../../../model/flightcheck/flightcheckuldlistmodel.dart';
@@ -76,9 +77,13 @@ class DamageShimentPage extends StatefulWidget {
   int pageView;
 
   LableModel? lableModel;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
 
 
   DamageShimentPage({super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.lableModel,
     required this.enterDamageNop,
     required this.enterDamageWt,
@@ -500,13 +505,16 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
               child: Scaffold(
                 key: _scaffoldKey,
-                drawer: BuildCustomeDrawer(
+                drawer: _user != null && _splashDefaultData != null
+                    ?  BuildCustomeDrawer(
+                  importSubMenuList: widget.importSubMenuList,
+                  exportSubMenuList: widget.exportSubMenuList,
                   user: _user!,
                   splashDefaultData: _splashDefaultData!,
                   onDrawerCloseIcon: () {
                     _scaffoldKey.currentState?.closeDrawer();
                   },
-                ),
+                ) : null,
                 backgroundColor: MyColor.colorWhite,
                 body: Stack(
                   children: [

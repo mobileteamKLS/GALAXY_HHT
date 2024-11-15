@@ -40,6 +40,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
+import '../../../submenu/model/submenumodel.dart';
 import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../model/uldacceptance/uldacceptancedetailmodel.dart';
 
@@ -50,9 +51,14 @@ class UldAcceptancePage extends StatefulWidget {
   String refrelCode;
   LableModel? lableModel;
   int menuId;
+  List<SubMenuName> importSubMenuList = [];
+  List<SubMenuName> exportSubMenuList = [];
+
 
   UldAcceptancePage({
     super.key,
+    required this.importSubMenuList,
+    required this.exportSubMenuList,
     required this.title,
     required this.refrelCode,
     this.lableModel,
@@ -424,13 +430,16 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
           child: SafeArea(
             child: Scaffold(
               key: _scaffoldKey,
-              drawer: BuildCustomeDrawer(
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: widget.importSubMenuList,
+                exportSubMenuList: widget.exportSubMenuList,
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },
-              ),
+              ) : null,
               resizeToAvoidBottomInset: true,
               body: NotificationListener<ScrollNotification>(
                 onNotification: (ScrollNotification scroll) {
@@ -1041,6 +1050,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                               context,
                                               CupertinoPageRoute(
                                                 builder: (context) => UldDamagedPage(
+                                                  importSubMenuList: widget.importSubMenuList,
+                                                  exportSubMenuList: widget.exportSubMenuList,
                                                   locationCode: locationController.text,
                                                   menuId: widget.menuId,
                                                   ULDNo:  CommonUtils.ULDUCRNO,
@@ -2588,6 +2599,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                             context,
                                             CupertinoPageRoute(
                                               builder: (context) => UldDamagedPage(
+                                                importSubMenuList: widget.importSubMenuList,
+                                                exportSubMenuList: widget.exportSubMenuList,
                                                 locationCode: locationController.text,
                                                 menuId: widget.menuId,
                                                 ULDNo: uldNoController.text,
@@ -2628,6 +2641,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                         context,
                                         CupertinoPageRoute(
                                           builder: (context) => UldDamagedPage(
+                                            importSubMenuList: widget.importSubMenuList,
+                                            exportSubMenuList: widget.exportSubMenuList,
                                             locationCode: locationController.text,
                                             menuId: widget.menuId,
                                             ULDNo: uldNoController.text,
@@ -3278,6 +3293,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                       context,
                       CupertinoPageRoute(
                         builder: (context) => UldDamagedPage(
+                          importSubMenuList: widget.importSubMenuList,
+                          exportSubMenuList: widget.exportSubMenuList,
                           locationCode: locationController.text,
                           menuId: widget.menuId,
                           ULDNo: uldModel.uLDNo!,
@@ -3318,6 +3335,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                       context,
                       CupertinoPageRoute(
                         builder: (context) => UldDamagedPage(
+                          importSubMenuList: widget.importSubMenuList,
+                          exportSubMenuList: widget.exportSubMenuList,
                           locationCode: locationController.text,
                           menuId: widget.menuId,
                           ULDNo: uldModel.uLDNo!,
@@ -3416,6 +3435,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
               context,
               CupertinoPageRoute(
                 builder: (context) => UldDamagedPage(
+                  importSubMenuList: widget.importSubMenuList,
+                  exportSubMenuList: widget.exportSubMenuList,
                   locationCode: locationController.text,
                   menuId: widget.menuId,
                   ULDNo: uldNo,
