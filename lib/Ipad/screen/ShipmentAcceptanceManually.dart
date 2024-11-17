@@ -403,9 +403,9 @@ class _ShipmentAcceptanceManuallyState
                                             MediaQuery.sizeOf(context).height *
                                                 0.02,
                                       ),
-                                      Row(
+                                      const Row(
                                         children: [
-                                          const Text("   CAPTURE RECEIVED SHIPMENT",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16)),
+                                          Text("   CAPTURE RECEIVED SHIPMENT",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16)),
                                         ],
                                       ),
                                       SizedBox(
@@ -713,17 +713,7 @@ class _ShipmentAcceptanceManuallyState
             ),
           ],
         ),
-        floatingActionButton: Theme(
-          data: ThemeData(useMaterial3: false),
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CreateShipment()));
-            },
-            backgroundColor: MyColor.primaryColorblue,
-            child: const Icon(Icons.add),
-          ),
-        ),
+
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         extendBody: true,
         bottomNavigationBar: BottomAppBar(
