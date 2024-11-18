@@ -42,6 +42,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
   };
 
   bool showMore = false;
+  bool isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +117,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                   'Capture Damage & Accept',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 18,
+                                    fontSize: 22,
                                   ),
                                 ),
                               ],
@@ -725,7 +726,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                         ),
                                         onPressed: () {},
                                         child: const Text(
-                                            "Capture Damage & Accept"),
+                                            "Cancel"),
                                       ),
                                     ),
                                     const SizedBox(
@@ -750,7 +751,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                         ),
                                         onPressed: () {},
                                         child: const Text(
-                                          "Accept",
+                                          "Save",
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
@@ -837,4 +838,59 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
       ),
     );
   }
+  //
+  // getDamageDetails()async {
+  //   if (isLoading) return;
+  //   shipmentListDetails = [];
+  //   shipmentListDetailsToBind = [];
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   var queryParams = {
+  //     "PageNo": 1,
+  //     "FilterClause": "1=1",
+  //     "OrderByClause": "1",
+  //     "AirportCode": "BLR",
+  //     "CompanyCode": 3,
+  //     "CultureCode": "en-US",
+  //     "UserId": 1,
+  //     "MenuId": 1
+  //   };
+  //   await authService
+  //       .postData(
+  //     "ShipmentCreation/GetShipmentList",
+  //     queryParams,
+  //   )
+  //       .then((response) {
+  //     print("data received ");
+  //     Map<String, dynamic> jsonData = json.decode(response.body);
+  //     List<dynamic> resp = jsonData['ShipmentDetailList'];
+  //     print(jsonData);
+  //     if (jsonData.isEmpty) {
+  //       setState(() {
+  //         hasNoRecord = true;
+  //       });
+  //     }
+  //     else{
+  //       hasNoRecord=false;
+  //     }
+  //     print("is empty record$hasNoRecord");
+  //     shipmentListDetailsToBind =
+  //         resp.map((json) => ShipmentListDetails.fromJSON(json)).toList();
+  //     print("length==  = ${shipmentListDetailsToBind.length}");
+  //     setState(() {
+  //       shipmentListDetails = shipmentListDetailsToBind;
+  //       // filteredList = listShipmentDetails;
+  //       print("length--  = ${shipmentListDetails.length}");
+  //       isLoading = false;
+  //
+  //     });
+  //   }).catchError((onError) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     print(onError);
+  //   });
+  // }
 }
