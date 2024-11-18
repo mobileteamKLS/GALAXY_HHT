@@ -227,7 +227,10 @@
     "invalidHAWBNo" : "Invalid HAWB No.",
     "checkInHAWB" : "Check-In HAWB",
     "detailsforHAWBNo" : "Details for HAWB No.",
-
+    "houseListing" : "House Listing",
+    "bdDone" : "BD DONE",
+    "awb" : "AWB",
+    "hawb" : "HAWB",
     "flightisFinalizedMsg" : "Flight is finalized.",
     "flightisNotArrivedMsg" : "Flight is not arrived",
     "enterPiecesGrtMsg" : "Please enter pieces greater than 0.",

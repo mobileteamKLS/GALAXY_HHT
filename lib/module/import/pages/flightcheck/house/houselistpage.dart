@@ -313,7 +313,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                               padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                               child: HeaderWidget(
                                 titleTextColor: MyColor.colorBlack,
-                                title: "House Listing",
+                                title: lableModel!.houseListing!,
                                 onBack: () {
                                   _onWillPop();
                                 },

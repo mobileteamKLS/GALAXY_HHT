@@ -264,7 +264,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                       children: [
 
                         CustomeText(
-                            text: "A) AIR WAYBILL DETAILS",
+                            text: "${lableModel.airWaybillDetail}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.bold,

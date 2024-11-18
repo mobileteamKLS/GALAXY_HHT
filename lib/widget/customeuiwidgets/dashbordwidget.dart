@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:galaxy/core/images.dart';
 import 'package:galaxy/widget/custometext.dart';
 import '../../core/mycolor.dart';
@@ -18,9 +19,56 @@ class DashboardCustomeWidget extends StatefulWidget {
 }
 
 class _DashboardCustomeWidgetState extends State<DashboardCustomeWidget> {
+
+  double screenWidth = 0;
+  double screenHeight = 0;
+
   @override
   Widget build(BuildContext context) {
+
+    screenWidth = MediaQuery.of(context).size.width;
+    screenHeight = MediaQuery.of(context).size.height;
+
     return InkWell(
+      onTap: () {
+        widget.onClick();
+      },
+      child: Card(
+
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER),
+        ),
+
+        color: MyColor.colorBlueWhite,
+        elevation: 5,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              widget.imageUrl.isNotEmpty
+                  ? SvgPicture.asset(widget.imageUrl, height: screenHeight * 0.06, width: screenWidth * 0.06, fit: BoxFit.cover)
+                  : Image.asset(
+                height: SizeConfig.blockSizeHorizontal * 10,
+                width: SizeConfig.blockSizeHorizontal * 10,
+                galaxylogo,
+              ),
+              CustomeText(
+                  text: widget.title,
+                  fontColor: MyColor.textColorGrey3,
+                  fontSize: screenHeight * 0.018,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.start)
+            ],
+          ),
+        ),
+      ),
+    );
+
+    /*return InkWell(
       onTap: () {
         widget.onClick();
       },
@@ -32,24 +80,37 @@ class _DashboardCustomeWidgetState extends State<DashboardCustomeWidget> {
             Container(
               margin: EdgeInsets.only(bottom: SizeConfig.blockSizeVertical * 1.5 ),
               width: double.infinity,
-
+              height: double.infinity,
               decoration: BoxDecoration(
-                  color: MyColor.colorWhite,
+                  color: MyColor.colorBlueWhite,
                   borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER),
-                  border: Border.all(color: MyColor.primaryColorblue, width: 0.5)
               ),
 
-              child: widget.imageUrl.isNotEmpty
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 SvgPicture.asset(widget.imageUrl, height: 50, width: 50, fit: BoxFit.cover,),
+                 SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                 CustomeText(
+                     text: widget.title,
+                     fontWeight: FontWeight.w600,
+                     fontColor: MyColor.textColorGrey3,
+                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                     textAlign: TextAlign.center)
+               ],
+             ),
+             
+             *//* child: widget.imageUrl.isNotEmpty
                    ? Image.asset(widget.imageUrl,
                      errorBuilder: (context, error, stackTrace) {
                      return Image.asset(galaxylogo);
                     },
                   )
-                  : Image.asset(galaxylogo),
+                  : Image.asset(galaxylogo),*//*
 
             ),
 
-            Positioned(
+            *//*Positioned(
                 bottom: 0,
                 left: 0,
                 right: 0,
@@ -63,10 +124,10 @@ class _DashboardCustomeWidgetState extends State<DashboardCustomeWidget> {
                         fontWeight: FontWeight.w600,
                         fontColor: MyColor.colorWhite,
                         fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE,
-                        textAlign: TextAlign.center)))
+                        textAlign: TextAlign.center)))*//*
           ],
         ),
       ),
-    );
+    );*/
   }
 }

@@ -11,7 +11,8 @@ import '../custometext.dart';
 class MainHeadingWidget extends StatefulWidget {
   String mainMenuName;
   final VoidCallback onDrawerIconTap;
-  MainHeadingWidget({super.key, required this.mainMenuName, required this.onDrawerIconTap});
+  final VoidCallback? onUserProfileIconTap;
+  MainHeadingWidget({super.key, required this.mainMenuName, required this.onDrawerIconTap, this.onUserProfileIconTap});
 
   @override
   State<MainHeadingWidget> createState() => _MainHeadingWidgetState();
@@ -55,10 +56,12 @@ class _MainHeadingWidgetState extends State<MainHeadingWidget> {
               ),
               Row(
                 children: [
-                  SvgPicture.asset(usercog, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
-                  SvgPicture.asset(bell, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                  InkWell(
+                      onTap: widget.onUserProfileIconTap,
+                      child: SvgPicture.asset(usercog, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,)),
                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                /*  SvgPicture.asset(bell, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),*/
                 ],
               )
             ],

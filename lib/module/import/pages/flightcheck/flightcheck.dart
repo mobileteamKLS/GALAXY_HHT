@@ -2339,7 +2339,7 @@ class _FlightCheckState extends State<FlightCheck>
                                             color: flightDetails.bDEndStatus == "Y" ? MyColor.flightFinalize : MyColor.transparentColor
                                         ),
                                         child: CustomeText(
-                                          text: flightDetails.bDEndStatus == "Y" ? "BD DONE" : "",
+                                          text: flightDetails.bDEndStatus == "Y" ? "${lableModel.bdDone}" : "",
                                           fontColor: MyColor.textColorGrey3,
                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                           fontWeight: FontWeight.w400,

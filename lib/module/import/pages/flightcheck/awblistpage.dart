@@ -1875,7 +1875,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                     fontWeight: FontWeight.w500,
                                                                     textAlign: TextAlign.center),),
                                                                 ),
-                                                                RoundedButtonBlue(text: "Add found cargo", press: () async {
+                                                                /*RoundedButtonBlue(text: "Add found cargo", press: () async {
                                                                   if (scanNoEditingController.text.length != 11) {
                                                                     openValidationDialog("${lableModel.invalidAWBNo}", scanAwbFocusNode);
                                                                     return;
@@ -1883,7 +1883,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                   var result = await DialogUtils.showFoundCargoAWBDialog(context, scanNoEditingController.text, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Add found cargo", widget.buttonRightsList, widget.groupIDRequires, widget.groupIDCharSize);
 
-                                                                },)
+                                                                },)*/
                                                               ],
                                                             )
                                                             : Padding(

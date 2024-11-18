@@ -20,9 +20,11 @@ import '../../../utils/dialogutils.dart';
 import '../../../utils/sizeutils.dart';
 import '../../../utils/snackbarutil.dart';
 import '../../../widget/customdivider.dart';
+import '../../../widget/customedrawer/customedrawer.dart';
 import '../../../widget/customeuiwidgets/footer.dart';
 import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
+import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
 import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
@@ -118,7 +120,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
     // call submenu api from menu Id
     context.read<SubMenuCubit>().subMenuModelData(_user!.userProfile!.userIdentity!, _user!.userProfile!.userGroup!, widget.menuId, _splashDefaultData!.companyCode!);
   }
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -143,168 +145,175 @@ class _SubMenuPageState extends State<SubMenuPage> {
         Navigator.pop(context, 'Done');
         return false; // Prevent default pop, as we are manually popping
       },
-      child: Directionality(
-        textDirection: uiDirection,
-        child: GestureDetector(
-          onTap: _resumeTimerOnInteraction,  // Resuming on any tap
-          onPanDown: (details) => _resumeTimerOnInteraction(), // Resuming on any gesture
-          child: Scaffold(
-            backgroundColor: MyColor.colorWhite,
-            body: SafeArea(child: Stack(
-              children: [
-                NotificationListener<ScrollNotification>(
-                  onNotification: (ScrollNotification scroll) {
-                    _resumeTimerOnInteraction(); // Reset the timer on scroll event
-                    return true;
-                  },
-                  child: Column(
-                    children: [
-                      // header widget with name
-                      Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: HeaderWidget(
-                          title: widget.menuName,
-                          onBack: () {
-                            Navigator.pop(context, "Done");
-                          },
-                          clearText: "",
-                        ),
-                      ),
-                      CustomDivider(
-                        space: 0,
-                        color: Colors.black,
-                        hascolor: true,
-                      ),
-                      const SizedBox(height: 5,),
-                      Expanded(child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.MAINPADDINGHORIZONTAL),
-                        child: BlocConsumer<SubMenuCubit, SubMenuState>(
-                          listener: (context, state) {
-                            if(state is SubMenuStateLoading){
-                              DialogUtils.showLoadingDialog(context, message: subMenuModelLang!.loading);
-                            }else if(state is SubMenuStateSuccess){
-                              if(widget.menuId == "1001"){
-                                importSubMenuList =  state.subMenuModel.subMenuName!;
-                              }else if(widget.menuId == "1002"){
-                                exportSubMenuList =  state.subMenuModel.subMenuName!;
-                              }
+      child: GestureDetector(
+        onTap: _resumeTimerOnInteraction,
+        // Resuming on any tap
+        onPanDown: (details) => _resumeTimerOnInteraction(),
+        // Resuming on any gesture
+        child: Directionality(
+          textDirection: uiDirection,
+          child: SafeArea(
+            child: Scaffold(
+              key: _scaffoldKey,
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                importSubMenuList: importSubMenuList,
+                exportSubMenuList: exportSubMenuList,
+                user: _user!,
+                splashDefaultData: _splashDefaultData!,
+                onDrawerCloseIcon: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                },) : null, // Add custom drawer widget here
+              body: Stack(
+                children: [
+                  MainHeadingWidget(mainMenuName: "${subMenuModelLang!.submenu}",
+                    onDrawerIconTap: () {
 
-                              setState(() {
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
 
-                              });
-                              DialogUtils.hideLoadingDialog(context);
-                            }else if(state is SubMenuStateFailure){
-                              DialogUtils.hideLoadingDialog(context);
-                              SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed);
-                            }
-                          },
-                          builder: (context, state) {
-                            if(state is SubMenuStateSuccess){
-                              // getting responce to submenu api call
+                  ),
+                  Positioned(
+                    top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scroll) {
+                        _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                        return true;
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: MyColor.bgColorGrey,
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                                topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                        child: Column(
+                          children: [
+                            // header of title and clear function
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 15, top: 12, bottom: 12),
+                              child: HeaderWidget(
+                                titleTextColor: MyColor.colorBlack,
+                                title: widget.menuName,
+                                onBack: () {
+                                  Navigator.pop(context, 'Done');
 
-                              return (state.subMenuModel.subMenuName!.isNotEmpty) ? GridView.builder(
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2, crossAxisSpacing: 5, childAspectRatio: 1.7),
-                                itemCount: state.subMenuModel.subMenuName!.length,
-                                physics:  const NeverScrollableScrollPhysics(),
-                                shrinkWrap: true,
-                                itemBuilder: (BuildContext context, int index) {
-                                  SubMenuName subMenuName = state.subMenuModel.subMenuName![index];
-                                  print("CHECK_TITIITTITI ==== ${localizations.locale.languageCode} === ${subMenuName.menuName!}");
+                                },
+                                clearText: "",
+                                //add clear text to clear all feild
+                                onClear: () {
 
-                                  String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang!.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
+                                },
+                              ),
+                            ),
 
-
-
-                                  return SubMenuWidget(title: subMenuTitle, imageUrl: CommonUtils.getImagePath(subMenuName.imageIcon!), onClick: () {
-                                    String refrelCode = CommonUtils.removeExtraIcons("${subMenuName.refMenuCode}");
-                                    int menuId = int.parse(subMenuName.menuId!);
-                                    String isEnable = subMenuName.IsEnable!;
-                                    if(menuId == SubMenuCodeUtils.ULDAcceptance){
-                                      // navigate to next page using submenu refrelcode
-
-                                      NextScreen(UldAcceptancePage(
-                                        importSubMenuList: importSubMenuList,
-                                        exportSubMenuList: exportSubMenuList,
-                                        title: subMenuTitle,
-                                        refrelCode: refrelCode,
-                                        lableModel: lableModel,
-                                        menuId: menuId,
-                                        mainMenuName: widget.menuName,), isEnable);
-                                     // NextScreen(DemoCodePage(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName,), isEnable);
-                                    } else if(menuId == SubMenuCodeUtils.FlightCheck){
-                                      // navigate to next page using submenu refrelcode
-
-                                      NextScreen(FlightCheck(
-                                          importSubMenuList: importSubMenuList,
-                                          exportSubMenuList: exportSubMenuList,
-                                          title: subMenuTitle,
-                                          refrelCode: refrelCode,
-                                          lableModel: lableModel,
-                                          menuId: menuId,
-                                          mainMenuName: widget.menuName), isEnable);
-                                    }else if(menuId == SubMenuCodeUtils.Binning){
-                                      NextScreen(Binning(
-                                          importSubMenuList: importSubMenuList,
-                                          exportSubMenuList: exportSubMenuList,
-                                          title: subMenuTitle,
-                                          refrelCode: refrelCode,
-                                          lableModel: lableModel,
-                                          menuId: menuId,
-                                          mainMenuName: widget.menuName), "Y");
-                                    }else if(menuId == SubMenuCodeUtils.Segration){
-
-                                      NextScreen(Container(), isEnable);
+                            Expanded(child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.MAINPADDINGVERTICAL),
+                              child: BlocConsumer<SubMenuCubit, SubMenuState>(
+                                listener: (context, state) {
+                                  if(state is SubMenuStateLoading){
+                                    DialogUtils.showLoadingDialog(context, message: subMenuModelLang!.loading);
+                                  }else if(state is SubMenuStateSuccess){
+                                    if(widget.menuId == "1001"){
+                                      importSubMenuList =  state.subMenuModel.subMenuName!;
+                                    }else if(widget.menuId == "1002"){
+                                      exportSubMenuList =  state.subMenuModel.subMenuName!;
                                     }
-                                  },);
-                              },
 
-                              ) : SizedBox();
-                            }
-                            return SizedBox();
-                          },
+                                    setState(() {
+
+                                    });
+                                    DialogUtils.hideLoadingDialog(context);
+                                  }else if(state is SubMenuStateFailure){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed);
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if(state is SubMenuStateSuccess){
+                                    // getting responce to submenu api call
+
+                                    return (state.subMenuModel.subMenuName!.isNotEmpty) ? GridView.builder(
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
+                                      itemCount: state.subMenuModel.subMenuName!.length,
+                                      physics:  const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        SubMenuName subMenuName = state.subMenuModel.subMenuName![index];
+                                        print("CHECK_TITIITTITI ==== ${localizations.locale.languageCode} === ${subMenuName.menuName!}");
+
+                                        String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang!.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
+
+                                        return SubMenuWidget(title: subMenuTitle,
+                                          imageUrl: (subMenuName.imageIcon!.isNotEmpty) ? CommonUtils.getSVGImagePath(subMenuName.imageIcon!) : "",
+                                          bgColor: MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
+                                          onClick: () {
+                                            String refrelCode = CommonUtils.removeExtraIcons("${subMenuName.refMenuCode}");
+                                            int menuId = int.parse(subMenuName.menuId!);
+                                            String isEnable = subMenuName.IsEnable!;
+                                            if(menuId == SubMenuCodeUtils.ULDAcceptance){
+                                              // navigate to next page using submenu refrelcode
+
+                                              NextScreen(UldAcceptancePage(
+                                                importSubMenuList: importSubMenuList,
+                                                exportSubMenuList: exportSubMenuList,
+                                                title: subMenuTitle,
+                                                refrelCode: refrelCode,
+                                                lableModel: lableModel,
+                                                menuId: menuId,
+                                                mainMenuName: widget.menuName,), isEnable);
+                                              // NextScreen(DemoCodePage(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName,), isEnable);
+                                            } else if(menuId == SubMenuCodeUtils.FlightCheck){
+                                              // navigate to next page using submenu refrelcode
+
+                                              NextScreen(FlightCheck(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(menuId == SubMenuCodeUtils.Binning){
+                                              NextScreen(Binning(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), "Y");
+                                            }else if(menuId == SubMenuCodeUtils.Segration){
+
+                                              NextScreen(Container(), isEnable);
+                                            }
+                                          },);
+                                      },
+
+                                    ) : SizedBox();
+                                  }
+                                  return SizedBox();
+                                },
+                              ),
+                            ))
+
+                          ],
                         ),
-                      ))
-                    ],
-                  ),
-                ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: ClipPath(
-                    clipper: ProsteThirdOrderBezierCurve(
-                      position: ClipPosition.top,
-                      list: [
-                        ThirdOrderBezierCurveSection(
-                          p2: Offset(SizeConfig.screenWidth, 50),
-                          p1: Offset(SizeConfig.screenWidth, 100),
-                          p3: const Offset(0, 100),
-                          p4: const Offset(0, 0),
-                        ),
-                      ],
-                    ),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.topRight,
-                            colors: [
-                              MyColor.primaryColorblue,
-                              Colors.white,
-                            ],
-                          )),
-                      height: 130,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            )),
-            bottomNavigationBar: FooterCompanyName(),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
+
   }
   Future<void> NextScreen(Widget nextPageScreen, String isEnable) async {
     if(isEnable == "Y"){

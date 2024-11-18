@@ -9,6 +9,7 @@ class SubMenuModelLang {
   String? HHT010;
   String? HHT011;
   String? HHT012;
+  String? submenu;
 
   SubMenuModelLang(
       {
@@ -22,6 +23,7 @@ class SubMenuModelLang {
         this.HHT010,
         this.HHT011,
         this.HHT012,
+        this.submenu,
 
       });
 
@@ -36,6 +38,7 @@ class SubMenuModelLang {
     HHT010 = json['HHT010'];
     HHT011 = json['HHT011'];
     HHT012 = json['HHT012'];
+    submenu = json['submenu'];
   }
 
   Map<String, dynamic> toJson() {
@@ -50,6 +53,7 @@ class SubMenuModelLang {
     data['HHT010'] = this.HHT010;
     data['HHT011'] = this.HHT011;
     data['HHT012'] = this.HHT012;
+    data['submenu'] = this.submenu;
 
 
     return data;

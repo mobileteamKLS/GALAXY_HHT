@@ -234,6 +234,10 @@ class LableModel {
   String? damagePcsGrtMsg;
   String? damageWeightGrtMsg;
   String? actualWtCannotGrtDocumentWt;
+  String? houseListing;
+  String? bdDone;
+  String? awb;
+  String? hawb;
 
   String? s9;
   String? s10;
@@ -589,7 +593,7 @@ class LableModel {
         this.remarkfor,
         this.back,
         this.acknowledge,
-
+        this.awb, this.hawb,
         this.addMail,
         this.addMailForThis,
         this.av7No,
@@ -653,6 +657,8 @@ class LableModel {
         this.damagePcsGrtMsg,
         this.damageWeightGrtMsg,
         this.actualWtCannotGrtDocumentWt,
+        this.houseListing,
+        this.bdDone,
         this.s9,
         this.s10,
         this.s11,
@@ -1082,6 +1088,10 @@ class LableModel {
     damagePcsGrtMsg = json['damagePcsGrtMsg'];
     damageWeightGrtMsg = json['damageWeightGrtMsg'];
     actualWtCannotGrtDocumentWt = json['actualWtCannotGrtDocumentWt'];
+    houseListing = json['houseListing'];
+    bdDone = json['bdDone'];
+    awb = json['awb'];
+    hawb = json['hawb'];
 
     s9 = json['9'];
     s10 = json['10'];
@@ -1512,6 +1522,11 @@ class LableModel {
     data['damagePcsGrtMsg'] = this.damagePcsGrtMsg;
     data['damageWeightGrtMsg'] = this.damageWeightGrtMsg;
     data['actualWtCannotGrtDocumentWt'] = this.actualWtCannotGrtDocumentWt;
+    data['houseListing'] = this.houseListing;
+    data['bdDone'] = this.bdDone;
+    data['awb'] = this.awb;
+    data['hawb'] = this.hawb;
+
     data['9'] = this.s9;
     data['10'] = this.s10;
     data['11'] = this.s11;

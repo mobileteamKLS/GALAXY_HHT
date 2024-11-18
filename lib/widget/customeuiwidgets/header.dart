@@ -43,7 +43,11 @@ class _HeaderWidgetState extends State<HeaderWidget> {
               SizedBox(
                 width: SizeConfig.blockSizeHorizontal * 2,
               ),
-              CustomeText(text: widget.title, fontColor: (widget.titleTextColor == null) ? MyColor.primaryColorblue : widget.titleTextColor!, fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, fontWeight: FontWeight.w500, textAlign: TextAlign.start)
+              CustomeText(text: widget.title,
+                  fontColor: (widget.titleTextColor == null)
+                      ? MyColor.primaryColorblue : widget.titleTextColor!,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE,
+                  fontWeight: FontWeight.bold, textAlign: TextAlign.start)
             ],
           ),
           InkWell(

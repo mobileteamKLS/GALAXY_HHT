@@ -78,6 +78,12 @@ class CommonUtils{
     return "assets/images/${imageName}";
   }
 
+  static String getSVGImagePath(String imageName){
+    return "assets/svgImages/${imageName}.svg";
+  }
+
+
+
 
   static String getLableFromAssets(String lableKey, String langCode){
 

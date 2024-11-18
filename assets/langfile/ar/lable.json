@@ -167,15 +167,15 @@
 
     "entervalidULDNo" : "الرجاء إدخال رقم يو إل دي صالحًا.",
 
-    "awbListing" : "قائمة AWB",
+    "awbListing" : "قائمة أو بي",
     "detailsForUldNo" : "تفاصيل رقم ULD.",
-    "scanAWB" : "مسح AWB",
+    "scanAWB" : "مسح أو بي",
     "showAllShipments" : "إظهار اكتمال الانتظار يو إل دي فقط",
     "showMoreDetails" : "عرض المزيد من التفاصيل",
     "showLessDetails" : "إظهار تفاصيل أقل",
 
     "allShipment" : "جميع الشحنات مقبولة",
-    "priorityAWbMsg" : "تغيير أولوية AWB No.",
+    "priorityAWbMsg" : "تغيير أولوية أو بي No.",
 
     "remarkList" : "قائمة الملاحظات",
     "remarkfor" : "ملاحظات ل",
@@ -201,8 +201,8 @@
     "mailTypeMsg" : "الرجاء تحديد نوع البريد",
 
 
-    "checkAWb" : "تحقق في AWB",
-    "detailsForAWBNo" : "تفاصيل رقم AWB.",
+    "checkAWb" : "تحقق في أو بي",
+    "detailsForAWBNo" : "تفاصيل رقم أو بي.",
     "otherDetail" : "تفاصيل أخرى",
     "flight": "رحلة جوية",
     "natureOfGoods" : "طبيعة البضائع",
@@ -212,6 +212,8 @@
 
     "cargo" : "شحن",
     "mail" : "البريد",
+    "awb" : "أدبليوب",
+    "hawb" : "حاوب",
 
     "breakdownCompleted" : "اكتمل الانهيار",
     "groupIdCharSizeMsg" : "يجب أن يكون معرف المجموعة {0} حرفًا بالضبط",
@@ -220,13 +222,15 @@
     "breakdownMsgUld" : "هل أنت متأكد أنك تريد إكمال تقسيم ULD {0}؟",
     "breakdownMsgBulk" : "هل أنت متأكد من رغبتك في إكمال تقسيم {0}؟",
     "noShipmentFound" : "لم يتم العثور على شحنة.",
-    "invalidAWBNo" : "رقم AWB غير صحيح",
+    "invalidAWBNo" : "رقم أو بي غير صحيح",
     "breakdownAlreadyCompleted" : "لقد اكتمل الانهيار بالفعل.",
-    "scanHAWB" : "مسح HAWB",
-    "showCompletionPendingHAWB" : "إظهار الإكمال في انتظار HAWB فقط",
-    "invalidHAWBNo" : "رقم HAWB غير صالح.",
-    "checkInHAWB" : "تسجيل الوصول HAWB",
-    "detailsforHAWBNo" : "تفاصيل HAWB رقم.",
+    "scanHAWB" : "مسح حاوب",
+    "showCompletionPendingHAWB" : "إظهار الإكمال في انتظار حاوب فقط",
+    "invalidHAWBNo" : "رقم حاوب غير صالح.",
+    "checkInHAWB" : "تسجيل الوصول حاوب",
+    "detailsforHAWBNo" : "تفاصيل حاوب رقم.",
+    "houseListing" : "قائمة البيت",
+    "bdDone" : "تم الانتهاء من ب د",
 
     "flightisFinalizedMsg" : "تمت الرحلة النهائية.",
     "flightisNotArrivedMsg" : "الرحلة لم تصل",
@@ -240,7 +244,7 @@
     "TOL" : "الخسارة الكلية",
     "kg" : "كجم",
     "shipmentWeightDetails" : "7) تفاصيل وزن الشحنة",
-    "totalWtShipped" : "أ) إجمالي الوزن المشحون (لكل AWB)",
+    "totalWtShipped" : "أ) إجمالي الوزن المشحون (لكل أو بي)",
     "totalWtAsPerActualCheck" : "ب) الوزن الإجمالي حسب الفحص الفعلي",
     "difference" : "ج) الاختلاف",
     "individualWtOfEachDamagePkg" : "8) وزن فردي. من كل حزمة ضرر/قطع.",
@@ -291,7 +295,7 @@
     "21" : "21)",
     "Disposition" : "التصرف",
     "22" : "22)",
-    "anyDamageRemarks" : "أي ضرر تم ملاحظته في: أ) AWB. ب) Manifest",
+    "anyDamageRemarks" : "أي ضرر تم ملاحظته في: أ) أو بي. ب) Manifest",
     "23" : "23)",
     "WeatherCondition" : "حالة الطقس ؟",
     "24" : "24)",

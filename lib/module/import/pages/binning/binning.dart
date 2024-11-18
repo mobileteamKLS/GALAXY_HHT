@@ -720,11 +720,6 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
 
                                                               }
 
-
-
-
-
-
                                                             },
                                                           ),
                                                         ),

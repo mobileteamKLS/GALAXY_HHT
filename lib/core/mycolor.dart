@@ -58,6 +58,7 @@ class MyColor {
 
   static const Color transparentColor = Colors.transparent;
 
+  static const Color colorBlueWhite = Color(0xffCCF1F6);
 
 
   static Color getLabelTextColor() {
@@ -92,6 +93,17 @@ class MyColor {
 
 
   ];
+
+
+  static List<Color> subMenuColorList = [
+    // Color for position 0, 10, 19, 28, etc.
+    Color(0xffFFD7BC),
+    Color(0xffD1E2FB),
+    Color(0xffB3D8B4),
+
+
+  ];
+
 
 
   /*static List<Color> colorList = [

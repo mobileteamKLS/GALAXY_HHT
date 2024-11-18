@@ -15,6 +15,7 @@ class DashboardModel {
   String? HHT001;
   String? HHT002;
   String? HHT003;
+  String? menu;
 
 
 
@@ -36,7 +37,8 @@ class DashboardModel {
         this.loading,
         this.HHT001,
         this.HHT002,
-        this.HHT003
+        this.HHT003,
+        this.menu
 
       });
 
@@ -59,6 +61,7 @@ class DashboardModel {
     HHT001 = json['HHT001'];
     HHT002 = json['HHT002'];
     HHT003 = json['HHT003'];
+    menu = json['menu'];
   }
 
   Map<String, dynamic> toJson() {
@@ -82,6 +85,7 @@ class DashboardModel {
     data['HHT001'] = this.HHT001;
     data['HHT002'] = this.HHT002;
     data['HHT003'] = this.HHT003;
+    data['menu'] = this.menu;
 
 
     return data;

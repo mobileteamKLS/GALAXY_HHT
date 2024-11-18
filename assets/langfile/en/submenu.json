@@ -14,6 +14,7 @@
     "HHT010" : "Document Upload",
 
     "HHT011" : "Flight Check-In",
-    "HHT012" : "AWB Remarks"
+    "HHT012" : "AWB Remarks",
+    "submenu" : "Submenu"
   }
 }

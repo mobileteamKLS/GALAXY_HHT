@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/language/model/dashboardModel.dart';
 import 'package:galaxy/module/dashboard/model/menumodel.dart';
@@ -18,6 +19,7 @@ import 'package:galaxy/utils/commonutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/validationmsgcodeutils.dart';
 import 'package:vibration/vibration.dart';
+import '../../../core/images.dart';
 import '../../../core/mycolor.dart';
 import '../../../language/appLocalizations.dart';
 import '../../../manager/lifecycleWatcher.dart';
@@ -26,12 +28,15 @@ import '../../../prefrence/savedprefrence.dart';
 import '../../../utils/dialogutils.dart';
 import '../../../utils/snackbarutil.dart';
 import '../../../widget/customebuttons/roundbuttonblue.dart';
+import '../../../widget/customedrawer/customedrawer.dart';
 import '../../../widget/custometext.dart';
 import '../../../widget/customeuiwidgets/dashbordwidget.dart';
 import '../../../widget/customeuiwidgets/footer.dart';
+import '../../../widget/customeuiwidgets/header.dart';
 import '../../../widget/customtextfield.dart';
 import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
+import '../../../widget/header/mainheadingwidget.dart';
 import '../../../widget/roundbutton.dart';
 import '../../profile/page/profilepagescreen.dart';
 import '../../login/model/userlogindatamodel.dart';
@@ -122,7 +127,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     super.dispose();
   }
 
-
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     //culture wise data load from assets file
@@ -142,7 +147,169 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ? ui.TextDirection.rtl
         : ui.TextDirection.ltr;
 
+
     return WillPopScope(
+      onWillPop: () async {
+        // show exit dialog
+        bool? exitConfirmed = await DialogUtils.showExitAppDialog(context, dashboardModel!);
+        if (exitConfirmed == true) {
+          return true; // Exit the app
+        }
+        return false; // Stay in the app (Cancel was clicked)
+      },
+      child: GestureDetector(
+        onTap: _resumeTimerOnInteraction,
+        // Resuming on any tap
+        onPanDown: (details) => _resumeTimerOnInteraction(),
+        // Resuming on any gesture
+        child: Directionality(
+          textDirection: uiDirection,
+          child: SafeArea(
+            child: Scaffold(
+              key: _scaffoldKey,
+              drawer: _user != null && _splashDefaultData != null
+                  ? BuildCustomeDrawer(
+                user: _user!,
+                splashDefaultData: _splashDefaultData!,
+                importSubMenuList: [],
+                exportSubMenuList: [],
+                onDrawerCloseIcon: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                },) : null, // Add custom drawer widget here
+              body: Stack(
+                children: [
+                  MainHeadingWidget(mainMenuName: "${dashboardModel!.dashBoard}",
+                    onDrawerIconTap: () {
+
+                      _scaffoldKey.currentState?.openDrawer();
+                    },
+                    onUserProfileIconTap: () {
+                      _scaffoldKey.currentState?.closeDrawer();
+                      // navigate to profile picture
+                      inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                    },
+
+                  ),
+                  Positioned(
+                    top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                    bottom: 0,
+                    right: 0,
+                    left: 0,
+                    child: NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification scroll) {
+                        _resumeTimerOnInteraction(); // Reset the timer on scroll event
+                        return true;
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: MyColor.bgColorGrey,
+                            borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                                topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                        child: Column(
+                          children: [
+                            // header of title and clear function
+                            Padding(
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 15, top: 12, bottom: 12),
+                              child: Row(
+                                children: [
+                                  InkWell(
+                                    onTap : () {
+                                    },
+                                    child: SvgPicture.asset(menu, height: 20,)/* Icon(
+                                      Icons.dashboard_rounded,
+                                      color: MyColor.colorBlack,
+                                      size: SizeConfig.blockSizeVertical * 3,
+                                    ),*/
+                                  ),
+                                  SizedBox(
+                                    width: SizeConfig.blockSizeHorizontal * 2,
+                                  ),
+                                  CustomeText(text: "${dashboardModel.menu}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, fontWeight: FontWeight.bold, textAlign: TextAlign.start)
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.MAINPADDINGVERTICAL,
+                              ),
+                              child: BlocConsumer<MenuCubit, MenuState>(
+                                listener: (context, state) {
+                                  if(state is MenuStateLoading){
+                                    //show loading dialog
+                                    DialogUtils.showLoadingDialog(context, message: dashboardModel.loading);
+                                  }
+                                  else if(state is MenuStateSuccess){
+                                    //hide loading dialog
+                                    DialogUtils.hideLoadingDialog(context);
+                                  }
+                                  else if(state is MenuStateFailure){
+                                    //hide loading dialog
+                                    DialogUtils.hideLoadingDialog(context);
+                                    //show snackbar dialog
+                                    SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed);
+                                  }
+                                },
+                                builder: (context, state) {
+                                  if(state is MenuStateSuccess){
+
+                                    //add gridview
+                                    return (state.menuModel.menuName!.isNotEmpty) ? GridView.builder(
+                                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
+                                      itemCount: state.menuModel.menuName!.length,
+                                      physics: const NeverScrollableScrollPhysics(),
+                                      shrinkWrap: true,
+                                      itemBuilder: (context, index) {
+                                        MenuName menuName = state.menuModel.menuName![index];
+                                        String menuTitle = "${dashboardModel.getValueFromKey(CommonUtils.removeExtraIcons(menuName.refMenuCode!))}";
+
+                                        return DashboardCustomeWidget(title: menuTitle,
+                                          imageUrl: (menuName.imageIcon!.isNotEmpty) ? CommonUtils.getSVGImagePath(menuName.imageIcon!) : "",
+                                          onClick: () async {
+                                            print("CHECK AUTORISed === ${state.menuModel.menuName![index].IsEnable}");
+
+                                            // next to submenu page from dashboard page
+                                            if(menuName.IsEnable == "Y"){
+                                              inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => SubMenuPage(menuId: menuName.menuId!, menuName: menuTitle),));
+                                              if(value == "Done"){
+                                                _resumeTimerOnInteraction();
+                                              }
+
+                                            }else{
+                                              SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              Vibration.vibrate(duration: 500);
+                                            }
+
+                                          },);
+                                      },) : const SizedBox();
+
+                                  }
+                                  return const SizedBox();
+                                },
+                              ),
+                            )
+
+
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+
+
+    /*return WillPopScope(
       onWillPop: () async {
         // show exit dialog
         bool? exitConfirmed = await DialogUtils.showExitAppDialog(context, dashboardModel!);
@@ -259,7 +426,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             //add gridview
                             return (state.menuModel.menuName!.isNotEmpty) ? GridView.builder(
                                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2, crossAxisSpacing: 5, childAspectRatio: 1.3),
+                                    crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
                                 itemCount: state.menuModel.menuName!.length,
                                 physics: const NeverScrollableScrollPhysics(),
                                 shrinkWrap: true,
@@ -268,7 +435,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   String menuTitle = "${dashboardModel.getValueFromKey(CommonUtils.removeExtraIcons(menuName.refMenuCode!))}";
 
                                   return DashboardCustomeWidget(title: menuTitle,
-                                    imageUrl: CommonUtils.getImagePath(menuName.imageIcon!),
+                                    imageUrl: (menuName.imageIcon!.isNotEmpty) ? CommonUtils.getSVGImagePath(menuName.imageIcon!) : "",
                                     onClick: () async {
                                     print("CHECK AUTORISed === ${state.menuModel.menuName![index].IsEnable}");
 
@@ -289,50 +456,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 },) : const SizedBox();
 
                           }
-                          return SizedBox();
+                          return const SizedBox();
                         },
                         ),
                       )
                     ],
                   ),
                 ),
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: ClipPath(
-                    clipper: ProsteThirdOrderBezierCurve(
-                      position: ClipPosition.top,
-                      list: [
-                        ThirdOrderBezierCurveSection(
-                          p2: Offset(SizeConfig.screenWidth, 50),
-                          p1: Offset(SizeConfig.screenWidth, 100),
-                          p3: const Offset(0, 100),
-                          p4: const Offset(0, 0),
-                        ),
-                      ],
-                    ),
-                    child: Container(
-                      decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.topRight,
-                        colors: [
-                          MyColor.primaryColorblue,
-                          Colors.white,
-                        ],
-                      )),
-                      height: 130,
-                    ),
-                  ),
-                ),
               ],
             )),
-            bottomNavigationBar: const FooterCompanyName(),
+
           ),
         ),
       ),
-    );
+    );*/
   }
 
   Future<void> _loadMenuList() async {

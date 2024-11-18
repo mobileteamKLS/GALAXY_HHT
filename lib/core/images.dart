@@ -96,11 +96,12 @@ const search_scan = 'assets/svgImages/search_scan.svg';
 const dashboard = 'assets/svgImages/dashboard.svg';
 const importSvg = 'assets/svgImages/import.svg';
 const exportSvg = 'assets/svgImages/export.svg';
-const courrierSvg = 'assets/svgImages/courrier.svg';
+const courrierSvg = 'assets/svgImages/courier.svg';
 const manual = 'assets/svgImages/manual.svg';
 const comments = 'assets/svgImages/comments.svg';
 const circleDown = 'assets/svgImages/circle_down.svg';
 const circleUp = 'assets/svgImages/circleup.svg';
+const menu = 'assets/svgImages/menu.svg';
 
 
 
