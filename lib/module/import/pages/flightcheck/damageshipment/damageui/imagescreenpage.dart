@@ -43,9 +43,8 @@ import '../../../../model/uldacceptance/buttonrolesrightsmodel.dart';
 class ImageScreenPage extends StatefulWidget {
 
   List<ButtonRight> buttonRightsList;
-  FlightDetailSummary flightDetailSummary;
-  FlightCheckInAWBBDList? aWBItem;
-  FlightCheckInHAWBBDList? haWBItem;
+  int iMPAWBRowId;
+  int iMPShipRowId;
   DamageDetailsModel? damageDetailsModel;
   final VoidCallback preclickCallback;
   final VoidCallback nextclickCallback;
@@ -56,14 +55,15 @@ class ImageScreenPage extends StatefulWidget {
   String groupId;
   InactivityTimerManager? inactivityTimerManager;
   int pageView;
+  String flightStatus;
+  int flightSeqNo;
 
   ImageScreenPage({super.key,
     required this.pageView,
     required this.buttonRightsList,
     required this.inactivityTimerManager,
-    this.aWBItem,
-    this.haWBItem,
-    required this.flightDetailSummary,
+    required this.iMPAWBRowId,
+    required this.iMPShipRowId,
     required this.damageDetailsModel,
     required this.preclickCallback,
     required this.nextclickCallback,
@@ -71,7 +71,9 @@ class ImageScreenPage extends StatefulWidget {
     required this.userId,
     required this.companyCode,
     required this.menuId,
-    required this.groupId});
+    required this.groupId,
+    required this.flightStatus,
+    required this.flightSeqNo});
 
   @override
   State<ImageScreenPage> createState() => _ImageScreenPageState();
@@ -686,7 +688,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                   text: "${lableModel.recordDamage}",
                   press: () async {
 
-                    if(widget.flightDetailSummary.flightStatus == "A"){
+                    if(widget.flightStatus == "A"){
                       String totalImages = "$images";
 
                       print("IAMGSSS ==== $images");
@@ -730,9 +732,13 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
 
 
-                        int? awbId = (widget.haWBItem == null) ? widget.aWBItem!.iMPAWBRowId : widget.haWBItem!.iMPAWBRowId;
-                        int? shipId = (widget.haWBItem == null) ? widget.aWBItem!.iMPShipRowId! : widget.haWBItem!.iMPSHIPRowId;
-                        int flightSeqNo = widget.flightDetailSummary.flightSeqNo!;
+                      /*  int? awbId = (widget.haWBItem == null) ? widget.aWBItem!.iMPAWBRowId : widget.haWBItem!.iMPAWBRowId;
+                        int? shipId = (widget.haWBItem == null) ? widget.aWBItem!.iMPShipRowId! : widget.haWBItem!.iMPSHIPRowId;*/
+
+                        int awbId = widget.iMPAWBRowId;
+                        int shipId = widget.iMPShipRowId;
+
+                        int flightSeqNo = widget.flightSeqNo;
                         String typeOfDiscrepancy = CommonUtils.SELECTEDTYPEOFDISCRPENCY;
 
                         int shipTotalPcs =  CommonUtils.shipTotalPcs;
@@ -800,16 +806,15 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                             totalImages,
                             widget.groupId,
                             widget.userId, widget.companyCode, widget.menuId);
-
                       }
                       else{
                         SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
                         Vibration.vibrate(duration: 500);
                       }
-                    }else if(widget.flightDetailSummary.flightStatus == "F"){
+                    }else if(widget.flightStatus == "F"){
                       SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                       Vibration.vibrate(duration: 500);
-                    }else if(widget.flightDetailSummary.flightStatus == "N"){
+                    }else if(widget.flightStatus == "N"){
                       SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                       Vibration.vibrate(duration: 500);
                     }

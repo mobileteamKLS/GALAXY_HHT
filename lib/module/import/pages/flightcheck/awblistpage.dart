@@ -742,11 +742,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                 CommonUtils.SELECTEDCONTENT = "";
                                                                                 CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                                int npxPices = aWBItem.nPR!;
+                                                                               /* int npxPices = aWBItem.nPR!;
                                                                                 double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                  builder: (context) => DamageShimentPage(
                                                                                   importSubMenuList: widget.importSubMenuList,
                                                                                   exportSubMenuList: widget.exportSubMenuList,
                                                                                   lableModel: lableModel,
@@ -756,7 +757,15 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                   damageNop: aWBItem.damageNOP!,
                                                                                   damageWt: aWBItem.damageWeight!,
                                                                                   buttonRightsList: widget.buttonRightsList,
-                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                    iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                    iMPShipRowId: aWBItem.iMPShipRowId!,
+                                                                                  flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                  flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                  mainMenuName: widget.mainMenuName,
+                                                                                  userId: _user!.userProfile!.userIdentity!,
+                                                                                  companyCode: _splashDefaultData!.companyCode!,
+                                                                                  menuId: widget.menuId,
+                                                                                  groupId: "",),));
 
                                                                                 if(value == "Done"){
                                                                                   _resumeTimerOnInteraction();
@@ -813,11 +822,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                 CommonUtils.SELECTEDCONTENT = "";
                                                                                 CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                                int npxPices = aWBItem.nPR!;
+                                                                                /*int npxPices = aWBItem.nPR!;
                                                                                 double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                  builder: (context) => DamageShimentPage(
                                                                                   importSubMenuList: widget.importSubMenuList,
                                                                                   exportSubMenuList: widget.exportSubMenuList,
                                                                                   lableModel: lableModel,
@@ -827,7 +837,15 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                   damageNop: aWBItem.damageNOP!,
                                                                                   damageWt: aWBItem.damageWeight!,
                                                                                   buttonRightsList: widget.buttonRightsList,
-                                                                                  aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                    iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                    iMPShipRowId: aWBItem.iMPShipRowId!,
+                                                                                    flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                    flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                    mainMenuName: widget.mainMenuName,
+                                                                                    userId: _user!.userProfile!.userIdentity!,
+                                                                                    companyCode: _splashDefaultData!.companyCode!,
+                                                                                    menuId: widget.menuId,
+                                                                                    groupId: "",),));
 
                                                                                 if(value == "Done"){
                                                                                   _resumeTimerOnInteraction();
@@ -935,11 +953,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                             CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                            int npxPices = aWBItem.nPR!;
+                                                                           /* int npxPices = aWBItem.nPR!;
                                                                             double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                            var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                            var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                              builder: (context) => DamageShimentPage(
                                                                               importSubMenuList: widget.importSubMenuList,
                                                                               exportSubMenuList: widget.exportSubMenuList,
                                                                               lableModel: lableModel,
@@ -949,7 +968,15 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                               damageNop: aWBItem.damageNOP!,
                                                                               damageWt: aWBItem.damageWeight!,
                                                                               buttonRightsList: widget.buttonRightsList,
-                                                                              aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                iMPShipRowId: aWBItem.iMPShipRowId!,
+                                                                                flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                mainMenuName: widget.mainMenuName,
+                                                                                userId: _user!.userProfile!.userIdentity!,
+                                                                                companyCode: _splashDefaultData!.companyCode!,
+                                                                                menuId: widget.menuId,
+                                                                                groupId: "",),));
 
                                                                             if(value == "Done"){
                                                                               _resumeTimerOnInteraction();
@@ -1568,11 +1595,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
 
-                                                                                                    int npxPices = aWBItem.nPR!;
+                                                                                                   /* int npxPices = aWBItem.nPR!;
                                                                                                     double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                      builder: (context) => DamageShimentPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
@@ -1582,7 +1610,17 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                       damageNop: aWBItem.damageNOP!,
                                                                                                       damageWt: aWBItem.damageWeight!,
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                        iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                                        iMPShipRowId: aWBItem.iMPShipRowId!,
+                                                                                                        flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                                        flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                                      mainMenuName: widget.mainMenuName,
+                                                                                                      userId: _user!.userProfile!.userIdentity!,
+                                                                                                      companyCode: _splashDefaultData!.companyCode!,
+                                                                                                      menuId: widget.menuId,
+                                                                                                      /*npxPieces: npxPices,
+                                                                                                      npxWeightCo: weightCo,*/
+                                                                                                      groupId: "",),));
 
                                                                                                     if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
@@ -1647,12 +1685,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
 
-                                                                                                    int npxPices = aWBItem.nPR!;
+                                                                                                   /* int npxPices = aWBItem.nPR!;
                                                                                                     double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
 
-
-                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                      builder: (context) => DamageShimentPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
@@ -1662,7 +1701,15 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                       damageNop: aWBItem.damageNOP!,
                                                                                                       damageWt: aWBItem.damageWeight!,
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                        iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                                        iMPShipRowId: aWBItem.iMPShipRowId!,
+                                                                                                        flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                                        flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                                        mainMenuName: widget.mainMenuName,
+                                                                                                        userId: _user!.userProfile!.userIdentity!,
+                                                                                                        companyCode: _splashDefaultData!.companyCode!,
+                                                                                                        menuId: widget.menuId,
+                                                                                                        groupId: "",),));
 
 
                                                                                                     if(value == "Done"){
@@ -1728,11 +1775,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
 
-                                                                                                  int npxPices = aWBItem.nPR!;
+                                                                                                 /* int npxPices = aWBItem.nPR!;
                                                                                                   double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                    builder: (context) => DamageShimentPage(
                                                                                                     importSubMenuList: widget.importSubMenuList,
                                                                                                     exportSubMenuList: widget.exportSubMenuList,
                                                                                                     lableModel: lableModel,
@@ -1742,7 +1790,15 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                     damageNop: aWBItem.damageNOP!,
                                                                                                     damageWt: aWBItem.damageWeight!,
                                                                                                     buttonRightsList: widget.buttonRightsList,
-                                                                                                    aWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                      iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                                      iMPShipRowId: aWBItem.iMPShipRowId!,
+                                                                                                      flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                                      flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                                      mainMenuName: widget.mainMenuName,
+                                                                                                      userId: _user!.userProfile!.userIdentity!,
+                                                                                                      companyCode: _splashDefaultData!.companyCode!,
+                                                                                                      menuId: widget.menuId,
+                                                                                                      groupId: "",),));
 
                                                                                                   if(value == "Done"){
                                                                                                     _resumeTimerOnInteraction();

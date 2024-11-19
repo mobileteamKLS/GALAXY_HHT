@@ -33,9 +33,6 @@ class DamageAwbDetailPage extends StatefulWidget {
   InactivityTimerManager? inactivityTimerManager;
 
 
-  int npxPieces;
-  double npxWeightCo;
-
   int damageNop;
   double damageWt;
   int enterDamageNop;
@@ -50,8 +47,6 @@ class DamageAwbDetailPage extends StatefulWidget {
     required this.enterDamageWt,
     required this.damageNop,
     required this.damageWt,
-    required this.npxPieces,
-    required this.npxWeightCo,
     required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback, required this.inactivityTimerManager, required this.pageView});
 
   @override
@@ -191,7 +186,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
           textDirection: uiDirection,
           child: HeaderWidget(
             titleTextColor: MyColor.colorBlack,
-            title: "${lableModel!.damageAndSave}",
+            title: "${lableModel!.damage}",
             onBack: () {
               widget.inactivityTimerManager!.stopTimer();
               Navigator.pop(context, "Done");

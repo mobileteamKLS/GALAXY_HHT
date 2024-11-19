@@ -298,10 +298,11 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                     int damageNop = widget.aWBItem.damageNOP!;
                                     double damageWt = widget.aWBItem.damageWeight!;
 
-                                    int npxPices = widget.aWBItem.nPR!;
+                                   /* int npxPices = widget.aWBItem.nPR!;
                                     double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-
-                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+*/
+                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                      builder: (context) => DamageShimentPage(
                                       importSubMenuList: widget.importSubMenuList,
                                       exportSubMenuList: widget.exportSubMenuList,
                                       lableModel: lableModel,
@@ -311,7 +312,15 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                       damageNop: damageNop,
                                       damageWt: damageWt,
                                       buttonRightsList: widget.buttonRightsList,
-                                      aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+                                      iMPAWBRowId: widget.aWBItem.iMPAWBRowId!,
+                                      iMPShipRowId: widget.aWBItem.iMPShipRowId!,
+                                        flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                        flightStatus: widget.flightDetailSummary.flightStatus!,
+                                        mainMenuName: widget.mainMenuName,
+                                        userId: _user!.userProfile!.userIdentity!,
+                                        companyCode: _splashDefaultData!.companyCode!,
+                                        menuId: widget.menuId,
+                                        groupId: groupIdController.text,),));
 
                                     if(value == "Done"){
                                       Navigator.pop(context, "true");
@@ -741,7 +750,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             Expanded(
                                               flex: 1,
                                               child: RoundedButtonBlue(
-                                                text: "${lableModel.damageAndSave}",
+                                                text: "${lableModel.damage}",
                                                 press: () async {
 
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
@@ -824,10 +833,11 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                         int damageNop = widget.aWBItem.damageNOP!;
                                                         double damageWt = widget.aWBItem.damageWeight!;
 
-                                                        int npxPices = widget.aWBItem.nPR!;
+                                                        /*int npxPices = widget.aWBItem.nPR!;
                                                         double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-
-                                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+*/
+                                                        var value = await Navigator.push(context, CupertinoPageRoute(
+                                                          builder: (context) => DamageShimentPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
                                                           lableModel: lableModel,
@@ -837,16 +847,22 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                           damageNop: damageNop,
                                                           damageWt: damageWt,
                                                           buttonRightsList: widget.buttonRightsList,
-                                                          aWBItem: widget.aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+                                                          iMPAWBRowId: widget.aWBItem.iMPAWBRowId!,
+                                                          iMPShipRowId: widget.aWBItem.iMPShipRowId!,
+                                                          flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                          flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          userId: _user!.userProfile!.userIdentity!,
+                                                          companyCode: _splashDefaultData!.companyCode!,
+                                                          menuId: widget.menuId,
+                                                          groupId: groupIdController.text,),));
 
                                                         if(value == "true"){
                                                           Navigator.pop(context, "true");
                                                         }else {
                                                           _resumeTimerOnInteraction();
                                                         }
-
                                                       }
-
 
                                                     }
                                                     else{
@@ -860,14 +876,6 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                     SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }
-
-
-
-
-
-
-
-
 
                                                   },
                                               ),

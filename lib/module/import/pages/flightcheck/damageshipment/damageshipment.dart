@@ -57,16 +57,15 @@ import 'damageui/imagescreenpage.dart';
 class DamageShimentPage extends StatefulWidget {
 
   List<ButtonRight> buttonRightsList;
-  FlightCheckInAWBBDList? aWBItem;
-  FlightCheckInHAWBBDList? haWBItem;
+  int iMPAWBRowId;
+  int iMPShipRowId;
   String mainMenuName;
-  FlightDetailSummary flightDetailSummary;
+  int flightSeqNo;
+  String flightStatus;
   int menuId;
   int userId;
   int companyCode;
 
-  int npxPieces;
-  double npxWeightCo;
   String groupId;
 
   int damageNop;
@@ -90,9 +89,16 @@ class DamageShimentPage extends StatefulWidget {
     required this.damageNop,
     required this.damageWt,
     required this.buttonRightsList,
-    this.aWBItem,
-    this.haWBItem,
-    required this.flightDetailSummary, required this.mainMenuName, required this.userId, required this.companyCode, required this.menuId, required this.npxPieces, required this.npxWeightCo, required this.groupId, required this.pageView});
+    required this.iMPAWBRowId,
+    required this.iMPShipRowId,
+    required this.flightStatus,
+    required this.flightSeqNo,
+    required this.mainMenuName,
+    required this.userId,
+    required this.companyCode,
+    required this.menuId,
+    required this.groupId,
+    required this.pageView});
 
   @override
   State<DamageShimentPage> createState() => _DamageShimentPageState();
@@ -131,11 +137,15 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       });
 
 
-      if(widget.aWBItem != null){
-        context.read<FlightCheckCubit>().getDamageDetails(widget.flightDetailSummary.flightSeqNo!, "${widget.aWBItem!.iMPAWBRowId!}", "${widget.aWBItem!.iMPShipRowId!}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+     /* if(widget.aWBItem != null){
+        context.read<FlightCheckCubit>().getDamageDetails(widget.flightSeqNo, "${widget.aWBItem!.iMPAWBRowId!}", "${widget.aWBItem!.iMPShipRowId!}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
       }else{
-        context.read<FlightCheckCubit>().getDamageDetails(widget.flightDetailSummary.flightSeqNo!, "${widget.haWBItem!.iMPAWBRowId!}", "${widget.haWBItem!.iMPSHIPRowId!}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+        context.read<FlightCheckCubit>().getDamageDetails(widget.flightSeqNo, "${widget.haWBItem!.iMPAWBRowId!}", "${widget.haWBItem!.iMPSHIPRowId!}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
       }
+*/
+
+      context.read<FlightCheckCubit>().getDamageDetails(widget.flightSeqNo, "${widget.iMPAWBRowId}", "${widget.iMPShipRowId}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
 
 
       inactivityTimerManager = InactivityTimerManager(
@@ -186,7 +196,6 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
     _pageController.dispose();
   }
 
-
   List<Widget> _listViews() {
     return [
 
@@ -197,8 +206,6 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         enterDamageWt: widget.enterDamageWt,
         damageNop: widget.damageNop,
         damageWt: widget.damageWt,
-        npxPieces: widget.npxPieces,
-        npxWeightCo: widget.npxWeightCo,
         damageDetailsModel: damageDetailsModel!,
         inactivityTimerManager: inactivityTimerManager,
         preclickCallback: () {
@@ -395,7 +402,36 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         },
       ) : Container(),
 
-      (damageDetailsModel != null)
+      (damageDetailsModel != null) ? ImageScreenPage(
+        pageView: widget.pageView,
+        buttonRightsList: widget.buttonRightsList,
+        inactivityTimerManager: inactivityTimerManager,
+        userId: widget.userId,
+        companyCode: widget.companyCode,
+        menuId: widget.menuId,
+        flightSeqNo: widget.flightSeqNo,
+        flightStatus: widget.flightStatus,
+        iMPAWBRowId: widget.iMPAWBRowId,
+        iMPShipRowId: widget.iMPShipRowId,
+        groupId: widget.groupId,
+        damageDetailsModel: damageDetailsModel,
+        preclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage > 0 ? _onPreviousPressed() : null;
+        },
+        nextclickCallback: () {
+          _resumeTimerOnInteraction(); // Reset the timer on scroll event
+          _currentPage < _listViews().length - 1
+              ? _onNextPressed()
+              : null;
+        },
+        curruentCallback: (curruentPage) {
+          _pageController.animateToPage(curruentPage,
+              duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
+        },
+      ) : Container()
+
+      /*(damageDetailsModel != null)
           ? (widget.aWBItem != null)
           ? ImageScreenPage(
         pageView: widget.pageView,
@@ -404,7 +440,8 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         userId: widget.userId,
         companyCode: widget.companyCode,
         menuId: widget.menuId,
-        flightDetailSummary: widget.flightDetailSummary,
+        flightSeqNo: widget.flightSeqNo,
+        flightStatus: widget.flightStatus,
         aWBItem: widget.aWBItem!,
         groupId: widget.groupId,
         damageDetailsModel: damageDetailsModel,
@@ -430,7 +467,8 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         userId: widget.userId,
         companyCode: widget.companyCode,
         menuId: widget.menuId,
-        flightDetailSummary: widget.flightDetailSummary,
+        flightSeqNo: widget.flightSeqNo,
+        flightStatus: widget.flightStatus,
         haWBItem: widget.haWBItem!,
         groupId: widget.groupId,
         damageDetailsModel: damageDetailsModel,
@@ -449,10 +487,12 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
               duration: Duration(milliseconds: 300), curve: Curves.easeInOut);
         },
       )
-          : Container(),
+          : Container(),*/
+
+
+
     ];
   }
-
 
   void _onNextPressed() {
     if (_currentPage < _listViews().length - 1) {

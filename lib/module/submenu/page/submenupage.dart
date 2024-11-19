@@ -28,6 +28,7 @@ import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
 import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
+import '../../import/pages/shipmentdamage/shipmentdamagepages.dart';
 import '../../import/pages/uldacceptance/uldacceptancepage.dart';
 import '../../login/pages/signinscreenmethods.dart';
 import '../../onboarding/sizeconfig.dart';
@@ -168,7 +169,6 @@ class _SubMenuPageState extends State<SubMenuPage> {
                 children: [
                   MainHeadingWidget(mainMenuName: "${subMenuModelLang!.submenu}",
                     onDrawerIconTap: () {
-
                       _scaffoldKey.currentState?.openDrawer();
                     },
 
@@ -236,7 +236,11 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                   if(state is SubMenuStateSuccess){
                                     // getting responce to submenu api call
 
-                                    return (state.subMenuModel.subMenuName!.isNotEmpty) ? GridView.builder(
+
+                                    state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1281", menuName: "Shipment Damage", sNo: 3325, imageIcon: "damage", refMenuCode: "§§HHT007§§", IsEnable: "Y"));
+
+                                    return (state.subMenuModel.subMenuName!.isNotEmpty)
+                                        ? GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
                                       itemCount: state.subMenuModel.subMenuName!.length,
@@ -287,14 +291,24 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   lableModel: lableModel,
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), "Y");
-                                            }else if(menuId == SubMenuCodeUtils.Segration){
+                                            }else if(menuId == SubMenuCodeUtils.shipmentCreation){
 
                                               NextScreen(Container(), isEnable);
+                                            }else if(menuId == SubMenuCodeUtils.damage){
+                                              NextScreen(ShipmentDamagePages(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), "Y");
                                             }
                                           },);
                                       },
 
-                                    ) : SizedBox();
+                                    )
+                                        : SizedBox();
                                   }
                                   return SizedBox();
                                 },

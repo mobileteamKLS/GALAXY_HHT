@@ -298,9 +298,9 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                     double damageWt = widget.haWBItem.damageWeight!;
 
 
-                                    int npxPices = widget.haWBItem.nPR!;
+                                   /* int npxPices = widget.haWBItem.nPR!;
                                     double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
-
+*/
                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
                                       importSubMenuList: widget.importSubMenuList,
                                       exportSubMenuList: widget.exportSubMenuList,
@@ -311,7 +311,15 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                       damageNop: damageNop,
                                       damageWt: damageWt,
                                       buttonRightsList: widget.buttonRightsList,
-                                      haWBItem: widget.haWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
+                                      iMPAWBRowId: widget.haWBItem.iMPAWBRowId!,
+                                      iMPShipRowId: widget.haWBItem.iMPSHIPRowId!,
+                                      flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                      flightStatus: widget.flightDetailSummary.flightStatus!,
+                                      mainMenuName: widget.mainMenuName,
+                                      userId: _user!.userProfile!.userIdentity!,
+                                      companyCode: _splashDefaultData!.companyCode!,
+                                      menuId: widget.menuId,
+                                      groupId: groupIdController.text,),));
 
                                     if(value == "Done"){
                                       _resumeTimerOnInteraction();
@@ -749,7 +757,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                             Expanded(
                                               flex: 1,
                                               child: RoundedButtonBlue(
-                                                text: "${lableModel.damageAndSave}",
+                                                text: "${lableModel.damage}",
                                                 press: () async {
 
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
@@ -858,9 +866,9 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                         double damageWt = widget.haWBItem.damageWeight!;
 
 
-                                                        int npxPices = widget.haWBItem.nPR!;
+                                                        /*int npxPices = widget.haWBItem.nPR!;
                                                         double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
-
+*/
                                                         var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
@@ -871,8 +879,15 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                           damageNop: damageNop,
                                                           damageWt: damageWt,
                                                           buttonRightsList: widget.buttonRightsList,
-                                                          haWBItem: widget.haWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: groupIdController.text,),));
-
+                                                          iMPAWBRowId: widget.haWBItem.iMPAWBRowId!,
+                                                          iMPShipRowId: widget.haWBItem.iMPSHIPRowId!,
+                                                          flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                          flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          userId: _user!.userProfile!.userIdentity!,
+                                                          companyCode: _splashDefaultData!.companyCode!,
+                                                          menuId: widget.menuId,
+                                                          groupId: groupIdController.text,),));
 
                                                         if(value == "true"){
                                                           Navigator.pop(context, "true");
@@ -880,8 +895,6 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                           _resumeTimerOnInteraction();
                                                         }
                                                       }
-
-
                                                     }
                                                     else{
                                                       SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);

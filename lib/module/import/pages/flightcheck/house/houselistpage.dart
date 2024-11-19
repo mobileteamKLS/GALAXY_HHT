@@ -669,11 +669,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                               CommonUtils.SELECTEDCONTAINER = "";
 
 
-                                                                              int npxPices = aWBItem.nPR!;
+                                                                             /* int npxPices = aWBItem.nPR!;
                                                                               double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                builder: (context) => DamageShimentPage(
                                                                                 importSubMenuList: widget.importSubMenuList,
                                                                                 exportSubMenuList: widget.exportSubMenuList,
                                                                                 lableModel: lableModel,
@@ -683,7 +684,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                 damageNop: aWBItem.damageNOP!,
                                                                                 damageWt: aWBItem.damageWeight!,
                                                                                 buttonRightsList: widget.buttonRightsList,
-                                                                                haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                iMPShipRowId: aWBItem.iMPSHIPRowId!,
+                                                                                flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                mainMenuName: widget.mainMenuName,
+                                                                                userId: _user!.userProfile!.userIdentity!,
+                                                                                companyCode: _splashDefaultData!.companyCode!,
+                                                                                menuId: widget.menuId,
+                                                                                groupId: "",),));
 
                                                                               if(value == "Done"){
                                                                                 _resumeTimerOnInteraction();
@@ -738,11 +747,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                               CommonUtils.SELECTEDCONTAINER = "";
 
 
-                                                                              int npxPices = aWBItem.nPR!;
+                                                                            /*  int npxPices = aWBItem.nPR!;
                                                                               double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                              var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                              var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                builder: (context) => DamageShimentPage(
                                                                                 importSubMenuList: widget.importSubMenuList,
                                                                                 exportSubMenuList: widget.exportSubMenuList,
                                                                                 lableModel: lableModel,
@@ -752,7 +762,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                 damageNop: aWBItem.damageNOP!,
                                                                                 damageWt: aWBItem.damageWeight!,
                                                                                 buttonRightsList: widget.buttonRightsList,
-                                                                                haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                  iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                  iMPShipRowId: aWBItem.iMPSHIPRowId!,
+                                                                                  flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                  flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                  mainMenuName: widget.mainMenuName,
+                                                                                  userId: _user!.userProfile!.userIdentity!,
+                                                                                  companyCode: _splashDefaultData!.companyCode!,
+                                                                                  menuId: widget.menuId,
+                                                                                  groupId: "",),));
 
 
                                                                               if(value == "Done"){
@@ -810,11 +828,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
 
-                                                                          int npxPices = aWBItem.nPR!;
+                                                                         /* int npxPices = aWBItem.nPR!;
                                                                           double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                          var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                          var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                            builder: (context) => DamageShimentPage(
                                                                             importSubMenuList: widget.importSubMenuList,
                                                                             exportSubMenuList: widget.exportSubMenuList,
                                                                             lableModel: lableModel,
@@ -824,7 +843,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                             damageNop: aWBItem.damageNOP!,
                                                                             damageWt: aWBItem.damageWeight!,
                                                                             buttonRightsList: widget.buttonRightsList,
-                                                                            haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                              iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                              iMPShipRowId: aWBItem.iMPSHIPRowId!,
+                                                                              flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                              flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                              mainMenuName: widget.mainMenuName,
+                                                                              userId: _user!.userProfile!.userIdentity!,
+                                                                              companyCode: _splashDefaultData!.companyCode!,
+                                                                              menuId: widget.menuId,
+                                                                              groupId: "",),));
 
                                                                           if(value == "Done"){
                                                                             _resumeTimerOnInteraction();
@@ -1404,11 +1431,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
 
 
-                                                                                                    int npxPices = aWBItem.nPR!;
+                                                                                                   /* int npxPices = aWBItem.nPR!;
                                                                                                     double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                      builder: (context) => DamageShimentPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
@@ -1418,7 +1446,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                       damageNop: aWBItem.damageNOP!,
                                                                                                       damageWt: aWBItem.damageWeight!,
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                        iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                                        iMPShipRowId: aWBItem.iMPSHIPRowId!,
+                                                                                                        flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                                        flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                                        mainMenuName: widget.mainMenuName,
+                                                                                                        userId: _user!.userProfile!.userIdentity!,
+                                                                                                        companyCode: _splashDefaultData!.companyCode!,
+                                                                                                        menuId: widget.menuId,
+                                                                                                        groupId: "",),));
 
                                                                                                     if(value == "Done"){
                                                                                                       _resumeTimerOnInteraction();
@@ -1473,11 +1509,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
 
 
-                                                                                                    int npxPices = aWBItem.nPR!;
-                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+                                                                                                    /*int npxPices = aWBItem.nPR!;
+                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));*/
 
 
-                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                      builder: (context) => DamageShimentPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
                                                                                                       lableModel: lableModel,
@@ -1487,7 +1524,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                       damageNop: aWBItem.damageNOP!,
                                                                                                       damageWt: aWBItem.damageWeight!,
                                                                                                       buttonRightsList: widget.buttonRightsList,
-                                                                                                      haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                        iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                                        iMPShipRowId: aWBItem.iMPSHIPRowId!,
+                                                                                                        flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                                        flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                                        mainMenuName: widget.mainMenuName,
+                                                                                                        userId: _user!.userProfile!.userIdentity!,
+                                                                                                        companyCode: _splashDefaultData!.companyCode!,
+                                                                                                        menuId: widget.menuId,
+                                                                                                        groupId: "",),));
 
 
                                                                                                     if(value == "Done"){
@@ -1542,14 +1587,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                                                 CommonUtils.SELECTEDCONTAINER = "";
 
-
-
-
-                                                                                                int npxPices = aWBItem.nPR!;
+                                                                                                /*int npxPices = aWBItem.nPR!;
                                                                                                 double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
+*/
 
-
-                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
+                                                                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                  builder: (context) => DamageShimentPage(
                                                                                                   importSubMenuList: widget.importSubMenuList,
                                                                                                   exportSubMenuList: widget.exportSubMenuList,
                                                                                                   lableModel: lableModel,
@@ -1559,7 +1602,15 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                   damageNop: aWBItem.damageNOP!,
                                                                                                   damageWt: aWBItem.damageWeight!,
                                                                                                   buttonRightsList: widget.buttonRightsList,
-                                                                                                  haWBItem: aWBItem, flightDetailSummary: widget.flightDetailSummary, mainMenuName: widget.mainMenuName, userId: _user!.userProfile!.userIdentity!, companyCode: _splashDefaultData!.companyCode!,  menuId: widget.menuId, npxPieces: npxPices, npxWeightCo: weightCo, groupId: "",),));
+                                                                                                    iMPAWBRowId: aWBItem.iMPAWBRowId!,
+                                                                                                    iMPShipRowId: aWBItem.iMPSHIPRowId!,
+                                                                                                    flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                                                    flightStatus: widget.flightDetailSummary.flightStatus!,
+                                                                                                    mainMenuName: widget.mainMenuName,
+                                                                                                    userId: _user!.userProfile!.userIdentity!,
+                                                                                                    companyCode: _splashDefaultData!.companyCode!,
+                                                                                                    menuId: widget.menuId,
+                                                                                                    groupId: "",),));
 
                                                                                                 if(value == "Done"){
                                                                                                   _resumeTimerOnInteraction();

@@ -6,6 +6,7 @@ import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/language/validationmessageservice/validationmessagelogic/validationmsgcubit.dart';
 import 'package:galaxy/module/dashboard/service/menuLogic/menucubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
+import 'package:galaxy/module/import/services/shipmentdamage/shipmentdamagelogic/shipmentdamagecubit.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenucubit.dart';
 import 'package:galaxy/module/splash/page/splashscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -77,6 +78,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => UldAcceptanceCubit(),),
         BlocProvider(create: (context) => FlightCheckCubit(),),
         BlocProvider(create: (context) => BinningCubit(),),
+        BlocProvider(create: (context) => ShipmentDamageCubit(),),
       ],
       child: MaterialApp(
 
