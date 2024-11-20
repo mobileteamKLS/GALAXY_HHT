@@ -184,9 +184,6 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
   }
 
 
-
-
-
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
         context, message, widget.lableModel!);
@@ -674,7 +671,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                           height: double.infinity,
                                                           child: RoundedButton(
                                                             color: (_isvalidateLocation) ? MyColor.primaryColorblue : MyColor.colorGrey.withOpacity(0.3),
-                                                            text: "Move",
+                                                            text: "${lableModel.move}",
                                                             press: () async {
 
 
@@ -994,7 +991,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                                                 Row(
                                                                                   children: [
                                                                                     CustomeText(
-                                                                                      text: "Weight :",
+                                                                                      text: "${lableModel.weight} :",
                                                                                       fontColor: MyColor.textColorGrey2,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                       fontWeight: FontWeight.w400,
@@ -1013,7 +1010,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                                                 Row(
                                                                                   children: [
                                                                                     CustomeText(
-                                                                                      text: "Volume :",
+                                                                                      text: "${lableModel.volume} :",
                                                                                       fontColor: MyColor.textColorGrey2,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                       fontWeight: FontWeight.w400,

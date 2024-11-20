@@ -65,7 +65,7 @@ class Apilist{
   static String binningDetailListApi = "/Binning/GetDetails";
   static String binningSaveApi = "/Binning/Save";
 
-
-
+  // Shipment Damage details
+  static String getShipmentDamageDetailListApi = "/ShipmentDamage/GetDetails";
 
 }

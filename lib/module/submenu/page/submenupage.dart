@@ -237,7 +237,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                    state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1281", menuName: "Shipment Damage", sNo: 3325, imageIcon: "damage", refMenuCode: "§§HHT007§§", IsEnable: "Y"));
+                                  //  state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1281", menuName: "Shipment Damage", sNo: 3325, imageIcon: "damage", refMenuCode: "§§HHT007§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
@@ -294,7 +294,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                             }else if(menuId == SubMenuCodeUtils.shipmentCreation){
 
                                               NextScreen(Container(), isEnable);
-                                            }else if(menuId == SubMenuCodeUtils.damage){
+                                            }else if(menuId == SubMenuCodeUtils.ShipmentDamage){
                                               NextScreen(ShipmentDamagePages(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,

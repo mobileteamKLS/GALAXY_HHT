@@ -1,12 +1,14 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:galaxy/module/import/services/shipmentdamage/shipmentdamagelogic/shipmentdamagestate.dart';
 
 import '../shipmentdamagerepository.dart';
-import 'shipmentdamagestate.dart';
+
+
 
 
 
 class ShipmentDamageCubit extends Cubit<ShipmentDamageState>{
-  ShipmentDamageCubit() : super( MainInitialState() );
+  ShipmentDamageCubit() : super( ShipmentDamageInitialState() );
 
   ShipmentDamageRepository shipmentDamageRepository = ShipmentDamageRepository();
 
@@ -25,22 +27,22 @@ class ShipmentDamageCubit extends Cubit<ShipmentDamageState>{
 
 
 
-/*// binning api call repo
-  Future<void> getDamageDetailListApi(String groupId, int userId, int companyCode, int menuId) async {
-     emit(MainLoadingState());
+// ShipmentDamage api call repo
+  Future<void> getShipmentDamageDetailListApi(String scan, String flag, int userId, int companyCode, int menuId) async {
+     emit(ShipmentDamageLoadingState());
     try {
-      final binningDetailListModel = await damageRepository.getBinningDetailListModel(groupId, userId, companyCode, menuId);
-      emit(Dama(binningDetailListModel));
+      final shipmentDamageListModel = await shipmentDamageRepository.getDamageDetailListModel(scan, flag, userId, companyCode, menuId);
+      emit(ShipmentDamageListSuccessState(shipmentDamageListModel));
     } catch (e) {
-      emit(BinningDetailListFailureState(e.toString()));
+      emit(ShipmentDamageListFailureState(e.toString()));
     }
-  }*/
+  }
 
 
 
 
   void resetState() {
-    emit(MainInitialState());
+    emit(ShipmentDamageInitialState());
   }
 
 }

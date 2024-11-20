@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/import/services/shipmentdamage/shipmentdamagelogic/shipmentdamagecubit.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:vibration/vibration.dart';
@@ -36,8 +37,10 @@ import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/binning/binningdetaillistmodel.dart';
+import '../../model/shipmentdamage/shipmentdamagelistmodel.dart';
 import '../../services/binning/binninglogic/binningcubit.dart';
 import '../../services/binning/binninglogic/binningstate.dart';
+import '../../services/shipmentdamage/shipmentdamagelogic/shipmentdamagestate.dart';
 
 class ShipmentDamagePages extends StatefulWidget {
   String mainMenuName;
@@ -76,11 +79,11 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
 
   FocusNode groupIdFocusNode = FocusNode();
 
-  bool _isvalidateLocation = false;
+
 
   bool isBackPressed = false; // Track if the back button was pressed
 
-  BinningDetailListModel? binningDetailListModel;
+  ShipmentDamageListModel? shipmentDamageListModel;
 
 
   int? _selectedIndex;
@@ -131,21 +134,30 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
 
     if (groupIdController.text.isNotEmpty) {
 
-      if (groupIdController.text.length != groupIDCharSize) {
-        openValidationDialog(CommonUtils.formatMessage("${widget.lableModel!.groupIdCharSizeMsg}", ["$groupIDCharSize"]), groupIdFocusNode);
-        return;
+      if(searchByGroupOrAWB == "G"){
+        if (groupIdController.text.length != groupIDCharSize) {
+          openValidationDialog(CommonUtils.formatMessage("${widget.lableModel!.groupIdCharSizeMsg}", ["$groupIDCharSize"]), groupIdFocusNode);
+          return;
+        }
+      }else{
+        if (groupIdController.text.length != 11) {
+          openValidationDialog(CommonUtils.formatMessage("AWB must be exactly {0} characters long.", ["11"]), groupIdFocusNode);
+          return;
+        }
       }
 
-      // call binning details api
-      await context.read<BinningCubit>().getBinningDetailListApi(
+
+      // call shipment damage details api
+      await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
           groupIdController.text,
+          searchByGroupOrAWB,
           _user!.userProfile!.userIdentity!,
           _splashDefaultData!.companyCode!,
           widget.menuId);
     }else{
       FocusScope.of(context).requestFocus(groupIdFocusNode);
       SnackbarUtil.showSnackbar(context, (searchByGroupOrAWB == "G") ? widget.lableModel!.enterGropIdMsg! : "Please enter AWB.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-      binningDetailListModel = null;
+      shipmentDamageListModel = null;
       setState(() {
 
       });
@@ -328,9 +340,8 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  binningDetailListModel = null;
+                                  shipmentDamageListModel = null;
                                   groupIdController.clear();
-                                  _isvalidateLocation = false;
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
                                   },
@@ -345,8 +356,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                             // start api responcer
                             BlocListener<BinningCubit, BinningState>(
                               listener: (context, state) async {
-                                if (state is MainInitialState) {
-                                }
+                                if (state is MainInitialState) {}
                                 else if (state is MainLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
@@ -367,556 +377,742 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                   }
                                 }
                               },
-                              child: Expanded(
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: MyColor.colorWhite,
-                                            borderRadius: BorderRadius.circular(8),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: MyColor.colorBlack.withOpacity(0.09),
-                                                spreadRadius: 2,
-                                                blurRadius: 15,
-                                                offset: Offset(0, 3), // changes position of shadow
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Directionality(
-                                                textDirection: textDirection,
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(info,
-                                                      height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
-                                                    ),
-                                                    SizedBox(
-                                                      width: SizeConfig.blockSizeHorizontal,
-                                                    ),
-                                                    CustomeText(
-                                                        text: "${lableModel.scanOrManual}",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start)
-                                                  ],
+                              child : BlocListener<ShipmentDamageCubit, ShipmentDamageState>(
+                                listener: (context, state) {
+                                  if(state is ShipmentDamageInitialState){
+
+                                  }else if(state is ShipmentDamageLoadingState){
+                                    DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                  }else if(state is ShipmentDamageListSuccessState){
+                                    DialogUtils.hideLoadingDialog(context);
+
+                                    if(state.shipmentDamageListModel.status == "E"){
+                                      SnackbarUtil.showSnackbar(context, state.shipmentDamageListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      Vibration.vibrate(duration: 500);
+                                    }else{
+                                      shipmentDamageListModel = state.shipmentDamageListModel;
+                                      setState(() {
+
+                                      });
+                                    }
+
+                                  }else if(state is ShipmentDamageListFailureState){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }
+                                },
+                                child: Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: MyColor.colorWhite,
+                                              borderRadius: BorderRadius.circular(8),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 15,
+                                                  offset: Offset(0, 3), // changes position of shadow
                                                 ),
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Directionality(
-                                                textDirection: uiDirection,
-                                                child: IntrinsicHeight(
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Directionality(
+                                                  textDirection: textDirection,
                                                   child: Row(
                                                     children: [
-                                                      // Yes Option
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: InkWell(
-                                                          onTap: () {
-
-                                                            setState(() {
-                                                              searchByGroupOrAWB = "G";
-                                                              groupIdController.clear();
-                                                            });
-
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                              color: searchByGroupOrAWB == "G" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                                              borderRadius: BorderRadius.only(
-                                                                topLeft: Radius.circular(10),
-                                                                bottomLeft: Radius.circular(10),
-                                                              ),
-                                                              border: Border.all(color: MyColor.primaryColorblue), // Border color
-                                                            ),
-                                                            padding: EdgeInsets.symmetric(vertical:12, horizontal: 10),
-                                                            child: Center(
-                                                                child: CustomeText(text: "Group Id", fontColor: searchByGroupOrAWB == "G" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-
-                                                            ),
-                                                          ),
-                                                        ),
+                                                      SvgPicture.asset(info,
+                                                        height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
                                                       ),
-                                                      // No Option
-                                                      Expanded(
-                                                        flex: 1,
-                                                        child: InkWell(
-                                                          onTap: () {
-                                                            setState(() {
-                                                              searchByGroupOrAWB = "A";
-                                                              groupIdController.clear();
-                                                            });
-
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                              color: searchByGroupOrAWB == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                                              borderRadius: BorderRadius.only(
-                                                                topRight: Radius.circular(10),
-                                                                bottomRight: Radius.circular(10),
-                                                              ),
-                                                              border: Border.all(color:MyColor.primaryColorblue), // Border color
-                                                            ),
-                                                            padding: EdgeInsets.symmetric(vertical:12, horizontal: 10),
-                                                            child: Center(
-                                                                child: CustomeText(text: "AWB", fontColor: searchByGroupOrAWB == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                                            ),
-                                                          ),
-                                                        ),
+                                                      SizedBox(
+                                                        width: SizeConfig.blockSizeHorizontal,
                                                       ),
-
-
+                                                      CustomeText(
+                                                          text: "${lableModel.scanOrManual}",
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.start)
                                                     ],
                                                   ),
                                                 ),
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_3),
-                                              // text manifest and recived in pices text counter
-                                              Directionality(
-                                                textDirection: textDirection,
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex :1,
-                                                      child: CustomTextField(
-                                                        textDirection: textDirection,
-                                                        controller: groupIdController,
-                                                        focusNode: groupIdFocusNode,
-                                                        onPress: () {},
-                                                        hasIcon: false,
-                                                        hastextcolor: true,
-                                                        animatedLabel: true,
-                                                        needOutlineBorder: true,
-                                                        labelText: (searchByGroupOrAWB == "G") ? "${lableModel.groupId} *" : "${lableModel.awb} *",
-                                                        readOnly: false,
-                                                        maxLength: searchByGroupOrAWB == "G" ? groupIDCharSize : 11,
-                                                        onChanged: (value) {
-                                                          binningDetailListModel = null;
-                                                          _isvalidateLocation = false;
-                                                          setState(() {
-
-                                                          });
-                                                        },
-                                                        fillColor: Colors.grey.shade100,
-                                                        textInputType: TextInputType.text,
-                                                        inputAction: TextInputAction.next,
-                                                        hintTextcolor: Colors.black45,
-                                                        verticalPadding: 0,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                        validator: (value) {
-                                                          if (value!.isEmpty) {
-                                                            return "Please fill out this field";
-                                                          } else {
-                                                            return null;
-                                                          }
-                                                        },
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                      width: SizeConfig.blockSizeHorizontal,
-                                                    ),
-                                                    // click search button to validate location
-                                                    InkWell(
-                                                      onTap: () {
-                                                        (searchByGroupOrAWB == "G") ? scanGroupQR() : scanAWBQR(lableModel);
-                                                      },
-                                                      child: Padding(padding: const EdgeInsets.all(8.0),
-                                                        child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
-                                                      ),
-
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(height: SizeConfig.blockSizeVertical),
-                                        Directionality(textDirection: textDirection,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: MyColor.colorWhite,
-                                                borderRadius: BorderRadius.circular(8),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: MyColor.colorBlack.withOpacity(0.09),
-                                                    spreadRadius: 2,
-                                                    blurRadius: 15,
-                                                    offset: Offset(0, 3), // changes position of shadow
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                child: (binningDetailListModel != null)
-                                                    ? (binningDetailListModel!.binningDetailList!.isNotEmpty) ? Column(
-                                                  children: [
-
-                                                    ListView.builder(
-                                                      itemCount: (binningDetailListModel != null)
-                                                          ? binningDetailListModel!.binningDetailList!.length
-                                                          : 0,
-                                                      physics: NeverScrollableScrollPhysics(),
-                                                      shrinkWrap: true,
-                                                      controller: scrollController,
-                                                      itemBuilder: (context, index) {
-                                                        BinningDetailList binningDetail = binningDetailListModel!.binningDetailList![index];
-                                                        bool isSelected = _selectedIndex == index;
-                                                        bool isExpand = _isExpandedDetails == index;
-                                                        List<String> shcCodes = binningDetail.sHCCode!.split(',');
-
-                                                        return InkWell(
+                                                SizedBox(height: SizeConfig.blockSizeVertical),
+                                                Directionality(
+                                                  textDirection: uiDirection,
+                                                  child: IntrinsicHeight(
+                                                    child: Row(
+                                                      children: [
+                                                        // Yes Option
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: InkWell(
                                                             onTap: () {
-                                                              FocusScope.of(context).unfocus();
-                                                              setState(() {
-                                                                _selectedIndex = index; // Update the selected index
-                                                              });
-                                                            },
-                                                            onDoubleTap: () async {
 
                                                               setState(() {
-                                                                _selectedIndex = index; // Update the selected index
+                                                                searchByGroupOrAWB = "G";
+                                                                shipmentDamageListModel = null;
+                                                                groupIdController.clear();
                                                               });
 
                                                             },
                                                             child: Container(
-                                                                margin: EdgeInsets.symmetric(vertical: 4),
-                                                                decoration: BoxDecoration(
-                                                                  color: MyColor.colorWhite,
-                                                                  borderRadius: BorderRadius.circular(8),
-
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                      color: MyColor.colorBlack.withOpacity(0.09),
-                                                                      spreadRadius: 2,
-                                                                      blurRadius: 15,
-                                                                      offset: Offset(0, 3), // changes position of shadow
-                                                                    ),
-                                                                  ],
-
+                                                              decoration: BoxDecoration(
+                                                                color: searchByGroupOrAWB == "G" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                                borderRadius: BorderRadius.only(
+                                                                  topLeft: Radius.circular(10),
+                                                                  bottomLeft: Radius.circular(10),
                                                                 ),
-                                                                child: DottedBorder(
-                                                                  dashPattern: [7, 7, 7, 7],
-                                                                  strokeWidth: 1,
-                                                                  borderType: BorderType.RRect,
-                                                                  color: binningDetail.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                                                                  radius: Radius.circular(8),
-                                                                  child: Container(
-                                                                    /*    margin: aWBItem.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),*/
-                                                                    padding: EdgeInsets.all(8),
-                                                                    decoration: BoxDecoration(
-                                                                      color: MyColor.colorWhite,
-                                                                      borderRadius: BorderRadius.circular(8),
-                                                                    ),
-                                                                    child: Stack(
-                                                                      children: [
-                                                                        Column(
-                                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "${binningDetail.flightNo!}",
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: " ${binningDetail.flightDate!.replaceAll(" ", "-")}",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                CustomeText(
-                                                                                  text: (binningDetail.hAWBNo!.isNotEmpty) ? "House" : "",
-                                                                                  fontColor: MyColor.colorBlack,
-                                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                  textAlign: TextAlign.start,
-                                                                                ),
-                                                                              ],
-                                                                            ),
-                                                                            SizedBox(height: SizeConfig.blockSizeVertical * 0.5,),
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                CustomeText(text: AwbFormateNumberUtils.formatAWBNumber(binningDetail.aWBNo!), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                                                                CustomeText(text: (binningDetail.hAWBNo!.isNotEmpty) ? binningDetail.hAWBNo! : "", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                                border: Border.all(color: MyColor.primaryColorblue), // Border color
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(vertical:12, horizontal: 10),
+                                                              child: Center(
+                                                                  child: CustomeText(text: "Group Id", fontColor: searchByGroupOrAWB == "G" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
 
-                                                                              ],
-                                                                            ),
-                                                                            binningDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
-                                                                            Row(
-                                                                              children: [
-                                                                                binningDetail.sHCCode!.isNotEmpty
-                                                                                    ? Row(
-                                                                                  children:shcCodes.asMap().entries.take(3).map((entry) {
-                                                                                    int index = entry.key; // Get the index for colorList assignment
-                                                                                    String code = entry.value.trim(); // Get the code value and trim it
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        // No Option
+                                                        Expanded(
+                                                          flex: 1,
+                                                          child: InkWell(
+                                                            onTap: () {
+                                                              setState(() {
+                                                                searchByGroupOrAWB = "A";
+                                                                shipmentDamageListModel = null;
+                                                                groupIdController.clear();
+                                                              });
 
-                                                                                    return Padding(
-                                                                                      padding: EdgeInsets.only(right: 5.0),
-                                                                                      child: AnimatedBuilder(
-                                                                                        animation: _colorAnimation,
-                                                                                        builder: (context, child) {
-                                                                                          return Container(
-                                                                                            padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                                                                            decoration : BoxDecoration(
-                                                                                              borderRadius: BorderRadius.circular(5),
-                                                                                              color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                                                                            child: CustomeText(
-                                                                                              text: code.trim(),
-                                                                                              fontColor: MyColor.textColorGrey3,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                                              fontWeight: FontWeight.w500,
-                                                                                              textAlign: TextAlign.center,
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                color: searchByGroupOrAWB == "A" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                                borderRadius: BorderRadius.only(
+                                                                  topRight: Radius.circular(10),
+                                                                  bottomRight: Radius.circular(10),
+                                                                ),
+                                                                border: Border.all(color:MyColor.primaryColorblue), // Border color
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(vertical:12, horizontal: 10),
+                                                              child: Center(
+                                                                  child: CustomeText(text: "AWB", fontColor: searchByGroupOrAWB == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+
+
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_3),
+                                                // text manifest and recived in pices text counter
+                                                Directionality(
+                                                  textDirection: textDirection,
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        flex :1,
+                                                        child: CustomTextField(
+                                                          textDirection: textDirection,
+                                                          controller: groupIdController,
+                                                          focusNode: groupIdFocusNode,
+                                                          onPress: () {},
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          labelText: (searchByGroupOrAWB == "G") ? "${lableModel.groupId} *" : "${lableModel.awb} *",
+                                                          readOnly: false,
+                                                          maxLength: searchByGroupOrAWB == "G" ? groupIDCharSize : 11,
+                                                          onChanged: (value) {
+                                                            shipmentDamageListModel = null;
+                                                            setState(() {
+
+                                                            });
+                                                          },
+                                                          fillColor: Colors.grey.shade100,
+                                                          textInputType: TextInputType.text,
+                                                          inputAction: TextInputAction.next,
+                                                          hintTextcolor: Colors.black45,
+                                                          verticalPadding: 0,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                          circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                          boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                          validator: (value) {
+                                                            if (value!.isEmpty) {
+                                                              return "Please fill out this field";
+                                                            } else {
+                                                              return null;
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        width: SizeConfig.blockSizeHorizontal,
+                                                      ),
+                                                      // click search button to validate location
+                                                      InkWell(
+                                                        onTap: () {
+                                                          (searchByGroupOrAWB == "G") ? scanGroupQR() : scanAWBQR(lableModel);
+                                                        },
+                                                        child: Padding(padding: const EdgeInsets.all(8.0),
+                                                          child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+                                                        ),
+
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(height: SizeConfig.blockSizeVertical),
+                                          Directionality(textDirection: textDirection,
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: MyColor.colorWhite,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: MyColor.colorBlack.withOpacity(0.09),
+                                                      spreadRadius: 2,
+                                                      blurRadius: 15,
+                                                      offset: Offset(0, 3), // changes position of shadow
+                                                    ),
+                                                  ],
+                                                ),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
+                                                  child: (shipmentDamageListModel != null)
+                                                      ? (shipmentDamageListModel!.damageDetailList!.isNotEmpty) ? Column(
+                                                    children: [
+
+                                                      ListView.builder(
+                                                        itemCount: (shipmentDamageListModel != null)
+                                                            ? shipmentDamageListModel!.damageDetailList!.length
+                                                            : 0,
+                                                        physics: NeverScrollableScrollPhysics(),
+                                                        shrinkWrap: true,
+                                                        controller: scrollController,
+                                                        itemBuilder: (context, index) {
+                                                          DamageDetailList damageDetailList = shipmentDamageListModel!.damageDetailList![index];
+                                                          bool isSelected = _selectedIndex == index;
+                                                          bool isExpand = _isExpandedDetails == index;
+                                                          List<String> shcCodes = damageDetailList.sHCCode!.split(',');
+
+                                                          return InkWell(
+                                                              onTap: () {
+                                                                FocusScope.of(context).unfocus();
+                                                                setState(() {
+                                                                  _selectedIndex = index; // Update the selected index
+                                                                });
+                                                              },
+                                                              onDoubleTap: () async {
+
+                                                                setState(() {
+                                                                  _selectedIndex = index; // Update the selected index
+                                                                });
+
+                                                              },
+                                                              child: Container(
+                                                                  margin: EdgeInsets.symmetric(vertical: 4),
+                                                                  decoration: BoxDecoration(
+                                                                    color: MyColor.colorWhite,
+                                                                    borderRadius: BorderRadius.circular(8),
+
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: MyColor.colorBlack.withOpacity(0.09),
+                                                                        spreadRadius: 2,
+                                                                        blurRadius: 15,
+                                                                        offset: Offset(0, 3), // changes position of shadow
+                                                                      ),
+                                                                    ],
+
+                                                                  ),
+                                                                  child: DottedBorder(
+                                                                    dashPattern: [7, 7, 7, 7],
+                                                                    strokeWidth: 1,
+                                                                    borderType: BorderType.RRect,
+                                                                    color: damageDetailList.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                                                                    radius: Radius.circular(8),
+                                                                    child: Container(
+                                                                      /*    margin: aWBItem.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),*/
+                                                                      padding: EdgeInsets.all(8),
+                                                                      decoration: BoxDecoration(
+                                                                        color: MyColor.colorWhite,
+                                                                        borderRadius: BorderRadius.circular(8),
+                                                                      ),
+                                                                      child: Stack(
+                                                                        children: [
+                                                                          Column(
+                                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(text: (searchByGroupOrAWB == "G") ? AwbFormateNumberUtils.formatAWBNumber(damageDetailList.aWBNo!) : damageDetailList.groupId!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                                                      SizedBox(width: 5,),
+                                                                                      (damageDetailList.damageNOP != 0)
+                                                                                          ? Padding(
+                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5),
+                                                                                        child: Row(
+                                                                                          children: [
+                                                                                            SvgPicture.asset(
+                                                                                              damageIcon,
+                                                                                              height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
                                                                                             ),
-                                                                                          );
-                                                                                        },
+                                                                                            SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                                                                            CustomeText(
+                                                                                              text: "DMG",
+                                                                                              fontColor: MyColor.colorRed,
+                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                              fontWeight: FontWeight.w400,
+                                                                                              textAlign: TextAlign.start,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ) : SizedBox(),
+                                                                                    ],
+                                                                                  ),
+                                                                                  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? damageDetailList.houseNo! : "", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+
+                                                                                ],
+                                                                              ),
+                                                                              damageDetailList.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
+                                                                              Row(
+                                                                                children: [
+                                                                                  damageDetailList.sHCCode!.isNotEmpty
+                                                                                      ? Row(
+                                                                                    children:shcCodes.asMap().entries.take(3).map((entry) {
+                                                                                      int index = entry.key; // Get the index for colorList assignment
+                                                                                      String code = entry.value.trim(); // Get the code value and trim it
+
+                                                                                      return Padding(
+                                                                                        padding: EdgeInsets.only(right: 5.0),
+                                                                                        child: AnimatedBuilder(
+                                                                                          animation: _colorAnimation,
+                                                                                          builder: (context, child) {
+                                                                                            return Container(
+                                                                                              padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                                                                              decoration : BoxDecoration(
+                                                                                                borderRadius: BorderRadius.circular(5),
+                                                                                                color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                                                                              child: CustomeText(
+                                                                                                text: code.trim(),
+                                                                                                fontColor: MyColor.textColorGrey3,
+                                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                                                fontWeight: FontWeight.w500,
+                                                                                                textAlign: TextAlign.center,
+                                                                                              ),
+                                                                                            );
+                                                                                          },
+                                                                                        ),
+                                                                                      );
+                                                                                    }).toList(),
+                                                                                  )
+                                                                                      : SizedBox(),
+                                                                                ],
+                                                                              ),
+                                                                              damageDetailList.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+
+                                                                              Row(
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "NPX :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${damageDetailList.nPX}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "NPR :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${damageDetailList.nPR}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                              Row(
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "Wt. Exp :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightExp!)}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "Wt. Rec. :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightRec!)}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                              Row(
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "Dmg. Pcs. :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${damageDetailList.damageNOP}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "Dmg. Wt. :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.damageWeight!)}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              /*Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "NPX :",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
                                                                                       ),
-                                                                                    );
-                                                                                  }).toList(),
-                                                                                )
-                                                                                    : SizedBox(),
-                                                                              ],
-                                                                            ),
-                                                                            binningDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "NOP :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: "${binningDetail.nOP}",
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "Weight :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: CommonUtils.formateToTwoDecimalPlacesValue(binningDetail.weight!),
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "Volume :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: CommonUtils.formateToTwoDecimalPlacesValue(binningDetail.volume!),
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ],
-                                                                            ),
+                                                                                      SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: "${damageDetailList.nPX}",
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "NPR :",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                      SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: "${damageDetailList.nPR}",
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
 
-                                                                            (isExpand)
-                                                                                ? Column(
-                                                                              children: [
-                                                                                SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "NOG :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: binningDetail.nOG!,
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "Commodity :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: "${binningDetail.commodity}",
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                                SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "Remark :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: "${binningDetail.remark}",
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
+                                                                                ],
+                                                                              ),*/
+                                                                             /* Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
 
-                                                                              ],
-                                                                            )
-                                                                                : SizedBox(),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "Wt. Exp.:",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                      SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightExp!),
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "Wt. Rec.:",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                      SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightRec!),
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ],
+                                                                              ),*/
+
+                                                                              (isExpand)
+                                                                                  ? Column(
+                                                                                children: [
+                                                                                  SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "NOG :",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                      SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: damageDetailList.nOG!,
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "Commodity :",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                      SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: "${damageDetailList.commodity}",
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                  SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(
+                                                                                        text: "Remark :",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w400,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+
+                                                                                ],
+                                                                              )
+                                                                                  : SizedBox(),
 
 
-                                                                            SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                                            CustomDivider(
-                                                                              space: 0,
-                                                                              color: MyColor.textColorGrey,
-                                                                              hascolor: true,
-                                                                              thickness: 1,
-                                                                            ),
-                                                                            SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                InkWell(
+                                                                              SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                              CustomDivider(
+                                                                                space: 0,
+                                                                                color: MyColor.textColorGrey,
+                                                                                hascolor: true,
+                                                                                thickness: 1,
+                                                                              ),
+                                                                              SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                              Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  InkWell(
+                                                                                      onTap: () async {
+
+                                                                                        setState(() {
+                                                                                          _selectedIndex = index;
+                                                                                          // Toggle the expansion state of the item
+                                                                                          if (_isExpandedDetails == index) {
+                                                                                            _isExpandedDetails = null; // Collapse if already expanded
+                                                                                          } else {
+                                                                                            _isExpandedDetails = index; // Expand this item
+                                                                                          }
+                                                                                        });
+
+
+                                                                                      },
+                                                                                      child: CustomeText(text: isExpand ? "${lableModel.showLessDetails}" : "${lableModel.showMoreDetails}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                                                  InkWell(
                                                                                     onTap: () async {
 
                                                                                       setState(() {
-                                                                                        _selectedIndex = index;
-                                                                                        // Toggle the expansion state of the item
-                                                                                        if (_isExpandedDetails == index) {
-                                                                                          _isExpandedDetails = null; // Collapse if already expanded
-                                                                                        } else {
-                                                                                          _isExpandedDetails = index; // Expand this item
-                                                                                        }
+                                                                                        _selectedIndex = index; // Update the selected index
                                                                                       });
 
 
                                                                                     },
-                                                                                    child: CustomeText(text: isExpand ? "${lableModel.showLessDetails}" : "${lableModel.showMoreDetails}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
-                                                                                InkWell(
-                                                                                  onTap: () async {
-
-                                                                                    setState(() {
-                                                                                      _selectedIndex = index; // Update the selected index
-                                                                                    });
-
-
-                                                                                  },
-                                                                                  child: Container(
-                                                                                    padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                                                                    decoration: BoxDecoration(
-                                                                                        color: MyColor.dropdownColor,
-                                                                                        borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                                                                    child: Container(
+                                                                                      padding: EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                                                                      decoration: BoxDecoration(
+                                                                                          color: MyColor.dropdownColor,
+                                                                                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                                                                      ),
+                                                                                      child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                                                                     ),
-                                                                                    child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                                                                  ),
-                                                                                )
-                                                                              ],)
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),)
-                                                            )
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
-                                                )
-                                                    : Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                  child: Center(
-                                                    child: CustomeText(text: "${lableModel.recordNotFound}", fontColor:
-                                                    MyColor.textColorGrey,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.center),),
-                                                )
-                                                    : Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                  child: Center(
-                                                    child: CustomeText(text: "${lableModel.recordNotFound}",
-                                                        fontColor: MyColor.textColorGrey,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.center),),
+                                                                                  )
+                                                                                ],)
+                                                                            ],
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),)
+                                                              )
+                                                          );
+                                                        },
+                                                      ),
+                                                    ],
+                                                  )
+                                                      : Padding(
+                                                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                    child: Center(
+                                                      child: CustomeText(text: "${lableModel.recordNotFound}", fontColor:
+                                                      MyColor.textColorGrey,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.center),),
+                                                  )
+                                                      : Padding(
+                                                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                    child: Center(
+                                                      child: CustomeText(text: "${lableModel.recordNotFound}",
+                                                          fontColor: MyColor.textColorGrey,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.center),),
+                                                  ),
+
                                                 ),
-
-                                              ),
-                                            )),
+                                              )),
 
 
-                                      ],
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
+                              )
+
                             )
                           ],
                         ),

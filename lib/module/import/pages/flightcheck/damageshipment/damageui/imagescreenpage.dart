@@ -777,7 +777,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
 
                         context.read<FlightCheckCubit>().damageBreakDownSave(
                             awbPrefix, awbNumber,
-                            awbId!, shipId!, flightSeqNo,
+                            awbId, shipId, flightSeqNo,
                             typeOfDiscrepancy,
                             shipTotalPcs, ShipTotalWt, shipDamagePcs, ShipDamageWt, shipDifferencePcs, shipDifferenceWt,
                             individualWTPerDoc, individualWTActChk, individualWTDifference,

@@ -254,6 +254,7 @@
     "damageWeightGrtMsg" : "Damage weight {0} cannot be greater than Shipment Rcvd weight - {1}",
     "actualWtCannotGrtDocumentWt" : "Actual weight cannot be greater than document weight.",
 
+
     "c" : "C)",
     "packingDetails" : "PACKING DETAILS",
     "9" : "9)",
@@ -452,6 +453,14 @@
     "enterGhaRepMsg" : "Please enter GHA Representative.",
     "enterAirlineRepMsg" : "Please enter Airline Representative.",
     "enterSecurityRepMsg" : "Please enter Security Representative.",
+
+    "move" : "Move",
+    "currentLocation" : "Current Location",
+    "suggestion" : "Suggestion",
+    "volume" : "Volume",
+    "nog" : "NoG",
+    "commodity" : "Commodity",
+    "remark" : "Remark",
 
 
     "2539" : "Bands Loose",

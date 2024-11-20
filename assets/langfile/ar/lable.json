@@ -459,6 +459,13 @@
     "enterAirlineRepMsg" : "الرجاء إدخال ممثل شركة الطيران.",
     "enterSecurityRepMsg" : "الرجاء إدخال ممثل الأمن.",
 
+    "move" : "تحرك",
+    "currentLocation" : "الموقع الحالي",
+    "suggestion" : "اقتراح",
+    "volume" : "المجلد",
+    "nog" : "ناوجي",
+    "commodity" : "سلعة",
+    "remark" : "تعليق",
 
 
     "2539" : "العصابات فضفاضة",

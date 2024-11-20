@@ -422,7 +422,13 @@ class LableModel {
   String? enterAirlineRepMsg;
   String? enterSecurityRepMsg;
 
-
+  String? move;
+  String? currentLocation;
+  String? suggestion;
+  String? volume;
+  String? nog;
+  String? commodity;
+  String? remark;
 
 
 
@@ -841,6 +847,13 @@ class LableModel {
         this.enterAirlineRepMsg,
         this.enterSecurityRepMsg,
 
+        this.move,
+        this.currentLocation,
+        this.suggestion,
+        this.volume,
+        this.nog,
+        this.commodity,
+        this.remark,
 
         this.save,
         this.s654,
@@ -1275,6 +1288,13 @@ class LableModel {
     enterAirlineRepMsg = json['enterAirlineRepMsg'];
     enterSecurityRepMsg = json['enterSecurityRepMsg'];
 
+    move = json['move'];
+    currentLocation = json['currentLocation'];
+    suggestion = json['suggestion'];
+    volume = json['volume'];
+    nog = json['nog'];
+    commodity = json['commodity'];
+    remark = json['remark'];
 
     s654 = json['654'];
     s655 = json['655'];
@@ -1710,6 +1730,13 @@ class LableModel {
     data['enterAirlineRepMsg'] = this.enterAirlineRepMsg;
     data['enterSecurityRepMsg'] = this.enterSecurityRepMsg;
 
+    data['move'] = this.move;
+    data['currentLocation'] = this.currentLocation;
+    data['suggestion'] = this.suggestion;
+    data['volume'] = this.volume;
+    data['nog'] = this.nog;
+    data['commodity'] = this.commodity;
+    data['remark'] = this.remark;
 
     data['654'] = this.s654;
     data['655'] = this.s655;

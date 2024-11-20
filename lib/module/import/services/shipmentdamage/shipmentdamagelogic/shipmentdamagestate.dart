@@ -1,20 +1,20 @@
-import '../../../model/uldacceptance/locationvalidationmodel.dart';
+import '../../../model/shipmentdamage/shipmentdamagelistmodel.dart';
+
 
 class ShipmentDamageState {}
 
 
-class MainInitialState extends ShipmentDamageState {}
-class MainLoadingState extends ShipmentDamageState {}
+class ShipmentDamageInitialState extends ShipmentDamageState {}
+class ShipmentDamageLoadingState extends ShipmentDamageState {}
 
-class DamageValidateLocationSuccessState extends ShipmentDamageState {
-  final LocationValidationModel validateLocationModel;
-  DamageValidateLocationSuccessState(this.validateLocationModel);
+
+class ShipmentDamageListSuccessState extends ShipmentDamageState {
+  final ShipmentDamageListModel shipmentDamageListModel;
+  ShipmentDamageListSuccessState(this.shipmentDamageListModel);
 }
 
-class DamageValidateLocationFailureState extends ShipmentDamageState {
+class ShipmentDamageListFailureState extends ShipmentDamageState {
   final String error;
-  DamageValidateLocationFailureState(this.error);
+  ShipmentDamageListFailureState(this.error);
 }
-
-
 
