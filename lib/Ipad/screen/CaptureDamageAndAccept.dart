@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/import/model/flightcheck/damagedetailmodel.dart';
 import '../../utils/commonutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
@@ -29,8 +30,9 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
   @override
   void initState() {
     super.initState();
+    getDamageDetails();
   }
-
+  final AuthService authService = AuthService();
   Map<String, bool> damageTypes = {
     'Bands Loose': false,
     'Broken': false,
@@ -43,7 +45,8 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
 
   bool showMore = false;
   bool isLoading = false;
-
+  bool hasNoRecord = false;
+  late List<ReferenceData14BList> referenceData14BList;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -160,8 +163,8 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
                                 SizedBox(
+                                  height: MediaQuery.sizeOf(context).height*0.59,
                                   child: Column(
                                     children: [
                                       Row(
@@ -211,337 +214,76 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                           Text("  DAMAGE TYPE",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16),),
                                         ],
                                       ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Brand Loose',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
+                                      isLoading
+                                          ? const Center(
+                                          child: SizedBox(
+                                              height: 100,
+                                              width: 100,
+                                              child: CircularProgressIndicator()))
+                                          : Expanded(
+                                        child: SingleChildScrollView(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                                top: 8.0, left: 0.0, bottom: 100),
+                                            child: SizedBox(
+                                              width: MediaQuery.of(context).size.width / 1.01,
+                                              child: (hasNoRecord)
+                                                  ? Container(
+                                                height: 400,
+                                                child: const Center(
+                                                  child: Text("NO RECORD FOUND"),
+                                                ),
+                                              )
+                                                  :  ListView.builder(
+                                                physics:
+                                                const NeverScrollableScrollPhysics(),
+                                                itemBuilder: (BuildContext, index) {
+                                                  final item = referenceData14BList[index];
+                                                  bool isSelected = item.isSelected == 'Y';
 
-                                                  setState(()  {
-
-                                                  });
+                                                  return Container(
+                                                    decoration: const BoxDecoration(
+                                                      border: Border(
+                                                        bottom: BorderSide(
+                                                          color: Color(0XFFE4E7EB),
+                                                          width: 1.5,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    width: MediaQuery.of(context).size.width * 0.9,
+                                                    child: Row(
+                                                      children: [
+                                                        Text(
+                                                          item.referenceDescription!,
+                                                          style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight: FontWeight.w600,
+                                                          ),
+                                                        ),
+                                                        const Spacer(),
+                                                        Theme(
+                                                          data: ThemeData(useMaterial3: false),
+                                                          child: Switch(
+                                                            onChanged: (value) {
+                                                              setState(() {
+                                                                referenceData14BList[index].isSelected = value ? 'Y' : 'N';
+                                                              });
+                                                            },
+                                                            value: isSelected,
+                                                            activeColor: MyColor.primaryColorblue,
+                                                            activeTrackColor: Colors.grey,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
                                                 },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
+                                                itemCount: referenceData14BList.length,
+                                                shrinkWrap: true,
+                                                padding: const EdgeInsets.all(2),
                                               ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Broken',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Crushed',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Others',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Tape Torn',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Wet',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Containers',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Crushed',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        decoration: const BoxDecoration(
-                                          border: Border(
-                                            bottom: BorderSide(
-                                              color: Color(0XFFE4E7EB),
-                                              width: 1.5,
-                                            ),
-                                          ),),
-                                        width: MediaQuery.sizeOf(context)
-                                            .width*0.9,
-                                        child: Row(
-                                          children: [
-                                            const Text(
-                                              'Others',
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                            ),
-                                            const Spacer(),
-                                            Theme(
-                                              data: ThemeData(useMaterial3: false),
-                                              child: Switch(
-                                                onChanged: (value) async{
-
-                                                  setState(()  {
-
-                                                  });
-                                                },
-                                                value: true,
-                                                activeColor: MyColor.primaryColorblue,
-                                                activeTrackColor: MyColor.bgColorGrey,
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
                                       ),
 
@@ -838,59 +580,56 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
       ),
     );
   }
-  //
-  // getDamageDetails()async {
-  //   if (isLoading) return;
-  //   shipmentListDetails = [];
-  //   shipmentListDetailsToBind = [];
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //
-  //   var queryParams = {
-  //     "PageNo": 1,
-  //     "FilterClause": "1=1",
-  //     "OrderByClause": "1",
-  //     "AirportCode": "BLR",
-  //     "CompanyCode": 3,
-  //     "CultureCode": "en-US",
-  //     "UserId": 1,
-  //     "MenuId": 1
-  //   };
-  //   await authService
-  //       .postData(
-  //     "ShipmentCreation/GetShipmentList",
-  //     queryParams,
-  //   )
-  //       .then((response) {
-  //     print("data received ");
-  //     Map<String, dynamic> jsonData = json.decode(response.body);
-  //     List<dynamic> resp = jsonData['ShipmentDetailList'];
-  //     print(jsonData);
-  //     if (jsonData.isEmpty) {
-  //       setState(() {
-  //         hasNoRecord = true;
-  //       });
-  //     }
-  //     else{
-  //       hasNoRecord=false;
-  //     }
-  //     print("is empty record$hasNoRecord");
-  //     shipmentListDetailsToBind =
-  //         resp.map((json) => ShipmentListDetails.fromJSON(json)).toList();
-  //     print("length==  = ${shipmentListDetailsToBind.length}");
-  //     setState(() {
-  //       shipmentListDetails = shipmentListDetailsToBind;
-  //       // filteredList = listShipmentDetails;
-  //       print("length--  = ${shipmentListDetails.length}");
-  //       isLoading = false;
-  //
-  //     });
-  //   }).catchError((onError) {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //     print(onError);
-  //   });
-  // }
+
+  getDamageDetails()async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    var queryParams = {
+      "FlightSeqNo": 11169,
+      "AWBId": "5323",
+      "SHIPId": "5506",
+      "AirportCode": "BLR",
+      "CompanyCode": 3,
+      "CultureCode": "en-US",
+      "UserId": 1,
+      "MenuId": 1
+    };
+    await authService
+        .postData(
+      "FlightCheckIn/GetDamageDetails",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      List<dynamic> resp = jsonData['ReferenceData14BList'];
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      }
+      else{
+        hasNoRecord=false;
+      }
+      print("is empty record $hasNoRecord");
+      setState(() {
+        referenceData14BList =
+            resp.map((json) => ReferenceData14BList.fromJson(json)).toList();
+        // filteredList = listShipmentDetails;
+        print("length--  = ${referenceData14BList.length}");
+        isLoading = false;
+
+      });
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
+  }
 }

@@ -146,7 +146,7 @@ class MyApp extends StatelessWidget {
                 return const Center(child: CircularProgressIndicator());
               } else {
                 // when
-                return snapshot.data == true ? const SplashScreen() : const OnboardingScreen();//OnboardingScreen IpadDashboard
+                return snapshot.data == true ? const SplashScreen() : const IpadDashboard();//OnboardingScreen IpadDashboard
               }
             }
         ),

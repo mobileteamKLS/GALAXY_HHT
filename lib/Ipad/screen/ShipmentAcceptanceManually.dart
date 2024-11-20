@@ -10,9 +10,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/import/model/flightcheck/mailtypemodel.dart';
+import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/commonutils.dart';
+import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
+import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../widget/customIpadTextfield.dart';
 import 'CaptureDamageAndAccept.dart';
@@ -29,6 +33,19 @@ class ShipmentAcceptanceManually extends StatefulWidget {
 
 class _ShipmentAcceptanceManuallyState
     extends State<ShipmentAcceptanceManually> {
+  TextEditingController prefixController = TextEditingController();
+  FocusNode mailTypeFocusNode = FocusNode();
+  MailTypeList? selectedMailType;
+  List<MailTypeList>? mailTypeList = [
+    MailTypeList(referenceDataIdentifier: "A", referenceDescription: "A"),
+    MailTypeList(referenceDataIdentifier: "B", referenceDescription: "B"),
+  ];
+  // TextEditingController prefixController = TextEditingController();
+  // TextEditingController prefixController = TextEditingController();
+  // TextEditingController prefixController = TextEditingController();
+  // TextEditingController prefixController = TextEditingController();
+  // TextEditingController prefixController = TextEditingController();
+  // TextEditingController prefixController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -80,7 +97,7 @@ class _ShipmentAcceptanceManuallyState
               constraints: const BoxConstraints.expand(),
               color: MyColor.screenBgColor,
               child: Padding(
-                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Material(
                   color: Colors.transparent,
                   // Ensures background transparency
@@ -172,7 +189,9 @@ class _ShipmentAcceptanceManuallyState
                                                         TextInputType.number,
                                                     fontSize: 18,
                                                     onChanged:
-                                                        (String, bool) {},
+                                                        (String, bool) {
+
+                                                        },
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -211,17 +230,53 @@ class _ShipmentAcceptanceManuallyState
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "HAWB No*",
-                                              readOnly: false,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                            child: Expanded(
+                                              flex : 2,
+                                              child: Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: SizeConfig.blockSizeVertical * 0.1,
+                                                  horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: MyColor.colorWhite,
+                                                  border: Border.all(color: Colors.black, width: 0.1),
+                                                  borderRadius: BorderRadius.circular(
+                                                    SizeConfig.blockSizeHorizontal * SizeUtils.ICONSIZE2,
+                                                  ),
+                                                ),
+                                                child: DropdownButton<MailTypeList>(
+                                                  focusNode: mailTypeFocusNode,
+                                                  value: selectedMailType,
+                                                  hint: CustomeText(
+                                                    text: "Select",
+                                                    fontColor: MyColor.colorBlack,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w500,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                  items: mailTypeList!.map((MailTypeList item) {
+                                                    return DropdownMenuItem<MailTypeList>(
+                                                      value: item,
+                                                      child: CustomeText(
+                                                        text: item.referenceDescription!,
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (MailTypeList? value) {
+                                                    setState(() {
+                                                      selectedMailType = value!;
+                                                    });
+                                                  },
+                                                  underline: SizedBox(),
+                                                  isExpanded: true,
+                                                  dropdownColor: Colors.white,
+                                                  icon: Icon(Icons.arrow_drop_down, color: Colors.black45),
+                                                ),
+                                              ),
                                             ),
                                           ),
                                         ],
