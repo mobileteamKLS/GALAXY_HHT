@@ -704,10 +704,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                     exportSubMenuList: widget.exportSubMenuList,
                                                                     lableModel: lableModel,
                                                                     pageView: 0,
-                                                                    enterDamageNop: 0,
-                                                                    enterDamageWt: 0.00,
-                                                                    damageNop: damageDetailList.damageNOP!,
-                                                                    damageWt: damageDetailList.damageWeight!,
+                                                                    enterDamageNop: damageDetailList.damageNOP!,
+                                                                    enterDamageWt: damageDetailList.damageWeight!,
+                                                                    damageNop: 0,
+                                                                    damageWt: 0.00,
                                                                     buttonRightsList: const [],
                                                                     iMPAWBRowId: damageDetailList.iMPAWBRowId!,
                                                                     iMPShipRowId: damageDetailList.iMPShipRowId!,
@@ -717,7 +717,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                     userId: _user!.userProfile!.userIdentity!,
                                                                     companyCode: _splashDefaultData!.companyCode!,
                                                                     menuId: widget.menuId,
-                                                                    groupId: groupIdController.text,
+                                                                    groupId: damageDetailList.groupId!,
                                                                   problemSeqId: damageDetailList.problemSeqId!,),));
 
                                                                 if(value == "Done"){
@@ -1184,14 +1184,23 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                           verticalPadding: 3,
                                                                                           text: "Revoke", press: () async {
 
-                                                                                          await context.read<ShipmentDamageCubit>().revokeDamageApi(
-                                                                                              damageDetailList.iMPAWBRowId!,
-                                                                                              damageDetailList.iMPShipRowId!,
-                                                                                              damageDetailList.problemSeqId!,
-                                                                                              damageDetailList.flightSeqNo!,
-                                                                                              _user!.userProfile!.userIdentity!,
-                                                                                              _splashDefaultData!.companyCode!,
-                                                                                              widget.menuId);
+                                                                                          bool? exitConfirmed = await DialogUtils.showRevokeDialog(context, lableModel);
+
+                                                                                          if(exitConfirmed == true) {
+                                                                                            await context.read<ShipmentDamageCubit>().revokeDamageApi(
+                                                                                                damageDetailList.iMPAWBRowId!,
+                                                                                                damageDetailList.iMPShipRowId!,
+                                                                                                damageDetailList.problemSeqId!,
+                                                                                                damageDetailList.flightSeqNo!,
+                                                                                                _user!.userProfile!.userIdentity!,
+                                                                                                _splashDefaultData!.companyCode!,
+                                                                                                widget.menuId);
+                                                                                          }else{
+                                                                                            _resumeTimerOnInteraction();
+                                                                                          }
+
+
+
 
                                                                                         },) : SizedBox(),
                                                                                       ],
@@ -1240,10 +1249,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         exportSubMenuList: widget.exportSubMenuList,
                                                                                         lableModel: lableModel,
                                                                                         pageView: 0,
-                                                                                        enterDamageNop: 0,
-                                                                                        enterDamageWt: 0.00,
-                                                                                        damageNop: damageDetailList.damageNOP!,
-                                                                                        damageWt: damageDetailList.damageWeight!,
+                                                                                        enterDamageNop: damageDetailList.damageNOP!,
+                                                                                        enterDamageWt: damageDetailList.damageWeight!,
+                                                                                        damageNop: 0,
+                                                                                        damageWt: 0.00,
                                                                                         buttonRightsList: const [],
                                                                                         iMPAWBRowId: damageDetailList.iMPAWBRowId!,
                                                                                         iMPShipRowId: damageDetailList.iMPShipRowId!,
@@ -1253,7 +1262,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         userId: _user!.userProfile!.userIdentity!,
                                                                                         companyCode: _splashDefaultData!.companyCode!,
                                                                                         menuId: widget.menuId,
-                                                                                        groupId: groupIdController.text,
+                                                                                        groupId: damageDetailList.groupId!,
                                                                                         problemSeqId: damageDetailList.problemSeqId!),));
 
                                                                                       if(value == "Done"){

@@ -221,6 +221,39 @@ class DialogUtils {
     );
   }
 
+  static Future<bool?> showRevokeDialog(BuildContext context, LableModel lableModel) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: "Revoke shipment",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: CustomeText(text: "Are you sure you want revoke shipment ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+           SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+           InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
+
 
 
   static Future<bool?> showingActivateTimerDialog(BuildContext context, String userId, int companyCode){

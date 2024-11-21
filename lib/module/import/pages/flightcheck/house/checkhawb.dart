@@ -762,34 +762,79 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                 press: () async {
 
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
+                                                    if(isButtonEnabled("awbsave", widget.buttonRightsList)){
 
-                                                    print("widget.aWBItem.iMPAWBRowId ========= ${widget.aWBItem.iMPAWBRowId}");
-                                                    print("widget.aWBItem.iMPShipRowId ========= ${widget.aWBItem.iMPShipRowId}");
-                                                    print("widget.aWBItem.uSeqNo ========= ${widget.aWBItem.uSeqNo}");
-                                                    print("widget.haWBItem.iMPAWBRowId ========= ${widget.haWBItem.iMPAWBRowId}");
-                                                    print("widget.haWBItem.iMPSHIPRowId ========= ${widget.haWBItem.iMPSHIPRowId}");
+
+
+                                                      String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
+
+                                                      String hawbId = "${widget.haWBItem.iMPAWBRowId}~${widget.haWBItem.iMPSHIPRowId}";
+
+
+                                                      if (piecesController.text.isEmpty) {
+                                                        openValidationDialog("${lableModel.piecesMsg}", piecesFocusNode);
+                                                        return;
+                                                      }
+
+                                                      if(int.parse(piecesController.text) == 0){
+                                                        openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
+                                                        return;
+                                                      }
+
+                                                      if (weightController.text.isEmpty) {
+                                                        openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
+                                                        return;
+                                                      }
+
+
+                                                      if(double.parse(weightController.text) == 0){
+                                                        openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
+                                                        return;
+                                                      }
+
+
+                                                      if(widget.groupIDRequires == "Y"){
+                                                        if (groupIdController.text.isEmpty) {
+                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                        // Check if the groupId length is between 14 (min and max 14 characters)
+                                                        if (groupIdController.text.length != widget.groupIDCharSize) {
+                                                          openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
+                                                          return;
+                                                        }
+
+                                                      }
+
+                                                      Clicks = "D";
+
+                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                    }
+                                                    else{
+                                                      SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
+                                                    }
+
+                                                  }
+                                                  else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                    SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    Vibration.vibrate(duration: 500);
+                                                  }
+                                                  else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                    SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    Vibration.vibrate(duration: 500);
+                                                  }
+
+
+                                                 /* if(widget.flightDetailSummary.flightStatus == "A"){
 
 
 
                                                     String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
                                                     String hawbId = "${widget.haWBItem.iMPAWBRowId}~${widget.haWBItem.iMPSHIPRowId}";
 
-                                                    /*if (piecesController.text.isNotEmpty) {
-                                                      if(int.parse(piecesController.text) == 0){
-                                                        openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
-                                                        return;
-                                                      }
-                                                      return;
-                                                    }*/
-
-                                                    /*if (weightController.text.isNotEmpty) {
-                                                      if(double.parse(weightController.text) == 0){
-                                                        openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
-                                                        return;
-                                                      }
-                                                      return;
-                                                    }
-*/
 
                                                     if(isButtonEnabled("awbdamageandsave", widget.buttonRightsList)){
 
@@ -867,9 +912,6 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                         double damageWt = widget.haWBItem.damageWeight!;
 
 
-                                                        /*int npxPices = widget.haWBItem.nPR!;
-                                                        double weightCo = double.parse(((npxPices * widget.haWBItem.weightExp!) / widget.haWBItem.nPX!).toStringAsFixed(2));
-*/
                                                         var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => DamageShimentPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
@@ -902,13 +944,15 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                       SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                       Vibration.vibrate(duration: 500);
                                                     }
-                                                  }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                  }
+                                                  else if(widget.flightDetailSummary.flightStatus == "F"){
                                                     SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
-                                                  }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                  }
+                                                  else if(widget.flightDetailSummary.flightStatus == "N"){
                                                     SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
-                                                  }
+                                                  }*/
 
                                                   },
                                               ),
@@ -926,13 +970,6 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                     if(isButtonEnabled("awbsave", widget.buttonRightsList)){
 
 
-                                                      print("widget.aWBItem.iMPAWBRowId ========= ${widget.aWBItem.iMPAWBRowId}");
-                                                      print("widget.aWBItem.iMPShipRowId ========= ${widget.aWBItem.iMPShipRowId}");
-                                                      print("widget.aWBItem.uSeqNo ========= ${widget.aWBItem.uSeqNo}");
-                                                      print("widget.haWBItem.iMPAWBRowId ========= ${widget.haWBItem.iMPAWBRowId}");
-                                                      print("widget.haWBItem.iMPSHIPRowId ========= ${widget.haWBItem.iMPSHIPRowId}");
-
-
 
                                                       String awbId = "${widget.aWBItem.iMPAWBRowId}~${widget.aWBItem.iMPShipRowId}~${widget.aWBItem.uSeqNo}";
 
@@ -948,6 +985,12 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                         openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
                                                         return;
                                                       }
+
+                                                      if (weightController.text.isEmpty) {
+                                                        openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
+                                                        return;
+                                                      }
+
 
                                                       if(double.parse(weightController.text) == 0){
                                                         openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
@@ -979,10 +1022,12 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                       Vibration.vibrate(duration: 500);
                                                     }
 
-                                                  }else if(widget.flightDetailSummary.flightStatus == "F"){
+                                                  }
+                                                  else if(widget.flightDetailSummary.flightStatus == "F"){
                                                     SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
-                                                  }else if(widget.flightDetailSummary.flightStatus == "N"){
+                                                  }
+                                                  else if(widget.flightDetailSummary.flightStatus == "N"){
                                                     SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     Vibration.vibrate(duration: 500);
                                                   }
