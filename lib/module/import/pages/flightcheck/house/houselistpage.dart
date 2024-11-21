@@ -636,7 +636,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                             }
                                                                             else{
 
-                                                                              CommonUtils.SELECTEDWHETHER = "";
+                                                                            /*  CommonUtils.SELECTEDWHETHER = "";
 
                                                                               CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -667,11 +667,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                               CommonUtils.SELECTEDCONTENT = "";
 
                                                                               CommonUtils.SELECTEDCONTAINER = "";
-
-
-                                                                             /* int npxPices = aWBItem.nPR!;
-                                                                              double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                 builder: (context) => DamageShimentPage(
@@ -692,7 +687,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                 userId: _user!.userProfile!.userIdentity!,
                                                                                 companyCode: _splashDefaultData!.companyCode!,
                                                                                 menuId: widget.menuId,
-                                                                                groupId: "",),));
+                                                                                groupId: "",
+                                                                                ),));
 
                                                                               if(value == "Done"){
                                                                                 _resumeTimerOnInteraction();
@@ -701,7 +697,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                               }
 
-
+*/
                                                                             }
 
 
@@ -714,7 +710,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                             else{
 
 
-                                                                              CommonUtils.SELECTEDWHETHER = "";
+                                                                             /* CommonUtils.SELECTEDWHETHER = "";
 
                                                                               CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -746,10 +742,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                               CommonUtils.SELECTEDCONTAINER = "";
 
-
-                                                                            /*  int npxPices = aWBItem.nPR!;
-                                                                              double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
 
                                                                               var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                 builder: (context) => DamageShimentPage(
@@ -778,7 +770,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                               }else if(value == "true"){
                                                                                 context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
-                                                                              }
+                                                                              }*/
 
                                                                             }
                                                                           }
@@ -793,7 +785,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                         else{
 
 
-                                                                          CommonUtils.SELECTEDWHETHER = "";
+                                                                          /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                           CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -827,11 +819,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
 
 
-
-                                                                         /* int npxPices = aWBItem.nPR!;
-                                                                          double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
-
                                                                           var value = await Navigator.push(context, CupertinoPageRoute(
                                                                             builder: (context) => DamageShimentPage(
                                                                             importSubMenuList: widget.importSubMenuList,
@@ -860,7 +847,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                           }
 
-
+*/
                                                                         }
 
                                                                       }
@@ -1398,7 +1385,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                   }
                                                                                                   else{
 
-                                                                                                    CommonUtils.SELECTEDWHETHER = "";
+                                                                                                    /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                     CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -1430,10 +1417,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
 
-
-                                                                                                   /* int npxPices = aWBItem.nPR!;
-                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                       builder: (context) => DamageShimentPage(
@@ -1463,7 +1446,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                                                     }
 
-
+*/
                                                                                                   }
 
 
@@ -1476,7 +1459,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                   else{
 
 
-                                                                                                    CommonUtils.SELECTEDWHETHER = "";
+                                                                                                    /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                     CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -1507,10 +1490,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     CommonUtils.SELECTEDCONTENT = "";
 
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
-
-
-                                                                                                    /*int npxPices = aWBItem.nPR!;
-                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));*/
 
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(
@@ -1541,7 +1520,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                       context.read<FlightCheckCubit>().getHouseList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.aWBItem.iMPAWBRowId!,  _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                                     }
-
+*/
                                                                                                   }
                                                                                                 }
 
@@ -1555,7 +1534,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                               else{
 
 
-                                                                                                CommonUtils.SELECTEDWHETHER = "";
+                                                                                                /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                 CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -1587,10 +1566,6 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                                                 CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                                                /*int npxPices = aWBItem.nPR!;
-                                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
-
                                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                   builder: (context) => DamageShimentPage(
                                                                                                   importSubMenuList: widget.importSubMenuList,
@@ -1619,7 +1594,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                                                 }
 
-
+*/
                                                                                               }
 
                                                                                             }

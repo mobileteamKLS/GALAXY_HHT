@@ -41,6 +41,7 @@ import '../../model/shipmentdamage/shipmentdamagelistmodel.dart';
 import '../../services/binning/binninglogic/binningcubit.dart';
 import '../../services/binning/binninglogic/binningstate.dart';
 import '../../services/shipmentdamage/shipmentdamagelogic/shipmentdamagestate.dart';
+import '../flightcheck/damageshipment/damageshipment.dart';
 
 class ShipmentDamagePages extends StatefulWidget {
   String mainMenuName;
@@ -67,6 +68,7 @@ class ShipmentDamagePages extends StatefulWidget {
 
 class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTickerProviderStateMixin{
   int groupIDCharSize = 1;
+  String isGroupIDRequired = "";
   String searchByGroupOrAWB = "G";
 
   InactivityTimerManager? inactivityTimerManager;
@@ -86,7 +88,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
   ShipmentDamageListModel? shipmentDamageListModel;
 
 
-  int? _selectedIndex;
+  int? _selectedIndex = -1;
 
   int? _isExpandedDetails;
 
@@ -141,7 +143,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
         }
       }else{
         if (groupIdController.text.length != 11) {
-          openValidationDialog(CommonUtils.formatMessage("AWB must be exactly {0} characters long.", ["11"]), groupIdFocusNode);
+          openValidationDialog(CommonUtils.formatMessage(widget.lableModel!.awbCharSizeMsg!, ["11"]), groupIdFocusNode);
           return;
         }
       }
@@ -156,7 +158,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
           widget.menuId);
     }else{
       FocusScope.of(context).requestFocus(groupIdFocusNode);
-      SnackbarUtil.showSnackbar(context, (searchByGroupOrAWB == "G") ? widget.lableModel!.enterGropIdMsg! : "Please enter AWB.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      SnackbarUtil.showSnackbar(context, (searchByGroupOrAWB == "G") ? widget.lableModel!.enterGropIdMsg! : "${widget.lableModel!.enterAWBMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
       shipmentDamageListModel = null;
       setState(() {
 
@@ -367,6 +369,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                     _onWillPop();
                                   }else{
                                     groupIDCharSize = state.binningPageLoadDefaultModel.IsGroupBasedAcceptNumber!;
+                                    isGroupIDRequired = state.binningPageLoadDefaultModel.IsGroupBasedAcceptChar!;
                                     setState(() {
 
                                     });
@@ -378,25 +381,65 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                 }
                               },
                               child : BlocListener<ShipmentDamageCubit, ShipmentDamageState>(
-                                listener: (context, state) {
+                                listener: (context, state) async {
                                   if(state is ShipmentDamageInitialState){
 
                                   }else if(state is ShipmentDamageLoadingState){
                                     DialogUtils.showLoadingDialog(context, message: lableModel.loading);
-                                  }else if(state is ShipmentDamageListSuccessState){
+                                  }
+                                  else if(state is ShipmentDamageListSuccessState){
                                     DialogUtils.hideLoadingDialog(context);
 
                                     if(state.shipmentDamageListModel.status == "E"){
-                                      SnackbarUtil.showSnackbar(context, state.shipmentDamageListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                      Vibration.vibrate(duration: 500);
-                                    }else{
-                                      shipmentDamageListModel = state.shipmentDamageListModel;
+                                      shipmentDamageListModel = null;
                                       setState(() {
 
                                       });
+                                      SnackbarUtil.showSnackbar(context, state.shipmentDamageListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      Vibration.vibrate(duration: 500);
+                                    }
+                                    else{
+
+                                      if(state.shipmentDamageListModel.damageDetailList == null){
+                                        shipmentDamageListModel = null;
+                                        /*SnackbarUtil.showSnackbar(context, "${widget.lableModel!.recordNotFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        Vibration.vibrate(duration: 500);
+                                        setState(() {
+
+                                        });*/
+                                      }else{
+                                        shipmentDamageListModel = state.shipmentDamageListModel;
+                                        _resumeTimerOnInteraction();
+                                        setState(() {
+
+                                        });
+                                      }
+
+
                                     }
 
-                                  }else if(state is ShipmentDamageListFailureState){
+                                  }
+                                  else if(state is ShipmentDamageListFailureState){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }
+                                  else if(state is RevokeDamageSuccessState){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    if(state.revokeDamageModel.status == "E"){
+                                      SnackbarUtil.showSnackbar(context, state.revokeDamageModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      Vibration.vibrate(duration: 500);
+                                    }else{
+                                      SnackbarUtil.showSnackbar(context, state.revokeDamageModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                      await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                                          groupIdController.text,
+                                          searchByGroupOrAWB,
+                                          _user!.userProfile!.userIdentity!,
+                                          _splashDefaultData!.companyCode!,
+                                          widget.menuId);
+                                    }
+                                  }
+                                  else if(state is RevokeDamageFailureState){
                                     DialogUtils.hideLoadingDialog(context);
                                     SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
@@ -475,7 +518,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                               ),
                                                               padding: EdgeInsets.symmetric(vertical:12, horizontal: 10),
                                                               child: Center(
-                                                                  child: CustomeText(text: "Group Id", fontColor: searchByGroupOrAWB == "G" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                                  child: CustomeText(text: "${lableModel.groupId}", fontColor: searchByGroupOrAWB == "G" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
 
                                                               ),
                                                             ),
@@ -504,7 +547,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                               ),
                                                               padding: EdgeInsets.symmetric(vertical:12, horizontal: 10),
                                                               child: Center(
-                                                                  child: CustomeText(text: "AWB", fontColor: searchByGroupOrAWB == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                                  child: CustomeText(text: "${lableModel.awb}", fontColor: searchByGroupOrAWB == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                                               ),
                                                             ),
                                                           ),
@@ -532,11 +575,12 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                           hastextcolor: true,
                                                           animatedLabel: true,
                                                           needOutlineBorder: true,
-                                                          labelText: (searchByGroupOrAWB == "G") ? "${lableModel.groupId} *" : "${lableModel.awb} *",
+                                                          labelText: (searchByGroupOrAWB == "G") ? (isGroupIDRequired == "Y") ? "${lableModel.groupId} *" : "${lableModel.groupId}" : "${lableModel.awb} *",
                                                           readOnly: false,
                                                           maxLength: searchByGroupOrAWB == "G" ? groupIDCharSize : 11,
                                                           onChanged: (value) {
                                                             shipmentDamageListModel = null;
+
                                                             setState(() {
 
                                                             });
@@ -625,6 +669,81 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                   _selectedIndex = index; // Update the selected index
                                                                 });
 
+                                                                CommonUtils.SELECTEDWHETHER = "";
+                                                                CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                CommonUtils.shipTotalPcs = 0;
+                                                                CommonUtils.ShipTotalWt = "0.00";
+                                                                CommonUtils.shipDamagePcs = 0;
+                                                                CommonUtils.ShipDamageWt = "0.00";
+                                                                CommonUtils.shipDifferencePcs = 0;
+                                                                CommonUtils.shipDifferenceWt = "0.00";
+                                                                CommonUtils.individualWTPerDoc = "0.00";
+                                                                CommonUtils.individualWTActChk = "0.00";
+                                                                CommonUtils.individualWTDifference = "0.00";
+                                                                CommonUtils.SELECTEDMATERIAL = "";
+                                                                CommonUtils.SELECTEDTYPE = "";
+                                                                CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                CommonUtils.SELECTEDINNERPACKING = "";
+                                                                CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                CommonUtils.SELECTEDDISPOSITION = "";
+                                                                CommonUtils.MISSINGITEM = "Y";
+                                                                CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                CommonUtils.SUFFICIENT = "Y";
+                                                                CommonUtils.EVIDENCE = "Y";
+                                                                CommonUtils.REMARKS = "";
+                                                                CommonUtils.SELECTEDCONTENT = "";
+                                                                CommonUtils.SELECTEDCONTAINER = "";
+
+
+                                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                  builder: (context) => DamageShimentPage(
+                                                                    importSubMenuList: widget.importSubMenuList,
+                                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                                    lableModel: lableModel,
+                                                                    pageView: 0,
+                                                                    enterDamageNop: 0,
+                                                                    enterDamageWt: 0.00,
+                                                                    damageNop: damageDetailList.damageNOP!,
+                                                                    damageWt: damageDetailList.damageWeight!,
+                                                                    buttonRightsList: const [],
+                                                                    iMPAWBRowId: damageDetailList.iMPAWBRowId!,
+                                                                    iMPShipRowId: damageDetailList.iMPShipRowId!,
+                                                                    flightSeqNo: damageDetailList.flightSeqNo!,
+                                                                    flightStatus: "",
+                                                                    mainMenuName: widget.mainMenuName,
+                                                                    userId: _user!.userProfile!.userIdentity!,
+                                                                    companyCode: _splashDefaultData!.companyCode!,
+                                                                    menuId: widget.menuId,
+                                                                    groupId: groupIdController.text,
+                                                                  problemSeqId: damageDetailList.problemSeqId!,),));
+
+                                                                if(value == "Done"){
+                                                                  _resumeTimerOnInteraction();
+                                                                  await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                                                                      groupIdController.text,
+                                                                      searchByGroupOrAWB,
+                                                                      _user!.userProfile!.userIdentity!,
+                                                                      _splashDefaultData!.companyCode!,
+                                                                      widget.menuId);
+                                                                  // Navigator.pop(context, "true");
+                                                                }
+                                                                else if(value == "true"){
+                                                                  _resumeTimerOnInteraction();
+                                                                  // call shipment damage details api
+                                                                  await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                                                                      groupIdController.text,
+                                                                      searchByGroupOrAWB,
+                                                                      _user!.userProfile!.userIdentity!,
+                                                                      _splashDefaultData!.companyCode!,
+                                                                      widget.menuId);
+                                                                  //Navigator.pop(context, "true");
+                                                                }
+
+
+
                                                               },
                                                               child: Container(
                                                                   margin: EdgeInsets.symmetric(vertical: 4),
@@ -689,7 +808,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                       ) : SizedBox(),
                                                                                     ],
                                                                                   ),
-                                                                                  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? damageDetailList.houseNo! : "", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                                                  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? /*damageDetailList.houseNo!*/"House" : "", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
 
                                                                                 ],
                                                                               ),
@@ -737,7 +856,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                     child: Row(
                                                                                       children: [
                                                                                         CustomeText(
-                                                                                          text: "NPX :",
+                                                                                          text: "NPR :",
                                                                                           fontColor: MyColor.textColorGrey2,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w400,
@@ -745,7 +864,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         ),
                                                                                         SizedBox(width: 5),
                                                                                         CustomeText(
-                                                                                          text: "${damageDetailList.nPX}",
+                                                                                          text: "${damageDetailList.nOP}",
                                                                                           fontColor: MyColor.colorBlack,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w600,
@@ -759,7 +878,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                     child: Row(
                                                                                       children: [
                                                                                         CustomeText(
-                                                                                          text: "NPR :",
+                                                                                          text: "Weight :",
                                                                                           fontColor: MyColor.textColorGrey2,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w400,
@@ -767,7 +886,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         ),
                                                                                         SizedBox(width: 5),
                                                                                         CustomeText(
-                                                                                          text: "${damageDetailList.nPR}",
+                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weight!)}",
                                                                                           fontColor: MyColor.colorBlack,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w600,
@@ -786,7 +905,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                     child: Row(
                                                                                       children: [
                                                                                         CustomeText(
-                                                                                          text: "Wt. Exp :",
+                                                                                          text: "NPX :",
                                                                                           fontColor: MyColor.textColorGrey2,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w400,
@@ -794,7 +913,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         ),
                                                                                         SizedBox(width: 5),
                                                                                         CustomeText(
-                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightExp!)}",
+                                                                                          text: "${damageDetailList.nPX!}",
                                                                                           fontColor: MyColor.colorBlack,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w600,
@@ -808,7 +927,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                     child: Row(
                                                                                       children: [
                                                                                         CustomeText(
-                                                                                          text: "Wt. Rec. :",
+                                                                                          text: "Wt. EX. :",
                                                                                           fontColor: MyColor.textColorGrey2,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w400,
@@ -816,7 +935,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         ),
                                                                                         SizedBox(width: 5),
                                                                                         CustomeText(
-                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightRec!)}",
+                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(damageDetailList.weightExp!)}",
                                                                                           fontColor: MyColor.colorBlack,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w600,
@@ -1037,28 +1156,128 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                               Row(
                                                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                 children: [
-                                                                                  InkWell(
-                                                                                      onTap: () async {
+                                                                                  Expanded(
+                                                                                    flex:1,
+                                                                                    child: Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                                                      children: [
+                                                                                        InkWell(
+                                                                                            onTap: () async {
 
-                                                                                        setState(() {
-                                                                                          _selectedIndex = index;
-                                                                                          // Toggle the expansion state of the item
-                                                                                          if (_isExpandedDetails == index) {
-                                                                                            _isExpandedDetails = null; // Collapse if already expanded
-                                                                                          } else {
-                                                                                            _isExpandedDetails = index; // Expand this item
-                                                                                          }
-                                                                                        });
+                                                                                              setState(() {
+                                                                                                _selectedIndex = index;
+                                                                                                // Toggle the expansion state of the item
+                                                                                                if (_isExpandedDetails == index) {
+                                                                                                  _isExpandedDetails = null; // Collapse if already expanded
+                                                                                                } else {
+                                                                                                  _isExpandedDetails = index; // Expand this item
+                                                                                                }
+                                                                                              });
 
 
-                                                                                      },
-                                                                                      child: CustomeText(text: isExpand ? "${lableModel.showLessDetails}" : "${lableModel.showMoreDetails}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                                                            },
+                                                                                            child: CustomeText(text: isExpand ? "${lableModel.showLessDetails}" : "${lableModel.showMoreDetails}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                                                        (damageDetailList.damageNOP != 0) ? const SizedBox(width: 10,) : const SizedBox(),
+                                                                                        (damageDetailList.damageNOP != 0) ? RoundedButton(
+                                                                                          color: MyColor.primaryColorblue,
+                                                                                          horizontalPadding: 10,
+                                                                                          verticalPadding: 3,
+                                                                                          text: "Revoke", press: () async {
+
+                                                                                          await context.read<ShipmentDamageCubit>().revokeDamageApi(
+                                                                                              damageDetailList.iMPAWBRowId!,
+                                                                                              damageDetailList.iMPShipRowId!,
+                                                                                              damageDetailList.problemSeqId!,
+                                                                                              damageDetailList.flightSeqNo!,
+                                                                                              _user!.userProfile!.userIdentity!,
+                                                                                              _splashDefaultData!.companyCode!,
+                                                                                              widget.menuId);
+
+                                                                                        },) : SizedBox(),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ),
+
                                                                                   InkWell(
                                                                                     onTap: () async {
 
                                                                                       setState(() {
                                                                                         _selectedIndex = index; // Update the selected index
                                                                                       });
+
+                                                                                      CommonUtils.SELECTEDWHETHER = "";
+                                                                                      CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                                      CommonUtils.shipTotalPcs = 0;
+                                                                                      CommonUtils.ShipTotalWt = "0.00";
+                                                                                      CommonUtils.shipDamagePcs = 0;
+                                                                                      CommonUtils.ShipDamageWt = "0.00";
+                                                                                      CommonUtils.shipDifferencePcs = 0;
+                                                                                      CommonUtils.shipDifferenceWt = "0.00";
+                                                                                      CommonUtils.individualWTPerDoc = "0.00";
+                                                                                      CommonUtils.individualWTActChk = "0.00";
+                                                                                      CommonUtils.individualWTDifference = "0.00";
+                                                                                      CommonUtils.SELECTEDMATERIAL = "";
+                                                                                      CommonUtils.SELECTEDTYPE = "";
+                                                                                      CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                                      CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                                      CommonUtils.SELECTEDINNERPACKING = "";
+                                                                                      CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                                      CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                                      CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                                      CommonUtils.SELECTEDDISPOSITION = "";
+                                                                                      CommonUtils.MISSINGITEM = "Y";
+                                                                                      CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                                      CommonUtils.SUFFICIENT = "Y";
+                                                                                      CommonUtils.EVIDENCE = "Y";
+                                                                                      CommonUtils.REMARKS = "";
+                                                                                      CommonUtils.SELECTEDCONTENT = "";
+                                                                                      CommonUtils.SELECTEDCONTAINER = "";
+
+
+                                                                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                        builder: (context) => DamageShimentPage(
+                                                                                        importSubMenuList: widget.importSubMenuList,
+                                                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                                                        lableModel: lableModel,
+                                                                                        pageView: 0,
+                                                                                        enterDamageNop: 0,
+                                                                                        enterDamageWt: 0.00,
+                                                                                        damageNop: damageDetailList.damageNOP!,
+                                                                                        damageWt: damageDetailList.damageWeight!,
+                                                                                        buttonRightsList: const [],
+                                                                                        iMPAWBRowId: damageDetailList.iMPAWBRowId!,
+                                                                                        iMPShipRowId: damageDetailList.iMPShipRowId!,
+                                                                                        flightSeqNo: damageDetailList.flightSeqNo!,
+                                                                                        flightStatus: "",
+                                                                                        mainMenuName: widget.mainMenuName,
+                                                                                        userId: _user!.userProfile!.userIdentity!,
+                                                                                        companyCode: _splashDefaultData!.companyCode!,
+                                                                                        menuId: widget.menuId,
+                                                                                        groupId: groupIdController.text,
+                                                                                        problemSeqId: damageDetailList.problemSeqId!),));
+
+                                                                                      if(value == "Done"){
+                                                                                        _resumeTimerOnInteraction();
+                                                                                        await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                                                                                            groupIdController.text,
+                                                                                            searchByGroupOrAWB,
+                                                                                            _user!.userProfile!.userIdentity!,
+                                                                                            _splashDefaultData!.companyCode!,
+                                                                                            widget.menuId);
+                                                                                       // Navigator.pop(context, "true");
+                                                                                      }
+                                                                                      else if(value == "true"){
+                                                                                        _resumeTimerOnInteraction();
+                                                                                        // call shipment damage details api
+                                                                                        await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                                                                                            groupIdController.text,
+                                                                                            searchByGroupOrAWB,
+                                                                                            _user!.userProfile!.userIdentity!,
+                                                                                            _splashDefaultData!.companyCode!,
+                                                                                            widget.menuId);
+                                                                                        //Navigator.pop(context, "true");
+                                                                                      }
+
 
 
                                                                                     },
@@ -1142,7 +1361,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         groupIdController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1157,20 +1376,18 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
             : result;
 
         groupIdController.text = truncatedResult;
-        // Call searchLocation api to validate or not
-        // call binning details api
-
         if (groupIdController.text.length != groupIDCharSize) {
           openValidationDialog(
               CommonUtils.formatMessage("${widget.lableModel!.groupIdCharSizeMsg}", ["$groupIDCharSize"]),
               groupIdFocusNode);
 
         }else{
-          /*await context.read<BinningCubit>().getBinningDetailListApi(
+          await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
               groupIdController.text,
+              searchByGroupOrAWB,
               _user!.userProfile!.userIdentity!,
               _splashDefaultData!.companyCode!,
-              widget.menuId);*/
+              widget.menuId);
         }
 
 
@@ -1192,7 +1409,39 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
     if(barcodeScanResult == "-1"){
     }else{
 
-      bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
+      if(RegExp(r'^[0-9]+$').hasMatch(barcodeScanResult)){
+        String result = barcodeScanResult.replaceAll(" ", "");
+        String truncatedResult = result.length > 11
+            ? result.substring(0, 11)
+            : result;
+
+        groupIdController.text = truncatedResult.toString();
+
+        if (groupIdController.text.length != 11) {
+          openValidationDialog(CommonUtils.formatMessage("${lableModel.awbCharSizeMsg}", ["11"]), groupIdFocusNode);
+
+        }
+        else{
+          await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+              groupIdController.text,
+              searchByGroupOrAWB,
+              _user!.userProfile!.userIdentity!,
+              _splashDefaultData!.companyCode!,
+              widget.menuId);
+        }
+      }else{
+        groupIdController.clear();
+        // Show invalid message if alphabet characters are present
+        SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(groupIdFocusNode);
+        });
+      }
+
+
+     /* bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
 
 
       if(specialCharAllow == true){
@@ -1202,7 +1451,8 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(groupIdFocusNode);
         });
-      }else{
+      }
+      else{
 
         if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
           groupIdController.clear();
@@ -1221,12 +1471,27 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
 
           groupIdController.text = truncatedResult.toString();
 
+          if (groupIdController.text.length != 11) {
+            openValidationDialog(CommonUtils.formatMessage("${lableModel.awbCharSizeMsg}", ["11"]), groupIdFocusNode);
+
+          }
+          else{
+            await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                groupIdController.text,
+                searchByGroupOrAWB,
+                _user!.userProfile!.userIdentity!,
+                _splashDefaultData!.companyCode!,
+                widget.menuId);
+          }
+
+
+
         }
 
 
 
 
-      }
+      }*/
 
 
     }

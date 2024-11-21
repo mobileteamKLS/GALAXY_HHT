@@ -200,6 +200,11 @@ class LableModel {
   String? mail;
   String? breakdownCompleted;
   String? groupIdCharSizeMsg;
+  String? awbCharSizeMsg;
+  String? enterAWBMsg;
+
+  String? onlyNumericValueMsg;
+  String? onlyAlphaNumericValueMsg;
 
   String? breakdown;
   String? breakdownMsgUld;
@@ -629,6 +634,10 @@ class LableModel {
         this.mail,
         this.breakdownCompleted,
         this.groupIdCharSizeMsg,
+        this.awbCharSizeMsg,
+        this.enterAWBMsg,
+        this.onlyNumericValueMsg,
+        this.onlyAlphaNumericValueMsg,
 
         this.breakdown,
         this.breakdownMsgUld,
@@ -1067,6 +1076,10 @@ class LableModel {
     mail = json['mail'];
     breakdownCompleted = json['breakdownCompleted'];
     groupIdCharSizeMsg = json['groupIdCharSizeMsg'];
+    awbCharSizeMsg = json['awbCharSizeMsg'];
+    enterAWBMsg = json['enterAWBMsg'];
+    onlyNumericValueMsg = json['onlyNumericValueMsg'];
+    onlyAlphaNumericValueMsg = json['onlyAlphaNumericValueMsg'];
 
     breakdown = json['breakdown'];
     breakdownMsgUld = json['breakdownMsgUld'];
@@ -1508,6 +1521,10 @@ class LableModel {
     data['mail'] = this.mail;
     data['breakdownCompleted'] = this.breakdownCompleted;
     data['groupIdCharSizeMsg'] = this.groupIdCharSizeMsg;
+    data['awbCharSizeMsg'] = this.awbCharSizeMsg;
+    data['enterAWBMsg'] = this.enterAWBMsg;
+    data['onlyNumericValueMsg'] = this.onlyNumericValueMsg;
+    data['onlyAlphaNumericValueMsg'] = this.onlyAlphaNumericValueMsg;
 
     data['breakdown'] = this.breakdown;
     data['breakdownMsgUld'] = this.breakdownMsgUld;

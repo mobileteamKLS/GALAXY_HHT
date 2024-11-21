@@ -714,7 +714,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                             else{
 
                                                                               if(aWBItem.mAWBInd != "M"){
-                                                                                CommonUtils.SELECTEDWHETHER = "";
+
+
+                                                                                /*CommonUtils.SELECTEDWHETHER = "";
                                                                                 CommonUtils.SELECTEDIMAGELIST.clear();
                                                                                 CommonUtils.shipTotalPcs = 0;
                                                                                 CommonUtils.ShipTotalWt = "0.00";
@@ -741,10 +743,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                 CommonUtils.REMARKS = "";
                                                                                 CommonUtils.SELECTEDCONTENT = "";
                                                                                 CommonUtils.SELECTEDCONTAINER = "";
-
-                                                                               /* int npxPices = aWBItem.nPR!;
-                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
 
                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                   builder: (context) => DamageShimentPage(
@@ -773,7 +771,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                   context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                 }
-
+*/
                                                                               }
                                                                               else{
                                                                                 gotoHouseListScreen(aWBItem);
@@ -794,7 +792,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                               if(aWBItem.mAWBInd != "M"){
-                                                                                CommonUtils.SELECTEDWHETHER = "";
+
+
+                                                                                /*CommonUtils.SELECTEDWHETHER = "";
                                                                                 CommonUtils.SELECTEDIMAGELIST.clear();
                                                                                 CommonUtils.shipTotalPcs = 0;
                                                                                 CommonUtils.ShipTotalWt = "0.00";
@@ -821,10 +821,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                 CommonUtils.REMARKS = "";
                                                                                 CommonUtils.SELECTEDCONTENT = "";
                                                                                 CommonUtils.SELECTEDCONTAINER = "";
-
-                                                                                /*int npxPices = aWBItem.nPR!;
-                                                                                double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
 
                                                                                 var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                   builder: (context) => DamageShimentPage(
@@ -853,7 +849,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                   context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                                 }
-
+*/
                                                                               }
                                                                               else{
                                                                                 gotoHouseListScreen(aWBItem);
@@ -921,7 +917,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         else{
 
                                                                           if(aWBItem.mAWBInd != "M"){
-                                                                            CommonUtils.SELECTEDWHETHER = "";
+
+                                                                            /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                             CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -953,10 +950,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                             CommonUtils.SELECTEDCONTAINER = "";
 
-                                                                           /* int npxPices = aWBItem.nPR!;
-                                                                            double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
-
                                                                             var value = await Navigator.push(context, CupertinoPageRoute(
                                                                               builder: (context) => DamageShimentPage(
                                                                               importSubMenuList: widget.importSubMenuList,
@@ -986,7 +979,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                               context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
                                                                             }
-
+*/
                                                                           }
                                                                           else{
                                                                             gotoHouseListScreen(aWBItem);
@@ -1560,7 +1553,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
 
-                                                                                                    CommonUtils.SELECTEDWHETHER = "";
+                                                                                                    /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                     CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -1591,13 +1584,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                     CommonUtils.SELECTEDCONTENT = "";
 
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
-
-
-
-
-                                                                                                   /* int npxPices = aWBItem.nPR!;
-                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                       builder: (context) => DamageShimentPage(
@@ -1618,8 +1604,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                       userId: _user!.userProfile!.userIdentity!,
                                                                                                       companyCode: _splashDefaultData!.companyCode!,
                                                                                                       menuId: widget.menuId,
-                                                                                                      /*npxPieces: npxPices,
-                                                                                                      npxWeightCo: weightCo,*/
+                                                                                                      *//*npxPieces: npxPices,
+                                                                                                      npxWeightCo: weightCo,*//*
                                                                                                       groupId: "",),));
 
                                                                                                     if(value == "Done"){
@@ -1629,7 +1615,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                                                       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
-                                                                                                    }
+                                                                                                    }*/
                                                                                                     }else{
                                                                                                       gotoHouseListScreen(aWBItem);
                                                                                                     }
@@ -1650,7 +1636,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
 
-
+/*
                                                                                                     CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                     CommonUtils.SELECTEDIMAGELIST.clear();
@@ -1682,13 +1668,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                     CommonUtils.SELECTEDCONTENT = "";
 
                                                                                                     CommonUtils.SELECTEDCONTAINER = "";
-
-
-
-                                                                                                   /* int npxPices = aWBItem.nPR!;
-                                                                                                    double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
-
 
                                                                                                     var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                       builder: (context) => DamageShimentPage(
@@ -1719,7 +1698,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                                                       context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
-                                                                                                    }
+                                                                                                    }*/
                                                                                                     }else{
 
                                                                                                       gotoHouseListScreen(aWBItem);
@@ -1741,7 +1720,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               else{
 
                                                                                                 if(aWBItem.mAWBInd != "M"){
-                                                                                                  CommonUtils.SELECTEDWHETHER = "";
+
+                                                                                                /*  CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                   CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -1774,11 +1754,6 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   CommonUtils.SELECTEDCONTAINER = "";
 
 
-
-                                                                                                 /* int npxPices = aWBItem.nPR!;
-                                                                                                  double weightCo = double.parse(((npxPices * aWBItem.weightExp!) / aWBItem.nPX!).toStringAsFixed(2));
-*/
-
                                                                                                   var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                     builder: (context) => DamageShimentPage(
                                                                                                     importSubMenuList: widget.importSubMenuList,
@@ -1807,13 +1782,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                                                     context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
 
-                                                                                                  }
+                                                                                                  }*/
                                                                                                 }else{
                                                                                                   gotoHouseListScreen(aWBItem);
                                                                                                 }
-
-
-
 
                                                                                               }
 

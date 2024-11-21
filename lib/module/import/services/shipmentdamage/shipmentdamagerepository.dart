@@ -8,6 +8,7 @@ import 'package:galaxy/utils/commonutils.dart';
 
 import '../../model/binning/binningpageloaddefault.dart';
 import '../../model/binning/binningsavemodel.dart';
+import '../../model/shipmentdamage/revokedamagemodel.dart';
 import '../../model/uldacceptance/locationvalidationmodel.dart';
 
 
@@ -43,6 +44,51 @@ class ShipmentDamageRepository{
       if (response.statusCode == 200) {
         ShipmentDamageListModel shipmentDamageListModel = ShipmentDamageListModel.fromJson(response.data);
         return shipmentDamageListModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  // shipment damage detail list api
+  Future<RevokeDamageModel> revokeDamageDetailModel(int imptAWBRowId, int impShipRowId, int problemSeqNo, int flighSeqNo, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "IAID": imptAWBRowId,
+        "ISID" : impShipRowId,
+        "ProblemSeqId" : problemSeqNo,
+        "FlightSeqNo" : flighSeqNo,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('BinningDetailListModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.revokeDamageApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        RevokeDamageModel revokeDamageModel = RevokeDamageModel.fromJson(response.data);
+        return revokeDamageModel;
       } else {
         // Handle non-200 response
         throw DioException(

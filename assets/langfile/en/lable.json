@@ -215,6 +215,10 @@
     "mail" : "Mail",
     "breakdownCompleted" : "Breakdown completed",
     "groupIdCharSizeMsg" : "Group ID must be exactly {0} characters long.",
+    "awbCharSizeMsg" : "AWB must be exactly {0} characters long.",
+    "enterAWBMsg" : "Please enter AWB.",
+    "onlyNumericValueMsg" : "Only numeric values are accepted.",
+    "onlyAlphaNumericValueMsg" : "Only alphanumeric characters are accepted.",
 
     "breakdown" : "Breakdown",
     "breakdownMsgUld" : "Are you sure you want to complete ULD {0} breakdown ?",

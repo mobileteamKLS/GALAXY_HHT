@@ -67,5 +67,6 @@ class Apilist{
 
   // Shipment Damage details
   static String getShipmentDamageDetailListApi = "/ShipmentDamage/GetDetails";
+  static String revokeDamageApi = "/ShipmentDamage/RevokeDamage";
 
 }

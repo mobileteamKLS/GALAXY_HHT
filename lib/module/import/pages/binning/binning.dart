@@ -1212,7 +1212,7 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         groupIdController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {

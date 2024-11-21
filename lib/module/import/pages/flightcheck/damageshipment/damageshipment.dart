@@ -67,6 +67,7 @@ class DamageShimentPage extends StatefulWidget {
   int companyCode;
 
   String groupId;
+  int problemSeqId;
 
   int damageNop;
   double damageWt;
@@ -98,6 +99,7 @@ class DamageShimentPage extends StatefulWidget {
     required this.companyCode,
     required this.menuId,
     required this.groupId,
+    required this.problemSeqId,
     required this.pageView});
 
   @override
@@ -144,8 +146,14 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
       }
 */
 
-      context.read<FlightCheckCubit>().getDamageDetails(widget.flightSeqNo, "${widget.iMPAWBRowId}", "${widget.iMPShipRowId}", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
+      context.read<FlightCheckCubit>().getDamageDetails(widget.flightSeqNo,
+          "${widget.iMPAWBRowId}",
+          "${widget.iMPShipRowId}",
+          widget.problemSeqId,
+          widget.groupId,
+          _user!.userProfile!.userIdentity!,
+          _splashDefaultData!.companyCode!,
+          widget.menuId);
 
 
       inactivityTimerManager = InactivityTimerManager(

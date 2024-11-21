@@ -1,3 +1,5 @@
+import 'package:galaxy/module/import/model/shipmentdamage/revokedamagemodel.dart';
+
 import '../../../model/shipmentdamage/shipmentdamagelistmodel.dart';
 
 
@@ -16,5 +18,15 @@ class ShipmentDamageListSuccessState extends ShipmentDamageState {
 class ShipmentDamageListFailureState extends ShipmentDamageState {
   final String error;
   ShipmentDamageListFailureState(this.error);
+}
+
+class RevokeDamageSuccessState extends ShipmentDamageState {
+  final RevokeDamageModel revokeDamageModel;
+  RevokeDamageSuccessState(this.revokeDamageModel);
+}
+
+class RevokeDamageFailureState extends ShipmentDamageState {
+  final String error;
+  RevokeDamageFailureState(this.error);
 }
 

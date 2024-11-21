@@ -38,6 +38,16 @@ class ShipmentDamageCubit extends Cubit<ShipmentDamageState>{
     }
   }
 
+// Revoke Damage api call repo
+  Future<void> revokeDamageApi(int imptAWBRowId, int impShipRowId, int problemSeqNo, int flighSeqNo, int userId, int companyCode, int menuId) async {
+    emit(ShipmentDamageLoadingState());
+    try {
+      final revokeDamageModel = await shipmentDamageRepository.revokeDamageDetailModel(imptAWBRowId, impShipRowId, problemSeqNo, flighSeqNo, userId, companyCode, menuId);
+      emit(RevokeDamageSuccessState(revokeDamageModel));
+    } catch (e) {
+      emit(RevokeDamageFailureState(e.toString()));
+    }
+  }
 
 
 

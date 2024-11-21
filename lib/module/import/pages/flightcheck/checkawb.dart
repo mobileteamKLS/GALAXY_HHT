@@ -320,7 +320,8 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                         userId: _user!.userProfile!.userIdentity!,
                                         companyCode: _splashDefaultData!.companyCode!,
                                         menuId: widget.menuId,
-                                        groupId: groupIdController.text,),));
+                                        groupId: groupIdController.text,
+                                      problemSeqId: 0,),));
 
                                     if(value == "Done"){
                                       Navigator.pop(context, "true");
@@ -756,14 +757,13 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                   if(widget.flightDetailSummary.flightStatus == "A"){
 
 
-                                                    /*if (piecesController.text.isNotEmpty) {
+                                                   /* if (piecesController.text.isNotEmpty) {
                                                       if(int.parse(piecesController.text) == 0){
                                                         openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
                                                         return;
                                                       }
                                                       return;
-                                                    }
-*/
+                                                    }*/
 
 
 
@@ -775,7 +775,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       Clicks = "D";
 
 
-                                                      CommonUtils.SELECTEDWHETHER = "";
+                                                    /*  CommonUtils.SELECTEDWHETHER = "";
 
                                                       CommonUtils.SELECTEDIMAGELIST.clear();
 
@@ -804,8 +804,26 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       CommonUtils.REMARKS = "";
 
                                                       CommonUtils.SELECTEDCONTENT = "";
-                                                      CommonUtils.SELECTEDCONTAINER = "";
+                                                      CommonUtils.SELECTEDCONTAINER = "";*/
 
+
+
+
+                                                      if (piecesController.text.isNotEmpty) {
+                                                        if(int.parse(piecesController.text) == 0){
+                                                          openValidationDialog("${lableModel.enterPiecesGrtMsg}", piecesFocusNode);
+                                                          return;
+                                                        }
+                                                        return;
+                                                      }
+
+                                                      if (weightController.text.isNotEmpty) {
+                                                        if(int.parse(weightController.text) == 0){
+                                                          openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode);
+                                                          return;
+                                                        }
+                                                        return;
+                                                      }
 
                                                       if(widget.groupIDRequires == "Y"){
                                                         if (groupIdController.text.isEmpty) {
@@ -822,20 +840,17 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       }
 
 
-                                                      if(piecesController.text.isNotEmpty){
-                                                        print("PICES Not EMPTY");
-                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
-                                                      }
-                                                      else{
+                                                      /*  else{
 
                                                         print("PICES EMPTY");
                                                         int damageNop = widget.aWBItem.damageNOP!;
                                                         double damageWt = widget.aWBItem.damageWeight!;
 
-                                                        /*int npxPices = widget.aWBItem.nPR!;
+                                                        *//*int npxPices = widget.aWBItem.nPR!;
                                                         double weightCo = double.parse(((npxPices * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-*/
+*//*
                                                         var value = await Navigator.push(context, CupertinoPageRoute(
                                                           builder: (context) => DamageShimentPage(
                                                           importSubMenuList: widget.importSubMenuList,
@@ -855,14 +870,15 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                           userId: _user!.userProfile!.userIdentity!,
                                                           companyCode: _splashDefaultData!.companyCode!,
                                                           menuId: widget.menuId,
-                                                          groupId: groupIdController.text,),));
+                                                          groupId: groupIdController.text,
+                                                          problemSeqId: 0,),));
 
                                                         if(value == "true"){
                                                           Navigator.pop(context, "true");
                                                         }else {
                                                           _resumeTimerOnInteraction();
                                                         }
-                                                      }
+                                                      }*/
 
                                                     }
                                                     else{

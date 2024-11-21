@@ -217,6 +217,8 @@
 
     "breakdownCompleted" : "اكتمل الانهيار",
     "groupIdCharSizeMsg" : "يجب أن يكون معرف المجموعة {0} حرفًا بالضبط",
+    "awbCharSizeMsg" : "يجب أن يكون طول أدبليوب {0} حرفًا بالضبط.",
+    "enterAWBMsg" : "الرجاء إدخال أدبليوب.",
 
     "breakdown" : "الانهيار",
     "breakdownMsgUld" : "هل أنت متأكد أنك تريد إكمال تقسيم ULD {0}؟",
@@ -231,6 +233,9 @@
     "detailsforHAWBNo" : "تفاصيل حاوب رقم.",
     "houseListing" : "قائمة البيت",
     "bdDone" : "تم الانتهاء من ب د",
+
+    "onlyNumericValueMsg" : "يتم قبول القيم الرقمية فقط.",
+    "onlyAlphaNumericValueMsg" : "يتم قبول الأحرف الأبجدية الرقمية فقط.",
 
     "flightisFinalizedMsg" : "تمت الرحلة النهائية.",
     "flightisNotArrivedMsg" : "الرحلة لم تصل",

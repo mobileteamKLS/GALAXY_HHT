@@ -30,8 +30,10 @@ class ShipmentDamageListModel {
 }
 
 class DamageDetailList {
+  int? flightSeqNo;
   int? iMPAWBRowId;
   int? iMPShipRowId;
+  int? problemSeqId;
   int? uSeqNo;
   String? aWBNo;
   String? houseNo;
@@ -53,8 +55,11 @@ class DamageDetailList {
   double? volume;
 
   DamageDetailList(
-      {this.iMPAWBRowId,
+      {
+        this.flightSeqNo,
+        this.iMPAWBRowId,
         this.iMPShipRowId,
+        this.problemSeqId,
         this.uSeqNo,
         this.aWBNo,
         this.houseNo,
@@ -76,8 +81,10 @@ class DamageDetailList {
         this.volume});
 
   DamageDetailList.fromJson(Map<String, dynamic> json) {
+    flightSeqNo = json['FlightSeqNo'];
     iMPAWBRowId = json['IMPAWBRowId'];
     iMPShipRowId = json['IMPShipRowId'];
+    problemSeqId = json['ProblemSeqId'];
     uSeqNo = json['USeqNo'];
     aWBNo = json['AWBNo'];
     houseNo = json['HouseNo'];
@@ -101,8 +108,10 @@ class DamageDetailList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FlightSeqNo'] = this.flightSeqNo;
     data['IMPAWBRowId'] = this.iMPAWBRowId;
     data['IMPShipRowId'] = this.iMPShipRowId;
+    data['ProblemSeqId'] = this.problemSeqId;
     data['USeqNo'] = this.uSeqNo;
     data['AWBNo'] = this.aWBNo;
     data['HouseNo'] = this.houseNo;

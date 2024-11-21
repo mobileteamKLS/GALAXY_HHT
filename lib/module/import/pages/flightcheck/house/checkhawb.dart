@@ -319,7 +319,8 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                       userId: _user!.userProfile!.userIdentity!,
                                       companyCode: _splashDefaultData!.companyCode!,
                                       menuId: widget.menuId,
-                                      groupId: groupIdController.text,),));
+                                      groupId: groupIdController.text,
+                                    problemSeqId: 0,),));
 
                                     if(value == "Done"){
                                       _resumeTimerOnInteraction();
@@ -887,7 +888,8 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                           userId: _user!.userProfile!.userIdentity!,
                                                           companyCode: _splashDefaultData!.companyCode!,
                                                           menuId: widget.menuId,
-                                                          groupId: groupIdController.text,),));
+                                                          groupId: groupIdController.text,
+                                                          problemSeqId: 0,),));
 
                                                         if(value == "true"){
                                                           Navigator.pop(context, "true");

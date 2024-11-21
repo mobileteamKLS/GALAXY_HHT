@@ -3209,7 +3209,7 @@ class _FlightCheckState extends State<FlightCheck>
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(locationcodeScanResult);
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, widget.lableModel!.onlyAlphaNumericValueMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         locationController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -3256,7 +3256,7 @@ class _FlightCheckState extends State<FlightCheck>
 
 
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         igmNoEditingController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {

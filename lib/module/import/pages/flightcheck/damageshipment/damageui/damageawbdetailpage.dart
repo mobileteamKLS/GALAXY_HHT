@@ -117,18 +117,90 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
       }
     }
 
-    documentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtPerDocument!.toStringAsFixed(2);
-    actualDocumentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtActualCheck!.toStringAsFixed(2);
+
+    documentweightController.text = CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageDetail!.indWtPerDocument!);
+    actualDocumentweightController.text = CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageDetail!.indWtActualCheck!);
+    /*documentweightController.text = "${double.parse(widget.damageDetailsModel!.damageDetail!.indWtPerDocument!.toStringAsFixed(2))}";
+    actualDocumentweightController.text = "${double.parse(widget.damageDetailsModel!.damageDetail!.indWtActualCheck!.toStringAsFixed(2))}";*/
     actuleDifferenceWeight = widget.damageDetailsModel!.damageDetail!.indWtDifference!;
 
 
 
-    totalDamageNop = (int.parse("${widget.damageNop}") + int.parse("${widget.enterDamageNop}"));
+   /* totalDamageNop = (int.parse("${widget.damageNop}") + int.parse("${widget.enterDamageNop}"));
     totalDamageWt = (double.parse("${widget.damageWt}") + double.parse("${widget.enterDamageWt}"));
-
+*/
+     totalDamageNop = int.parse("${widget.enterDamageNop}");
+    totalDamageWt = double.parse("${widget.enterDamageWt}");
 
     nopController.text = totalDamageNop.toString();
     weightController.text = totalDamageWt.toStringAsFixed(2);
+
+    print("CHECK----ALL VALUE ==== ${nopController.text} === ${weightController.text} ==== ${documentweightController.text} === ${actualDocumentweightController.text}" );
+
+
+    if(nopController.text.contains("0")){
+      nopController.clear();
+    }
+    if(weightController.text == "0.00"){
+      weightController.clear();
+    }
+    if(documentweightController.text == "0.00"){
+      documentweightController.clear();
+    }
+    if(actualDocumentweightController.text == "0.00"){
+      actualDocumentweightController.clear();
+    }
+
+   /* if(CommonUtils.shipDamagePcs == 0){
+      if(nopController.text.contains("0")){
+        nopController.clear();
+      }
+    }else{
+      nopController.text = "${CommonUtils.shipDamagePcs}";
+      differenceNpx = CommonUtils.shipDifferencePcs;
+      setState(() {
+
+      });
+    }*/
+
+
+   /* if(CommonUtils.ShipDamageWt == "0.00"){
+      if(weightController.text.contains("0.00")){
+        weightController.clear();
+      }
+    }else{
+      weightController.text = CommonUtils.ShipDamageWt;
+      differenceWeight = double.parse(CommonUtils.shipDifferenceWt);
+      setState(() {
+
+      });
+    }*/
+
+
+
+ /*   if(CommonUtils.individualWTPerDoc == "0.00"){
+      if(documentweightController.text.contains("0.00")){
+        documentweightController.clear();
+      }
+    }else{
+      documentweightController.text = CommonUtils.individualWTPerDoc;
+      actuleDifferenceWeight = double.parse(CommonUtils.individualWTDifference);
+    }*/
+
+
+   /* if(CommonUtils.individualWTActChk == "0.00"){
+      if(actualDocumentweightController.text.contains("0.00")){
+        actualDocumentweightController.clear();
+      }
+    }else{
+      actualDocumentweightController.text = CommonUtils.individualWTActChk;
+      actuleDifferenceWeight = double.parse(CommonUtils.individualWTDifference);
+    }*/
+
+
+
+
+
 
    /* if(widget.pageView == 1){
       documentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtPerDocument!.toStringAsFixed(2);
@@ -214,6 +286,21 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
               differenceNpx = npx - totalDamageNop;
               differenceWeight = weight - totalDamageWt;
+
+              if(nopController.text.contains("0")){
+                nopController.clear();
+              }
+              if(weightController.text.contains("0.00")){
+                weightController.clear();
+              }
+              if(documentweightController.text.contains("0.00")){
+                documentweightController.clear();
+              }
+              if(actualDocumentweightController.text.contains("0.00")){
+                actualDocumentweightController.clear();
+              }
+
+
 
               if(widget.pageView == 1){
                 documentweightController.text = widget.damageDetailsModel!.damageDetail!.indWtPerDocument!.toStringAsFixed(2);
@@ -571,7 +658,8 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
 
                                         }
-                                      }else{
+                                      }
+                                      else{
                                         if (enteredNpx > npr) {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(nopFocusNode);
@@ -597,7 +685,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
                                     }else{
                                       setState(() {
-                                        differenceNpx = 0;
+                                        differenceNpx = npx;
                                       });
                                     }
 
@@ -650,10 +738,10 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weight"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "${weight}"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //weightController.clear(); // Clear the TextField
                                           setState(() {
-                                            differenceWeight = 0.00;
+                                            differenceWeight = weight - enteredWeight;
                                           });
                                         }
                                         else {
@@ -667,10 +755,10 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weightRec"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //weightController.clear(); // Clear the TextField
                                           setState(() {
-                                            differenceWeight = 0.00;
+                                            differenceWeight = weight - enteredWeight;
                                           });
                                         }
                                         else {
@@ -684,7 +772,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
 
                                     }else{
                                       setState(() {
-                                        differenceWeight = 0.00;
+                                        differenceWeight = weight;
                                       });
                                     }
                                   },
@@ -918,6 +1006,11 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                 return;
               }
 
+              if (weightController.text.isEmpty) {
+                openValidationDialog("${lableModel.weightMsg}", weightFocusNode, lableModel!);
+                return;
+              }
+
               int enteredNpx = int.tryParse(nopController.text) ?? 0;
               if (enteredNpx > npr) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -932,7 +1025,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   FocusScope.of(context).requestFocus(weightFocusNode);
                 });
-                SnackbarUtil.showSnackbar(context,  CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]) , MyColor.colorRed, icon: FontAwesomeIcons.times);
+                SnackbarUtil.showSnackbar(context,  CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weightRec"]) , MyColor.colorRed, icon: FontAwesomeIcons.times);
                 //weightController.clear(); // Clear the TextField
                return;
               }
@@ -944,15 +1037,14 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                 return;
               }
 
+
+
               if(double.parse(weightController.text) == 0){
                 openValidationDialog("${lableModel.enterWeightGrtMsg}", weightFocusNode, lableModel!);
                 return;
               }
 
-              if (weightController.text.isEmpty) {
-                openValidationDialog("${lableModel.weightMsg}", weightFocusNode, lableModel!);
-                return;
-              }
+
 
 
               CommonUtils.SELECTEDTYPEOFDISCRPENCY = (selectedDiscrepancy == null) ? " " : selectedDiscrepancy!.referenceDataIdentifier!;
@@ -1068,7 +1160,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weight"]),
+          CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weight"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
@@ -1086,7 +1178,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]),
+          CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weightRec"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );

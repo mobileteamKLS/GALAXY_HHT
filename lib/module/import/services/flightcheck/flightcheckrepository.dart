@@ -789,7 +789,14 @@ class FlightCheckRepository{
     }
   }
 
-  Future<DamageDetailsModel> getDamageDetails(int flightSeqNo, String AWBId, String SHIPId, int userId, int companyCode, int menuId) async {
+  Future<DamageDetailsModel> getDamageDetails(
+      int flightSeqNo,
+      String AWBId,
+      String SHIPId,
+      int problemSeqId,
+      String groupId,
+      int userId,
+      int companyCode, int menuId) async {
 
     try {
 
@@ -797,6 +804,8 @@ class FlightCheckRepository{
         "FlightSeqNo" : flightSeqNo,
         "AWBId" : AWBId,
         "SHIPId": SHIPId,
+        "GroupId" : groupId,
+        "ProblemSeqId" : problemSeqId,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

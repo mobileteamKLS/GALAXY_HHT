@@ -243,12 +243,16 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                         ? GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
-                                      itemCount: state.subMenuModel.subMenuName!.length,
+                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation").length,
                                       physics:  const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder: (BuildContext context, int index) {
-                                        SubMenuName subMenuName = state.subMenuModel.subMenuName![index];
-                                        print("CHECK_TITIITTITI ==== ${localizations.locale.languageCode} === ${subMenuName.menuName!}");
+
+                                        List<SubMenuName> filteredSubMenuList = state.subMenuModel.subMenuName!
+                                            .where((menu) => menu.menuName != "Shipment Creation")
+                                            .toList();
+
+                                        SubMenuName subMenuName = filteredSubMenuList[index];
 
                                         String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang!.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
 

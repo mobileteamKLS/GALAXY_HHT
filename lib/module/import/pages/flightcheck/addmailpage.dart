@@ -1146,7 +1146,7 @@ class _AddMailPageState extends State<AddMailPage> {
 
       
       if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, "Only alphanumeric characters are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${lableModel.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         av7NoController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
