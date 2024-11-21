@@ -164,7 +164,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height: MediaQuery.sizeOf(context).height*0.59,
+                                  height: MediaQuery.sizeOf(context).height*0.55,
                                   child: Column(
                                     children: [
                                       Row(
@@ -466,7 +466,9 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                                 Radius.circular(8)),
                                           ),
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
                                         child: const Text(
                                             "Cancel"),
                                       ),

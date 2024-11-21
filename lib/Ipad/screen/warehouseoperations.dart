@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../widget/customIpadTextfield.dart';
@@ -10,6 +11,7 @@ import 'Customsoperation.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 import 'ShipmentAcceptance.dart';
+import 'WareHouseLocation.dart';
 
 class WarehouseOperations extends StatefulWidget {
   const WarehouseOperations({super.key});
@@ -148,7 +150,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                         RoundedIconButton(
                           icon: Icons.trolley,
                           text: 'Warehouse\nLocation',
-                          targetPage: ImportShipmentListing(),
+                          targetPage: WarehouseLocation(),
                           containerColor: Color(0xffffd1d1),
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
@@ -157,7 +159,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                         RoundedIconButton(
                           icon: Icons.local_shipping_outlined,
                           text: 'Warehouse\nDelivery Order',
-                          targetPage: ShipmentAcceptance(),
+                          targetPage: WdoListing(),
                           containerColor: Color(0xffb4d9b5),
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
