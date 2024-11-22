@@ -80,6 +80,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
   TextEditingController groupIdController = TextEditingController();
 
   FocusNode groupIdFocusNode = FocusNode();
+  FocusNode itemFocusNode = FocusNode();
 
 
 
@@ -98,7 +99,6 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
-  bool _isLocationSearchBtnEnable = false;
   @override
   void initState() {
     super.initState();
@@ -253,6 +253,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
     isBackPressed = true; // Set to true to avoid showing snackbar on back press
     FocusScope.of(context).unfocus();
     groupIdFocusNode.unfocus();
+    itemFocusNode.unfocus();
     Navigator.pop(context);
     inactivityTimerManager?.stopTimer();
     return false; // Prevents the default back button action
@@ -392,6 +393,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
 
                                     if(state.shipmentDamageListModel.status == "E"){
                                       shipmentDamageListModel = null;
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                      },
+                                      );
                                       setState(() {
 
                                       });
@@ -402,6 +407,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
 
                                       if(state.shipmentDamageListModel.damageDetailList == null){
                                         shipmentDamageListModel = null;
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                        },
+                                        );
                                         /*SnackbarUtil.showSnackbar(context, "${widget.lableModel!.recordNotFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         Vibration.vibrate(duration: 500);
                                         setState(() {
@@ -410,6 +419,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                       }else{
                                         shipmentDamageListModel = state.shipmentDamageListModel;
                                         _resumeTimerOnInteraction();
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(itemFocusNode);
+                                        },
+                                        );
                                         setState(() {
 
                                         });
@@ -649,6 +662,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                             : 0,
                                                         physics: NeverScrollableScrollPhysics(),
                                                         shrinkWrap: true,
+
                                                         controller: scrollController,
                                                         itemBuilder: (context, index) {
                                                           DamageDetailList damageDetailList = shipmentDamageListModel!.damageDetailList![index];
@@ -657,6 +671,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                           List<String> shcCodes = damageDetailList.sHCCode!.split(',');
 
                                                           return InkWell(
+                                                              focusNode: itemFocusNode,
                                                               onTap: () {
                                                                 FocusScope.of(context).unfocus();
                                                                 setState(() {
@@ -806,14 +821,16 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                           ],
                                                                                         ),
                                                                                       ) : SizedBox(),
+
                                                                                     ],
                                                                                   ),
-                                                                                  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? /*damageDetailList.houseNo!*/"House" : "", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                                                  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? /*damageDetailList.houseNo!*/"House" : "", fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
 
                                                                                 ],
                                                                               ),
                                                                               damageDetailList.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
                                                                               Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                 children: [
                                                                                   damageDetailList.sHCCode!.isNotEmpty
                                                                                       ? Row(
@@ -845,6 +862,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                     }).toList(),
                                                                                   )
                                                                                       : SizedBox(),
+
+                                                                                  (damageDetailList.houseNo!.isNotEmpty) ? CustomeText(text: damageDetailList.houseNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start) : SizedBox(),
+
+
                                                                                 ],
                                                                               ),
                                                                               damageDetailList.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
@@ -1376,8 +1397,17 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(groupIdFocusNode);
         });
-      }else {
 
+        shipmentDamageListModel = null;
+        setState(() {
+
+        });
+
+      }else {
+        shipmentDamageListModel = null;
+        setState(() {
+
+        });
         String result = groupcodeScanResult.replaceAll(" ", "");
 
         String truncatedResult = result.length > groupIDCharSize
@@ -1418,12 +1448,17 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
     if(barcodeScanResult == "-1"){
     }else{
 
+
+
       if(RegExp(r'^[0-9]+$').hasMatch(barcodeScanResult)){
         String result = barcodeScanResult.replaceAll(" ", "");
         String truncatedResult = result.length > 11
             ? result.substring(0, 11)
             : result;
+        shipmentDamageListModel = null;
+        setState(() {
 
+        });
         groupIdController.text = truncatedResult.toString();
 
         if (groupIdController.text.length != 11) {
@@ -1443,7 +1478,10 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
         // Show invalid message if alphabet characters are present
         SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
+        shipmentDamageListModel = null;
+        setState(() {
 
+        });
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(groupIdFocusNode);
         });

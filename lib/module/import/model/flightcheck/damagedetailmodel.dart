@@ -247,6 +247,8 @@ class DamageAWBDetail {
   double? wtExp;
   int? nPR;
   double? wtRec;
+  int? nOP;
+  double? weight;
 
   DamageAWBDetail(
       {this.aWBNo,
@@ -260,7 +262,9 @@ class DamageAWBDetail {
         this.nPX,
         this.wtExp,
         this.nPR,
-        this.wtRec});
+        this.wtRec,
+        this.nOP,
+      this.weight});
 
   DamageAWBDetail.fromJson(Map<String, dynamic> json) {
     aWBNo = json['AWBNo'];
@@ -275,6 +279,8 @@ class DamageAWBDetail {
     wtExp = json['WtExp'];
     nPR = json['NPR'];
     wtRec = json['WtRec'];
+    nOP = json['NOP'];
+    weight = json['Weight'];
   }
 
   Map<String, dynamic> toJson() {
@@ -291,6 +297,8 @@ class DamageAWBDetail {
     data['WtExp'] = this.wtExp;
     data['NPR'] = this.nPR;
     data['WtRec'] = this.wtRec;
+    data['NOP'] = this.nOP;
+    data['Weight'] = this.weight;
     return data;
   }
 }

@@ -258,6 +258,11 @@
     "damageWeightGrtMsg" : "Damage weight {0} cannot be greater than Shipment Rcvd weight - {1}",
     "actualWtCannotGrtDocumentWt" : "Actual weight cannot be greater than document weight.",
 
+    "revoke" : "Revoke",
+    "revokeDamage" : "Revoke damage",
+    "revokeDamageMsg" : "Are you sure you want revoke damage ?",
+
+
 
     "c" : "C)",
     "packingDetails" : "PACKING DETAILS",

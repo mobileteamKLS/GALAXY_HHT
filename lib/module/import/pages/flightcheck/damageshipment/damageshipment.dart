@@ -583,7 +583,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
                             SnackbarUtil.showSnackbar(context, state.damageDetailsModel.statusMessage!, MyColor.textColor, icon: FontAwesomeIcons.times);
                           }else{
                             damageDetailsModel = state.damageDetailsModel;
-
+                            CommonUtils.REMARKS = damageDetailsModel!.damageDetail!.remark!;
                             setState(() {
 
                             });

@@ -243,6 +243,9 @@ class LableModel {
   String? bdDone;
   String? awb;
   String? hawb;
+  String? revoke;
+  String? revokeDamage;
+  String? revokeDamageMsg;
 
   String? s9;
   String? s10;
@@ -717,6 +720,9 @@ class LableModel {
         this.anyDamageRemarks,
         this.weatherCondition,
         this.representative,
+        this.revoke,
+        this.revokeDamage,
+        this.revokeDamageMsg,
 
         this.cLT,
         this.cRB,
@@ -1162,6 +1168,9 @@ class LableModel {
     anyDamageRemarks = json['anyDamageRemarks'];
     weatherCondition = json['WeatherCondition'];
     representative = json['Representative'];
+    revoke = json['revoke'];
+    revokeDamage = json['revokeDamage'];
+    revokeDamageMsg = json['revokeDamageMsg'];
 
     cLT = json['CLT'];
     cRB = json['CRB'];
@@ -1607,7 +1616,9 @@ class LableModel {
     data['anyDamageRemarks'] = this.anyDamageRemarks;
     data['WeatherCondition'] = this.weatherCondition;
     data['Representative'] = this.representative;
-
+    data['revoke'] = this.revoke;
+    data['revokeDamage'] = this.revokeDamage;
+    data['revokeDamageMsg'] = this.revokeDamageMsg;
 
     data['CLT'] = this.cLT;
     data['CRB'] = this.cRB;

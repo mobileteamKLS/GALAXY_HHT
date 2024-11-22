@@ -47,7 +47,11 @@ class DamageAwbDetailPage extends StatefulWidget {
     required this.enterDamageWt,
     required this.damageNop,
     required this.damageWt,
-    required this.damageDetailsModel, required this.preclickCallback, required this.nextclickCallback, required this.inactivityTimerManager, required this.pageView});
+    required this.damageDetailsModel,
+    required this.preclickCallback,
+    required this.nextclickCallback,
+    required this.inactivityTimerManager,
+    required this.pageView});
 
   @override
   State<DamageAwbDetailPage> createState() => _DamageAwbDetailPageState();
@@ -93,11 +97,11 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     // TODO: implement initState
     super.initState();
 
-    npx = widget.damageDetailsModel!.damageAWBDetail!.nPX!;
-    weight = widget.damageDetailsModel!.damageAWBDetail!.wtExp!;
+    npx = widget.damageDetailsModel!.damageAWBDetail!.nOP!;
+    weight = widget.damageDetailsModel!.damageAWBDetail!.weight!;
 
-    npr = widget.damageDetailsModel!.damageAWBDetail!.nPR!;
-    weightRec = widget.damageDetailsModel!.damageAWBDetail!.wtRec!;
+    npr = widget.damageDetailsModel!.damageAWBDetail!.nOP!;
+    weightRec = widget.damageDetailsModel!.damageAWBDetail!.weight!;
 
 
     typesOfDiscrepancy = List.of(widget.damageDetailsModel!.referenceDataTypeOfDiscrepancyList!);
@@ -138,7 +142,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     print("CHECK----ALL VALUE ==== ${nopController.text} === ${weightController.text} ==== ${documentweightController.text} === ${actualDocumentweightController.text}" );
 
 
-    if(nopController.text.contains("0")){
+    if(nopController.text == "0"){
       nopController.clear();
     }
     if(weightController.text == "0.00"){
@@ -277,8 +281,13 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
               differenceNpx = npx - widget.damageNop;
               differenceWeight = weight - widget.damageWt;*/
 
-              totalDamageNop = (int.parse("${widget.damageNop}") + int.parse("${widget.enterDamageNop}"));
+            /*  totalDamageNop = (int.parse("${widget.damageNop}") + int.parse("${widget.enterDamageNop}"));
               totalDamageWt = (double.parse("${widget.damageWt}") + double.parse("${widget.enterDamageWt}"));
+*/
+
+              totalDamageNop =  int.parse("${widget.enterDamageNop}");
+              totalDamageWt =  double.parse("${widget.enterDamageWt}");
+
 
 
               nopController.text = totalDamageNop.toString();
@@ -602,7 +611,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                 fontWeight: FontWeight.w500,
                                 textAlign: TextAlign.start),
                             CustomeText(
-                                text: "${widget.damageDetailsModel!.damageAWBDetail!.nPX}/${CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageAWBDetail!.wtExp!)} kg",
+                                text: "${widget.damageDetailsModel!.damageAWBDetail!.nOP}/${CommonUtils.formateToTwoDecimalPlacesValue(widget.damageDetailsModel!.damageAWBDetail!.weight!)} kg",
                                 fontColor: MyColor.textColorGrey3,
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
                                 fontWeight: FontWeight.w800,
