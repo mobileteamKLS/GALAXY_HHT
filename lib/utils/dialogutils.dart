@@ -188,7 +188,7 @@ class DialogUtils {
     return formattedMessage;
   }
 
-  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo, int uldProgress, String bdEndStatus) {
+  static Future<bool?> showULDBDCompleteDialog(BuildContext context, LableModel lableModel, String uldNo, int uldProgress, String bdEndStatus, int shipmentList) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -199,7 +199,27 @@ class DialogUtils {
           backgroundColor: MyColor.colorWhite,
           title: CustomeText(text: "${lableModel.breakdown}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
-          content: CustomeText(text: (bdEndStatus == "Y") ? "${lableModel.breakdownAlreadyCompleted}" : (uldNo.contains("BULK")) ? formatMessage(lableModel.breakdownMsgBulk!, [uldNo]) : formatMessage(lableModel.breakdownMsgUld!, [uldNo]),fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              Container(
+                padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                decoration : BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: (shipmentList != 0)
+                      ? MyColor.lightYeloPendingColor
+                      : MyColor.flightFinalize
+                ),
+                child: CustomeText(text: (shipmentList != 0) ? "$shipmentList shipment(s) pending" : "No shipments pending",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w500),
+              ),
+
+
+              const SizedBox(height: 10,),
+              CustomeText(text: (bdEndStatus == "Y") ? "${lableModel.breakdownAlreadyCompleted}" : (uldNo.contains("BULK")) ? formatMessage(lableModel.breakdownMsgBulk!, [uldNo]) : formatMessage(lableModel.breakdownMsgUld!, [uldNo]),fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+            ],
+          ),
           actions: <Widget>[
             InkWell(
                 onTap: () {
@@ -254,7 +274,47 @@ class DialogUtils {
     );
   }
 
+  static Future<bool?> showExpectedPiecesDialog(BuildContext context, LableModel lableModel, int enterpieces, int npxpieces) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
 
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: "Excess pieces",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomeText(text: "Received pieces ${enterpieces} would be more than expected pieces ${npxpieces}.",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+              SizedBox(height: 10,),
+              CustomeText(text: "Do you want to breakdown pieces ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w500),
+
+            ],
+          ),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
 
   static Future<bool?> showingActivateTimerDialog(BuildContext context, String userId, int companyCode){
     TextEditingController mPinController = TextEditingController();
@@ -407,8 +467,6 @@ class DialogUtils {
     );
   }
 
-
-
   static void showDataNotFoundDialog(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -487,8 +545,6 @@ class DialogUtils {
       },
     );
   }
-
-
 
   static Future<Map<String, String?>> showSortRangeDialog(BuildContext context, LableModel lableModel) async {
 

@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/language/appLocalizations.dart';
 import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/language/model/subMenuModel.dart';
+import 'package:galaxy/module/profile/page/profilepagescreen.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenucubit.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenustate.dart';
 import 'package:galaxy/utils/commonutils.dart';
@@ -170,6 +171,12 @@ class _SubMenuPageState extends State<SubMenuPage> {
                   MainHeadingWidget(mainMenuName: "${subMenuModelLang!.submenu}",
                     onDrawerIconTap: () {
                       _scaffoldKey.currentState?.openDrawer();
+                    },
+                    onUserProfileIconTap: () {
+                      _scaffoldKey.currentState?.closeDrawer();
+                      // navigate to profile picture
+                      inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
                     },
 
                   ),

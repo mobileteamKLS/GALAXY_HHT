@@ -881,20 +881,8 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                             labelText: "${lableModel.asPerDocumentKG}",
                             readOnly: (widget.pageView == 0) ? false : true,
                             onChanged: (value) {
+                              calculateDifference(lableModel);
 
-                              if (value.isEmpty) {
-                                setState(() {
-                                  actuleDifferenceWeight = 0.00;
-                                });
-                              }else{
-                                actualDocumentweightController.clear();
-                                setState(() {
-                                  actuleDifferenceWeight = 0.00;
-                                });
-                              }
-
-
-                           //   calculateDifference();
                             },
                             fillColor:  Colors.grey.shade100,
                             textInputType: TextInputType.number,
@@ -1085,7 +1073,12 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     double documentWeight = double.tryParse(documentweightController.text) ?? 0.0;
     double actualWeight = double.tryParse(actualDocumentweightController.text) ?? 0.0;
 
-    // If actual weight exceeds document weight, show snackbar and clear the text
+    setState(() {
+      actuleDifferenceWeight = documentWeight - actualWeight; // Calculate the difference
+    });
+
+
+   /* // If actual weight exceeds document weight, show snackbar and clear the text
     if (actualWeight > documentWeight) {
       SnackbarUtil.showSnackbar(context, "${lableModel.actualWtCannotGrtDocumentWt}", MyColor.colorRed, icon: FontAwesomeIcons.times);
       Vibration.vibrate(duration: 500);
@@ -1095,10 +1088,8 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
       });
 
     } else {
-      setState(() {
-        actuleDifferenceWeight = documentWeight - actualWeight; // Calculate the difference
-      });
-    }
+
+    }*/
   }
 
 

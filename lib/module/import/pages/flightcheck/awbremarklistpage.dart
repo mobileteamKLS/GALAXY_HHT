@@ -15,6 +15,7 @@ import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../onboarding/sizeconfig.dart';
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
@@ -98,6 +99,11 @@ class _AwbRemarkListpageState extends State<AwbRemarkListpage> {
             children: [
               MainHeadingWidget(mainMenuName: widget.mainMenuName,
                 onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                onUserProfileIconTap: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                  // navigate to profile picture
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                },
               ),
               Positioned(
                 top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,

@@ -35,6 +35,7 @@ import '../../../../widget/roundbutton.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
@@ -253,6 +254,12 @@ class _AddMailPageState extends State<AddMailPage> {
 
               MainHeadingWidget(mainMenuName: widget.mainMenuName,
                 onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                onUserProfileIconTap: () {
+                  _scaffoldKey.currentState?.closeDrawer();
+                  // navigate to profile picture
+                  inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                  Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                },
               ),
               Positioned(
                   top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,

@@ -30,6 +30,7 @@ import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../../widget/roundbutton.dart';
 import '../../../login/pages/signinscreenmethods.dart';
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
@@ -309,6 +310,16 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                     isBackPressed = true; // Set to true to avoid showing snackbar on back press
                     _scaffoldKey.currentState?.openDrawer();
                   },
+                    onUserProfileIconTap: () {
+                      isBackPressed = true; // Set to true to avoid showing snackbar on back press
+                      FocusScope.of(context).unfocus();
+                      groupIdFocusNode.unfocus();
+                      itemFocusNode.unfocus();
+                      _scaffoldKey.currentState?.closeDrawer();
+                      // navigate to profile picture
+                      inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                    },
 
                   /*  onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),*/
                   ),
@@ -411,11 +422,8 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
                                         },
                                         );
-                                        /*SnackbarUtil.showSnackbar(context, "${widget.lableModel!.recordNotFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.recordNotFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         Vibration.vibrate(duration: 500);
-                                        setState(() {
-
-                                        });*/
                                       }else{
                                         shipmentDamageListModel = state.shipmentDamageListModel;
                                         _resumeTimerOnInteraction();
@@ -1388,6 +1396,11 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
     if(groupcodeScanResult == "-1"){
 
     }else{
+
+      setState(() {
+
+      });
+
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
 
       if(specialCharAllow == true){
@@ -1399,15 +1412,11 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
         });
 
         shipmentDamageListModel = null;
-        setState(() {
 
-        });
 
       }else {
         shipmentDamageListModel = null;
-        setState(() {
 
-        });
         String result = groupcodeScanResult.replaceAll(" ", "");
 
         String truncatedResult = result.length > groupIDCharSize
@@ -1438,6 +1447,9 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
   }
 
   Future<void> scanAWBQR(LableModel lableModel) async {
+
+
+
     String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scanner overlay
       'Cancel', // Text for the cancel button
@@ -1448,8 +1460,76 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
     if(barcodeScanResult == "-1"){
     }else{
 
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
 
 
+      if(specialCharAllow == true){
+        groupIdController.clear();
+        shipmentDamageListModel = null;
+        setState(() {
+
+        });
+        SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(groupIdFocusNode);
+        });
+      }else{
+
+        if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
+          groupIdController.clear();
+          shipmentDamageListModel = null;
+          setState(() {
+
+          });
+          // Show invalid message if alphabet characters are present
+          SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+          Vibration.vibrate(duration: 500);
+
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(groupIdFocusNode);
+          });
+        } else {
+          String result = barcodeScanResult.replaceAll(" ", "");
+          String truncatedResult = result.length > 11
+              ? result.substring(0, 11)
+              : result;
+
+          groupIdController.text = truncatedResult.toString();
+          if (groupIdController.text.length != 11) {
+            openValidationDialog(CommonUtils.formatMessage("${lableModel.awbCharSizeMsg}", ["11"]), groupIdFocusNode);
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              FocusScope.of(context).requestFocus(groupIdFocusNode);
+            });
+          }
+          else{
+            await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
+                groupIdController.text,
+                searchByGroupOrAWB,
+                _user!.userProfile!.userIdentity!,
+                _splashDefaultData!.companyCode!,
+                widget.menuId);
+          }
+        }
+
+
+
+
+      }
+
+
+    }
+
+    /*    String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Color for the scanner overlay
+      'Cancel', // Text for the cancel button
+      true, // Enable flash option
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    if(barcodeScanResult == "-1"){
+    }
+    else{
       if(RegExp(r'^[0-9]+$').hasMatch(barcodeScanResult)){
         String result = barcodeScanResult.replaceAll(" ", "");
         String truncatedResult = result.length > 11
@@ -1473,7 +1553,8 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
               _splashDefaultData!.companyCode!,
               widget.menuId);
         }
-      }else{
+      }
+      else{
         groupIdController.clear();
         // Show invalid message if alphabet characters are present
         SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -1486,62 +1567,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
           FocusScope.of(context).requestFocus(groupIdFocusNode);
         });
       }
-
-
-     /* bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
-
-
-      if(specialCharAllow == true){
-        groupIdController.clear();
-        SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-        Vibration.vibrate(duration: 500);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(groupIdFocusNode);
-        });
-      }
-      else{
-
-        if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
-          groupIdController.clear();
-          // Show invalid message if alphabet characters are present
-          SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-          Vibration.vibrate(duration: 500);
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            FocusScope.of(context).requestFocus(groupIdFocusNode);
-          });
-        } else {
-          String result = barcodeScanResult.replaceAll(" ", "");
-          String truncatedResult = result.length > 11
-              ? result.substring(0, 11)
-              : result;
-
-          groupIdController.text = truncatedResult.toString();
-
-          if (groupIdController.text.length != 11) {
-            openValidationDialog(CommonUtils.formatMessage("${lableModel.awbCharSizeMsg}", ["11"]), groupIdFocusNode);
-
-          }
-          else{
-            await context.read<ShipmentDamageCubit>().getShipmentDamageDetailListApi(
-                groupIdController.text,
-                searchByGroupOrAWB,
-                _user!.userProfile!.userIdentity!,
-                _splashDefaultData!.companyCode!,
-                widget.menuId);
-          }
-
-
-
-        }
-
-
-
-
-      }*/
-
-
-    }
+    }*/
   }
 
 

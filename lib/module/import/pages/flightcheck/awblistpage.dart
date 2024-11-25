@@ -39,6 +39,7 @@ import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
@@ -95,6 +96,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
   List<FlightCheckInAWBBDList> awbItemList = [];
   List<FlightCheckInAWBBDList> filterAWBDetailsList = [];
+
+  static int COUNTSHIPMENT = 0;
 
   AWBModel? awbModel;
   int uldProgress = 0;
@@ -188,7 +191,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
     print("ULD_PROGRSS == ${uldProgress}");
 
     if(widget.bDEndStatus == "N"){
-      bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress, widget.bDEndStatus);
+
+      bool? exitConfirmed = await DialogUtils.showULDBDCompleteDialog(context, widget.lableModel, widget.uldNo, uldProgress, widget.bDEndStatus, COUNTSHIPMENT);
       if (exitConfirmed == true) {
         bool hasIncompleteAWB = false;
 
@@ -225,7 +229,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
       else {
         Navigator.pop(context, "Done");
       }
-    }else{
+
+
+    }
+    else{
       Navigator.pop(context, "Done");
     }
 
@@ -289,6 +296,12 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                 children: [
                   MainHeadingWidget(mainMenuName: widget.mainMenuName,
                     onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                    onUserProfileIconTap: () {
+                      _scaffoldKey.currentState?.closeDrawer();
+                      // navigate to profile picture
+                      inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                    },
                   ),
                   Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
@@ -354,6 +367,11 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                     awbItemList = List.from(awbModel!.flightCheckInAWBBDList != null ? awbModel!.flightCheckInAWBBDList! : []);
+
+                                    if(_isOpenULDFlagEnable == false){
+                                      COUNTSHIPMENT = awbItemList.length;
+                                    }
+
 
                                     filterAWBDetailsList = List.from(awbItemList);
                                     filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
@@ -2098,6 +2116,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
   Future<void> scanQR(LableModel lableModel) async {
+
+
     String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scanner overlay
       'Cancel', // Text for the cancel button

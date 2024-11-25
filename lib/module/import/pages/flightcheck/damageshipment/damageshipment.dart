@@ -35,6 +35,7 @@ import '../../../../login/pages/signinscreenmethods.dart';
 
 import '../../../../onboarding/sizeconfig.dart';
 
+import '../../../../profile/page/profilepagescreen.dart';
 import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../../submenu/model/submenumodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
@@ -569,6 +570,12 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
 
                     MainHeadingWidget(mainMenuName: "${widget.mainMenuName}",
                       onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                      onUserProfileIconTap: () {
+                        _scaffoldKey.currentState?.closeDrawer();
+                        // navigate to profile picture
+                        inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                        Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                      },
                     ),
 
                     BlocListener<FlightCheckCubit, FlightCheckState>(
@@ -583,7 +590,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
                             SnackbarUtil.showSnackbar(context, state.damageDetailsModel.statusMessage!, MyColor.textColor, icon: FontAwesomeIcons.times);
                           }else{
                             damageDetailsModel = state.damageDetailsModel;
-                            CommonUtils.REMARKS = damageDetailsModel!.damageDetail!.remark!;
+                            CommonUtils.REMARKS = (damageDetailsModel!.damageDetail!.remark == null) ? "" :damageDetailsModel!.damageDetail!.remark!;
                             setState(() {
 
                             });

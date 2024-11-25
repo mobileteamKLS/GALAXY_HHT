@@ -36,6 +36,7 @@ import '../../../../widget/roundbutton.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/flightcheck/awblistmodel.dart';
@@ -224,6 +225,12 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
                 MainHeadingWidget(mainMenuName: widget.mainMenuName,
                   onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                  onUserProfileIconTap: () {
+                    _scaffoldKey.currentState?.closeDrawer();
+                    // navigate to profile picture
+                    inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                  },
                 ),
                 Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
@@ -799,7 +806,28 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
                                                       }
 
-                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                      if(int.parse(piecesController.text) > widget.aWBItem.nPX!){
+                                                        bool? confirm = await DialogUtils.showExpectedPiecesDialog(context, lableModel, int.parse(piecesController.text), widget.aWBItem.nPX!);
+
+                                                        if(confirm == true){
+                                                          context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                        }else{
+                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                            FocusScope.of(context).requestFocus(piecesFocusNode);
+                                                          });
+                                                          _resumeTimerOnInteraction();
+                                                        }
+
+                                                      }else{
+                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }
+
+
+
+
+
 
                                                     }
                                                     else{
@@ -874,7 +902,27 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
                                                       }
 
-                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      if(int.parse(piecesController.text) > widget.aWBItem.nPX!){
+                                                        bool? confirm = await DialogUtils.showExpectedPiecesDialog(context, lableModel, int.parse(piecesController.text), widget.aWBItem.nPX!);
+
+                                                        if(confirm == true){
+                                                          context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                        }else{
+                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                            FocusScope.of(context).requestFocus(piecesFocusNode);
+                                                          });
+                                                          _resumeTimerOnInteraction();
+                                                        }
+
+                                                      }else{
+                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }
+
+
+
 
                                                     }
                                                     else{

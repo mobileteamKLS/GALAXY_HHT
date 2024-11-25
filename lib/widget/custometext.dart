@@ -12,7 +12,7 @@ class CustomeText extends StatefulWidget {
   final TextDecoration textDecoration;
   int? maxLine;
 
-  CustomeText({super.key, required this.text, required this.fontColor, required this.fontSize, required this.fontWeight, required this.textAlign, this.textDirection, this.textDecoration = TextDecoration.none, this.maxLine = 2});
+  CustomeText({super.key, required this.text, required this.fontColor, required this.fontSize, required this.fontWeight, required this.textAlign, this.textDirection, this.textDecoration = TextDecoration.none, this.maxLine = 3});
 
   @override
   State<CustomeText> createState() => _CustomeTextState();

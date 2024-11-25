@@ -35,6 +35,7 @@ import '../../../../widget/customeuiwidgets/enlargedbinaryimagescreen.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../login/pages/signinscreenmethods.dart';
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../onboarding/sizeconfig.dart';
 import '../../../login/model/userlogindatamodel.dart';
@@ -224,6 +225,12 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                         children: [
                           MainHeadingWidget(mainMenuName: widget.mainMenuName!,
                             onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                            onUserProfileIconTap: () {
+                              _scaffoldKey.currentState?.closeDrawer();
+                              // navigate to profile picture
+                              inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                              Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                            },
                           ),
                           Positioned(
                             top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,

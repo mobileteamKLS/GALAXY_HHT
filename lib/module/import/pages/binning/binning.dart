@@ -29,6 +29,7 @@ import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../../widget/roundbutton.dart';
 import '../../../login/pages/signinscreenmethods.dart';
+import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
@@ -324,6 +325,15 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                     isBackPressed = true; // Set to true to avoid showing snackbar on back press
                     _scaffoldKey.currentState?.openDrawer();
                   },
+                    onUserProfileIconTap: () {
+                      isBackPressed = true; // Set to true to avoid showing snackbar on back press
+                      FocusScope.of(context).unfocus();
+                      groupIdFocusNode.unfocus();
+                      _scaffoldKey.currentState?.closeDrawer();
+                      // navigate to profile picture
+                      inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                      Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                    },
 
                   /*  onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),*/
                   ),

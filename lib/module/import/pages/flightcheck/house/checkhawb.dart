@@ -33,6 +33,7 @@ import '../../../../../widget/header/mainheadingwidget.dart';
 import '../../../../login/model/userlogindatamodel.dart';
 import '../../../../login/pages/signinscreenmethods.dart';
 import '../../../../onboarding/sizeconfig.dart';
+import '../../../../profile/page/profilepagescreen.dart';
 import '../../../../splash/model/splashdefaultmodel.dart';
 import '../../../../submenu/model/submenumodel.dart';
 import '../../../model/flightcheck/awblistmodel.dart';
@@ -229,6 +230,12 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                 MainHeadingWidget(mainMenuName: widget.mainMenuName,
                   onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
+                  onUserProfileIconTap: () {
+                    _scaffoldKey.currentState?.closeDrawer();
+                    // navigate to profile picture
+                    inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
+                    Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                  },
                 ),
                 Positioned(
                     top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
@@ -809,7 +816,26 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                       Clicks = "D";
 
-                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      if(int.parse(piecesController.text) > widget.haWBItem.nPX!){
+                                                        bool? confirm = await DialogUtils.showExpectedPiecesDialog(context, lableModel, int.parse(piecesController.text), widget.haWBItem.nPX!);
+
+                                                        if(confirm == true){
+                                                          context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                        }else{
+                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                            FocusScope.of(context).requestFocus(piecesFocusNode);
+                                                          });
+                                                          _resumeTimerOnInteraction();
+                                                        }
+
+                                                      }else{
+                                                          context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }
+
+
 
                                                     }
                                                     else{
@@ -1014,7 +1040,25 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
 
                                                       Clicks = "S";
 
-                                                      context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                      if(int.parse(piecesController.text) > widget.haWBItem.nPX!){
+                                                        bool? confirm = await DialogUtils.showExpectedPiecesDialog(context, lableModel, int.parse(piecesController.text), widget.haWBItem.nPX!);
+
+                                                        if(confirm == true){
+                                                          context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                        }else{
+                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                            FocusScope.of(context).requestFocus(piecesFocusNode);
+                                                          });
+                                                          _resumeTimerOnInteraction();
+                                                        }
+
+                                                      }else{
+                                                        context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, hawbId, int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      }
+
+
 
                                                     }
                                                     else{

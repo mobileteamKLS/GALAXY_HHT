@@ -12,7 +12,7 @@
     "trollyFBT" : "Accept 1st BT",
     "trollyLBT" : "Accept Last BT",
 
-    "emptyULDMessage" : "Do you want to accept empty ULD ?",
+    "emptyULDMessage" : "Do you want to accept empty ULD?",
     "yes" : "Yes",
     "no" : "No",
 
@@ -70,7 +70,7 @@
     "entertrollyTypeMsg" : "Please enter trolley type.",
 
     "lastBTConfirm" : "Last BT Confirmation.",
-    "lastBTMsg" : "Are you sure want to accept Last BT ?",
+    "lastBTMsg" : "Are you sure want to accept Last BT?",
     "ok": "Ok",
     "cancel" : "Cancel",
 
@@ -104,7 +104,7 @@
     "time" : "Time",
     "recordata" : "Record ATA",
     "finalizeflight" : "Finalize Flight",
-    "finalizeflightMsg" : "Do you want Flight Finalized ?",
+    "finalizeflightMsg" : "Do you want Flight Finalized?",
     "totalshipments" : "Total Shipments",
     "pieces" : "Pieces",
     "weight" : "Weight",
@@ -221,8 +221,8 @@
     "onlyAlphaNumericValueMsg" : "Only alphanumeric characters are accepted.",
 
     "breakdown" : "Breakdown",
-    "breakdownMsgUld" : "Are you sure you want to complete ULD {0} breakdown ?",
-    "breakdownMsgBulk" : "Are you sure you want to complete {0} breakdown ?",
+    "breakdownMsgUld" : "Are you sure you want to complete ULD {0} breakdown?",
+    "breakdownMsgBulk" : "Are you sure you want to complete {0} breakdown?",
     "noShipmentFound" : "No shipment found.",
     "invalidAWBNo" : "Invalid AWB No.",
     "breakdownAlreadyCompleted" : "Breakdown already completed.",
@@ -260,7 +260,7 @@
 
     "revoke" : "Revoke",
     "revokeDamage" : "Revoke damage",
-    "revokeDamageMsg" : "Are you sure you want revoke damage ?",
+    "revokeDamageMsg" : "Are you sure you want revoke damage?",
 
 
 
