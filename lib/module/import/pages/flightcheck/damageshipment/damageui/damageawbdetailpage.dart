@@ -271,9 +271,18 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
             clearText: (widget.pageView == 0) ? "${lableModel.clear}" : "",
             onClear: () {
               selectedDiscrepancy = typesOfDiscrepancy[0];
+
               documentweightController.clear();
               actualDocumentweightController.clear();
               actuleDifferenceWeight = 0.00;
+              nopController.clear();
+              weightController.clear();
+
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                FocusScope.of(context).requestFocus(nopFocusNode);
+              });
+
+
 
               /*nopController.text = "${widget.damageNop}";
               weightController.text = widget.damageWt.toStringAsFixed(2);
@@ -285,16 +294,17 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
               totalDamageWt = (double.parse("${widget.damageWt}") + double.parse("${widget.enterDamageWt}"));
 */
 
-              totalDamageNop =  int.parse("${widget.enterDamageNop}");
-              totalDamageWt =  double.parse("${widget.enterDamageWt}");
+
+              totalDamageNop = int.parse("${widget.enterDamageNop}");
+              totalDamageWt = double.parse("${widget.enterDamageWt}");
 
 
 
-              nopController.text = totalDamageNop.toString();
-              weightController.text = totalDamageWt.toStringAsFixed(2);
+            /*  nopController.text = totalDamageNop.toString();
+              weightController.text = totalDamageWt.toStringAsFixed(2);*/
 
-              differenceNpx = npx - totalDamageNop;
-              differenceWeight = weight - totalDamageWt;
+              differenceNpx = npx - 0;
+              differenceWeight = weight - 0.00;
 
               if(nopController.text.contains("0")){
                 nopController.clear();
@@ -657,7 +667,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           //  showSnackBar(context, "Entered pieces exceed the limit!");
                                           //  nopController.clear(); // Clear the TextField
                                           setState(() {
-                                            differenceNpx = 0;
+                                            differenceNpx = npx - enteredNpx; // Calculate difference
                                           });
                                         }
                                         else {
@@ -677,7 +687,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           //  showSnackBar(context, "Entered pieces exceed the limit!");
                                           //  nopController.clear(); // Clear the TextField
                                           setState(() {
-                                            differenceNpx = 0;
+                                            differenceNpx = npx - enteredNpx; // Calculate difference
                                           });
                                         }
                                         else {
@@ -747,7 +757,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "${weight}"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weight"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //weightController.clear(); // Clear the TextField
                                           setState(() {
                                             differenceWeight = weight - enteredWeight;
@@ -764,7 +774,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
-                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weightRec"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           //weightController.clear(); // Clear the TextField
                                           setState(() {
                                             differenceWeight = weight - enteredWeight;
@@ -1022,7 +1032,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   FocusScope.of(context).requestFocus(weightFocusNode);
                 });
-                SnackbarUtil.showSnackbar(context,  CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weightRec"]) , MyColor.colorRed, icon: FontAwesomeIcons.times);
+                SnackbarUtil.showSnackbar(context,  CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]) , MyColor.colorRed, icon: FontAwesomeIcons.times);
                 //weightController.clear(); // Clear the TextField
                return;
               }
@@ -1160,7 +1170,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weight"]),
+          CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weight"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
@@ -1178,7 +1188,7 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
         });
         SnackbarUtil.showSnackbar(
           context,
-          CommonUtils.formatMessage("${lableModel.damagePcsGrtMsg}", ["$enteredWeight", "$weightRec"]),
+          CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$weightRec"]),
           MyColor.colorRed,
           icon: FontAwesomeIcons.times,
         );
