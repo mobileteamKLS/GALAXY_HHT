@@ -246,6 +246,11 @@ class LableModel {
   String? revoke;
   String? revokeDamage;
   String? revokeDamageMsg;
+  String? pendingShipmentMsg;
+  String? noPendingShipmentMsg;
+  String? excessPieces;
+  String? receivesPiecesMsg;
+  String? breakdownPiecesMsg;
 
   String? s9;
   String? s10;
@@ -723,6 +728,11 @@ class LableModel {
         this.revoke,
         this.revokeDamage,
         this.revokeDamageMsg,
+        this.pendingShipmentMsg,
+        this.noPendingShipmentMsg,
+        this.excessPieces,
+        this.receivesPiecesMsg,
+        this.breakdownPiecesMsg,
 
         this.cLT,
         this.cRB,
@@ -1171,6 +1181,11 @@ class LableModel {
     revoke = json['revoke'];
     revokeDamage = json['revokeDamage'];
     revokeDamageMsg = json['revokeDamageMsg'];
+    pendingShipmentMsg = json['pendingShipmentMsg'];
+    noPendingShipmentMsg = json['noPendingShipmentMsg'];
+    excessPieces = json['excessPieces'];
+    receivesPiecesMsg = json['receivesPiecesMsg'];
+    breakdownPiecesMsg = json['breakdownPiecesMsg'];
 
     cLT = json['CLT'];
     cRB = json['CRB'];
@@ -1619,6 +1634,11 @@ class LableModel {
     data['revoke'] = this.revoke;
     data['revokeDamage'] = this.revokeDamage;
     data['revokeDamageMsg'] = this.revokeDamageMsg;
+    data['pendingShipmentMsg'] = this.pendingShipmentMsg;
+    data['noPendingShipmentMsg'] = this.noPendingShipmentMsg;
+    data['excessPieces'] = this.excessPieces;
+    data['receivesPiecesMsg'] = this.receivesPiecesMsg;
+    data['breakdownPiecesMsg'] = this.breakdownPiecesMsg;
 
     data['CLT'] = this.cLT;
     data['CRB'] = this.cRB;

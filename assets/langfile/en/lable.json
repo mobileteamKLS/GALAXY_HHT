@@ -258,9 +258,17 @@
     "damageWeightGrtMsg" : "Damage weight {0} cannot be greater than Shipment Rcvd weight - {1}",
     "actualWtCannotGrtDocumentWt" : "Actual weight cannot be greater than document weight.",
 
+
+    "pendingShipmentMsg" : "{0} shipment(s) pending",
+    "noPendingShipmentMsg" : "No shipments pending",
+
     "revoke" : "Revoke",
     "revokeDamage" : "Revoke damage",
     "revokeDamageMsg" : "Are you sure you want revoke damage?",
+
+    "excessPieces" : "Excess pieces",
+    "receivesPiecesMsg" : "Received pieces {0} would be more than expected pieces {1}.",
+    "breakdownPiecesMsg" : "Do you want to breakdown pieces?",
 
 
 

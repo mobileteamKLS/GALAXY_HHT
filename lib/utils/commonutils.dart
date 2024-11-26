@@ -1,7 +1,6 @@
 
 import 'package:flutter/cupertino.dart';
 
-import '../module/import/model/flightcheck/damagedetailmodel.dart';
 
 class CommonUtils{
 

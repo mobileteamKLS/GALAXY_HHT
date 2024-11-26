@@ -807,32 +807,56 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                 children: [
                                                                                   Row(
                                                                                     children: [
-                                                                                      CustomeText(text: (searchByGroupOrAWB == "G") ? AwbFormateNumberUtils.formatAWBNumber(damageDetailList.aWBNo!) : damageDetailList.groupId!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                                                                      SizedBox(width: 5,),
-                                                                                      (damageDetailList.damageNOP != 0)
-                                                                                          ? Padding(
-                                                                                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                                                                                        child: Row(
-                                                                                          children: [
-                                                                                            SvgPicture.asset(
-                                                                                              damageIcon,
-                                                                                              height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
-                                                                                            ),
-                                                                                            SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                                                                            CustomeText(
-                                                                                              text: "DMG",
-                                                                                              fontColor: MyColor.colorRed,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                              textAlign: TextAlign.start,
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ) : SizedBox(),
-
+                                                                                      CustomeText(
+                                                                                        text: "${damageDetailList.flightNo}",
+                                                                                        fontColor: MyColor.colorBlack,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
+                                                                                      const SizedBox(width: 5),
+                                                                                      CustomeText(
+                                                                                        text: " ${damageDetailList.flightDate!.replaceAll(" ", "-")}",
+                                                                                        fontColor: MyColor.textColorGrey2,
+                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                        fontWeight: FontWeight.w600,
+                                                                                        textAlign: TextAlign.start,
+                                                                                      ),
                                                                                     ],
                                                                                   ),
-                                                                                  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? /*damageDetailList.houseNo!*/"House" : "", fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
+                                                                                  (damageDetailList.damageNOP != 0)
+                                                                                      ? Padding(
+                                                                                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        SvgPicture.asset(
+                                                                                          damageIcon,
+                                                                                          height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+                                                                                        ),
+                                                                                        SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                                                                        CustomeText(
+                                                                                          text: "DMG",
+                                                                                          fontColor: MyColor.colorRed,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
+                                                                                  ) : SizedBox(),
+                                                                                ],
+                                                                              ),
+                                                                              SizedBox(height: SizeConfig.blockSizeVertical * 0.8),
+                                                                              Row(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Row(
+                                                                                    children: [
+                                                                                      CustomeText(text: (searchByGroupOrAWB == "G") ? AwbFormateNumberUtils.formatAWBNumber(damageDetailList.aWBNo!) : damageDetailList.groupId!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                                                    ],
+                                                                                  ),
+                                                                                //  CustomeText(text: (damageDetailList.houseNo!.isNotEmpty) ? /*damageDetailList.houseNo!*/"House" : "", fontColor: MyColor.textColorGrey, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
+                                                                                  (damageDetailList.houseNo!.isNotEmpty) ? CustomeText(text: damageDetailList.houseNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.start) : SizedBox(),
 
                                                                                 ],
                                                                               ),
@@ -871,7 +895,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                   )
                                                                                       : SizedBox(),
 
-                                                                                  (damageDetailList.houseNo!.isNotEmpty) ? CustomeText(text: damageDetailList.houseNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start) : SizedBox(),
+                                                                                //  (damageDetailList.houseNo!.isNotEmpty) ? CustomeText(text: damageDetailList.houseNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start) : SizedBox(),
 
 
                                                                                 ],
@@ -1211,7 +1235,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                           color: MyColor.primaryColorblue,
                                                                                           horizontalPadding: 10,
                                                                                           verticalPadding: 3,
-                                                                                          text: "Revoke", press: () async {
+                                                                                          text: "${lableModel.revoke}", press: () async {
 
                                                                                           bool? exitConfirmed = await DialogUtils.showRevokeDialog(context, lableModel);
 

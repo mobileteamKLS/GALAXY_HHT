@@ -263,6 +263,14 @@
     "revokeDamage" : "إلغاء الضرر",
     "revokeDamageMsg" : "هل أنت متأكد أنك تريد إلغاء الضرر؟",
 
+    "pendingShipmentMsg" : ".{0} الشحنة (الشحنات) معلقة",
+    "noPendingShipmentMsg" : "لا توجد شحنات معلقة.",
+
+    "excessPieces" : "قطع زائدة",
+    "receivesPiecesMsg" : "ستكون القطع المستلمة {0} أكثر من القطع المتوقعة {1}.",
+    "breakdownPiecesMsg" : "هل تريد تفكيك القطع؟",
+
+
     "c" : "ج)",
     "packingDetails" : "تفاصيل التعبئة والتغليف",
     "9" : "9)",

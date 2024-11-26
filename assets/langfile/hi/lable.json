@@ -260,6 +260,14 @@
     "revokeDamage" : "क्षति वापस लें",
     "revokeDamageMsg" : "क्या आप वाकई क्षति रद्द करना चाहते हैं?",
 
+    "pendingShipmentMsg" : "{0} शिपमेंट लंबित है.",
+    "noPendingShipmentMsg" : "कोई शिपमेंट लंबित नहीं है.",
+
+    "excessPieces" : "अतिरिक्त टुकड़े",
+    "receivesPiecesMsg" : "प्राप्त टुकड़े {0} अपेक्षित टुकड़ों {1} से अधिक होंगे.",
+    "breakdownPiecesMsg" : "क्या आप टुकड़ों को तोड़ना चाहते हैं?",
+
+
     "c" : "सी)",
     "packingDetails" : "पैकिंग विवरण",
     "9" : "9)",

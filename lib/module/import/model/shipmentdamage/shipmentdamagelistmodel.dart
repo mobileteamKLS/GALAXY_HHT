@@ -30,6 +30,8 @@ class ShipmentDamageListModel {
 }
 
 class DamageDetailList {
+  String? flightNo;
+  String? flightDate;
   int? flightSeqNo;
   int? iMPAWBRowId;
   int? iMPShipRowId;
@@ -56,6 +58,8 @@ class DamageDetailList {
 
   DamageDetailList(
       {
+        this.flightNo,
+        this.flightDate,
         this.flightSeqNo,
         this.iMPAWBRowId,
         this.iMPShipRowId,
@@ -81,6 +85,8 @@ class DamageDetailList {
         this.volume});
 
   DamageDetailList.fromJson(Map<String, dynamic> json) {
+    flightNo = json['FlightNo'];
+    flightDate = json['FlightDate'];
     flightSeqNo = json['FlightSeqNo'];
     iMPAWBRowId = json['IMPAWBRowId'];
     iMPShipRowId = json['IMPShipRowId'];
@@ -108,6 +114,8 @@ class DamageDetailList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FlightNo'] = this.flightNo;
+    data['FlightDate'] = this.flightDate;
     data['FlightSeqNo'] = this.flightSeqNo;
     data['IMPAWBRowId'] = this.iMPAWBRowId;
     data['IMPShipRowId'] = this.iMPShipRowId;
