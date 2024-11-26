@@ -155,8 +155,8 @@ class RoundedIconButton extends StatelessWidget {
     return GestureDetector(
       onTap: () => _navigate(context),
       child: Container(
-        width: MediaQuery.sizeOf(context).width*0.22,
-        height:MediaQuery.sizeOf(context).height*0.18 ,
+        width: MediaQuery.sizeOf(context).width*0.29,
+        height:MediaQuery.sizeOf(context).height*0.22 ,
         decoration: BoxDecoration(
           color: containerColor,
           borderRadius: BorderRadius.circular(8.0),
@@ -179,12 +179,12 @@ class RoundedIconButton extends StatelessWidget {
             Icon(
               icon,
               color: iconColor,
-              size: 48,
+              size: 72,
             ),
             const SizedBox(height: 10),
             Text(
               text,
-              style: TextStyle(color: textColor, fontSize: 20),
+              style: TextStyle(color: textColor, fontSize: 32),
               textAlign: TextAlign.center,
             ),
           ],

@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,40 +7,48 @@ import '../../core/mycolor.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import 'ImportCreateShipment.dart';
+import 'ImportShipmentListing.dart';
+import 'createNewDo.dart';
 
-class ImportShipmentListing extends StatefulWidget {
-  const ImportShipmentListing({super.key});
+class WdoListing extends StatefulWidget {
+  const WdoListing({super.key});
 
   @override
-  State<ImportShipmentListing> createState() => _ImportShipmentListingState();
+  State<WdoListing> createState() => _WdoListingState();
 }
 
-class _ImportShipmentListingState extends State<ImportShipmentListing> {
-  final List<ShipmentDetails> shipmentDetailsListOld = [
-    ShipmentDetails(
+class _WdoListingState extends State<WdoListing> {
+  final List<WDOlistItem> shipmentDetailsListOld = [
+    WDOlistItem(
+        wdoNo: "2024080150007",
         awbNumber: "125-76676867",
-        mawbNumber: "MAWB01",
+        hawbNumber: "HAWB01",
         date: "16 SEP 2024 12:23",
-        declaredPcs: 12,
-        declaredWeight: 60.0,
-        unit: "Kg",
-        acceptedPcs: 24,
-        acceptedWeight: 17,
         awb: "AWB",
         shipmentType: "CONSOLE",
-        status: "CREATED"),
-    ShipmentDetails(
+        status: "CREATED",
+      customRefNo: 123654789,
+      deliveredNop: 10,
+      nop: 10,
+      flightDetails: "BA009/01 AUG 2024",
+      reWareHouse: "01 AUG 2024 21:00"
+    ),
+    WDOlistItem(
+      wdoNo: "2024080150007",
         awbNumber: "125-76676867",
-        mawbNumber: "MAWB02",
-        date: "17 SEP 2024 12:23",
-        declaredPcs: 12,
-        declaredWeight: 60.0,
-        unit: "Kg",
-        acceptedPcs: 24,
-        acceptedWeight: 17,
+        hawbNumber: "HAWB01",
+        date: "16 SEP 2024 12:23",
         awb: "AWB",
-        shipmentType: "DIRECT",
-        status: "PENDING"),
+        shipmentType: "CONSOLE",
+        status: "Generated",
+      customRefNo: 123654789,
+      deliveredNop: 10,
+      nop: 10,
+      flightDetails: "BA009/01 AUG 2024",
+      reWareHouse: "01 AUG 2024 21:00"
+    ),
+
+
   ];
   late List<ShipmentListDetails> shipmentListDetails=[];
   late List<ShipmentListDetails> shipmentListDetailsToBind=[];
@@ -54,63 +60,63 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
   @override
   void initState() {
     super.initState();
-    getShipmentListing();
+    // getShipmentListing();
   }
 
-  getShipmentListing() async {
-    if (isLoading) return;
-    shipmentListDetails = [];
-    shipmentListDetailsToBind = [];
-    setState(() {
-      isLoading = true;
-    });
-
-    var queryParams = {
-      "PageNo": 1,
-      "FilterClause": "1=1",
-      "OrderByClause": "1",
-      "AirportCode": "BLR",
-      "CompanyCode": 3,
-      "CultureCode": "en-US",
-      "UserId": 1,
-      "MenuId": 1
-    };
-    await authService
-        .postData(
-      "ShipmentCreation/GetShipmentList",
-      queryParams,
-    )
-        .then((response) {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-      List<dynamic> resp = jsonData['ShipmentDetailList'];
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      }
-      else{
-        hasNoRecord=false;
-      }
-      print("is empty record$hasNoRecord");
-      shipmentListDetailsToBind =
-          resp.map((json) => ShipmentListDetails.fromJSON(json)).toList();
-      print("length==  = ${shipmentListDetailsToBind.length}");
-      setState(() {
-        shipmentListDetails = shipmentListDetailsToBind;
-        // filteredList = listShipmentDetails;
-        print("length--  = ${shipmentListDetails.length}");
-        isLoading = false;
-
-      });
-    }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
-      print(onError);
-    });
-  }
+  // getShipmentListing() async {
+  //   if (isLoading) return;
+  //   shipmentListDetails = [];
+  //   shipmentListDetailsToBind = [];
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   var queryParams = {
+  //     "PageNo": 1,
+  //     "FilterClause": "1=1",
+  //     "OrderByClause": "1",
+  //     "AirportCode": "BLR",
+  //     "CompanyCode": 3,
+  //     "CultureCode": "en-US",
+  //     "UserId": 1,
+  //     "MenuId": 1
+  //   };
+  //   await authService
+  //       .postData(
+  //     "ShipmentCreation/GetShipmentList",
+  //     queryParams,
+  //   )
+  //       .then((response) {
+  //     print("data received ");
+  //     Map<String, dynamic> jsonData = json.decode(response.body);
+  //     List<dynamic> resp = jsonData['ShipmentDetailList'];
+  //     print(jsonData);
+  //     if (jsonData.isEmpty) {
+  //       setState(() {
+  //         hasNoRecord = true;
+  //       });
+  //     }
+  //     else{
+  //       hasNoRecord=false;
+  //     }
+  //     print("is empty record$hasNoRecord");
+  //     shipmentListDetailsToBind =
+  //         resp.map((json) => ShipmentListDetails.fromJSON(json)).toList();
+  //     print("length==  = ${shipmentListDetailsToBind.length}");
+  //     setState(() {
+  //       shipmentListDetails = shipmentListDetailsToBind;
+  //       // filteredList = listShipmentDetails;
+  //       print("length--  = ${shipmentListDetails.length}");
+  //       isLoading = false;
+  //
+  //     });
+  //   }).catchError((onError) {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //     print(onError);
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -161,7 +167,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 children: [
                   Padding(
                     padding:
-                        const EdgeInsets.only(top: 10, left: 20, right: 20),
+                    const EdgeInsets.only(top: 10, left: 20, right: 20),
                     child: Material(
                       color: Colors.transparent,
                       // Ensures background transparency
@@ -178,7 +184,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                 },
                               ),
                               const Text(
-                                '  SHIPMENT LIST',
+                                '  Warehouse Delivery Order List  ',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 22),
                               ),
@@ -262,14 +268,14 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                             const NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext, index) {
 
-                              ShipmentListDetails
+                              WDOlistItem
                               shipmentDetails =
-                              shipmentListDetails
+                              shipmentDetailsListOld
                                   .elementAt(index);
                               return buildShipmentCardV2(
                                   shipmentDetails);
                             },
-                            itemCount: shipmentListDetails.length,
+                            itemCount: shipmentDetailsListOld.length,
                             shrinkWrap: true,
                             padding: const EdgeInsets.all(2),
                           ),
@@ -319,7 +325,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
           data: ThemeData(useMaterial3: false),
           child: FloatingActionButton(
             onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_)=>CreateShipment()));
+              Navigator.push(context, MaterialPageRoute(builder: (_)=>CreateNewDO()));
             },
             backgroundColor: MyColor.primaryColorblue,
             child: const Icon(Icons.add),
@@ -371,7 +377,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
     );
   }
 
-  Widget buildShipmentCard(ShipmentListDetails shipment) {
+  Widget buildShipmentCardV2(WDOlistItem shipment) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -386,20 +392,16 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
             Row(
               children: [
                 Text(
-                  shipment.documentNo,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  shipment.wdoNo,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
-                buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
-                const SizedBox(width: 8),
-                buildLabel(shipment.houseNo==""?"DIRECT":"CONSOLE", Colors.white,8,isBorder: true,borderColor: Colors.grey),
-                const SizedBox(width: 16),
-                buildLabel(shipment.shipmentStatus, Colors.lightBlue,20),
+                buildLabel(shipment.status, Colors.lightBlue,20),
                 const SizedBox(width: 8),
                 Row(
                   children: [
                     Text(
-                      shipment.shipStatusDateTime,
+                      shipment.date,
                       style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(width: 8),
@@ -409,235 +411,141 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                     ),
                   ],
                 ),
-                const Spacer(),
-                Container(
-                  height: 30,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    gradient: const LinearGradient(
-                      colors: [
-                        Color(0xFF0057D8),
-                        Color(0xFF1c86ff),
-                      ],
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                    ),
-                  ),
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        shadowColor: Colors.transparent),
-                    onPressed: null,
-                    child: const Text(
-                      'Accept Shipment',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                  ),
+                const SizedBox(width: 32),
+                Text(
+                  shipment.awbNumber,
+                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
+                const SizedBox(width: 8),
+                buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
+                const SizedBox(width: 8),
+                buildLabel(shipment.hawbNumber==""?"DIRECT":"CONSOLE", Colors.white,8,isBorder: true,borderColor: Colors.grey),
+
+
+                // Container(
+                //   height: 30,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(8),
+                //     gradient: const LinearGradient(
+                //       colors: [
+                //         Color(0xFF0057D8),
+                //         Color(0xFF1c86ff),
+                //       ],
+                //       begin: Alignment.centerLeft,
+                //       end: Alignment.centerRight,
+                //     ),
+                //   ),
+                //   child: ElevatedButton(
+                //     style: ElevatedButton.styleFrom(
+                //         backgroundColor: Colors.transparent,
+                //         shadowColor: Colors.transparent),
+                //     onPressed: null,
+                //     child: const Text(
+                //       'Accept Shipment',
+                //       style: TextStyle(color: Colors.white),
+                //     ),
+                //   ),
+                // ),
 
 
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 20),
+
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
-                  children: [
-                    const Text("MAWB No: "),
-                    Text("MAWB1",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Row(
-                  children: [
-                    const Text("Declared PCS: "),
-                    Text("${shipment.awbPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Row(
-                  children: [
-                    const Text("Declared Weight: "),
-                    Text("${shipment.awbWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Row(
-                  children: [
-                    const Text("Unit: "),
-                    Text(shipment.weightUnit,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Row(
-                  children: [
-                    const Text("Accepted Pcs: "),
-                    Text(
-                      "${shipment.acceptedPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Row(
-                  children: [
-                    const Text("Accepted Wt: "),
-                    Text(
-                      "${shipment.acceptedWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                  ],
-                ),
-                const SizedBox(width: 12),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
-  Widget buildShipmentCardV2(ShipmentListDetails shipment) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  shipment.documentNo,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(width: 8),
-                buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
-                const SizedBox(width: 8),
-                buildLabel(shipment.houseNo==""?"DIRECT":"CONSOLE", Colors.white,8,isBorder: true,borderColor: Colors.grey),
-                const SizedBox(width: 20),
-                buildLabel(shipment.shipmentStatus, Colors.lightBlue,20),
-                const SizedBox(width: 8),
-                Row(
+                const SizedBox(width: 4),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      shipment.shipStatusDateTime,
-                      style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                    Row(
+                      children: [
+                        const Text("HAWB No: "),
+                        Text("${shipment.hawbNumber}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      ],
                     ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      Icons.info_outline_rounded,
-                      color: MyColor.primaryColorblue,
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        const Text("Custom Ref No.: "),
+                        Text("${shipment.customRefNo}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      ],
                     ),
                   ],
                 ),
-
-              ],
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width*0.5,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Row(
-                            children: [
-                              Text("HAWB No: "),
-                              Text("MAWB1",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Text("Unit: "),
-                              Text(shipment.weightUnit,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 32),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Text("Declared PCS: "),
-                              Text("${shipment.awbPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Text("Accepted Pcs: "),
-                              Text(
-                                "${shipment.acceptedPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(width: 32),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              const Text("Declared Weight: "),
-                              Text("${shipment.awbWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Text("Accepted Wt: "),
-                              Text(
-                                "${shipment.acceptedWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
-                        ],
-                      ),
-
-                    ],
-                  ),
+                const SizedBox(width: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text("NOP: "),
+                        Text("${shipment.nop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        const Text("Delivered NOP: "),
+                        Text("${shipment.deliveredNop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 128),
+                const SizedBox(width: 24),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        const Text("Flight Details: "),
+                        Text(shipment.flightDetails,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        const Text("Re Warehouse: "),
+                        Text(shipment.reWareHouse,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 64),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        Container(
-                          height: 30,
-                          margin: const EdgeInsets.only(right: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF0057D8),
-                                Color(0xFF1c86ff),
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent),
-                            onPressed: null,
-                            child: const Text(
-                              'Accepted Shipment',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                      Container(
+                        height: 30,
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF0057D8),
+                              Color(0xFF1c86ff),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
                           ),
                         ),
-                        const Icon(
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent),
+                          onPressed: null,
+                          child: const Text(
+                            'Released',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                        Icon(
                           Icons.more_vert_outlined,
                           color: MyColor.primaryColorblue,
                         ),
@@ -647,17 +555,19 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                             borderRadius: BorderRadius.circular(5),
                             color:Color(0xffF2F7FD),
                           ),
-                          child: const Icon(
+                          child: Icon(
                             size: 28,
-                            Icons.keyboard_arrow_right_outlined,
+                             Icons.keyboard_arrow_right_outlined,
                             color: MyColor.primaryColorblue,
                           ),
                         )
-                      ],)
+                    ],)
                   ],
                 )
+               
               ],
             ),
+
           ],
         ),
       ),
@@ -708,7 +618,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                     style: TextStyle(fontSize: 16),
                                   ),
                                   const SizedBox(height: 16),
-                                    Row(
+                                  Row(
                                     children: [
                                       SizedBox(
                                         height:
@@ -1037,7 +947,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
     showModalBottomSheet(
       context: context,
       constraints: BoxConstraints(
-       minWidth: double.infinity,
+        minWidth: double.infinity,
       ),
       isScrollControlled: true,
       backgroundColor: Colors.transparent, // Make background transparent to remove default padding
@@ -1176,11 +1086,12 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
     );
   }
 
+
   Widget buildLabel(
       String text, Color color, double radius,
       {bool isBorder = false, Color borderColor = Colors.black, double borderWidth = 1.0}) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(radius),
@@ -1195,161 +1106,32 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
 
 }
 
-class ShipmentDetailsList extends StatelessWidget {
-  final List<ShipmentDetails> shipmentDetailsList;
-
-  ShipmentDetailsList({required this.shipmentDetailsList});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: shipmentDetailsList.length,
-      itemBuilder: (context, index) {
-        final shipment = shipmentDetailsList[index];
-        return buildShipmentCard(shipment);
-      },
-    );
-  }
-
-  Widget buildShipmentCard(ShipmentDetails shipment) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      elevation: 3,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  shipment.awbNumber,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(width: 8),
-                _buildLabel("AWB", Colors.blueAccent),
-                SizedBox(width: 4),
-                _buildLabel("CONSOL", Colors.grey),
-                SizedBox(width: 4),
-                _buildLabel("CREATED", Colors.lightBlue),
-                Spacer(),
-                Text(
-                  shipment.date,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("MAWB No: ${shipment.mawbNumber}",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text("Declared PCS: ${shipment.declaredPcs}"),
-                Text("Declared Weight: ${shipment.declaredWeight}"),
-                Text("Unit: ${shipment.unit}"),
-                Text("Accepted Pcs: ${shipment.acceptedPcs}"),
-                Text("Accepted Wt: ${shipment.acceptedWeight}"),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabel(String text, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: color, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class ShipmentDetails {
+class WDOlistItem {
+  final String wdoNo;
   final String awbNumber;
-  final String mawbNumber;
+  final String hawbNumber;
   final String date;
-  final int declaredPcs;
-  final double declaredWeight;
-  final String unit;
-  final int acceptedPcs;
-  final int acceptedWeight;
+  final int nop;
+  final int deliveredNop;
+  final String flightDetails;
+  final int customRefNo;
+  final String reWareHouse;
   final String awb;
   final String shipmentType;
   final String status;
 
-  ShipmentDetails({
+  WDOlistItem({
+    required this.wdoNo,
     required this.awbNumber,
-    required this.mawbNumber,
+    required this.hawbNumber,
     required this.date,
-    required this.declaredPcs,
-    required this.declaredWeight,
-    required this.unit,
-    required this.acceptedPcs,
-    required this.acceptedWeight,
+    required this.nop,
+    required this.deliveredNop,
+    required this.flightDetails,
+    required this.customRefNo,
+    required this.reWareHouse,
     required this.awb,
     required this.shipmentType,
     required this.status,
   });
-}
-
-class AppBarPainterGradient extends CustomPainter {
-  @override
-  bool shouldRepaint(AppBarPainterGradient oldDelegate) => false;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Rect rect = Rect.fromLTWH(0.0, 0.0, size.width, size.height);
-    const Gradient gradient = LinearGradient(
-      colors: [
-        Color(0xff0060e6),
-        Color(0xFF1c86ff),
-      ],
-      begin: Alignment.centerLeft,
-      end: Alignment.centerRight,
-    );
-
-    Paint paint_1 = Paint()
-      ..shader = gradient.createShader(rect)
-      ..style = PaintingStyle.fill;
-
-    Path path_1 = Path()
-      ..moveTo(0, 0)
-      ..lineTo(size.width * 0.08, 0.0)
-      ..cubicTo(
-        size.width * 0.04,
-        0.0,
-        0.0,
-        0.00001 * (size.width),
-        0.0,
-        0.05 * size.width,
-      );
-
-    Path path_2 = Path()
-      ..moveTo(size.width, 0)
-      ..lineTo(size.width * 0.92, 0.0)
-      ..cubicTo(
-        size.width * 0.96,
-        0.0,
-        size.width,
-        0.00001 * size.width,
-        size.width,
-        0.05 * size.width,
-      );
-
-    canvas.drawPath(path_1, paint_1);
-    canvas.drawPath(path_2, paint_1);
-    // canvas.drawPath(path_3, paint_2);
-  }
 }

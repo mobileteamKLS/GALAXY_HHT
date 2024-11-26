@@ -66,7 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
               Timer(
                 const Duration(seconds: 3),
                     () => Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const IpadDashboard(),
+                  builder: (BuildContext context) => const SignInScreenMethod(),//SignInScreenMethod IpadDashboard
                 )),
               );
             }else{

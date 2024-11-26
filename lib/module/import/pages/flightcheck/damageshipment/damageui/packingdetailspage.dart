@@ -186,7 +186,7 @@ class _PackingDetailsPageState extends State<PackingDetailsPage> {
                                                 CircleAvatar(
                                                   radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                                   backgroundColor: backgroundColor,
-                                                  child: CustomeText(text: "${material.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                    child: CustomeText(text: "${material.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                                 ),
                                                 SizedBox(
                                                   width: 15,

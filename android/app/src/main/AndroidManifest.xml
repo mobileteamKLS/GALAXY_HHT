@@ -13,7 +13,7 @@
 
 
     <application
-        android:label="Galaxy"
+        android:label="WFS-CES"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -8,7 +8,7 @@ class AuthService{
     return fetchDataPOST(service, payload);
   }
   Future<Post> fetchDataPOST(apiName, payload) async {
-    var newURL = "https://galaxyqa.kalelogistics.com/GHAHHTAPI/api/$apiName";
+    var newURL = "https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName";
 
     // final headers = {
     //   'Content-Type': 'application/json',
@@ -65,6 +65,36 @@ class AuthService{
         return Post.fromJson(response.body, statusCode);
       });
     }
+  }
+
+  Future<Post> getData(service, payload) async {
+    print("payload $payload");
+    // Utils.printPrettyJson("encoded payload ${json.encode(payload)}");
+    return fetchDataGET(service, payload);
+  }
+  Future<Post> fetchDataGET(apiName, payload) async {
+    var newURL = "https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName";
+    print("fetch data for API = $newURL");
+    var url = Uri.parse(newURL);
+    url = Uri.https(url.authority, url.path, payload);
+    return await http.get(url,
+        headers: <String, String>{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        }).then((http.Response response) {
+
+      print(response.statusCode);
+
+      final int statusCode = response.statusCode;
+      if (statusCode == 401) {
+        return Post.fromJson(response.body, statusCode);
+      }
+      if (statusCode < 200 || statusCode > 400) {
+        return Post.fromJson(response.body, statusCode);
+      }
+      print("sending data to post");
+      return Post.fromJson(response.body, statusCode);
+    });
   }
 }
 

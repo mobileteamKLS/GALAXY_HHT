@@ -80,12 +80,24 @@ class _ShipmentAcceptanceState extends State<ShipmentAcceptance> {
               child:  SingleChildScrollView(
                 child: Column(
                   children: [
-                    const Row(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'Shipment Acceptance',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              child: const Icon(Icons.arrow_back_ios,
+                                  color: MyColor.primaryColorblue),
+                              onTap: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                            const Text(
+                              '  Shipment Acceptance',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 22),
+                            ),
+                          ],
                         ),
                       ],
                     ),

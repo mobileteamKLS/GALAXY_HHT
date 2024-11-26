@@ -10,10 +10,15 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/import/model/flightcheck/mailtypemodel.dart';
+import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/commonutils.dart';
+import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
+import '../../widget/custometext.dart';
 import '../auth/auth.dart';
+import '../modal/ShipmentAcceptanceModal.dart';
 import '../widget/customIpadTextfield.dart';
 import 'CaptureDamageAndAccept.dart';
 import 'ImportCreateShipment.dart';
@@ -29,9 +34,87 @@ class ShipmentAcceptanceManually extends StatefulWidget {
 
 class _ShipmentAcceptanceManuallyState
     extends State<ShipmentAcceptanceManually> {
+  final AuthService authService = AuthService();
+  bool isLoading = false;
+  bool hasNoRecord = false;
+  List<VCTItem> dropdownItems = [];
+  TextEditingController prefixController = TextEditingController();
+  TextEditingController awbController = TextEditingController();
+  TextEditingController houseController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+    awbSearch();
+  }
+  awbSearch() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    var queryParams = {
+      "AWBNo" :"12522110115",
+      "HAWBNo":"",
+      "AirportCode":"JFK",
+      "CompanyCode":"0",
+      "CultureCode":"en-US",
+      "UserId":"0",
+      "MenuId":"0"
+    };
+    await authService
+        .getData(
+      "ShipmentAcceptance/Search",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      }
+      else{
+        hasNoRecord=false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage'];
+
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        return;
+      }
+
+      List<VCTItem> dropdownItems = [];
+      if (jsonData['VCTList'] != null) {
+        dropdownItems = (jsonData['VCTList'] as List)
+            .where((item) => item['Type'] == 'H')
+            .map((item) => VCTItem.fromJson(item))
+            .toList();
+      }
+      VCTMasterDataForDamage? masterDataForDamage;
+      if (jsonData['VCTMasterDataForDamage'] != null) {
+        masterDataForDamage = VCTMasterDataForDamage.fromJson(jsonData['VCTMasterDataForDamage']);
+      }
+
+      print("Dropdown Items: ${dropdownItems.map((e) => '${e.consignmentRowId} - ${e.houseNo}').toList()}");
+      print("Master Data: ${masterDataForDamage?.documentNo}");
+
+      setState(() {
+        isLoading = false;
+
+      });
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
   }
 
   @override
@@ -80,7 +163,7 @@ class _ShipmentAcceptanceManuallyState
               constraints: const BoxConstraints.expand(),
               color: MyColor.screenBgColor,
               child: Padding(
-                padding: EdgeInsets.only(top: 20, left: 20, right: 20),
+                padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                 child: Material(
                   color: Colors.transparent,
                   // Ensures background transparency
@@ -88,12 +171,24 @@ class _ShipmentAcceptanceManuallyState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              'Booking Creation',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            Row(
+                              children: [
+                                GestureDetector(
+                                  child: const Icon(Icons.arrow_back_ios,
+                                      color: MyColor.primaryColorblue),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                const Text(
+                                  '  Shipment Acceptance',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold, fontSize: 22),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -160,7 +255,9 @@ class _ShipmentAcceptanceManuallyState
                                                         TextInputType.number,
                                                     fontSize: 18,
                                                     onChanged:
-                                                        (String, bool) {},
+                                                        (String, bool) {
+
+                                                        },
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -174,7 +271,7 @@ class _ShipmentAcceptanceManuallyState
                                                   width:
                                                       MediaQuery.sizeOf(context)
                                                               .width *
-                                                          0.32,
+                                                          0.26,
                                                   child:
                                                       CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -186,12 +283,24 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "AWB No*",
                                                     readOnly: false,
+                                                    controller: awbController,
                                                     maxLength: 8,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
                                                   ),
-                                                )
+                                                ),
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQRAWB(false);
+                                                  },
+                                                  child: Padding(padding: const EdgeInsets.all(2.0),
+                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -199,17 +308,46 @@ class _ShipmentAcceptanceManuallyState
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "HAWB No*",
-                                              readOnly: false,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  height:
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
+                                                  width:
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.38,
+                                                  child:
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    textInputType:
+                                                    TextInputType.number,
+                                                    needOutlineBorder: true,
+                                                    labelText: "HAWB No*",
+                                                    readOnly: false,
+                                                    maxLength: 8,
+                                                    fontSize: 18,
+                                                    onChanged:
+                                                        (String, bool) {},
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQRAWB(true);
+                                                  },
+                                                  child: Padding(padding: const EdgeInsets.all(2.0),
+                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -403,9 +541,9 @@ class _ShipmentAcceptanceManuallyState
                                             MediaQuery.sizeOf(context).height *
                                                 0.02,
                                       ),
-                                      Row(
+                                      const Row(
                                         children: [
-                                          const Text("   CAPTURE RECEIVED SHIPMENT",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16)),
+                                          Text("   CAPTURE RECEIVED SHIPMENT",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16)),
                                         ],
                                       ),
                                       SizedBox(
@@ -547,69 +685,69 @@ class _ShipmentAcceptanceManuallyState
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 0.015,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 2,
-                                blurRadius: 8,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text("  Part Shipment History",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16),),
-                                SizedBox(height: 10,),
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  color: Color(0xffE4E7EB),
-                                  padding: EdgeInsets.all(2.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      columns: const [
-                                        DataColumn(label: Text('Received NoP')),
-                                        DataColumn(label: Text('Received Weight')),
-                                        DataColumn(label: Text('Unit')),
-                                        DataColumn(label: Text('Accepted By')),
-                                        DataColumn(label: Text('Accepted On')),
-                                        DataColumn(label: Text('Group ID')),
-                                      ],
-                                      rows: const [
-                                        DataRow(cells: [
-                                          DataCell(Text('10')),
-                                          DataCell(Text('1000.00')),
-                                          DataCell(Text('KG')),
-                                          DataCell(Text('-')), // Assuming "-" for empty cells
-                                          DataCell(Text('01 AUG 2024 09:30')),
-                                          DataCell(Text('-')), // Assuming "-" for empty cells
-                                        ]),
-                                      ],
-                                      headingRowColor:
-                                      WidgetStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
-                                      dataRowColor:  WidgetStateProperty.resolveWith((states) => Color(0xfffafafa)),
-                                      columnSpacing: 64.0,
-                                      dataRowHeight: 48.0,
-
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: MediaQuery.sizeOf(context).height * 0.015,
+                        // ),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(12.0),
+                        //     color: Colors.white,
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Colors.black.withOpacity(0.1),
+                        //         spreadRadius: 2,
+                        //         blurRadius: 8,
+                        //         offset: const Offset(
+                        //             0, 3), // changes position of shadow
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.symmetric(
+                        //         vertical: 14, horizontal: 10),
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         const Text("  Part Shipment History",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16),),
+                        //         SizedBox(height: 10,),
+                        //         Container(
+                        //           width: MediaQuery.sizeOf(context).width,
+                        //           color: Color(0xffE4E7EB),
+                        //           padding: EdgeInsets.all(2.0),
+                        //           child: SingleChildScrollView(
+                        //             scrollDirection: Axis.horizontal,
+                        //             child: DataTable(
+                        //               columns: const [
+                        //                 DataColumn(label: Text('Received NoP')),
+                        //                 DataColumn(label: Text('Received Weight')),
+                        //                 DataColumn(label: Text('Unit')),
+                        //                 DataColumn(label: Text('Accepted By')),
+                        //                 DataColumn(label: Text('Accepted On')),
+                        //                 DataColumn(label: Text('Group ID')),
+                        //               ],
+                        //               rows: const [
+                        //                 DataRow(cells: [
+                        //                   DataCell(Text('10')),
+                        //                   DataCell(Text('1000.00')),
+                        //                   DataCell(Text('KG')),
+                        //                   DataCell(Text('-')), // Assuming "-" for empty cells
+                        //                   DataCell(Text('01 AUG 2024 09:30')),
+                        //                   DataCell(Text('-')), // Assuming "-" for empty cells
+                        //                 ]),
+                        //               ],
+                        //               headingRowColor:
+                        //               WidgetStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
+                        //               dataRowColor:  WidgetStateProperty.resolveWith((states) => Color(0xfffafafa)),
+                        //               columnSpacing: 64.0,
+                        //               dataRowHeight: 48.0,
+                        //
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.015,
                         ),
@@ -713,17 +851,7 @@ class _ShipmentAcceptanceManuallyState
             ),
           ],
         ),
-        floatingActionButton: Theme(
-          data: ThemeData(useMaterial3: false),
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CreateShipment()));
-            },
-            backgroundColor: MyColor.primaryColorblue,
-            child: const Icon(Icons.add),
-          ),
-        ),
+
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         extendBody: true,
         bottomNavigationBar: BottomAppBar(
@@ -769,4 +897,50 @@ class _ShipmentAcceptanceManuallyState
       ),
     );
   }
+
+  Future<void> scanQRAWB(bool isHawb) async {
+    String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Color for the scanner overlay
+      'Cancel', // Text for the cancel button
+      true, // Enable flash option
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    print("barcode scann ==== ${barcodeScanResult}");
+    if(barcodeScanResult == "-1"){
+
+    }else{
+
+      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+
+      if(false){
+        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        prefixController.clear();
+        awbController.clear();
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   FocusScope.of(context).requestFocus(igmNoFocusNode);
+        // });
+      }else{
+
+        String result = barcodeScanResult.replaceAll(" ", "");
+        if(isHawb){
+          houseController.text=result;
+        }
+        else{
+          String prefix = result.substring(0, 2);
+          String awb = result.substring(3);
+          prefixController.text = prefix;
+          awbController.text = awb;
+        }
+
+        //callFlightCheckULDListApi(context, locationController.text, truncatedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+      }
+    }
+  }
+
+
 }

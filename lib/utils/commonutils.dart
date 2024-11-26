@@ -1,7 +1,7 @@
 
 class CommonUtils{
 
-  static String airportCode = "BLR";
+  static String airportCode = "JFK";
   static int defaultComapnyCode = 3;
   static String defaultLanguageCode = "en-US";
   static String LOGINMENUNAME = "HHT000";

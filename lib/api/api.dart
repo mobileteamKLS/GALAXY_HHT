@@ -6,7 +6,7 @@ class Api{
   final Dio _dio = Dio();
 
   Api() {
-    _dio.options.baseUrl = "https://galaxyqa.kalelogistics.com/GHAHHTAPI/api/";
+    _dio.options.baseUrl = "https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/";//GalaxyHHTIPADAPI
     //_dio.options.baseUrl = "http://192.168.1.10/GalaxyHHTAPI/api/";
     _dio.interceptors.add(PrettyDioLogger());
   }
