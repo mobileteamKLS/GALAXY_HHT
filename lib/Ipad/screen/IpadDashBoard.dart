@@ -9,6 +9,8 @@ import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
+import '../modal/ShipmentAcceptanceModal.dart';
+import '../utils/global.dart';
 import '../widget/customIpadTextfield.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
@@ -22,9 +24,127 @@ class IpadDashboard extends StatefulWidget {
 }
 
 class _IpadDashboardState extends State<IpadDashboard> {
+
+  final AuthService authService = AuthService();
+  bool isLoading = false;
+  bool hasNoRecord = false;
   @override
   void initState() {
     super.initState();
+    getCommodity();
+    getCustomerName();
+  }
+
+  getCommodity() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    var queryParams = {
+      "AirportCode":"BLR",
+      "CompanyCode":"3",
+      "CultureCode":"en-US",
+      "UserId":"1",
+      "MenuId":"1"
+    };
+    await authService
+        .getData(
+      "CommodityNames/Get",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      }
+      else{
+        hasNoRecord=false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage'];
+
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        return;
+      }
+      final List<dynamic> commodities = jsonData['CommodityList'];
+      setState(() {
+        commodityListMaster = commodities
+            .map((commodity) => Commodity.fromJson(commodity))
+            .toList();
+        isLoading = false;
+
+      });
+      print("No of commodities ${commodityListMaster.length}");
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
+  }
+  getCustomerName() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    var queryParams = {
+      "AirportCode":"BLR",
+      "CompanyCode":"3",
+      "CultureCode":"en-US",
+      "UserId":"1",
+      "MenuId":"1"
+    };
+    await authService
+        .getData(
+      "CustomerNames/Get",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      }
+      else{
+        hasNoRecord=false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage'];
+
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        return;
+      }
+      final List<dynamic> customers = jsonData['CustomerList'];
+      setState(() {
+        customerListMaster =
+            customers.map((customer) => Customer.fromJson(customer)).toList();
+        isLoading = false;
+
+      });
+      print("No of commodities ${customerListMaster.length}");
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
   }
 
   @override

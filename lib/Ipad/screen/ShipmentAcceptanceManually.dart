@@ -18,6 +18,7 @@ import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
+import '../modal/ShipmentAcceptanceModal.dart';
 import '../widget/customIpadTextfield.dart';
 import 'CaptureDamageAndAccept.dart';
 import 'ImportCreateShipment.dart';
@@ -33,22 +34,87 @@ class ShipmentAcceptanceManually extends StatefulWidget {
 
 class _ShipmentAcceptanceManuallyState
     extends State<ShipmentAcceptanceManually> {
+  final AuthService authService = AuthService();
+  bool isLoading = false;
+  bool hasNoRecord = false;
+  List<VCTItem> dropdownItems = [];
   TextEditingController prefixController = TextEditingController();
-  FocusNode mailTypeFocusNode = FocusNode();
-  MailTypeList? selectedMailType;
-  List<MailTypeList>? mailTypeList = [
-    MailTypeList(referenceDataIdentifier: "A", referenceDescription: "A"),
-    MailTypeList(referenceDataIdentifier: "B", referenceDescription: "B"),
-  ];
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
+  TextEditingController awbController = TextEditingController();
+  TextEditingController houseController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
+    awbSearch();
+  }
+  awbSearch() async {
+    if (isLoading) return;
+
+    setState(() {
+      isLoading = true;
+    });
+
+    var queryParams = {
+      "AWBNo" :"12522110115",
+      "HAWBNo":"",
+      "AirportCode":"JFK",
+      "CompanyCode":"0",
+      "CultureCode":"en-US",
+      "UserId":"0",
+      "MenuId":"0"
+    };
+    await authService
+        .getData(
+      "ShipmentAcceptance/Search",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      }
+      else{
+        hasNoRecord=false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage'];
+
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        return;
+      }
+
+      List<VCTItem> dropdownItems = [];
+      if (jsonData['VCTList'] != null) {
+        dropdownItems = (jsonData['VCTList'] as List)
+            .where((item) => item['Type'] == 'H')
+            .map((item) => VCTItem.fromJson(item))
+            .toList();
+      }
+      VCTMasterDataForDamage? masterDataForDamage;
+      if (jsonData['VCTMasterDataForDamage'] != null) {
+        masterDataForDamage = VCTMasterDataForDamage.fromJson(jsonData['VCTMasterDataForDamage']);
+      }
+
+      print("Dropdown Items: ${dropdownItems.map((e) => '${e.consignmentRowId} - ${e.houseNo}').toList()}");
+      print("Master Data: ${masterDataForDamage?.documentNo}");
+
+      setState(() {
+        isLoading = false;
+
+      });
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
   }
 
   @override
@@ -205,7 +271,7 @@ class _ShipmentAcceptanceManuallyState
                                                   width:
                                                       MediaQuery.sizeOf(context)
                                                               .width *
-                                                          0.32,
+                                                          0.26,
                                                   child:
                                                       CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -217,12 +283,24 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "AWB No*",
                                                     readOnly: false,
+                                                    controller: awbController,
                                                     maxLength: 8,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
                                                   ),
-                                                )
+                                                ),
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQRAWB(false);
+                                                  },
+                                                  child: Padding(padding: const EdgeInsets.all(2.0),
+                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -230,53 +308,46 @@ class _ShipmentAcceptanceManuallyState
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: Expanded(
-                                              flex : 2,
-                                              child: Container(
-                                                padding: EdgeInsets.symmetric(
-                                                  vertical: SizeConfig.blockSizeVertical * 0.1,
-                                                  horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,
-                                                ),
-                                                decoration: BoxDecoration(
-                                                  color: MyColor.colorWhite,
-                                                  border: Border.all(color: Colors.black, width: 0.1),
-                                                  borderRadius: BorderRadius.circular(
-                                                    SizeConfig.blockSizeHorizontal * SizeUtils.ICONSIZE2,
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  height:
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
+                                                  width:
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.38,
+                                                  child:
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    textInputType:
+                                                    TextInputType.number,
+                                                    needOutlineBorder: true,
+                                                    labelText: "HAWB No*",
+                                                    readOnly: false,
+                                                    maxLength: 8,
+                                                    fontSize: 18,
+                                                    onChanged:
+                                                        (String, bool) {},
                                                   ),
                                                 ),
-                                                child: DropdownButton<MailTypeList>(
-                                                  focusNode: mailTypeFocusNode,
-                                                  value: selectedMailType,
-                                                  hint: CustomeText(
-                                                    text: "Select",
-                                                    fontColor: MyColor.colorBlack,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w500,
-                                                    textAlign: TextAlign.start,
-                                                  ),
-                                                  items: mailTypeList!.map((MailTypeList item) {
-                                                    return DropdownMenuItem<MailTypeList>(
-                                                      value: item,
-                                                      child: CustomeText(
-                                                        text: item.referenceDescription!,
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (MailTypeList? value) {
-                                                    setState(() {
-                                                      selectedMailType = value!;
-                                                    });
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQRAWB(true);
                                                   },
-                                                  underline: SizedBox(),
-                                                  isExpanded: true,
-                                                  dropdownColor: Colors.white,
-                                                  icon: Icon(Icons.arrow_drop_down, color: Colors.black45),
+                                                  child: Padding(padding: const EdgeInsets.all(2.0),
+                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  ),
                                                 ),
-                                              ),
+                                              ],
                                             ),
                                           ),
                                         ],
@@ -614,69 +685,69 @@ class _ShipmentAcceptanceManuallyState
                             ),
                           ),
                         ),
-                        SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 0.015,
-                        ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 2,
-                                blurRadius: 8,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text("  Part Shipment History",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16),),
-                                SizedBox(height: 10,),
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  color: Color(0xffE4E7EB),
-                                  padding: EdgeInsets.all(2.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      columns: const [
-                                        DataColumn(label: Text('Received NoP')),
-                                        DataColumn(label: Text('Received Weight')),
-                                        DataColumn(label: Text('Unit')),
-                                        DataColumn(label: Text('Accepted By')),
-                                        DataColumn(label: Text('Accepted On')),
-                                        DataColumn(label: Text('Group ID')),
-                                      ],
-                                      rows: const [
-                                        DataRow(cells: [
-                                          DataCell(Text('10')),
-                                          DataCell(Text('1000.00')),
-                                          DataCell(Text('KG')),
-                                          DataCell(Text('-')), // Assuming "-" for empty cells
-                                          DataCell(Text('01 AUG 2024 09:30')),
-                                          DataCell(Text('-')), // Assuming "-" for empty cells
-                                        ]),
-                                      ],
-                                      headingRowColor:
-                                      WidgetStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
-                                      dataRowColor:  WidgetStateProperty.resolveWith((states) => Color(0xfffafafa)),
-                                      columnSpacing: 64.0,
-                                      dataRowHeight: 48.0,
-
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                        // SizedBox(
+                        //   height: MediaQuery.sizeOf(context).height * 0.015,
+                        // ),
+                        // Container(
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(12.0),
+                        //     color: Colors.white,
+                        //     boxShadow: [
+                        //       BoxShadow(
+                        //         color: Colors.black.withOpacity(0.1),
+                        //         spreadRadius: 2,
+                        //         blurRadius: 8,
+                        //         offset: const Offset(
+                        //             0, 3), // changes position of shadow
+                        //       ),
+                        //     ],
+                        //   ),
+                        //   child: Padding(
+                        //     padding: const EdgeInsets.symmetric(
+                        //         vertical: 14, horizontal: 10),
+                        //     child: Column(
+                        //       crossAxisAlignment: CrossAxisAlignment.start,
+                        //       children: [
+                        //         const Text("  Part Shipment History",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16),),
+                        //         SizedBox(height: 10,),
+                        //         Container(
+                        //           width: MediaQuery.sizeOf(context).width,
+                        //           color: Color(0xffE4E7EB),
+                        //           padding: EdgeInsets.all(2.0),
+                        //           child: SingleChildScrollView(
+                        //             scrollDirection: Axis.horizontal,
+                        //             child: DataTable(
+                        //               columns: const [
+                        //                 DataColumn(label: Text('Received NoP')),
+                        //                 DataColumn(label: Text('Received Weight')),
+                        //                 DataColumn(label: Text('Unit')),
+                        //                 DataColumn(label: Text('Accepted By')),
+                        //                 DataColumn(label: Text('Accepted On')),
+                        //                 DataColumn(label: Text('Group ID')),
+                        //               ],
+                        //               rows: const [
+                        //                 DataRow(cells: [
+                        //                   DataCell(Text('10')),
+                        //                   DataCell(Text('1000.00')),
+                        //                   DataCell(Text('KG')),
+                        //                   DataCell(Text('-')), // Assuming "-" for empty cells
+                        //                   DataCell(Text('01 AUG 2024 09:30')),
+                        //                   DataCell(Text('-')), // Assuming "-" for empty cells
+                        //                 ]),
+                        //               ],
+                        //               headingRowColor:
+                        //               WidgetStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
+                        //               dataRowColor:  WidgetStateProperty.resolveWith((states) => Color(0xfffafafa)),
+                        //               columnSpacing: 64.0,
+                        //               dataRowHeight: 48.0,
+                        //
+                        //             ),
+                        //           ),
+                        //         ),
+                        //       ],
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.015,
                         ),
@@ -826,4 +897,50 @@ class _ShipmentAcceptanceManuallyState
       ),
     );
   }
+
+  Future<void> scanQRAWB(bool isHawb) async {
+    String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666', // Color for the scanner overlay
+      'Cancel', // Text for the cancel button
+      true, // Enable flash option
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    print("barcode scann ==== ${barcodeScanResult}");
+    if(barcodeScanResult == "-1"){
+
+    }else{
+
+      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+
+      if(false){
+        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        prefixController.clear();
+        awbController.clear();
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   FocusScope.of(context).requestFocus(igmNoFocusNode);
+        // });
+      }else{
+
+        String result = barcodeScanResult.replaceAll(" ", "");
+        if(isHawb){
+          houseController.text=result;
+        }
+        else{
+          String prefix = result.substring(0, 2);
+          String awb = result.substring(3);
+          prefixController.text = prefix;
+          awbController.text = awb;
+        }
+
+        //callFlightCheckULDListApi(context, locationController.text, truncatedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+      }
+    }
+  }
+
+
 }

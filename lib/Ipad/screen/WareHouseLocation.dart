@@ -4,10 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -17,10 +13,6 @@ import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
-import '../auth/auth.dart';
-import '../widget/customIpadTextfield.dart';
-import 'CaptureDamageAndAccept.dart';
-import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 
 class WarehouseLocation extends StatefulWidget {
@@ -375,11 +367,11 @@ class _WarehouseLocationState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text("  Current Location",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 20),),
-                                SizedBox(height: 10,),
+                                const SizedBox(height: 10,),
                                 Container(
                                   width: MediaQuery.sizeOf(context).width,
-                                  color: Color(0xffE4E7EB),
-                                  padding: EdgeInsets.all(2.0),
+                                  color: const Color(0xffE4E7EB),
+                                  padding: const EdgeInsets.all(2.0),
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
                                     child: DataTable(
@@ -529,8 +521,8 @@ class _WarehouseLocationState
                                         ]),
                                       ],
                                       headingRowColor:
-                                      WidgetStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
-                                      dataRowColor:  WidgetStateProperty.resolveWith((states) => Color(0xfffafafa)),
+                                      MaterialStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
+                                      dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
                                       columnSpacing: MediaQuery.sizeOf(context).width*0.025,
                                       dataRowHeight: 48.0,
 

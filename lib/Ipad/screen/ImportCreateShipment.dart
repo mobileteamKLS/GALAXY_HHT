@@ -88,6 +88,16 @@ class _CreateShipmentState extends State<CreateShipment> {
       showDataNotFoundDialog(context, "ULD is required.");
       return;
     }
+    if (dispositionCodeController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Disposition Code is required.");
+      return;
+    }
+    if(modeSelected==1){
+      if (houseNoController.text.isEmpty) {
+        showDataNotFoundDialog(context, "House No is required.");
+        return;
+      }
+    }
     final newShipment = ShipmentCreateDetails(
         vhRowId: 0,
         awbPrefix: prefixController.text,
@@ -109,41 +119,44 @@ class _CreateShipmentState extends State<CreateShipment> {
         disposition: dispositionCodeController.text,
         fsnId: 0,
         shcDetailsXml: "",
-        airportCode: "BLR",
+        airportCode: "JFK",
         companyCode: 3,
         cultureCode: "en-US",
         userId: 1,
         menuId: 1);
+    print(flightDateController.text);
+    saveShipmentDetails();
   }
 
   saveShipmentDetails() async {
     var queryParams = {
       "VHRowId": 0,
-      "AWBPrefix": "115",
-      "AWBNo": "68645135",
-      "HouseNo": "",
+      "AWBPrefix": prefixController.text,
+      "AWBNo": awbNoController.text,
+      "HouseNo": houseNoController.text,
       "Pieces": int.parse(nopController.text),
-      "Weight": 100,
-      "Origin": "IST",
-      "Destination": "BLR",
+      "Weight": double.parse(grossWeightController.text),
+      "Origin": originController.text,
+      "Destination": destinationController.text,
       "Commodity": 1,
-      "CommodityType": "ATO",
-      "Airline": "AJ",
-      "FltNo": "007",
+      "CommodityType": commTypeController.text,
+      "Airline": flightNoController.text.substring(0, 2),
+      "FltNo": flightNoController.text.substring(3),
       "FltDate": "2024-10-25",
-      "ULDType": "",
-      "ULDNumber": "",
-      "ULDOwner": "",
-      "FIRMS": "QQA",
-      "Disposition": "11",
+      "ULDType": uldController.text.substring(0, 3),
+      "ULDNumber":uldController.text.substring(3, 8),
+      "ULDOwner": uldController.text.substring(8, 10),
+      "FIRMS": firmsCodeController.text,
+      "Disposition":dispositionCodeController.text,
       "FSNId": 0,
       "SHCDetailsXML": "",
-      "AirportCode": "BLR",
+      "AirportCode": "JFK",
       "CompanyCode": 3,
       "CultureCode": "en-US",
       "UserId": 1,
       "MenuId": 1
     };
+    DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
       "ShipmentCreation/Save",
@@ -152,15 +165,19 @@ class _CreateShipmentState extends State<CreateShipment> {
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
-      List<dynamic> resp = jsonData['ShipmentDetailList'];
-      print(jsonData);
-      setState(() {
-        isLoading = false;
-      });
+      String status = jsonData['Status'];
+      String? statusMessage = jsonData['StatusMessage']??"";
+      if(jsonData.isNotEmpty){
+        DialogUtils.hideLoadingDialog(context);
+        if(status!="S"){
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+
+      }
+
+
     }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
+
       print(onError);
     });
   }
@@ -305,7 +322,11 @@ class _CreateShipmentState extends State<CreateShipment> {
                                         borderColor: const [Colors.grey],
                                         onToggle: (index) {
                                           print('switched to: $index');
-
+                                          prefixController.clear();
+                                          awbNoController.clear();
+                                          nopController.clear();
+                                          grossWeightController.clear();
+                                          houseNoController.clear();
                                           setState(() {
                                             modeSelected = index!;
                                           });
@@ -440,6 +461,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               TextInputType
                                                                   .number,
                                                           fontSize: 18,
+                                                          controller: prefixController,
                                                           onChanged:
                                                               (String, bool) {},
                                                         ),
@@ -471,6 +493,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               true,
                                                           labelText: "AWB No*",
                                                           readOnly: false,
+                                                          controller: awbNoController,
                                                           maxLength: 8,
                                                           fontSize: 18,
                                                           onChanged:
@@ -508,6 +531,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               true,
                                                           labelText: "NoP*",
                                                           readOnly: false,
+                                                          controller: nopController,
                                                           textInputType:
                                                               TextInputType
                                                                   .number,
@@ -542,6 +566,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           labelText:
                                                               "Gross Weight*",
                                                           readOnly: false,
+                                                          controller: grossWeightController,
                                                           textInputType:
                                                               TextInputType
                                                                   .number,
@@ -586,6 +611,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           animatedLabel: true,
                                                           needOutlineBorder:
                                                               true,
+                                                          controller: prefixController,
                                                           labelText: "Prefix*",
                                                           readOnly: false,
                                                           maxLength: 15,
@@ -638,6 +664,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                                 labelText:
                                                                     "AWB No*",
                                                                 readOnly: false,
+                                                                controller: awbNoController,
                                                                 maxLength: 15,
                                                                 fontSize: 18,
                                                                 onChanged:
@@ -672,6 +699,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                                     true,
                                                                 labelText:
                                                                     "HAWB No*",
+                                                                controller: houseNoController,
                                                                 readOnly: false,
                                                                 maxLength: 15,
                                                                 fontSize: 18,
@@ -714,6 +742,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               true,
                                                           labelText: "NoP*",
                                                           readOnly: false,
+                                                          controller: nopController,
                                                           maxLength: 15,
                                                           fontSize: 18,
                                                           onChanged:
@@ -744,6 +773,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               true,
                                                           labelText:
                                                               "Gross Weight*",
+                                                          controller: grossWeightController,
                                                           readOnly: false,
                                                           maxLength: 15,
                                                           fontSize: 18,
@@ -776,6 +806,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                               animatedLabel: true,
                                               needOutlineBorder: true,
                                               labelText: "Origin*",
+                                              controller: originController,
                                               readOnly: false,
                                               maxLength: 15,
                                               fontSize: 18,
@@ -793,6 +824,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                               animatedLabel: true,
                                               needOutlineBorder: true,
                                               labelText: "Destination*",
+                                              controller: destinationController,
                                               readOnly: false,
                                               maxLength: 15,
                                               fontSize: 18,
@@ -833,6 +865,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Code*",
+                                                    controller: codeController,
                                                     readOnly: false,
                                                     maxLength: 15,
                                                     fontSize: 18,
@@ -879,6 +912,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           labelText:
                                                               "Flight No*",
                                                           readOnly: false,
+                                                          controller: flightNoController,
                                                           maxLength: 15,
                                                           fontSize: 18,
                                                           onChanged:
@@ -941,6 +975,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     needOutlineBorder: true,
                                                     labelText: "ULD*",
                                                     readOnly: false,
+                                                    controller: uldController,
                                                     maxLength: 15,
                                                     fontSize: 18,
                                                     onChanged:
@@ -976,6 +1011,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                               needOutlineBorder: true,
                                               labelText: "Commodity Type",
                                               readOnly: false,
+                                              controller: commTypeController,
                                               maxLength: 15,
                                               fontSize: 18,
                                               onChanged: (String, bool) {},
@@ -1004,6 +1040,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "FIRMS Code",
+                                                    controller: firmsCodeController,
                                                     readOnly: false,
                                                     maxLength: 15,
                                                     fontSize: 18,
@@ -1033,6 +1070,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     labelText:
                                                         "Disposition Code*",
                                                     readOnly: false,
+                                                    controller: dispositionCodeController,
                                                     maxLength: 15,
                                                     fontSize: 18,
                                                     onChanged:

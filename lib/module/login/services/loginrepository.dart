@@ -60,7 +60,7 @@ class LoginRepository{
         'MPIN': authFlg == 'M' ? password : '',
         'CultureCode': CommonUtils.defaultLanguageCode,
         'AirportCode': CommonUtils.airportCode,
-        'CompanyCode' : companyCode
+        'CompanyCode' : CommonUtils.defaultComapnyCode
       };
 
       // Print payload for debugging

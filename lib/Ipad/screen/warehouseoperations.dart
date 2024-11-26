@@ -11,6 +11,7 @@ import 'Customsoperation.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 import 'ShipmentAcceptance.dart';
+import 'ShipmentAcceptanceManually.dart';
 import 'WareHouseLocation.dart';
 
 class WarehouseOperations extends StatefulWidget {
@@ -130,7 +131,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                         RoundedIconButton(
                           icon: CupertinoIcons.cube_box,
                           text: 'Shipment\nAcceptance',
-                          targetPage: ShipmentAcceptance(),
+                          targetPage: ShipmentAcceptanceManually(),
                           containerColor: Color(0xffffd7bd),
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
@@ -144,38 +145,38 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                   const Padding(
                     padding: EdgeInsets.only(
                         top: 5, left: 20, right: 20, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RoundedIconButton(
-                          icon: Icons.trolley,
-                          text: 'Warehouse\nLocation',
-                          targetPage: WarehouseLocation(),
-                          containerColor: Color(0xffffd1d1),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
-                        // SizedBox(width: 40,),
-                        RoundedIconButton(
-                          icon: Icons.local_shipping_outlined,
-                          text: 'Warehouse\nDelivery Order',
-                          targetPage: WdoListing(),
-                          containerColor: Color(0xffb4d9b5),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
-                        RoundedIconButton(
-                          icon: CupertinoIcons.checkmark_rectangle,
-                          text: 'Customs\nOperation',
-                          targetPage: CustomsOperation(),
-                          containerColor: Color(0xffe1d8f0),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
-
-
-                      ],
-                    ),
+                    // child: Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    //   children: [
+                    //     RoundedIconButton(
+                    //       icon: Icons.trolley,
+                    //       text: 'Warehouse\nLocation',
+                    //       targetPage: WarehouseLocation(),
+                    //       containerColor: Color(0xffffd1d1),
+                    //       iconColor: MyColor.textColorGrey3,
+                    //       textColor: MyColor.textColorGrey3,
+                    //     ),
+                    //     // SizedBox(width: 40,),
+                    //     RoundedIconButton(
+                    //       icon: Icons.local_shipping_outlined,
+                    //       text: 'Warehouse\nDelivery Order',
+                    //       targetPage: WdoListing(),
+                    //       containerColor: Color(0xffb4d9b5),
+                    //       iconColor: MyColor.textColorGrey3,
+                    //       textColor: MyColor.textColorGrey3,
+                    //     ),
+                    //     RoundedIconButton(
+                    //       icon: CupertinoIcons.checkmark_rectangle,
+                    //       text: 'Customs\nOperation',
+                    //       targetPage: CustomsOperation(),
+                    //       containerColor: Color(0xffe1d8f0),
+                    //       iconColor: MyColor.textColorGrey3,
+                    //       textColor: MyColor.textColorGrey3,
+                    //     ),
+                    //
+                    //
+                    //   ],
+                    // ),
                   ),
 
                 ],

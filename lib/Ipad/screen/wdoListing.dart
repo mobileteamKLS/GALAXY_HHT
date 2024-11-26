@@ -174,13 +174,19 @@ class _WdoListingState extends State<WdoListing> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Row(
+                           Row(
                             children: [
-                              Icon(CupertinoIcons.cube),
-                              Text(
+                              GestureDetector(
+                                child:  const Icon(Icons.arrow_back_ios,
+                                    color: MyColor.primaryColorblue),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              const Text(
                                 '  Warehouse Delivery Order List  ',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18),
+                                    fontWeight: FontWeight.bold, fontSize: 22),
                               ),
                             ],
                           ),
@@ -456,7 +462,7 @@ class _WdoListingState extends State<WdoListing> {
                   children: [
                     Row(
                       children: [
-                        const Text("HAWb No: "),
+                        const Text("HAWB No: "),
                         Text("${shipment.hawbNumber}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                       ],
                     ),

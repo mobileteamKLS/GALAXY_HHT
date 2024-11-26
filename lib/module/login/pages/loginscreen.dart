@@ -31,6 +31,7 @@ import '../../../../widget/roundbutton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
 
+import '../../../Ipad/screen/IpadDashBoard.dart';
 import '../../../prefrence/savedprefrence.dart';
 import '../../../utils/sizeutils.dart';
 import '../../../utils/validationmsgcodeutils.dart';
@@ -59,6 +60,7 @@ class _LogInScreenState extends State<LogInScreen> {
   SplashDefaultModel? _splashDefaultData;
   FocusNode userIdFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
+  bool isMobile=false;
 
   @override
   void initState() {
@@ -101,6 +103,16 @@ class _LogInScreenState extends State<LogInScreen> {
         FocusScope.of(context).requestFocus(userIdFocusNode);
       },
     );
+  }
+  void getDeviceType() {
+    final data = MediaQueryData.fromView(WidgetsBinding.instance!.window);
+    if (data.size.shortestSide < 600) {
+      setState(() {
+        isMobile = true;
+      });
+    }
+
+    // return data.size.shortestSide < 600 ? DeviceType.Phone : DeviceType.Tablet;
   }
 
 
@@ -231,7 +243,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   CupertinoPageRoute(
-                                    builder: (context) => DashboardScreen(),
+                                    builder: (context) =>isMobile?DashboardScreen(): IpadDashboard(),
                                   ),
                                   (route) => false,
                                 );
@@ -348,7 +360,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                               userIdController.text.trim(),
                                               passwordController.text,
                                               widget.authFlag,
-                                              _splashDefaultData!.companyCode!);
+                                              3);
                                         } else {}
 
                                       },),
