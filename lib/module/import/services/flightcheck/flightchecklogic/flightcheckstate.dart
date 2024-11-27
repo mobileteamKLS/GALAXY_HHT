@@ -4,6 +4,7 @@ import 'package:galaxy/module/import/model/flightcheck/airportcitymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/bdprioritymodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/breakdownendmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/finalizeflightmodel.dart';
+import 'package:galaxy/module/import/model/flightcheck/foundcargosavemodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/importshipmentmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/maildetailmodel.dart';
 import 'package:galaxy/module/import/model/flightcheck/recordatamodel.dart';
@@ -251,3 +252,14 @@ class HouseListFailureState extends FlightCheckState {
   final String error;
   HouseListFailureState(this.error);
 }
+
+class AddFoundCargoSuccessState extends FlightCheckState {
+  final FoundCargoSaveModel foundCargoSaveModel;
+  AddFoundCargoSuccessState(this.foundCargoSaveModel);
+}
+
+class AddFoundCargoFailureState extends FlightCheckState {
+  final String error;
+  AddFoundCargoFailureState(this.error);
+}
+

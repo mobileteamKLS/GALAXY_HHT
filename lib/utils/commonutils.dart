@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 class CommonUtils{
 
   static String airportCode = "BLR";
+
   static int defaultComapnyCode = 3;
   static String defaultLanguageCode = "en-US";
   static String LOGINMENUNAME = "HHT000";

@@ -19,10 +19,15 @@ import 'package:vibration/vibration.dart';
 import '../core/images.dart';
 import '../module/import/model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../module/import/pages/uldacceptance/ulddamagedpage.dart';
+import '../module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
+import '../module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import '../module/import/services/uldacceptance/uldacceptancelogic/uldacceptancecubit.dart';
+import '../module/login/model/userlogindatamodel.dart';
 import '../module/login/services/loginlogic/logincubit.dart';
 import '../module/login/services/loginlogic/loginstate.dart';
+import '../module/splash/model/splashdefaultmodel.dart';
 import '../widget/customdivider.dart';
+import '../widget/customeedittext/customeedittextwithborder.dart';
 import '../widget/custometext.dart';
 import '../widget/customtextfield.dart';
 import 'dart:ui' as ui;
@@ -1870,18 +1875,61 @@ class DialogUtils {
     );
   }
 
-  static Future<Map<String, String>?> showFoundCargoAWBDialog(BuildContext context, String awbNo, LableModel lableModel, ui.TextDirection textDirection, int userIdentity, int companyCode, int menuId, String title,  List<ButtonRight> buttonRightsList, String groupIdRequired, int groupIDCharSize) {
+  static Future<Map<String, String>?> showFoundCargoAWBDialog(
+      BuildContext context,
+      String awbNo,
+      LableModel lableModel, ui.TextDirection textDirection,
+      int userIdentity, int companyCode,
+      int menuId,
+      String title,
+      List<ButtonRight> buttonRightsList,
+      String groupIdRequired,
+      int groupIDCharSize,
+      int flightSeqNo,
+      int uldSeqNo,
+      String locationCode) {
     TextEditingController piecesController = TextEditingController();
     TextEditingController weightController = TextEditingController();
-    TextEditingController dmgpiecesController = TextEditingController();
-    TextEditingController dmgweightController = TextEditingController();
+
+    TextEditingController originController = TextEditingController();
+    TextEditingController destinationController = TextEditingController();
+
     TextEditingController groupIdController = TextEditingController();
     FocusNode piecesFocusNode = FocusNode();
     FocusNode weightFocusNode = FocusNode();
-    FocusNode dmgpiecesFocusNode = FocusNode();
-    FocusNode dmgweightFocusNode = FocusNode();
+    FocusNode originFocusNode = FocusNode();
+    FocusNode destinationFocusNode = FocusNode();
     FocusNode groupIdFocusNode = FocusNode();
     String errorText = "";
+    String btnClick = "";
+
+    bool _isvalidateOrigin = false;
+    bool _isvalidateDestination = false;
+
+
+
+    Future<void> leaveOriginFocus() async {
+      if (originController.text.isNotEmpty) {
+        // call check airport api
+        context.read<FlightCheckCubit>().checkOAirportCity(originController.text, userIdentity, companyCode, menuId);
+      }
+    }
+
+    Future<void> leaveDestinationFocus() async {
+      if (destinationController.text.isNotEmpty) {
+        // call check airport api
+
+        if(originController.text == destinationController.text){
+          destinationController.clear();
+        }else{
+          context.read<FlightCheckCubit>().checkDAirportCity(destinationController.text, userIdentity, companyCode, menuId);
+        }
+
+
+      }
+    }
+
+
 
     return showModalBottomSheet<Map<String, String>>(
       backgroundColor: MyColor.colorWhite,
@@ -1889,134 +1937,352 @@ class DialogUtils {
       isScrollControlled: true,
       builder: (BuildContext newContext) {
 
+        originFocusNode.addListener(() {
+          if (!originFocusNode.hasFocus) {
+            leaveOriginFocus();
+          }
+        });
+
+        destinationFocusNode.addListener(() {
+          if (!destinationFocusNode.hasFocus) {
+            leaveDestinationFocus();
+          }
+        },);
+
+
+
+
         return StatefulBuilder(
             builder:(BuildContext context, StateSetter setState) {
-              // Only set focus once after the widget is built
 
-              return Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(newContext).viewInsets.bottom,  // Adjust for keyboard
-                ),
-                child: FractionallySizedBox(
-                  widthFactor: 1,  // Adjust the width to 90% of the screen width
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        vertical: SizeConfig.blockSizeVertical * 2,
-                        horizontal: SizeConfig.blockSizeHorizontal * 4,
-                      ),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              CustomeText(text: title, fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                              InkWell(
-                                  onTap: () {
-                                    /*Navigator.pop(context, null);*/
-                                    Navigator.pop(context, {
-                                      "status": "N",
-                                    });
-                                  },
-                                  child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          CustomDivider(
-                            space: 0,
-                            color: Colors.black,
-                            hascolor: true,
-                            thickness: 1,
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            children: [
-                              SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                              CustomeText(
-                                text: "${lableModel.detailsForAWBNo} ${awbNo}",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                fontWeight: FontWeight.w400,
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
+              return WillPopScope(
+                onWillPop: () async{
+                  piecesController.clear();
+                  weightController.clear();
+                  originController.clear();
+                  destinationController.clear();
+                  groupIdController.clear();
+                  _isvalidateOrigin = false;
+                  _isvalidateDestination = false;
 
-                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
 
-                          Row(
-                            children: [
-                              Expanded(
-                                flex:1,
-                                child: Directionality(
-                                  textDirection: textDirection,
-                                  child: CustomTextField(
+                  Navigator.pop(context, {
+                    "status": "N",
+                  });
+                  return true; // Allow the modal to close
+                },
+                child: BlocListener<FlightCheckCubit, FlightCheckState>(listener: (context, state) {
+                  if (state is MainInitialState) {
+                  }
+                  else if (state is MainLoadingState) {
+                    // showing loading dialog in this state
+                    DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                  }
+                  else if (state is CheckOAirportCitySuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.airportCityModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                     // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.airportCityModel.statusMessage!;
+                        _isvalidateOrigin = false;
+                      });
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        FocusScope.of(context).requestFocus(originFocusNode);
+                      },
+                      );
+
+                    }else{
+                      _isvalidateOrigin = true;
+                      setState(() {
+                        errorText = "";
+                      });
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        FocusScope.of(context).requestFocus(destinationFocusNode);
+                      },
+                      );
+                    }
+                  }
+                  else if (state is CheckOAirportCityFailureState){
+                    DialogUtils.hideLoadingDialog(context);
+                    Vibration.vibrate(duration: 500);
+                   // SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                    setState(() {
+                      errorText = state.error;
+                      _isvalidateOrigin = false;
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      FocusScope.of(context).requestFocus(originFocusNode);
+                    },
+                    );
+                  }
+                  else if (state is CheckDAirportCitySuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.airportCityModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                     // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.airportCityModel.statusMessage!;
+                        _isvalidateDestination = false;
+                      });
+
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        FocusScope.of(context).requestFocus(destinationFocusNode);
+                      },
+                      );
+
+                    }else{
+                      _isvalidateDestination = true;
+                      setState(() {
+                        errorText = "";
+                      });
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        FocusScope.of(context).requestFocus(groupIdFocusNode);
+                      },
+                      );
+                    }
+                  }
+                  else if (state is CheckDAirportCityFailureState){
+                    DialogUtils.hideLoadingDialog(context);
+                    Vibration.vibrate(duration: 500);
+                    //SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                    setState(() {
+                      errorText = state.error;
+                      _isvalidateDestination = false;
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      FocusScope.of(context).requestFocus(destinationFocusNode);
+                    },
+                    );
+                  }
+                  else if (state is AddFoundCargoSuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.foundCargoSaveModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                      // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.foundCargoSaveModel.statusMessage!;
+                      });
+                    }else{
+
+                      if(btnClick == "D"){
+                        Navigator.pop(context, {
+                          "status": "D",
+                          "pieces" : piecesController.text,
+                          "weight" : weightController.text,
+                          "iMPAWBRowId" : "${state.foundCargoSaveModel.iMPAWBRowId}",
+                          "iMShipRowId" : "${state.foundCargoSaveModel.iMShipRowId}",
+                          "groupId" : groupIdController.text
+                        });
+                      }else if(btnClick == "A"){
+                        Navigator.pop(context, {
+                          "status": "A",
+                        });
+                      }
+
+                    }
+                  }
+                  else if (state is AddFoundCargoFailureState){
+                    Vibration.vibrate(duration: 500);
+                    // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                    setState(() {
+                      errorText = state.error;
+                    });
+                  }
+
+                },
+
+                child:Padding(
+                  padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(newContext).viewInsets.bottom,  // Adjust for keyboard
+                  ),
+                  child: FractionallySizedBox(
+                    widthFactor: 1,  // Adjust the width to 90% of the screen width
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          vertical: SizeConfig.blockSizeVertical * 2,
+                          horizontal: SizeConfig.blockSizeHorizontal * 4,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                CustomeText(text: title, fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                InkWell(
+                                    onTap: () {
+                                      /*Navigator.pop(context, null);*/
+
+                                      piecesController.clear();
+                                      weightController.clear();
+                                      originController.clear();
+                                      destinationController.clear();
+                                      groupIdController.clear();
+                                      _isvalidateOrigin = false;
+                                      _isvalidateDestination = false;
+
+
+                                      Navigator.pop(context, {
+                                        "status": "N",
+                                      });
+                                    },
+                                    child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                              ],
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical),
+                            CustomDivider(
+                              space: 0,
+                              color: Colors.black,
+                              hascolor: true,
+                              thickness: 1,
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical),
+                            Row(
+                              children: [
+                                SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                CustomeText(
+                                  text: "${lableModel.detailsForAWBNo} ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
+                                  fontColor: MyColor.textColorGrey2,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                  fontWeight: FontWeight.w400,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ],
+                            ),
+
+                            SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex:1,
+                                  child: Directionality(
                                     textDirection: textDirection,
-                                    controller: piecesController,
-                                    focusNode: piecesFocusNode,
+                                    child: CustomTextField(
+                                      textDirection: textDirection,
+                                      controller: piecesController,
+                                      focusNode: piecesFocusNode,
+                                      onPress: () {},
+                                      hasIcon: false,
+                                      hastextcolor: true,
+                                      animatedLabel: true,
+                                      needOutlineBorder: true,
+                                      labelText: "${lableModel.pieces} *",
+                                      readOnly: false,
+                                      maxLength: 3,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          errorText = "";
+                                        });
+                                      },
+                                      fillColor:  Colors.grey.shade100,
+                                      textInputType: TextInputType.number,
+                                      inputAction: TextInputAction.next,
+                                      hintTextcolor: Colors.black45,
+                                      verticalPadding: 0,
+                                      digitsOnly: true,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please fill out this field";
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                Expanded(
+                                  flex:1,
+                                  child: Directionality(
+                                    textDirection: textDirection,
+                                    child: CustomTextField(
+                                      textDirection: textDirection,
+                                      controller: weightController,
+                                      focusNode: weightFocusNode,
+                                      onPress: () {},
+                                      hasIcon: false,
+                                      hastextcolor: true,
+                                      animatedLabel: true,
+                                      needOutlineBorder: true,
+                                      labelText: "${lableModel.weight}",
+                                      readOnly: false,
+                                      maxLength: 10,
+                                      digitsOnly: false,
+                                      doubleDigitOnly: true,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(value)}";
+                                          // weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
+                                        });
+
+                                      },
+                                      fillColor:  Colors.grey.shade100,
+                                      textInputType: TextInputType.number,
+                                      inputAction: TextInputAction.next,
+                                      hintTextcolor: Colors.black45,
+                                      verticalPadding: 0,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please fill out this field";
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex:1,
+                                  child: CustomeEditTextWithBorder(
+                                    lablekey: "AIRPORT",
+                                    controller: originController,
+                                    focusNode: originFocusNode,
                                     onPress: () {},
                                     hasIcon: false,
                                     hastextcolor: true,
                                     animatedLabel: true,
                                     needOutlineBorder: true,
-                                    labelText: "${lableModel.pieces} *",
+                                    labelText: "${lableModel.origin} *",
                                     readOnly: false,
                                     maxLength: 3,
-                                    onChanged: (value) {
+                                    isShowSuffixIcon: _isvalidateOrigin,
+                                    onChanged: (value, validate) {
+                                      destinationController.clear();
+                                      _isvalidateDestination = false;
                                       setState(() {
+                                        _isvalidateOrigin = false;
                                         errorText = "";
                                       });
-                                    },
-                                    fillColor:  Colors.grey.shade100,
-                                    textInputType: TextInputType.number,
-                                    inputAction: TextInputAction.next,
-                                    hintTextcolor: Colors.black45,
-                                    verticalPadding: 0,
-                                    digitsOnly: true,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please fill out this field";
-                                      } else {
-                                        return null;
+                                      if (value.toString().isEmpty) {
+                                        destinationController.clear();
+                                        _isvalidateDestination = false;
+                                        _isvalidateOrigin = false;
+                                        setState(() {
+                                          errorText = "";
+                                        });
                                       }
                                     },
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                              Expanded(
-                                flex:1,
-                                child: Directionality(
-                                  textDirection: textDirection,
-                                  child: CustomTextField(
-                                    textDirection: textDirection,
-                                    controller: weightController,
-                                    focusNode: weightFocusNode,
-                                    onPress: () {},
-                                    hasIcon: false,
-                                    hastextcolor: true,
-                                    animatedLabel: true,
-                                    needOutlineBorder: true,
-                                    labelText: "${lableModel.weight}",
-                                    readOnly: false,
-                                    maxLength: 10,
-                                    digitsOnly: false,
-                                    doubleDigitOnly: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(value)}";
-                                       // weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
-                                      });
-
-                                    },
                                     fillColor:  Colors.grey.shade100,
-                                    textInputType: TextInputType.number,
+                                    textInputType: TextInputType.text,
                                     inputAction: TextInputAction.next,
                                     hintTextcolor: Colors.black45,
                                     verticalPadding: 0,
@@ -2032,80 +2298,52 @@ class DialogUtils {
                                     },
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex:1,
-                                child: Directionality(
-                                  textDirection: textDirection,
-                                  child: CustomTextField(
-                                    textDirection: textDirection,
-                                    controller: dmgpiecesController,
-                                    focusNode: dmgpiecesFocusNode,
+                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                Expanded(
+                                  flex: 1,
+                                  child: CustomeEditTextWithBorder(
+                                    lablekey: "AIRPORT",
+                                    controller: destinationController,
+                                    focusNode: destinationFocusNode,
                                     onPress: () {},
                                     hasIcon: false,
                                     hastextcolor: true,
                                     animatedLabel: true,
                                     needOutlineBorder: true,
-                                    labelText: "${lableModel.damagedPCS}",
+                                    labelText: "${lableModel.destination} *",
                                     readOnly: false,
                                     maxLength: 3,
-                                    onChanged: (value) {
+                                    isShowSuffixIcon: _isvalidateDestination,
+                                    onChanged: (value, validate) {
+
                                       setState(() {
+                                        _isvalidateDestination = false;
                                         errorText = "";
                                       });
-                                    },
-                                    fillColor:  Colors.grey.shade100,
-                                    textInputType: TextInputType.number,
-                                    inputAction: TextInputAction.next,
-                                    hintTextcolor: Colors.black45,
-                                    verticalPadding: 0,
-                                    digitsOnly: true,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                    validator: (value) {
-                                      if (value!.isEmpty) {
-                                        return "Please fill out this field";
-                                      } else {
-                                        return null;
+
+
+                                      if (value.isEmpty) {
+                                        setState(() {
+                                          _isvalidateDestination = false;
+                                          errorText = "";
+
+                                        });
+                                        return;
                                       }
-                                    },
-                                  ),
-                                ),
-                              ),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                              Expanded(
-                                flex:1,
-                                child: Directionality(
-                                  textDirection: textDirection,
-                                  child: CustomTextField(
-                                    textDirection: textDirection,
-                                    controller: dmgweightController,
-                                    focusNode: dmgweightFocusNode,
-                                    onPress: () {},
-                                    hasIcon: false,
-                                    hastextcolor: true,
-                                    animatedLabel: true,
-                                    needOutlineBorder: true,
-                                    labelText: "Damage Weight",
-                                    readOnly: false,
-                                    maxLength: 10,
-                                    digitsOnly: false,
-                                    doubleDigitOnly: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        dmgweightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(value)}";
-                                        // weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
-                                      });
+
+                                      // Check if the destination matches the origin
+                                      if (destinationController.text.isNotEmpty && originController.text == value) {
+                                        setState(() {
+                                          _isvalidateDestination = false;
+                                          errorText = "${lableModel.originDestinationSameMsg}"; // Show error message
+                                          Vibration.vibrate(duration: 500);
+                                        });
+                                        return;
+                                      }
 
                                     },
                                     fillColor:  Colors.grey.shade100,
-                                    textInputType: TextInputType.number,
+                                    textInputType: TextInputType.text,
                                     inputAction: TextInputAction.next,
                                     hintTextcolor: Colors.black45,
                                     verticalPadding: 0,
@@ -2121,139 +2359,337 @@ class DialogUtils {
                                     },
                                   ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          // text manifest and recived in pices text counter
-                          Directionality(
-                            textDirection: textDirection,
-                            child: CustomTextField(
+                              ],
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                            // text manifest and recived in pices text counter
+                            Directionality(
                               textDirection: textDirection,
-                              controller: groupIdController,
-                              focusNode: groupIdFocusNode,
-                              onPress: () {},
-                              hasIcon: false,
-                              hastextcolor: true,
-                              animatedLabel: true,
-                              needOutlineBorder: true,
-                              labelText: groupIdRequired == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
-                              readOnly: false,
-                              maxLength: groupIDCharSize,
-                              onChanged: (value) {
-                                setState(() {
-                                  errorText = "";
-                                });
-                              },
-                              fillColor: Colors.grey.shade100,
-                              textInputType: TextInputType.text,
-                              inputAction: TextInputAction.next,
-                              hintTextcolor: Colors.black45,
-                              verticalPadding: 0,
-                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return "Please fill out this field";
-                                } else {
-                                  return null;
-                                }
-                              },
-                            ),
-                          ),
-                          (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          if (errorText.isNotEmpty)  // Show error text if not empty
-                            Padding(
-                              padding: const EdgeInsets.only(top: 8.0),
-                              child: CustomeText(
-                                text: errorText,
-                                fontColor: MyColor.colorRed,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                fontWeight: FontWeight.w500,
-                                textAlign: TextAlign.start,
-                              ),
-                            ),
-                          CustomDivider(
-                            space: 0,
-                            color: Colors.black,
-                            hascolor: true,
-                            thickness: 1,
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          Row(
-                            children: [
-                              Expanded(
-                                flex: 1,
-                                child: RoundedButtonBlue(
-                                  isborderButton: true,
-                                  text: "${lableModel.cancel}",
-                                  press: () {
-                                    Navigator.pop(context, {
-                                      "status": "N",
+                              child: CustomTextField(
+                                textDirection: textDirection,
+                                controller: groupIdController,
+                                focusNode: groupIdFocusNode,
+                                onPress: () {},
+                                hasIcon: false,
+                                hastextcolor: true,
+                                animatedLabel: true,
+                                needOutlineBorder: true,
+                                labelText: groupIdRequired == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
+                                readOnly: false,
+                                maxLength: groupIDCharSize,
+                                onChanged: (value) {
+                                  if(groupIdController.text.isEmpty){
+                                    setState(() {
+                                      errorText = "";
                                     });
-                                  },
+                                  }
+
+                                },
+                                fillColor: Colors.grey.shade100,
+                                textInputType: TextInputType.text,
+                                inputAction: TextInputAction.next,
+                                hintTextcolor: Colors.black45,
+                                verticalPadding: 0,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please fill out this field";
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                              ),
+                            ),
+                            (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                            if (errorText.isNotEmpty)  // Show error text if not empty
+                              Padding(
+                                padding: const EdgeInsets.only(top: 8.0),
+                                child: CustomeText(
+                                  text: errorText,
+                                  fontColor: MyColor.colorRed,
+                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                  fontWeight: FontWeight.w500,
+                                  textAlign: TextAlign.start,
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                flex: 1,
-                                child: RoundedButtonBlue(
-                                  text: "${lableModel.accept}",
-                                  press: () {
+                            CustomDivider(
+                              space: 0,
+                              color: Colors.black,
+                              hascolor: true,
+                              thickness: 1,
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: RoundedButtonBlue(
+                                    isborderButton: true,
+                                    text: "${lableModel.damage}",
+                                    press: () {
 
-                                    if (piecesController.text.isEmpty) {
-                                      setState(() {
-                                        errorText = "Please enter no. of pcs.";
-                                      });
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(piecesFocusNode);
-                                      });
-                                      Vibration.vibrate(duration: 500);
-                                      return;
-                                    }
+                                      btnClick = "D";
 
-                                    if(groupIdRequired == "Y"){
-                                      if (groupIdController.text.isEmpty) {
+                                      if (piecesController.text.isEmpty) {
+
                                         setState(() {
-                                          errorText = "${lableModel.enterGropIdMsg}";
+                                          errorText = "${lableModel.piecesMsg}";
                                         });
                                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                          FocusScope.of(context).requestFocus(piecesFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if (weightController.text.isEmpty) {
+                                        setState(() {
+                                          errorText = "${lableModel.weightMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(weightFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if(int.parse(piecesController.text) == 0){
+                                        setState(() {
+                                          errorText = "${lableModel.enterPiecesGrtMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(piecesFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if(double.parse(weightController.text) == 0){
+                                        setState(() {
+                                          errorText = "${lableModel.enterWeightGrtMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(weightFocusNode);
                                         });
                                         Vibration.vibrate(duration: 500);
                                         return;
                                       }
-                                      // Check if the groupId length is between 14 (min and max 14 characters)
-                                      if (groupIdController.text.length != groupIDCharSize) {
+
+                                      if (originController.text.isEmpty || !_isvalidateOrigin) {
                                         setState(() {
-                                          errorText = formatMessage("${lableModel.groupIdCharSizeMsg}", ["${groupIDCharSize}"]);
+                                          errorText = "${lableModel.originMsg}";
                                         });
                                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                          FocusScope.of(context).requestFocus(originFocusNode);
                                         });
                                         Vibration.vibrate(duration: 500);
                                         return;
                                       }
 
-                                    }
+                                      if (destinationController.text.isEmpty || !_isvalidateDestination) {
+                                        setState(() {
+                                          errorText = "${lableModel.destinationMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(destinationFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+                                        return;
+                                      }
+
+                                      if(groupIdRequired == "Y"){
+                                        if (groupIdController.text.isEmpty) {
+                                          setState(() {
+                                            errorText = "${lableModel.enterGropIdMsg}";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }
+                                        // Check if the groupId length is between 14 (min and max 14 characters)
+                                        if (groupIdController.text.length != groupIDCharSize) {
+                                          setState(() {
+                                            errorText = formatMessage("${lableModel.groupIdCharSizeMsg}", ["${groupIDCharSize}"]);
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }
+
+                                      }
+
+
+                                      context.read<FlightCheckCubit>().addFoundCargoSave(
+                                          flightSeqNo,
+                                          uldSeqNo,
+                                          awbNo,
+                                          int.parse(piecesController.text),
+                                          double.parse(weightController.text),
+                                          groupIdController.text,
+                                          locationCode,
+                                          originController.text,
+                                          destinationController.text,
+                                          userIdentity,
+                                          companyCode,
+                                          menuId
+                                      );
 
 
 
-                                  },
+                                      /* Navigator.pop(context, {
+                                        "status": "N",
+                                      });*/
+                                    },
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  flex: 1,
+                                  child: RoundedButtonBlue(
+                                    text: "${lableModel.accept}",
+                                    press: () {
+
+                                      btnClick = "A";
+
+                                      if (piecesController.text.isEmpty) {
+
+                                        setState(() {
+                                          errorText = "${lableModel.piecesMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(piecesFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if (weightController.text.isEmpty) {
+                                        setState(() {
+                                          errorText = "${lableModel.weightMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(weightFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if(int.parse(piecesController.text) == 0){
+                                        setState(() {
+                                          errorText = "${lableModel.enterPiecesGrtMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(piecesFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if(double.parse(weightController.text) == 0){
+                                        setState(() {
+                                          errorText = "${lableModel.enterWeightGrtMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(weightFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+                                        return;
+                                      }
+
+                                      if (originController.text.isEmpty || !_isvalidateOrigin) {
+                                        setState(() {
+                                          errorText = "${lableModel.originMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(originFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+                                        return;
+                                      }
+
+                                      if (destinationController.text.isEmpty || !_isvalidateDestination) {
+                                        setState(() {
+                                          errorText = "${lableModel.destinationMsg}";
+                                        });
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(destinationFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+                                        return;
+                                      }
+
+                                      if(groupIdRequired == "Y"){
+                                        if (groupIdController.text.isEmpty) {
+                                          setState(() {
+                                            errorText = "${lableModel.enterGropIdMsg}";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }
+                                        // Check if the groupId length is between 14 (min and max 14 characters)
+                                        if (groupIdController.text.length != groupIDCharSize) {
+                                          setState(() {
+                                            errorText = formatMessage("${lableModel.groupIdCharSizeMsg}", ["${groupIDCharSize}"]);
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }
+
+                                      }
+
+
+                                      context.read<FlightCheckCubit>().addFoundCargoSave(
+                                        flightSeqNo,
+                                        uldSeqNo,
+                                        awbNo,
+                                        int.parse(piecesController.text),
+                                        double.parse(weightController.text),
+                                        groupIdController.text,
+                                        locationCode,
+                                        originController.text,
+                                        destinationController.text,
+                                        userIdentity,
+                                        companyCode,
+                                        menuId
+                                      );
 
 
 
-                        ],
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+
+
+
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
+                ),
               );
+
             }
         );
       },

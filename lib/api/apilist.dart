@@ -33,6 +33,8 @@ class Apilist{
   static String updateBDPriority = "/FlightCheckIn/UpdateBDPriority";
   static String recordAtaApi = "/FlightCheckIn/RecordATA";
   static String finalizeFlightApi = "/FlightCheckIn/FlightFinalized";
+  // found cargo save
+  static String foundCargoSaveApi = "/FlightCheckIn/FoundCargoSave";
 
   // awb list apis
   static String awbListApi = "/FlightCheckIn/GetAWBDetails";
@@ -55,9 +57,6 @@ class Apilist{
 
   // house list apis
   static String houseListApi = "/FlightCheckIn/GetHAWBDetails";
-
-  // found cargo save
-  static String foundCargoSaveApi = "/FlightCheckIn/FoundCargoSave";
 
 
   // Binning list details

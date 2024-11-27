@@ -411,11 +411,20 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       onChanged: (value) {
                                                         int piecesCount = int.tryParse(value) ?? 0;
                                                         // Calculate the weight count using the formula
-                                                        setState(() {
-                                                          weightCount = double.parse(((piecesCount * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
-                                                         // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
-                                                          weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
-                                                        });
+
+                                                        if(widget.aWBItem.weightExp == 0.0){
+                                                          setState(() {
+                                                            weightCount = 0;
+                                                            weightController.text = "";
+                                                          });
+                                                        }else{
+                                                          setState(() {
+                                                            weightCount = double.parse(((piecesCount * widget.aWBItem.weightExp!) / widget.aWBItem.nPX!).toStringAsFixed(2));
+                                                            // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
+                                                            weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
+                                                          });
+                                                        }
+
                                                       },
                                                       fillColor:  Colors.grey.shade100,
                                                       textInputType: TextInputType.number,
@@ -903,6 +912,9 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                       }
 
 
+                                                      print("CHECK______WEIGHT---- ${weightController.text}");
+
+
                                                       if(int.parse(piecesController.text) > widget.aWBItem.nPX!){
                                                         bool? confirm = await DialogUtils.showExpectedPiecesDialog(context, lableModel, int.parse(piecesController.text), widget.aWBItem.nPX!);
 
@@ -918,11 +930,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
 
                                                       }else{
                                                         context.read<FlightCheckCubit>().importShipmentSave(widget.location, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, groupIdController.text, awbId, "0", int.parse(piecesController.text), weightController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
                                                       }
-
-
-
 
                                                     }
                                                     else{

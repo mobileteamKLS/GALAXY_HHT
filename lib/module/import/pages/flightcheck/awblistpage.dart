@@ -1927,7 +1927,113 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                     return;
                                                                   }
 
-                                                                  var result = await DialogUtils.showFoundCargoAWBDialog(context, scanNoEditingController.text, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Add found cargo", widget.buttonRightsList, widget.groupIDRequires, widget.groupIDCharSize);
+                                                                  var result = await DialogUtils.showFoundCargoAWBDialog(context, scanNoEditingController.text, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Add found cargo", widget.buttonRightsList, widget.groupIDRequires, widget.groupIDCharSize, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.location);
+
+                                                                  if (result != null) {
+                                                                    if (result.containsKey('status')) {
+                                                                      String? status = result['status'];
+                                                                      
+                                                                      
+                                                                      
+                                                                      if(status == "N"){
+                                                                       _resumeTimerOnInteraction();
+                                                                      }else if(status == "A"){
+                                                                        _resumeTimerOnInteraction();
+                                                                        scanNoEditingController.clear();
+                                                                        _isOpenULDFlagEnable = false;
+                                                                        setState(() {
+
+                                                                        });
+                                                                        context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                      }else if(status == "D"){
+                                                                        scanNoEditingController.clear();
+                                                                        String? pieces = result['pieces'];
+                                                                        String? weight = result['weight'];
+                                                                        String? iMPAWBRowId = result['iMPAWBRowId'];
+                                                                        String? iMShipRowId = result['iMShipRowId'];
+                                                                        String? groupId = result['groupId'];
+
+                                                                        print("CHECK_DATA++++++++++++++ $pieces $weight $iMPAWBRowId $iMShipRowId $groupId");
+
+
+                                                                        CommonUtils.SELECTEDWHETHER = "";
+                                                                        CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                        CommonUtils.shipTotalPcs = 0;
+                                                                        CommonUtils.ShipTotalWt = "0.00";
+                                                                        CommonUtils.shipDamagePcs = 0;
+                                                                        CommonUtils.ShipDamageWt = "0.00";
+                                                                        CommonUtils.shipDifferencePcs = 0;
+                                                                        CommonUtils.shipDifferenceWt = "0.00";
+                                                                        CommonUtils.individualWTPerDoc = "0.00";
+                                                                        CommonUtils.individualWTActChk = "0.00";
+                                                                        CommonUtils.individualWTDifference = "0.00";
+                                                                        CommonUtils.SELECTEDMATERIAL = "";
+                                                                        CommonUtils.SELECTEDTYPE = "";
+                                                                        CommonUtils.SELECTEDMARKANDLABLE = "";
+                                                                        CommonUtils.SELECTEDOUTRERPACKING = "";
+                                                                        CommonUtils.SELECTEDINNERPACKING = "";
+                                                                        CommonUtils.SELECTEDDAMAGEDISCOVER = "";
+                                                                        CommonUtils.SELECTEDDAMAGEAPPARENTLY = "";
+                                                                        CommonUtils.SELECTEDSALVAGEACTION = "";
+                                                                        CommonUtils.SELECTEDDISPOSITION = "";
+                                                                        CommonUtils.MISSINGITEM = "Y";
+                                                                        CommonUtils.VERIFIEDINVOICE = "Y";
+                                                                        CommonUtils.SUFFICIENT = "Y";
+                                                                        CommonUtils.EVIDENCE = "Y";
+                                                                        CommonUtils.REMARKS = "";
+                                                                        CommonUtils.SELECTEDCONTENT = "";
+                                                                        CommonUtils.SELECTEDCONTAINER = "";
+
+
+                                                                        var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                          builder: (context) => DamageShimentPage(
+                                                                            importSubMenuList: widget.importSubMenuList,
+                                                                            exportSubMenuList: widget.exportSubMenuList,
+                                                                            lableModel: lableModel,
+                                                                            pageView: 0,
+                                                                            enterDamageNop: int.parse(pieces!),
+                                                                            enterDamageWt: double.parse(weight!),
+                                                                            damageNop: 0,
+                                                                            damageWt: 0.00,
+                                                                            buttonRightsList: const [],
+                                                                            iMPAWBRowId: int.parse(iMPAWBRowId!),
+                                                                            iMPShipRowId: int.parse(iMShipRowId!),
+                                                                            flightSeqNo: widget.flightDetailSummary.flightSeqNo!,
+                                                                            flightStatus: "",
+                                                                            mainMenuName: widget.mainMenuName,
+                                                                            userId: _user!.userProfile!.userIdentity!,
+                                                                            companyCode: _splashDefaultData!.companyCode!,
+                                                                            menuId: widget.menuId,
+                                                                            groupId: groupId!,
+                                                                            problemSeqId: 0,),));
+
+                                                                        if(value == "Done"){
+                                                                          _resumeTimerOnInteraction();
+                                                                          _isOpenULDFlagEnable = false;
+                                                                          setState(() {
+
+                                                                          });
+                                                                          context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                        }
+                                                                        else if(value == "true"){
+                                                                          _resumeTimerOnInteraction();
+                                                                          _isOpenULDFlagEnable = false;
+                                                                          setState(() {
+
+                                                                          });
+                                                                          context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+
+                                                                        }
+
+                                                                      }
+                                                                    }else{
+
+                                                                    }
+                                                                  }else{
+
+                                                                  }
+
 
                                                                 },)
                                                               ],

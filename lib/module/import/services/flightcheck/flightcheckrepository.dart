@@ -17,6 +17,7 @@ import '../../model/flightcheck/damagedetailmodel.dart';
 import '../../model/flightcheck/finalizeflightmodel.dart';
 import '../../model/flightcheck/flightchecksummarymodel.dart';
 import '../../model/flightcheck/flightcheckuldlistmodel.dart';
+import '../../model/flightcheck/foundcargosavemodel.dart';
 import '../../model/flightcheck/hawblistmodel.dart';
 import '../../model/flightcheck/importshipmentmodel.dart';
 import '../../model/flightcheck/maildetailmodel.dart';
@@ -995,6 +996,74 @@ class FlightCheckRepository{
       }
     }
   }
+
+
+  // Found Cargo save api call
+  Future<FoundCargoSaveModel> addFoundCargoSave(
+      int flightSeqNo,
+      int uldSeqNo,
+      String awbNo,
+      int npr,
+      double wtRec,
+      String groupId,
+      String locationCode,
+      String origin,
+      String destination,
+      int userId,
+      int companyCode,
+      int menuId) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo": flightSeqNo,
+        "ULDSeqNo": uldSeqNo,
+        "AWBNo": awbNo,
+        "HouseNo": "",
+        "NPR": npr,
+        "WtRec": wtRec,
+        "DMGPsc": 0,
+        "DMGWt": 0.0,
+        "DMGCode": "",
+        "GroupId": groupId,
+        "LocationCode": locationCode,
+        "Origin": origin,
+        "Destination": destination,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('foundCargoSaveModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.foundCargoSaveApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        FoundCargoSaveModel foundCargoSaveModel = FoundCargoSaveModel.fromJson(response.data);
+        return foundCargoSaveModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
 
 }

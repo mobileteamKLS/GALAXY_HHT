@@ -315,6 +315,31 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
   }
 
 
+  Future<void> addFoundCargoSave(
+      int flightSeqNo,
+      int uldSeqNo,
+      String awbNo,
+      int npr,
+      double wtRec,
+      String groupId,
+      String locationCode,
+      String origin,
+      String destination,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    emit(MainLoadingState());
+    try {
+      final foundCargoModelData = await flightCheckRepository.addFoundCargoSave(
+          flightSeqNo, uldSeqNo, awbNo,npr,wtRec, groupId, locationCode, origin, destination, userId, companyCode, menuId);
+
+      emit(AddFoundCargoSuccessState(foundCargoModelData));
+    } catch (e) {
+      emit(AddFoundCargoFailureState(e.toString()));
+    }
+  }
+
+
 
 
   void resetState() {
