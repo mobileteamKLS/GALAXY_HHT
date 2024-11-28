@@ -4,8 +4,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:galaxy/Ipad/utils/global.dart';
+import 'package:galaxy/utils/dialogutils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
@@ -15,6 +18,7 @@ import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/commonutils.dart';
 import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
+import '../../widget/customebuttons/roundbuttonblue.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
@@ -41,33 +45,90 @@ class _ShipmentAcceptanceManuallyState
   TextEditingController prefixController = TextEditingController();
   TextEditingController awbController = TextEditingController();
   TextEditingController houseController = TextEditingController();
+  TextEditingController commodityController = TextEditingController();
+  TextEditingController agentController = TextEditingController();
+  FocusNode prefixFocusNode = FocusNode();
+  FocusNode awbFocusNode = FocusNode();
+  FocusNode houseFocusNode = FocusNode();
 
   @override
   void initState() {
     super.initState();
-    awbSearch();
+    // awbSearch();
+    print("-----${commodityListMaster.length}");
+    awbFocusNode.addListener(() {
+      if (!awbFocusNode.hasFocus) {
+        print("LOST focus");
+         leftAWBFocus();
+      }
+    },);
+    houseFocusNode.addListener(() {
+      if (!houseFocusNode.hasFocus) {
+        // leaveDestinationFocus();
+      }
+    },);
   }
+
+  void showDataNotFoundDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
+              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
+              CustomeText(
+                text: message,
+                fontColor: MyColor.colorBlack,
+                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
+                fontWeight: FontWeight.w400,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
+              RoundedButtonBlue(
+                text: "Ok",
+                color: MyColor.primaryColorblue,
+                press: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  leftAWBFocus() async {
+    if(awbController.text.length!=8){
+      showDataNotFoundDialog(context, "Please enter a valid AWB No.");
+      return;
+    }
+    if(prefixController.text.length!=3){
+      showDataNotFoundDialog(context, "Please enter a valid AWB No.");
+      return;
+    }
+    if (awbController.text.isNotEmpty && prefixController.text.isNotEmpty) {
+      print("iput is valid");
+      awbSearch();
+    }
+  }
+
+
   awbSearch() async {
-    if (isLoading) return;
-
-    setState(() {
-      isLoading = true;
-    });
-
-    var queryParams = {
-      "AWBNo" :"12522110115",
-      "HAWBNo":"",
-      "AirportCode":"JFK",
-      "CompanyCode":"0",
-      "CultureCode":"en-US",
-      "UserId":"0",
-      "MenuId":"0"
+    DialogUtils.showLoadingDialog(context);
+    var queryParams ={
+      "InputXML": "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
     };
-    await authService
-        .getData(
-      "ShipmentAcceptance/Search",
-      queryParams,
-    )
+
+    await authService.sendXmlInGetWithBody("ShipmentAcceptance/GetShipmentDetails",queryParams)
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
@@ -82,37 +143,18 @@ class _ShipmentAcceptanceManuallyState
         hasNoRecord=false;
       }
       print("is empty record$hasNoRecord");
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage'];
+      String status = jsonData['ReturnOutput'][0]['Status'];
+      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
 
       if (status != 'S') {
         print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, statusMessage);
         return;
       }
-
-      List<VCTItem> dropdownItems = [];
-      if (jsonData['VCTList'] != null) {
-        dropdownItems = (jsonData['VCTList'] as List)
-            .where((item) => item['Type'] == 'H')
-            .map((item) => VCTItem.fromJson(item))
-            .toList();
-      }
-      VCTMasterDataForDamage? masterDataForDamage;
-      if (jsonData['VCTMasterDataForDamage'] != null) {
-        masterDataForDamage = VCTMasterDataForDamage.fromJson(jsonData['VCTMasterDataForDamage']);
-      }
-
-      print("Dropdown Items: ${dropdownItems.map((e) => '${e.consignmentRowId} - ${e.houseNo}').toList()}");
-      print("Master Data: ${masterDataForDamage?.documentNo}");
-
-      setState(() {
-        isLoading = false;
-
-      });
+      DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
+      DialogUtils.hideLoadingDialog(context);
       print(onError);
     });
   }
@@ -250,7 +292,9 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "Prefix*",
                                                     readOnly: false,
-                                                    maxLength: 3,
+                                                    focusNode: prefixFocusNode,
+                                                    controller: prefixController,
+                                                    maxLength: 3, onPress: () {},
                                                     textInputType:
                                                         TextInputType.number,
                                                     fontSize: 18,
@@ -282,6 +326,8 @@ class _ShipmentAcceptanceManuallyState
                                                         TextInputType.number,
                                                     needOutlineBorder: true,
                                                     labelText: "AWB No*",
+                                                        onPress: () {},
+                                                    focusNode: awbFocusNode,
                                                     readOnly: false,
                                                     controller: awbController,
                                                     maxLength: 8,
@@ -329,7 +375,10 @@ class _ShipmentAcceptanceManuallyState
                                                     TextInputType.number,
                                                     needOutlineBorder: true,
                                                     labelText: "HAWB No*",
+                                                    onPress: () {},
                                                     readOnly: false,
+                                                    focusNode: houseFocusNode,
+                                                    controller: houseController,
                                                     maxLength: 8,
                                                     fontSize: 18,
                                                     onChanged:
@@ -385,6 +434,7 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "NoP*",
                                                     readOnly: false,
+                                                        onPress: () {},
                                                     textInputType:
                                                         TextInputType.number,
                                                     maxLength: 4,
@@ -413,6 +463,7 @@ class _ShipmentAcceptanceManuallyState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Total Weight*",
+                                                        onPress: () {},
                                                     readOnly: false,
                                                     textInputType:
                                                         TextInputType.number,
@@ -448,6 +499,7 @@ class _ShipmentAcceptanceManuallyState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Unit*",
+                                                        onPress: () {},
                                                     readOnly: false,
                                                     textInputType:
                                                         TextInputType.number,
@@ -477,6 +529,7 @@ class _ShipmentAcceptanceManuallyState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Group Id*",
+                                                        onPress: () {},
                                                     readOnly: false,
                                                     textInputType:
                                                         TextInputType.number,
@@ -504,34 +557,144 @@ class _ShipmentAcceptanceManuallyState
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "Commodity/Activity*",
-                                              readOnly: false,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                            child: TypeAheadField<
+                                                Commodity>(
+                                              controller: commodityController,
+                                              debounceDuration:
+                                              const Duration(milliseconds: 300),
+                                              suggestionsCallback: (search) =>
+                                                  CommodityService.find(search),
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black, width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black, width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black, width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+
+                                                      Text(item.commodityType.toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller, focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText: "Commodity/Activity*",
+                                                    readOnly: false,
+
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder: (context, child) =>
+                                                  Material(
+                                                    type: MaterialType.card,
+                                                    elevation: 4,
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    child: child,
+                                                  ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) => const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text('No Commodity Found',
+                                                    style: TextStyle(fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                commodityController.text =
+                                                    value.commodityType
+                                                        .toUpperCase();
+
+                                              },
                                             ),
                                           ),
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "Agent Code - Name*",
-                                              readOnly: false,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                            child: TypeAheadField<
+                                                Customer>(
+                                              controller: agentController,
+                                              debounceDuration:
+                                              const Duration(milliseconds: 300),
+                                              suggestionsCallback: (search) =>
+                                                  AgentService.find(search),
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration: const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black, width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black, width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black, width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding: const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+
+                                                      Text(item.customerName.toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller, focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText: "Agent Code - Name*",
+                                                    readOnly: false,
+
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder: (context, child) =>
+                                                  Material(
+                                                    type: MaterialType.card,
+                                                    elevation: 4,
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                    child: child,
+                                                  ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) => const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text('No Customer Found',
+                                                    style: TextStyle(fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                agentController.text =
+                                                    value.customerName
+                                                        .toUpperCase();
+
+                                              },
                                             ),
                                           ),
                                         ],

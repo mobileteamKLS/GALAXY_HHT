@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/utils/dialogutils.dart';
+import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
@@ -172,6 +173,11 @@ class _CreateShipmentState extends State<CreateShipment> {
         if(status!="S"){
           showDataNotFoundDialog(context, statusMessage!);
         }
+        if((status=="S")){
+          SnackbarUtil.showSnackbar(context, "Shipment Saved successfully", Color(0xff43A047));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+        }
 
       }
 
@@ -188,7 +194,7 @@ class _CreateShipmentState extends State<CreateShipment> {
       child: Scaffold(
         appBar: AppBar(
             title: const Text(
-              'Imports',
+              '',
               style: TextStyle(color: Colors.white),
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
@@ -206,22 +212,22 @@ class _CreateShipmentState extends State<CreateShipment> {
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 10,
               ),
             ]),
-        drawer: const Drawer(),
+        // drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
@@ -248,7 +254,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                   },
                                 ),
                                 const Text(
-                                  '  Booking Creation',
+                                  '  Shipment Creation',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 22),
@@ -1736,48 +1742,48 @@ class _CreateShipmentState extends State<CreateShipment> {
         //     child: const Icon(Icons.add),
         //   ),
         // ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        extendBody: true,
-        bottomNavigationBar: BottomAppBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 60,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 5,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.chart_pie),
-                    Text("Dashboard"),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.help_outline,
-                      color: MyColor.primaryColorblue,
-                    ),
-                    Text(
-                      "User Help",
-                      style: TextStyle(color: MyColor.primaryColorblue),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // extendBody: true,
+        // bottomNavigationBar: BottomAppBar(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   height: 60,
+        //   color: Colors.white,
+        //   surfaceTintColor: Colors.white,
+        //   shape: const CircularNotchedRectangle(),
+        //   notchMargin: 5,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: <Widget>[
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(CupertinoIcons.chart_pie),
+        //             Text("Dashboard"),
+        //           ],
+        //         ),
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(
+        //               Icons.help_outline,
+        //               color: MyColor.primaryColorblue,
+        //             ),
+        //             Text(
+        //               "User Help",
+        //               style: TextStyle(color: MyColor.primaryColorblue),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }

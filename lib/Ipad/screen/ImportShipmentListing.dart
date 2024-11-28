@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
@@ -69,7 +70,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       "PageNo": 1,
       "FilterClause": "1=1",
       "OrderByClause": "1",
-      "AirportCode": "BLR",
+      "AirportCode": "JFK",
       "CompanyCode": 3,
       "CultureCode": "en-US",
       "UserId": 1,
@@ -118,7 +119,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       child: Scaffold(
         appBar: AppBar(
             title: const Text(
-              'Imports',
+              '',
               style: TextStyle(color: Colors.white),
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
@@ -136,22 +137,22 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 10,
               ),
             ]),
-        drawer: const Drawer(),
+        // drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
@@ -159,6 +160,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
               color: MyColor.screenBgColor,
               child: Column(
                 children: [
+                  const SizedBox(height: 10,),
                   Padding(
                     padding:
                         const EdgeInsets.only(top: 10, left: 20, right: 20),
@@ -186,57 +188,58 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                           ),
                           Row(
                             children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.search,
-                                  color: MyColor.primaryColorblue,
-                                ),
-                                onPressed: () {
-                                  print("Search button pressed");
-                                  // showShipmentSearchDialog(context);
-                                },
-                              ),
+                              // IconButton(
+                              //   icon: const Icon(
+                              //     Icons.search,
+                              //     color: MyColor.primaryColorblue,
+                              //   ),
+                              //   onPressed: () {
+                              //     print("Search button pressed");
+                              //     // showShipmentSearchDialog(context);
+                              //   },
+                              // ),
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 5, left: 20, right: 20, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Showing (0/0)',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        Row(
-                          children: [
-                            GestureDetector(
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.filter_alt_outlined,
-                                    color: MyColor.primaryColorblue,
-                                  ),
-                                  Text(
-                                    ' Filter',
-                                    style: TextStyle(fontSize: 18),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                showShipmentSearchBottomSheet(context);
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                  const SizedBox(height: 10,),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(
+                  //       top: 5, left: 20, right: 20, bottom: 10),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       const Text(
+                  //         'Showing (0/0)',
+                  //         style: TextStyle(
+                  //             fontWeight: FontWeight.bold, fontSize: 18),
+                  //       ),
+                  //       Row(
+                  //         children: [
+                  //           GestureDetector(
+                  //             child: const Row(
+                  //               children: [
+                  //                 Icon(
+                  //                   Icons.filter_alt_outlined,
+                  //                   color: MyColor.primaryColorblue,
+                  //                 ),
+                  //                 Text(
+                  //                   ' Filter',
+                  //                   style: TextStyle(fontSize: 18),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //             onTap: () {
+                  //               showShipmentSearchBottomSheet(context);
+                  //             },
+                  //           ),
+                  //         ],
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
                   isLoading
                       ? const Center(
                       child: SizedBox(
@@ -325,48 +328,52 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
             child: const Icon(Icons.add),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        extendBody: true,
-        bottomNavigationBar: BottomAppBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 60,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 5,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.chart_pie),
-                    Text("Dashboard"),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.help_outline,
-                      color: MyColor.primaryColorblue,
-                    ),
-                    Text(
-                      "User Help",
-                      style: TextStyle(color: MyColor.primaryColorblue),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // extendBody: true,
+        // bottomNavigationBar: BottomAppBar(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   height: 60,
+        //   color: Colors.white,
+        //   surfaceTintColor: Colors.white,
+        //   shape: const CircularNotchedRectangle(),
+        //   notchMargin: 5,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: <Widget>[
+        //       GestureDetector(
+        //         onTap: () {
+        //           Navigator.pushReplacement(context,
+        //               MaterialPageRoute(builder: (context) => const WarehouseOperations()));
+        //         },
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(CupertinoIcons.chart_pie,
+        //               ),
+        //             Text("Dashboard"),
+        //           ],
+        //         ),
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(
+        //               Icons.help_outline,
+        //
+        //             ),
+        //             Text(
+        //               "User Help",
+        //
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
@@ -606,56 +613,56 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                   ),
                 ),
                 const SizedBox(width: 128),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Container(
-                          height: 30,
-                          margin: const EdgeInsets.only(right: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF0057D8),
-                                Color(0xFF1c86ff),
-                              ],
-                              begin: Alignment.centerLeft,
-                              end: Alignment.centerRight,
-                            ),
-                          ),
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent),
-                            onPressed: null,
-                            child: const Text(
-                              'Accepted Shipment',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ),
-                        ),
-                        const Icon(
-                          Icons.more_vert_outlined,
-                          color: MyColor.primaryColorblue,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color:Color(0xffF2F7FD),
-                          ),
-                          child: const Icon(
-                            size: 28,
-                            Icons.keyboard_arrow_right_outlined,
-                            color: MyColor.primaryColorblue,
-                          ),
-                        )
-                      ],)
-                  ],
-                )
+                // Column(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //       children: [
+                //         Container(
+                //           height: 30,
+                //           margin: const EdgeInsets.only(right: 12),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(8),
+                //             gradient: const LinearGradient(
+                //               colors: [
+                //                 Color(0xFF0057D8),
+                //                 Color(0xFF1c86ff),
+                //               ],
+                //               begin: Alignment.centerLeft,
+                //               end: Alignment.centerRight,
+                //             ),
+                //           ),
+                //           child: ElevatedButton(
+                //             style: ElevatedButton.styleFrom(
+                //                 backgroundColor: Colors.transparent,
+                //                 shadowColor: Colors.transparent),
+                //             onPressed: null,
+                //             child: const Text(
+                //               'Accepted Shipment',
+                //               style: TextStyle(color: Colors.white),
+                //             ),
+                //           ),
+                //         ),
+                //         const Icon(
+                //           Icons.more_vert_outlined,
+                //           color: MyColor.primaryColorblue,
+                //         ),
+                //         Container(
+                //           margin: const EdgeInsets.only(left: 12),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(5),
+                //             color:Color(0xffF2F7FD),
+                //           ),
+                //           child: const Icon(
+                //             size: 28,
+                //             Icons.keyboard_arrow_right_outlined,
+                //             color: MyColor.primaryColorblue,
+                //           ),
+                //         )
+                //       ],)
+                //   ],
+                // )
               ],
             ),
           ],

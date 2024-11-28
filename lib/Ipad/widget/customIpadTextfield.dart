@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/utils/global.dart';
 import 'package:galaxy/module/onboarding/sizeconfig.dart';
 import 'package:galaxy/utils/commonutils.dart';
 
@@ -11,6 +12,7 @@ import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../utils/flightnumbervalidationutils.dart';
 import '../../utils/sizeutils.dart';
+import '../modal/ShipmentAcceptanceModal.dart';
 
 class CustomeEditTextWithBorderDatePicker extends StatefulWidget {
   final String lablekey;
@@ -193,4 +195,58 @@ class RoundedIconButton extends StatelessWidget {
     );
   }
 }
+
+class CommodityService {
+  static List<Commodity> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return commodityListMaster.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.commodityType);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return commodityListMaster.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.commodityType);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
+class AgentService {
+  static List<Customer> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return customerListMaster.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.customerName);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return customerListMaster.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.customerName);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
+
+
+
 

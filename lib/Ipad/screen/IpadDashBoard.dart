@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
+import 'package:galaxy/utils/dialogutils.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
@@ -31,16 +32,16 @@ class _IpadDashboardState extends State<IpadDashboard> {
   @override
   void initState() {
     super.initState();
-    getCommodity();
+    fetchMasterData();
+  }
+  void fetchMasterData() async {
+    await Future.delayed(Duration.zero); // Ensures no synchronous blocking
     getCustomerName();
+    getCommodity();
   }
 
   getCommodity() async {
-    if (isLoading) return;
-
-    setState(() {
-      isLoading = true;
-    });
+   DialogUtils.showLoadingDialog(context);
 
     var queryParams = {
       "AirportCode":"BLR",
@@ -69,10 +70,11 @@ class _IpadDashboardState extends State<IpadDashboard> {
       }
       print("is empty record$hasNoRecord");
       String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage'];
+      String statusMessage = jsonData['StatusMessage']??"";
 
       if (status != 'S') {
         print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
         return;
       }
       final List<dynamic> commodities = jsonData['CommodityList'];
@@ -80,23 +82,17 @@ class _IpadDashboardState extends State<IpadDashboard> {
         commodityListMaster = commodities
             .map((commodity) => Commodity.fromJson(commodity))
             .toList();
-        isLoading = false;
 
       });
+      DialogUtils.hideLoadingDialog(context);
       print("No of commodities ${commodityListMaster.length}");
     }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
+      DialogUtils.hideLoadingDialog(context);
       print(onError);
     });
   }
   getCustomerName() async {
-    if (isLoading) return;
-
-    setState(() {
-      isLoading = true;
-    });
+    DialogUtils.showLoadingDialog(context);
 
     var queryParams = {
       "AirportCode":"BLR",
@@ -125,20 +121,20 @@ class _IpadDashboardState extends State<IpadDashboard> {
       }
       print("is empty record$hasNoRecord");
       String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage'];
+      String statusMessage = jsonData['StatusMessage']??"";
 
       if (status != 'S') {
         print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
         return;
       }
       final List<dynamic> customers = jsonData['CustomerList'];
       setState(() {
         customerListMaster =
             customers.map((customer) => Customer.fromJson(customer)).toList();
-        isLoading = false;
-
       });
-      print("No of commodities ${customerListMaster.length}");
+      DialogUtils.hideLoadingDialog(context);
+      print("No of customers ${customerListMaster.length}");
     }).catchError((onError) {
       setState(() {
         isLoading = false;
@@ -153,7 +149,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
       child: Scaffold(
         appBar: AppBar(
             title: const Text(
-              'Landing Page',
+              '',
               style: TextStyle(color: Colors.white),
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
@@ -171,22 +167,22 @@ class _IpadDashboardState extends State<IpadDashboard> {
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 10,
               ),
             ]),
-        drawer: const Drawer(),
+        // drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
@@ -201,22 +197,22 @@ class _IpadDashboardState extends State<IpadDashboard> {
                     child: Material(
                       color: Colors.transparent,
                       // Ensures background transparency
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(Icons.list),
-                              Text(
-                                '  Menu',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 22),
-                              ),
-                            ],
-                          ),
-
-                        ],
-                      ),
+                      // child: Row(
+                      //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   children: [
+                      //     Row(
+                      //       children: [
+                      //         Icon(Icons.list),
+                      //         Text(
+                      //           '  Menu',
+                      //           style: TextStyle(
+                      //               fontWeight: FontWeight.bold, fontSize: 22),
+                      //         ),
+                      //       ],
+                      //     ),
+                      //
+                      //   ],
+                      // ),
                     ),
                   ),
                   SizedBox(height: 20,),
@@ -350,48 +346,48 @@ class _IpadDashboardState extends State<IpadDashboard> {
             ),
           ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        extendBody: true,
-        bottomNavigationBar: BottomAppBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 60,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 5,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.chart_pie),
-                    Text("Dashboard"),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.help_outline,
-                      color: MyColor.primaryColorblue,
-                    ),
-                    Text(
-                      "User Help",
-                      style: TextStyle(color: MyColor.primaryColorblue),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // extendBody: true,
+        // bottomNavigationBar: BottomAppBar(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   height: 60,
+        //   color: Colors.white,
+        //   surfaceTintColor: Colors.white,
+        //   shape: const CircularNotchedRectangle(),
+        //   notchMargin: 5,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: <Widget>[
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(CupertinoIcons.chart_pie),
+        //             Text("Dashboard"),
+        //           ],
+        //         ),
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(
+        //               Icons.help_outline,
+        //               color: MyColor.primaryColorblue,
+        //             ),
+        //             Text(
+        //               "User Help",
+        //               style: TextStyle(color: MyColor.primaryColorblue),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }

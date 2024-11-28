@@ -220,12 +220,12 @@ class _LogInScreenState extends State<LogInScreen> {
                         children: [
                           Row(
                             children: [
-                              InkWell(
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
-                                child: SvgPicture.asset(back, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3)
-                              ),
+                              // InkWell(
+                              //   onTap: () {
+                              //     Navigator.pop(context);
+                              //   },
+                              //   child: SvgPicture.asset(back, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3)
+                              // ),
                               SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                               CustomeText(
                                   text: "${loginModel.login}",
@@ -318,15 +318,15 @@ class _LogInScreenState extends State<LogInScreen> {
                                         ),
                                       ),
                                       SizedBox(height: SizeConfig.blockSizeVertical),
-                                      Directionality(
-                                        textDirection: textDirection,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.end,
-                                          children: [
-                                            CustomeText(text: "${loginModel.recoverForgotPassword}", fontColor: MyColor.bggradientfirst, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w400, textAlign: TextAlign.right),
-                                          ],
-                                        ),
-                                      ),
+                                      // Directionality(
+                                      //   textDirection: textDirection,
+                                      //   child: Row(
+                                      //     mainAxisAlignment: MainAxisAlignment.end,
+                                      //     children: [
+                                      //       CustomeText(text: "${loginModel.recoverForgotPassword}", fontColor: MyColor.bggradientfirst, fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, fontWeight: FontWeight.w400, textAlign: TextAlign.right),
+                                      //     ],
+                                      //   ),
+                                      // ),
                                       SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                       RoundedButtonBlueGradient(text: (state is LoginLoading)
                                           ? '${loginModel.loading}'

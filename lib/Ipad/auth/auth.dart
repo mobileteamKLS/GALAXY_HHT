@@ -9,7 +9,7 @@ class AuthService{
   }
   Future<Post> fetchDataPOST(apiName, payload) async {
     var newURL = "https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName";
-
+    print("fetch data for API = $newURL");
     // final headers = {
     //   'Content-Type': 'application/json',
     //   'Accept': 'application/json',
@@ -96,7 +96,68 @@ class AuthService{
       return Post.fromJson(response.body, statusCode);
     });
   }
+
+  Future<Post> sendXmlInGetWithBody(apiName, payload) async {
+    String url = 'https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName';
+  //
+  //   String xmlContent = '''
+  // <Root>
+  //   <AWBPrefix>125</AWBPrefix>
+  //   <AWBNo>78787787</AWBNo>
+  //   <HAWBNO>HB234</HAWBNO>
+  //   <AirportCity>JFK</AirportCity>
+  //   <Culture>''</Culture>
+  //   <CompanyCode>3</CompanyCode>
+  //   <UserId>1</UserId>
+  // </Root>
+  // ''';
+  //
+  //   // Create the JSON object
+  //   Map<String, dynamic> jsonBody = {
+  //     "InputXML": xmlContent,
+  //   };
+
+    // Convert the map to JSON
+    String jsonString = json.encode(payload);
+
+    // Create a request object for GET method
+    var request = http.Request('GET', Uri.parse(url));
+
+    // Set headers to indicate the content type (application/json)
+    request.headers['Content-Type'] = 'application/json';
+
+    // Add the JSON string in the request body
+    request.body = jsonString;
+
+    try {
+      // Send the GET request
+      var response = await request.send();
+      return await handleResponse(response);
+
+    } catch (e) {
+      throw Exception("Failed request: $e");
+    }
+  }
 }
+
+Future<Post> handleResponse(http.StreamedResponse response) async {
+  final int statusCode = response.statusCode;
+  final String responseBody = await response.stream.bytesToString();
+
+  print('Response:Successful');
+  print('Status code: $statusCode');
+
+  if (statusCode == 401) {
+    return Post.fromJson(responseBody, statusCode);
+  }
+
+  if (statusCode < 200 || statusCode > 400) {
+    throw Exception("Error while fetching data: $statusCode");
+  }
+
+  return Post.fromJson(responseBody, statusCode);
+}
+
 
 class Post {
   final int statusCode;

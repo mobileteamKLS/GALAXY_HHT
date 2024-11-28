@@ -33,7 +33,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       child: Scaffold(
         appBar: AppBar(
             title: const Text(
-              'Landing Page',
+              '',
               style: TextStyle(color: Colors.white),
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
@@ -51,22 +51,22 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 10,
               ),
             ]),
-        drawer: const Drawer(),
+        // drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
@@ -110,7 +110,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                     padding: EdgeInsets.only(
                         top: 5, left: 20, right: 20, bottom: 10),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         RoundedIconButton(
                           icon: CupertinoIcons.doc,
@@ -120,6 +120,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
                         ),
+                        SizedBox(width: 40,),
                         RoundedIconButton(
                           icon: CupertinoIcons.add,
                           text: 'Create\nShipment',
@@ -128,14 +129,14 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
                         ),
-                        RoundedIconButton(
-                          icon: CupertinoIcons.cube_box,
-                          text: 'Shipment\nAcceptance',
-                          targetPage: ShipmentAcceptanceManually(),
-                          containerColor: Color(0xffffd7bd),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
+                        // RoundedIconButton(
+                        //   icon: CupertinoIcons.cube_box,
+                        //   text: 'Shipment\nAcceptance',
+                        //   targetPage: ShipmentAcceptanceManually(),
+                        //   containerColor: Color(0xffffd7bd),
+                        //   iconColor: MyColor.textColorGrey3,
+                        //   textColor: MyColor.textColorGrey3,
+                        // ),
 
 
                       ],
@@ -199,48 +200,48 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
             ),
           ],
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        extendBody: true,
-        bottomNavigationBar: BottomAppBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 60,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 5,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.chart_pie),
-                    Text("Dashboard"),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.help_outline,
-                      color: MyColor.primaryColorblue,
-                    ),
-                    Text(
-                      "User Help",
-                      style: TextStyle(color: MyColor.primaryColorblue),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // extendBody: true,
+        // bottomNavigationBar: BottomAppBar(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   height: 60,
+        //   color: Colors.white,
+        //   surfaceTintColor: Colors.white,
+        //   shape: const CircularNotchedRectangle(),
+        //   notchMargin: 5,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: <Widget>[
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(CupertinoIcons.chart_pie),
+        //             Text("Dashboard"),
+        //           ],
+        //         ),
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(
+        //               Icons.help_outline,
+        //               color: MyColor.primaryColorblue,
+        //             ),
+        //             Text(
+        //               "User Help",
+        //               style: TextStyle(color: MyColor.primaryColorblue),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }

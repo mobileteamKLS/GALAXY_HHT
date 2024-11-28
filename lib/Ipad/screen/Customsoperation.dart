@@ -621,7 +621,7 @@ class AcceptedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Accepted View',
+        '',
         style: TextStyle(fontSize: 18),
       ),
     );
@@ -635,7 +635,7 @@ class RejectedView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Rejected View',
+        '',
         style: TextStyle(fontSize: 18),
       ),
     );
@@ -649,7 +649,7 @@ class AvailableForExaminationView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Text(
-        'Available for Examination View',
+        '',
         style: TextStyle(fontSize: 18),
       ),
     );
