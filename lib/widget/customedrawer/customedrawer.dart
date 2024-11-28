@@ -205,7 +205,7 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                     ),
                                   ),
                                   SizedBox(height: 10,),
-                                  Container(
+                                 /* Container(
                                     decoration: BoxDecoration(
                                       color: (isImportExpanded) ? MyColor.textColorBlueHigh : MyColor.bgColorGrey,
                                       borderRadius: BorderRadius.circular(8),
@@ -222,37 +222,31 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                           });
                                         },
                                         subMenuList: isImportExpanded ? widget.importSubMenuList : null,
+
                                       ),
+                                    ),
+                                  ),*/
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
 
+                                        Row(
+                                          children: [
+                                            SvgPicture.asset(exportSvg, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
+                                            SizedBox(width: 20,),
+                                            CustomeText(
+                                              text: "Import (0)",
+                                              textAlign: TextAlign.center,
+                                              fontWeight: FontWeight.w500,
+                                              fontColor:  MyColor.textColorGrey3,
+                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
+                                          ],
+                                        ),
+                                        SvgPicture.asset(circleDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
 
-                                      /*Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-
-                                          Row(
-                                            children: [
-                                              SvgPicture.asset(importSvg, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
-                                              SizedBox(width: 20,),
-                                              InkWell(
-                                                onTap: () {
-                                                 widget.onDrawerCloseIcon();
-                                                // Navigator.push(context, CupertinoPageRoute(builder: (context) => SubMenuPage(menuId: "1001", menuName: "Import"),));
-
-                                                },
-                                                child: CustomeText(
-                                                  text: "Import (${widget.importSubMenuList!.length})",
-                                                  textAlign: TextAlign.center,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontColor:  MyColor.textColorGrey3,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
-                                              ),
-                                            ],
-                                          ),
-
-
-                                          SvgPicture.asset(circleDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
-                                        ],
-                                      ),*/
+                                      ],
                                     ),
                                   ),
                                   SizedBox(height: 10,),

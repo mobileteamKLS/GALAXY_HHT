@@ -442,6 +442,8 @@ class LableModel {
   String? nog;
   String? commodity;
   String? remark;
+  String? addfoundcargo;
+  String? allAWBMatchedDiscrepancy;
 
 
 
@@ -733,6 +735,8 @@ class LableModel {
         this.excessPieces,
         this.receivesPiecesMsg,
         this.breakdownPiecesMsg,
+        this.addfoundcargo,
+        this.allAWBMatchedDiscrepancy,
 
         this.cLT,
         this.cRB,
@@ -1134,6 +1138,8 @@ class LableModel {
     bdDone = json['bdDone'];
     awb = json['awb'];
     hawb = json['hawb'];
+    addfoundcargo = json['addfoundcargo'];
+    allAWBMatchedDiscrepancy = json['allAWBMatchedDiscrepancy'];
 
     s9 = json['9'];
     s10 = json['10'];
@@ -1587,6 +1593,8 @@ class LableModel {
     data['bdDone'] = this.bdDone;
     data['awb'] = this.awb;
     data['hawb'] = this.hawb;
+    data['addfoundcargo'] = this.addfoundcargo;
+    data['allAWBMatchedDiscrepancy'] = this.allAWBMatchedDiscrepancy;
 
     data['9'] = this.s9;
     data['10'] = this.s10;

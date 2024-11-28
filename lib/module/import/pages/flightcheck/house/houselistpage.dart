@@ -643,6 +643,9 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                             }
                                                                             else{
 
+                                                                              SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                              Vibration.vibrate(duration: 500);
+
                                                                             /*  CommonUtils.SELECTEDWHETHER = "";
 
                                                                               CommonUtils.SELECTEDIMAGELIST.clear();
@@ -715,7 +718,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                               Vibration.vibrate(duration: 500);
                                                                             }
                                                                             else{
-
+                                                                              SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                              Vibration.vibrate(duration: 500);
 
                                                                              /* CommonUtils.SELECTEDWHETHER = "";
 
@@ -786,12 +790,13 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                       }
                                                                       else if(widget.flightDetailSummary.flightStatus == "F"){
                                                                         if(aWBItem.damageNOP == 0){
-                                                                          SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                           Vibration.vibrate(duration: 500);
                                                                         }
                                                                         else{
 
-
+                                                                          SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          Vibration.vibrate(duration: 500);
                                                                           /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                           CommonUtils.SELECTEDIMAGELIST.clear();
@@ -859,7 +864,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                       }
                                                                       else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                                        SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         Vibration.vibrate(duration: 500);
                                                                       }
                                                                       setState(() {
@@ -1391,6 +1396,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     Vibration.vibrate(duration: 500);
                                                                                                   }
                                                                                                   else{
+                                                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                    Vibration.vibrate(duration: 500);
 
                                                                                                     /*CommonUtils.SELECTEDWHETHER = "";
 
@@ -1464,7 +1471,8 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                                     Vibration.vibrate(duration: 500);
                                                                                                   }
                                                                                                   else{
-
+                                                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                    Vibration.vibrate(duration: 500);
 
                                                                                                     /*CommonUtils.SELECTEDWHETHER = "";
 
@@ -1535,11 +1543,12 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                                                                             }
                                                                                             else if(widget.flightDetailSummary.flightStatus == "F"){
                                                                                               if(aWBItem.damageNOP == 0){
-                                                                                                SnackbarUtil.showSnackbar(context, "Flight is finalized.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                SnackbarUtil.showSnackbar(context, "${lableModel.flightisFinalizedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                                 Vibration.vibrate(duration: 500);
                                                                                               }
                                                                                               else{
-
+                                                                                                SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                Vibration.vibrate(duration: 500);
 
                                                                                                 /*CommonUtils.SELECTEDWHETHER = "";
 
@@ -1606,7 +1615,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
 
                                                                                             }
                                                                                             else if(widget.flightDetailSummary.flightStatus == "N"){
-                                                                                              SnackbarUtil.showSnackbar(context, "Flight is not arrived.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                              SnackbarUtil.showSnackbar(context, "${lableModel.flightisNotArrivedMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                               Vibration.vibrate(duration: 500);
                                                                                             }
                                                                                             setState(() {

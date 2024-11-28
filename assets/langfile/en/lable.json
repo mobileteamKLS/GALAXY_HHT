@@ -46,7 +46,7 @@
     "ztoa" : "Z - A",
     "enteruldNoMsg" : "Please enter ULD number.",
     "enteruldOwnerMsg" : "Please enter ULD owner.",
-    "enterGropIdMsg" : "Please enter group id.",
+    "enterGropIdMsg" : "Please enter Group Id.",
     "enterLocationMsg" : "Please enter location.",
     "validateLocation" : "Please validate location.",
     "gate" : "Gate",
@@ -198,7 +198,7 @@
     "destinationMsg" : "Please enter destination.",
     "nopMsg" : "Please enter NoP.",
     "weightMsg" : "Please enter weight.",
-    "originDestinationSameMsg" : "Origin & destination can't the same.",
+    "originDestinationSameMsg" : "Org and Dest can't be same.",
     "mailTypeMsg" : "Please select mail type.",
 
     "checkAWb" : "Check-In AWB",
@@ -214,11 +214,12 @@
     "cargo" : "Cargo",
     "mail" : "Mail",
     "breakdownCompleted" : "Breakdown completed",
-    "groupIdCharSizeMsg" : "Group ID must be exactly {0} characters long.",
+    "groupIdCharSizeMsg" : "Group Id must be exactly {0} characters long.",
     "awbCharSizeMsg" : "AWB must be exactly {0} characters long.",
     "enterAWBMsg" : "Please enter AWB.",
     "onlyNumericValueMsg" : "Only numeric values are accepted.",
     "onlyAlphaNumericValueMsg" : "Only alphanumeric characters are accepted.",
+    "allAWBMatchedDiscrepancy" : "All the AWBs have not yet been matched/recorded discrepancy.",
 
     "breakdown" : "Breakdown",
     "breakdownMsgUld" : "Are you sure you want to complete ULD {0} breakdown?",
@@ -270,6 +271,7 @@
     "receivesPiecesMsg" : "Received pieces {0} would be more than expected pieces {1}.",
     "breakdownPiecesMsg" : "Do you want to breakdown pieces?",
 
+    "addfoundcargo" : "Add found cargo",
 
 
     "c" : "C)",

@@ -10,7 +10,9 @@ import '../../../core/mycolor.dart';
 import '../../../language/appLocalizations.dart';
 import '../../../prefrence/savedprefrence.dart';
 import '../../../utils/dialogutils.dart';
+import '../../../utils/sizeutils.dart';
 import '../../../widget/customeuiwidgets/footer.dart';
+import '../../../widget/header/mainheadingwidget.dart';
 import '../../login/pages/signinscreenmethods.dart';
 import '../../onboarding/sizeconfig.dart';
 import '../../login/model/userlogindatamodel.dart';
@@ -64,80 +66,102 @@ class _ProfilepagescreenState extends State<Profilepagescreen> {
       child: Scaffold(
         backgroundColor: MyColor.colorWhite,
         body: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              HeaderWidget(title: "${dashboardModel!.profile}", onBack:() {
+              MainHeadingWidget(mainMenuName: "${dashboardModel!.profile}",
+              onDrawerIconTap: () {
                 Navigator.pop(context);
-              },),
-              CustomDivider(space: 0, color: Colors.black, hascolor: true,),
-              Container(
-                margin: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal * 3, right :SizeConfig.blockSizeHorizontal * 3),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(height: SizeConfig.blockSizeVertical * 1.7,),
-                    CircleAvatar(
-                      radius: SizeConfig.blockSizeVertical * 4.5,
-                      backgroundColor: MyColor.primaryColorblue,
-                      child: Text("${_user!.userProfile!.firstName![0]}${_user!.userProfile!.lastName![0]}", style:  GoogleFonts.poppins(textStyle:TextStyle(fontSize: SizeConfig.textMultiplier * 3.5, color: MyColor.colorWhite)),),
-                    ),
-                    SizedBox(height: SizeConfig.blockSizeVertical * 1.7,),
+              },
+              hideDrawer: true,),
 
-                    Text( "${_user?.userProfile?.firstName ?? ''} ${_user?.userProfile?.lastName ?? ''}", style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: SizeConfig.textMultiplier * 2, color: MyColor.colorBlack),)),
-                    SizedBox(height: SizeConfig.blockSizeVertical * 1.3),
-                    Divider(thickness: 0.2,),
-                    Directionality(
-                      textDirection: textDirection,
-                      child: ProfileMenu(
-                        iconColor: MyColor.primaryColorblue,
-                        text: "${dashboardModel.feedback}",
-                        icon: Icons.feedback_rounded,
-                        textSize:  SizeConfig.textMultiplier * 1.5,
-                        press: () {},
-                      ),
-                    ),
-                    Directionality(
-                      textDirection: textDirection,
-                      child: ProfileMenu(
-                        iconColor: MyColor.primaryColorblue,
-                        text: "${dashboardModel.helpCenter}",
-                        icon: Icons.help_outline_rounded,
-                        textSize:  SizeConfig.textMultiplier * 1.5,
-                        press: () {},
-                      ),
-                    ),
-                    SizedBox(height:  SizeConfig.blockSizeVertical * 0.2),
-                    Divider(thickness: 0.2,),
-                    SizedBox(height:  SizeConfig.blockSizeVertical * 0.2),
-                    Directionality(
-                      textDirection: textDirection,
-                      child: ProfileMenu(
-                          text: "${dashboardModel.logout}",
-                          icon: Icons.login_rounded,
-                          iconColor: Colors.red,
-                          textSize:  SizeConfig.textMultiplier * 1.5,
-                          press: () async {
+              Positioned(
+                top: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: MyColor.bgColorGrey,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2),
+                          topLeft: Radius.circular(SizeConfig.blockSizeVertical * SizeUtils.WIDTH2))),
+                  child: Column(
+                    children: [
 
-                            bool? logoutConfirmed = await DialogUtils.showLogoutDialog(context, dashboardModel);
-                            if (logoutConfirmed == true) {
-                              await savedPrefrence.logout();
-                              Navigator.pushAndRemoveUntil(
-                                context,
-                                CupertinoPageRoute(
-                                  builder: (context) => SignInScreenMethod(),
-                                ), (route) => false,
-                              );
-                            }
-                          }
-                      ),
-                    ),
-                  ],
+                      Container(
+                        margin: EdgeInsets.only(left:SizeConfig.blockSizeHorizontal * 3, right :SizeConfig.blockSizeHorizontal * 3),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            SizedBox(height: SizeConfig.blockSizeVertical * 1.7,),
+                            CircleAvatar(
+                              radius: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT4,
+                              backgroundColor: MyColor.primaryColorblue,
+                              child: Text("${_user!.userProfile!.firstName![0]}${_user!.userProfile!.lastName![0]}", style:  GoogleFonts.poppins(textStyle:TextStyle(fontSize: SizeConfig.textMultiplier * 3.5, color: MyColor.colorWhite)),),
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical * 1.7,),
+
+                            Text( "${_user?.userProfile?.firstName ?? ''} ${_user?.userProfile?.lastName ?? ''}", style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: SizeConfig.textMultiplier * 2, color: MyColor.colorBlack),)),
+                            SizedBox(height: SizeConfig.blockSizeVertical * 1.3),
+                            Divider(thickness: 0.2,),
+                            Directionality(
+                              textDirection: textDirection,
+                              child: ProfileMenu(
+                                iconColor: MyColor.primaryColorblue,
+                                text: "${dashboardModel.feedback}",
+                                icon: Icons.feedback_rounded,
+                                textSize:  SizeConfig.textMultiplier * 1.5,
+                                press: () {},
+                              ),
+                            ),
+                            Directionality(
+                              textDirection: textDirection,
+                              child: ProfileMenu(
+                                iconColor: MyColor.primaryColorblue,
+                                text: "${dashboardModel.helpCenter}",
+                                icon: Icons.help_outline_rounded,
+                                textSize:  SizeConfig.textMultiplier * 1.5,
+                                press: () {},
+                              ),
+                            ),
+                            SizedBox(height:  SizeConfig.blockSizeVertical * 0.2),
+                            Divider(thickness: 0.2,),
+                            SizedBox(height:  SizeConfig.blockSizeVertical * 0.2),
+                            Directionality(
+                              textDirection: textDirection,
+                              child: ProfileMenu(
+                                  text: "${dashboardModel.logout}",
+                                  icon: Icons.login_rounded,
+                                  iconColor: Colors.red,
+                                  textSize:  SizeConfig.textMultiplier * 1.5,
+                                  press: () async {
+
+                                    bool? logoutConfirmed = await DialogUtils.showLogoutDialog(context, dashboardModel);
+                                    if (logoutConfirmed == true) {
+                                      await savedPrefrence.logout();
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        CupertinoPageRoute(
+                                          builder: (context) => SignInScreenMethod(),
+                                        ), (route) => false,
+                                      );
+                                    }
+                                  }
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              )
+              ),
+
+
+
             ],
           ),
         ),
-        bottomNavigationBar: FooterCompanyName(),
       ),
     );
 

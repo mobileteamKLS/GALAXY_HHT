@@ -171,8 +171,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ? BuildCustomeDrawer(
                 user: _user!,
                 splashDefaultData: _splashDefaultData!,
-                importSubMenuList: [],
-                exportSubMenuList: [],
+                importSubMenuList: const [],
+                exportSubMenuList: const [],
                 onDrawerCloseIcon: () {
                   _scaffoldKey.currentState?.closeDrawer();
                 },) : null, // Add custom drawer widget here
@@ -256,14 +256,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   if(state is MenuStateSuccess){
 
                                     //add gridview
-                                    return (state.menuModel.menuName!.isNotEmpty) ? GridView.builder(
+                                    return (state.menuModel.menuName!.isNotEmpty) ?
+                                    GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
-                                      itemCount: state.menuModel.menuName!.length,
+                                      itemCount: state.menuModel.menuName!
+                                          .where((menu) => menu.menuName != "Export" && menu.menuName != "Courier")
+                                          .toList()
+                                          .length, // Filter the list and update the itemCount
                                       physics: const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder: (context, index) {
-                                        MenuName menuName = state.menuModel.menuName![index];
+
+                                        final filteredMenu = state.menuModel.menuName!
+                                            .where((menu) => menu.menuName != "Export" && menu.menuName != "Courier")
+                                            .toList();
+
+                                        MenuName menuName = filteredMenu[index];
                                         String menuTitle = "${dashboardModel.getValueFromKey(CommonUtils.removeExtraIcons(menuName.refMenuCode!))}";
 
                                         return DashboardCustomeWidget(title: menuTitle,

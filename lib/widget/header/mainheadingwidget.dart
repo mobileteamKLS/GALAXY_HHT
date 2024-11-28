@@ -10,9 +10,10 @@ import '../custometext.dart';
 
 class MainHeadingWidget extends StatefulWidget {
   String mainMenuName;
-  final VoidCallback onDrawerIconTap;
+  final VoidCallback? onDrawerIconTap;
   final VoidCallback? onUserProfileIconTap;
-  MainHeadingWidget({super.key, required this.mainMenuName, required this.onDrawerIconTap, this.onUserProfileIconTap});
+  bool? hideDrawer;
+  MainHeadingWidget({super.key, required this.mainMenuName, this.onDrawerIconTap, this.onUserProfileIconTap, this.hideDrawer = false});
 
   @override
   State<MainHeadingWidget> createState() => _MainHeadingWidgetState();
@@ -47,8 +48,9 @@ class _MainHeadingWidgetState extends State<MainHeadingWidget> {
             children: [
               Row(
                 children: [
-                  InkWell(onTap: widget.onDrawerIconTap,
-                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,), // Trigger the callback here
+                  InkWell(
+                    onTap: widget.onDrawerIconTap,
+                    child: SvgPicture.asset(widget.hideDrawer! ? back : drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3, color: MyColor.colorWhite,), // Trigger the callback here
                   ),
                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
                   CustomeText(text: widget.mainMenuName, fontColor: MyColor.colorWhite, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start)
@@ -56,7 +58,7 @@ class _MainHeadingWidgetState extends State<MainHeadingWidget> {
               ),
               Row(
                 children: [
-                  InkWell(
+                  (widget.hideDrawer!) ? const SizedBox(): InkWell(
                       onTap: widget.onUserProfileIconTap,
                       child: SvgPicture.asset(usercog, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,)),
                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),

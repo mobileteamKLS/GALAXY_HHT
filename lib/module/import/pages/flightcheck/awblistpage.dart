@@ -203,8 +203,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
             // Show Snackbar with the AWB number of the first item with Progress 0
             SnackbarUtil.showSnackbar(
-              context,
-              "All the AWBs have not yet been matched/recorded discrepancy.",
+              context, widget.lableModel.allAWBMatchedDiscrepancy!,
               MyColor.colorRed,
               icon: FontAwesomeIcons.times,
             );
@@ -566,8 +565,17 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                 ),
                                                               ),
                                                               InkWell(
-                                                                onTap: () {
-                                                                  scanQR(lableModel);
+                                                                onTap: () async {
+
+                                                                  if(_isOpenULDFlagEnable == false){
+                                                                    _isOpenULDFlagEnable = true;
+                                                                    await context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                    scanQR(lableModel);
+                                                                  }else{
+                                                                    scanQR(lableModel);
+                                                                  }
+
+
                                                                 },
                                                                 child: Padding(padding: const EdgeInsets.all(8.0),
                                                                   child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
@@ -733,7 +741,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                               if(aWBItem.mAWBInd != "M"){
 
-
+                                                                                SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                Vibration.vibrate(duration: 500);
                                                                                 /*CommonUtils.SELECTEDWHETHER = "";
                                                                                 CommonUtils.SELECTEDIMAGELIST.clear();
                                                                                 CommonUtils.shipTotalPcs = 0;
@@ -810,7 +819,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                               if(aWBItem.mAWBInd != "M"){
-
+                                                                                SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                Vibration.vibrate(duration: 500);
 
                                                                                 /*CommonUtils.SELECTEDWHETHER = "";
                                                                                 CommonUtils.SELECTEDIMAGELIST.clear();
@@ -935,7 +945,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         else{
 
                                                                           if(aWBItem.mAWBInd != "M"){
-
+                                                                            SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                            Vibration.vibrate(duration: 500);
                                                                             /*CommonUtils.SELECTEDWHETHER = "";
 
                                                                             CommonUtils.SELECTEDIMAGELIST.clear();
@@ -1567,7 +1578,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                   else{
 
                                                                                                     if(aWBItem.mAWBInd != "M"){
-
+                                                                                                      SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                      Vibration.vibrate(duration: 500);
 
 
 
@@ -1653,7 +1665,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                                     if(aWBItem.mAWBInd != "M"){
 
 
-
+                                                                                                      SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                      Vibration.vibrate(duration: 500);
 /*
                                                                                                     CommonUtils.SELECTEDWHETHER = "";
 
@@ -1738,7 +1751,8 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                                               else{
 
                                                                                                 if(aWBItem.mAWBInd != "M"){
-
+                                                                                                  SnackbarUtil.showSnackbar(context, "${lableModel.breakdownAlreadyCompleted}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                                  Vibration.vibrate(duration: 500);
                                                                                                 /*  CommonUtils.SELECTEDWHETHER = "";
 
                                                                                                   CommonUtils.SELECTEDIMAGELIST.clear();
@@ -1921,13 +1935,13 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                     fontWeight: FontWeight.w500,
                                                                     textAlign: TextAlign.center),),
                                                                 ),
-                                                                RoundedButtonBlue(text: "Add found cargo", press: () async {
+                                                                RoundedButtonBlue(text: "${lableModel.addfoundcargo}", press: () async {
                                                                   if (scanNoEditingController.text.length != 11) {
                                                                     openValidationDialog("${lableModel.invalidAWBNo}", scanAwbFocusNode);
                                                                     return;
                                                                   }
 
-                                                                  var result = await DialogUtils.showFoundCargoAWBDialog(context, scanNoEditingController.text, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Add found cargo", widget.buttonRightsList, widget.groupIDRequires, widget.groupIDCharSize, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.location);
+                                                                  var result = await DialogUtils.showFoundCargoAWBDialog(context, scanNoEditingController.text, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "${lableModel.addfoundcargo}", widget.buttonRightsList, widget.groupIDRequires, widget.groupIDCharSize, widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, widget.location);
 
                                                                   if (result != null) {
                                                                     if (result.containsKey('status')) {
@@ -1940,7 +1954,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                       }else if(status == "A"){
                                                                         _resumeTimerOnInteraction();
                                                                         scanNoEditingController.clear();
-                                                                        _isOpenULDFlagEnable = false;
+                                                                        _isOpenULDFlagEnable = true;
                                                                         setState(() {
 
                                                                         });
@@ -2010,7 +2024,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
                                                                         if(value == "Done"){
                                                                           _resumeTimerOnInteraction();
-                                                                          _isOpenULDFlagEnable = false;
+                                                                          _isOpenULDFlagEnable = true;
                                                                           setState(() {
 
                                                                           });
@@ -2018,7 +2032,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                         }
                                                                         else if(value == "true"){
                                                                           _resumeTimerOnInteraction();
-                                                                          _isOpenULDFlagEnable = false;
+                                                                          _isOpenULDFlagEnable = true;
                                                                           setState(() {
 
                                                                           });
@@ -2264,7 +2278,10 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
               : result;
 
           scanNoEditingController.text = truncatedResult.toString();
+
+
           updateSearchList(truncatedResult);
+
         }
 
 
