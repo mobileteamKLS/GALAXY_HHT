@@ -2,20 +2,12 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/damagedetailmodel.dart';
-import '../../utils/commonutils.dart';
-import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
-import '../widget/customIpadTextfield.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 

@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,16 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
-import '../../module/onboarding/sizeconfig.dart';
-import '../../utils/commonutils.dart';
-import '../../utils/sizeutils.dart';
-import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
-import '../../widget/custometext.dart';
-import '../auth/auth.dart';
-import '../widget/customIpadTextfield.dart';
-import 'CaptureDamageAndAccept.dart';
-import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 
 class CreateNewDO extends StatefulWidget {
