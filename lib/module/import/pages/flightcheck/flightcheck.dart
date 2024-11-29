@@ -2961,7 +2961,7 @@ class _FlightCheckState extends State<FlightCheck>
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
           child: CustomeText(
-              text: "Comming Soon",
+              text: "Coming Soon",
               // if record not found
               fontColor: MyColor.textColorGrey,
               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
