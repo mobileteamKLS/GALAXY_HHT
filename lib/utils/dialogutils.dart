@@ -1310,7 +1310,7 @@ class DialogUtils {
                           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                           Row(
                             children: [
-                              Expanded(
+                              (uldNo == "BULK") ? const SizedBox() : Expanded(
                                 flex: 1,
                                 child: RoundedButtonBlue(
                                   text: "${lableModel.uldDamageAccept}",
@@ -1359,7 +1359,7 @@ class DialogUtils {
                                   },
                                 ),
                               ),
-                              const SizedBox(width: 10),
+                              (uldNo == "BULK") ? const SizedBox() : const SizedBox(width: 10),
                               Expanded(
                                 flex: 1,
                                 child: RoundedButtonBlue(
@@ -1400,8 +1400,6 @@ class DialogUtils {
                                      // SnackbarUtil.showSnackbar(context, "You don't have sufficient rights", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                       Vibration.vibrate(duration: 500);
                                     }
-
-
 
 
 
@@ -2376,7 +2374,7 @@ class DialogUtils {
                                 needOutlineBorder: true,
                                 labelText: groupIdRequired == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
                                 readOnly: false,
-                                maxLength: groupIDCharSize,
+                                maxLength: (groupIDCharSize == 0) ? 1 : groupIDCharSize,
                                 onChanged: (value) {
                                   if(groupIdController.text.isEmpty){
                                     setState(() {

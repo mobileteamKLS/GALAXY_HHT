@@ -2125,7 +2125,7 @@ class _FlightCheckState extends State<FlightCheck>
 
 
 
-                                  (/*flightDetails.damageNOP != 0 || */flightDetails.damageConditionCode!.isNotEmpty)
+                                  (/*flightDetails.damageNOP != 0 ||*/ flightDetails.damageConditionCode!.isNotEmpty)
                                       ? Padding(
                                     padding: const EdgeInsets.symmetric(horizontal: 5),
                                     child: Row(

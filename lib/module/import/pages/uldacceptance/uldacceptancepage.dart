@@ -1313,6 +1313,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                               onTap: () {
                                                                 setState(() {
                                                                   _pageIndex = index;
+                                                                  _checkScrollable();
                                                                 });
                                                               },
                                                               child: Container(
@@ -1770,14 +1771,17 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                                                               padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
                                                                                               decoration : BoxDecoration(
                                                                                                   borderRadius: BorderRadius.circular(20),
-                                                                                                  color: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "S")
+                                                                                                 /* color: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "S" || uldModel.buttonStatus!.replaceAll(" ", "") == "0" || uldModel.buttonStatus!.replaceAll(" ", "") == "2")
                                                                                                       ? MyColor.acceptedColor
-                                                                                                      : MyColor.pendingColor
+                                                                                                      : MyColor.pendingColor*/
+                                                                                                  color: (uldModel.buttonStatus!.replaceAll(" ", "") != "A") ? MyColor.acceptedColor : MyColor.pendingColor
+
                                                                                               ),
                                                                                               child: CustomeText(
-                                                                                                  text: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "S")
+                                                                                                 /* text: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "S")
                                                                                                       ? lableModel.accepted!.toUpperCase()
-                                                                                                      : lableModel.pending!.toUpperCase(),
+                                                                                                      : lableModel.pending!.toUpperCase(),*/
+                                                                                                  text : (uldModel.buttonStatus!.replaceAll(" ", "") != "A") ? lableModel.accepted!.toUpperCase() : lableModel.pending!.toUpperCase(),
                                                                                                   fontColor: MyColor.colorBlack,
                                                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_2,
                                                                                                   fontWeight: FontWeight.w400,
@@ -1886,10 +1890,10 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                                   itemBuilder: (context, index) {
                                                                     TrollyDetails trollyDetail = trollyList[index];
 
-                                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                /*    WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                       _checkScrollable();
                                                                     });
-
+*/
                                                                     return Padding(
                                                                       padding: const EdgeInsets.only(left: 12, right: 12, top: 4, bottom: 4),
                                                                       child: Container(
@@ -2047,7 +2051,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                             radius: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
                             backgroundColor: Colors.transparent,  // Set to transparent so the gradient shows
                             child: (_isAtTop) ?  SvgPicture.asset(arrowDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,) : SvgPicture.asset(arrowUp, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3),
-                            /* child: Icon(
+                             /*child: Icon(
                         (_isAtTop) ? FontAwesomeIcons.longArrowDown : FontAwesomeIcons.longArrowUp,
                         color: MyColor.colorWhite,
                       ),*/
@@ -2058,7 +2062,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                   ],
                 ),
               ),
-            /*  floatingActionButton: (_isScrollable)
+             /* floatingActionButton: (_isScrollable)
                   ? InkWell(
                 onTap: () {
                   if (_isAtTop) {
@@ -2638,7 +2642,8 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                       else{
                                         openValidationDialog(lableModel.enteruldNoMsg!, uldNoFocusNode);
                                       }
-                                    } else {
+                                    }
+                                    else {
                                       openValidationDialog(lableModel.enterGropIdMsg!, groupIdFocusNode);
                                     }
                                   }
@@ -2735,27 +2740,27 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                   if (!isvalidateLocation) {
                                     await leaveLocationFocus();
                                     uldAcceptPassData(
-                                        -1,
-                                        -1,
+                                        CommonUtils.FLIGHTSEQUENCENUMBER,
+                                        CommonUtils.ULDSEQUENCENUMBER,
                                         uldNoController.text.replaceAll(' ', ''),
                                         locationController.text,
                                         groupIdController.text,
                                         _user!.userProfile!.userIdentity!,
                                         _splashDefaultData!.companyCode!);
 
-                                    CommonUtils.ULDSEQUENCENUMBER = -1;
+                                    CommonUtils.ULDSEQUENCENUMBER = CommonUtils.ULDSEQUENCENUMBER;
                                     CommonUtils.ULDBT = 2;
                                   } else {
                                     uldAcceptPassData(
-                                        -1,
-                                        -1,
+                                        CommonUtils.FLIGHTSEQUENCENUMBER,
+                                        CommonUtils.ULDSEQUENCENUMBER,
                                         uldNoController.text.replaceAll(' ', ''),
                                         locationController.text,
                                         groupIdController.text,
                                         _user!.userProfile!.userIdentity!,
                                         _splashDefaultData!.companyCode!);
 
-                                    CommonUtils.ULDSEQUENCENUMBER = -1;
+                                    CommonUtils.ULDSEQUENCENUMBER = CommonUtils.ULDSEQUENCENUMBER;
                                     CommonUtils.ULDBT = 2;
                                   }
                                 }
@@ -3209,6 +3214,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     if (buttonStatus!.replaceAll(" ", "") == "A") {
       if (uldModel.uLDNo == "BULK" || uldModel.uLDNo == "Bulk") {
         return RoundedButtonBlue(
+          verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE / 1.2,
           text: "${lableModel.acceptBulk}",
           textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
           press: () async {
@@ -3226,13 +3232,12 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                   FocusScope.of(context).requestFocus(groupIdFocusNode);
                 },
                 );
-                // FocusScope.of(context).requestFocus(groupIdFocusNode);
-                _isAcceptBtnEnable = true;
-                /* _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeOut,
-              );*/
+
+               // _isAcceptBtnEnable = true;
+
+                openULDAcceptanceDialog(context, uldModel.uLDNo!, lableModel, textDirection, _isGroupIdIsMandatory, buttonRightsList);
+
+
               });
             }else{
               SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -3256,7 +3261,6 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                 _suffixIconUld = false;
                 _pageIndex = 0;
                 _tabController.animateTo(0);
-                //   uldNoController.text = uldModel.uLDNo!;
                 CommonUtils.ULDBT = 2;
                 CommonUtils.ULDSEQUENCENUMBER = uldSqNo;
                 CommonUtils.FLIGHTSEQUENCENUMBER = fltsqNo;
@@ -3264,19 +3268,6 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
 
                 openULDAcceptanceDialog(context, uldModel.uLDNo!, lableModel, textDirection, _isGroupIdIsMandatory, buttonRightsList);
 
-
-                // _isAcceptBtnEnable = true;
-                /* WidgetsBinding.instance.addPostFrameCallback((_) {
-                FocusScope.of(context).requestFocus(groupIdFocusNode);
-              },
-              );*/
-                // FocusScope.of(context).requestFocus(groupIdFocusNode);
-
-                /* _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeOut,
-              );*/
               });
             }else{
               SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);

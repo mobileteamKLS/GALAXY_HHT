@@ -31,6 +31,7 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customdivider.dart';
+import '../../../../widget/customeedittext/remarkedittextfeild.dart';
 import '../../../../widget/customeuiwidgets/enlargedbinaryimagescreen.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
@@ -763,7 +764,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                           child: Column(
                                                             children: [
 
-                                                              CustomTextField(
+                                                              RemarkCustomTextField(
                                                                 textDirection: textDirection,
                                                                 controller: remarkController,
                                                                 focusNode: remarkFocus,
@@ -779,11 +780,14 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                                 inputAction: TextInputAction.next,
                                                                 hintTextcolor: Colors.black45,
                                                                 maxLines: 2,
+                                                                maxLength: 500,
+                                                                digitsOnly: false,
+                                                                doubleDigitOnly: false,
                                                                 verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                                 circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                                 boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
-                                                                digitsOnly: false,
+
                                                                 validator: (value) {
                                                                   if (value!.isEmpty) {
                                                                     return "Please fill out this field";
@@ -1058,260 +1062,264 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
             builder:(BuildContext context, StateSetter setState) {
               return FractionallySizedBox(
                 widthFactor: 1,  // Adjust the width to 90% of the screen width
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15, top: 15, left: 15, bottom: 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomeText(text: "${lableModel.addPhotos}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                            InkWell(
-                                onTap: () {
-                                  Navigator.pop(context, null);
-                                },
-                                child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,))
-                          ],
+                child: Container(
+                  height: SizeConfig.blockSizeVertical * 70,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.max,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15, top: 15, left: 15, bottom: 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              CustomeText(text: "${lableModel.addPhotos}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                              InkWell(
+                                  onTap: () {
+                                    Navigator.pop(context, null);
+                                  },
+                                  child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,))
+                            ],
+                          ),
                         ),
-                      ),
-                      CustomDivider(
-                        space: 0,
-                        color: Colors.black,
-                        hascolor: true,
-                        thickness: 1,
-                      ),
-                      SizedBox(height: SizeConfig.blockSizeVertical),
-                      Padding(
-                        padding: const EdgeInsets.only(right: 15, top: 15, left: 15),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: InkWell(
-                                onTap: () {
-                                  _takePicture(setState, lableModel);
-                                },
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                        CustomDivider(
+                          space: 0,
+                          color: Colors.black,
+                          hascolor: true,
+                          thickness: 1,
+                        ),
+                        SizedBox(height: SizeConfig.blockSizeVertical),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 15, top: 15, left: 15),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  onTap: () {
+                                    _takePicture(setState, lableModel);
+                                  },
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                    SvgPicture.asset(camera, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                    CustomeText(text: "${lableModel.takePhoto}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)
+                                  ],),
+                                ),
+                              ),
+
+                              Expanded(
+                                flex: 1,
+                                child: InkWell(
+                                  onTap: () {
+                                    _attachPhotoFromGallery(setState, lableModel);
+                                  },
+                                  child: Row(children: [
+                                    SvgPicture.asset(link, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                    CustomeText(text: "${lableModel.attachPhotos}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)
+                                  ],),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: SizeConfig.blockSizeVertical),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: CustomeText(text: "${lableModel.damagePhotos}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                        ),
+                        SizedBox(height: SizeConfig.blockSizeVertical),
+
+                        if (recordView == 0 || recordView == 2)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  // Number of columns
+                                  crossAxisSpacing: 5,
+                                  // Spacing between columns
+                                  mainAxisSpacing: 7),
+                              // Spacing between rows),
+                              shrinkWrap: true,
+                              itemCount: imageList.length,
+                              // Limit to 3 items max
+                              itemBuilder: (context, index) {
+                                String base64Image = imageList[index];
+
+                                return Stack(
                                   children: [
-                                  SvgPicture.asset(camera, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
-                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                  CustomeText(text: "${lableModel.takePhoto}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)
-                                ],),
-                              ),
-                            ),
-
-                            Expanded(
-                              flex: 1,
-                              child: InkWell(
-                                onTap: () {
-                                  _attachPhotoFromGallery(setState, lableModel);
-                                },
-                                child: Row(children: [
-                                  SvgPicture.asset(link, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
-                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                  CustomeText(text: "${lableModel.attachPhotos}", fontColor: MyColor.primaryColorblue, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)
-                                ],),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: SizeConfig.blockSizeVertical),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: CustomeText(text: "${lableModel.damagePhotos}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                      ),
-                      SizedBox(height: SizeConfig.blockSizeVertical),
-
-                      if (recordView == 0 || recordView == 2)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                // Number of columns
-                                crossAxisSpacing: 5,
-                                // Spacing between columns
-                                mainAxisSpacing: 7),
-                            // Spacing between rows),
-                            shrinkWrap: true,
-                            itemCount: imageList.length,
-                            // Limit to 3 items max
-                            itemBuilder: (context, index) {
-                              String base64Image = imageList[index];
-
-                              return Stack(
-                                children: [
-                                  // Image displayed in the grid
-                                  InkWell(
-                                    onTap: () {
-                                      // Navigate to Enlarge image screen
-                                      Navigator.push(
-                                        context,
-                                        CupertinoPageRoute(
-                                            builder: (context) =>
-                                                EnlargedBinaryImageScreen(
-                                                  binaryFile: base64Image,
-                                                  imageList: imageList,
-                                                  index: index,
-                                                ),
-                                            fullscreenDialog:
-                                            true),
-                                      );
-                                    },
-                                    focusNode: imageFocus,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(12.0),
-                                      child: Image.memory(base64Decode(base64Image),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        // Ensure the image takes up the full space
-                                        height: double.infinity, // Ensure the image takes up the full space
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Positioned remove icon on top right of the image
-                                  Positioned(
-                                    top: 5,
-                                    right: 5,
-                                    child: InkWell(
+                                    // Image displayed in the grid
+                                    InkWell(
                                       onTap: () {
-                                        setState(() {
-                                          imageList.removeAt(index); // Remove the selected image
-                                        });
+                                        // Navigate to Enlarge image screen
+                                        Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                              builder: (context) =>
+                                                  EnlargedBinaryImageScreen(
+                                                    binaryFile: base64Image,
+                                                    imageList: imageList,
+                                                    index: index,
+                                                  ),
+                                              fullscreenDialog:
+                                              true),
+                                        );
                                       },
-                                      focusNode: removeIconFocus,
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                        decoration: const BoxDecoration(
-                                          borderRadius: BorderRadius.all(Radius.circular(10)),
-                                          color: MyColor.colorWhite
+                                      focusNode: imageFocus,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(12.0),
+                                        child: Image.memory(base64Decode(base64Image),
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          // Ensure the image takes up the full space
+                                          height: double.infinity, // Ensure the image takes up the full space
                                         ),
-
-                                        child: SvgPicture.asset(trashcan, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
 
-                      if (recordView == 1)
+                                    // Positioned remove icon on top right of the image
+                                    Positioned(
+                                      top: 5,
+                                      right: 5,
+                                      child: InkWell(
+                                        onTap: () {
+                                          setState(() {
+                                            imageList.removeAt(index); // Remove the selected image
+                                          });
+                                        },
+                                        focusNode: removeIconFocus,
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                          decoration: const BoxDecoration(
+                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                            color: MyColor.colorWhite
+                                          ),
+
+                                          child: SvgPicture.asset(trashcan, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+
+                        if (recordView == 1)
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
+                            child: GridView.builder(
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  // Number of columns
+                                  crossAxisSpacing: 5,
+                                  // Spacing between columns
+                                  mainAxisSpacing: 5),
+                              // Spacing between rows),
+                              shrinkWrap: true,
+                              itemCount: imageList.length,
+                              // Limit to 3 items max
+                              itemBuilder:
+                                  (context,
+                                  index) {
+                                String
+                                base64Image = imageList[index];
+                                return Stack(
+                                  children: [
+                                    // Image displayed in the grid
+                                    InkWell(
+                                      onTap: () {
+                                        // Navigate to Enlarge image screen
+                                        Navigator
+                                            .push(
+                                          context,
+                                          CupertinoPageRoute(
+                                              builder: (context) =>
+                                                  EnlargedBinaryImageScreen(
+                                                    binaryFile: base64Image,
+                                                    imageList: imageList!,
+                                                    index: index,
+                                                  ),
+                                              fullscreenDialog:
+                                              true),
+                                        );
+                                      },
+                                      focusNode: imageFocus,
+                                      child:
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(15.0),
+                                        child: Image.memory(base64Decode(base64Image),
+                                          fit: BoxFit.cover,
+                                          width: double.infinity,
+                                          // Ensure the image takes up the full space
+                                          height: double.infinity, // Ensure the image takes up the full space
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                          ),
+
+                        SizedBox(height: SizeConfig.blockSizeVertical),
+                        CustomDivider(
+                          space: 0,
+                          color: Colors.black,
+                          hascolor: true,
+                          thickness: 1,
+                        ),
+                        SizedBox(height: SizeConfig.blockSizeVertical),
                         Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                // Number of columns
-                                crossAxisSpacing: 5,
-                                // Spacing between columns
-                                mainAxisSpacing: 5),
-                            // Spacing between rows),
-                            shrinkWrap: true,
-                            itemCount: imageList.length,
-                            // Limit to 3 items max
-                            itemBuilder:
-                                (context,
-                                index) {
-                              String
-                              base64Image = imageList[index];
-                              return Stack(
-                                children: [
-                                  // Image displayed in the grid
-                                  InkWell(
-                                    onTap: () {
-                                      // Navigate to Enlarge image screen
-                                      Navigator
-                                          .push(
-                                        context,
-                                        CupertinoPageRoute(
-                                            builder: (context) =>
-                                                EnlargedBinaryImageScreen(
-                                                  binaryFile: base64Image,
-                                                  imageList: imageList!,
-                                                  index: index,
-                                                ),
-                                            fullscreenDialog:
-                                            true),
-                                      );
-                                    },
-                                    focusNode: imageFocus,
-                                    child:
-                                    ClipRRect(
-                                      borderRadius: BorderRadius.circular(15.0),
-                                      child: Image.memory(base64Decode(base64Image),
-                                        fit: BoxFit.cover,
-                                        width: double.infinity,
-                                        // Ensure the image takes up the full space
-                                        height: double.infinity, // Ensure the image takes up the full space
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
+                          padding: const EdgeInsets.all(12),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: RoundedButtonBlue(
+                                  text: "${lableModel.cancel}",
+                                  isborderButton: true,
+                                  press: () {
+                                    Navigator.pop(context, null);
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                flex: 1,
+                                child: RoundedButtonBlue(
+                                  text: "${lableModel.save}",
+                                  press: () {
+
+                                    if(isButtonEnabled("save", buttonRightsList)){
+                                      CommonUtils.SELECTEDIMAGELIST = imageList;
+                                      String images = "${generateImageXMLData(imageList)}";
+                                      String count = imageList.length.toString();
+                                      Navigator.pop(context, {
+                                        "images" : images,
+                                        "imageCount" : count
+                                      });
+                                    }else{
+                                      SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      Vibration.vibrate(duration: 500);
+                                    }
+
+
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-
-                      SizedBox(height: SizeConfig.blockSizeVertical),
-                      CustomDivider(
-                        space: 0,
-                        color: Colors.black,
-                        hascolor: true,
-                        thickness: 1,
-                      ),
-                      SizedBox(height: SizeConfig.blockSizeVertical),
-                      Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: RoundedButtonBlue(
-                                text: "${lableModel.cancel}",
-                                isborderButton: true,
-                                press: () {
-                                  Navigator.pop(context, null);
-                                },
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              flex: 1,
-                              child: RoundedButtonBlue(
-                                text: "${lableModel.save}",
-                                press: () {
-
-                                  if(isButtonEnabled("save", buttonRightsList)){
-                                    CommonUtils.SELECTEDIMAGELIST = imageList;
-                                    String images = "${generateImageXMLData(imageList)}";
-                                    String count = imageList.length.toString();
-                                    Navigator.pop(context, {
-                                      "images" : images,
-                                      "imageCount" : count
-                                    });
-                                  }else{
-                                    SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                    Vibration.vibrate(duration: 500);
-                                  }
-
-
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );

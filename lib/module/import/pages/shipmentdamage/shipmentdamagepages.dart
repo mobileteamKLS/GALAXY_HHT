@@ -598,7 +598,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                           needOutlineBorder: true,
                                                           labelText: (searchByGroupOrAWB == "G") ? (isGroupIDRequired == "Y") ? "${lableModel.groupId} *" : "${lableModel.groupId}" : "${lableModel.awb} *",
                                                           readOnly: false,
-                                                          maxLength: searchByGroupOrAWB == "G" ? groupIDCharSize : 11,
+                                                          maxLength: searchByGroupOrAWB == "G" ? (groupIDCharSize == 0) ? 1 : groupIDCharSize : 11,
                                                           onChanged: (value) {
                                                             shipmentDamageListModel = null;
 
@@ -693,7 +693,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                 });
 
                                                                 CommonUtils.SELECTEDWHETHER = "";
-                                                                CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                CommonUtils.SELECTEDDAMAGEIMAGELIST.clear();
                                                                 CommonUtils.shipTotalPcs = 0;
                                                                 CommonUtils.ShipTotalWt = "0.00";
                                                                 CommonUtils.shipDamagePcs = 0;
@@ -1268,7 +1268,7 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                       });
 
                                                                                       CommonUtils.SELECTEDWHETHER = "";
-                                                                                      CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                                      CommonUtils.SELECTEDDAMAGEIMAGELIST.clear();
                                                                                       CommonUtils.shipTotalPcs = 0;
                                                                                       CommonUtils.ShipTotalWt = "0.00";
                                                                                       CommonUtils.shipDamagePcs = 0;

@@ -24,6 +24,7 @@ class CommonUtils{
   static String FLIGHTNUMBERCHECK = "";
 
   static List<String> SELECTEDIMAGELIST = [];
+  static List<String> SELECTEDDAMAGEIMAGELIST = [];
 
   static String ULDUCRNO = "";
   static String UCRBTSTATUS = "";

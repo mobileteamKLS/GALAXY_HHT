@@ -65,6 +65,7 @@ class Binning extends StatefulWidget {
 
 class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
   int groupIDCharSize = 1;
+  String groupRequired = "";
 
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
@@ -434,6 +435,8 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                     _onWillPop();
                                   }else{
                                     groupIDCharSize = state.binningPageLoadDefaultModel.IsGroupBasedAcceptNumber!;
+                                    groupRequired = state.binningPageLoadDefaultModel.IsGroupBasedAcceptChar!;
+
                                     setState(() {
 
                                     });
@@ -573,9 +576,9 @@ class _BinningState extends State<Binning> with SingleTickerProviderStateMixin{
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "${lableModel.groupId} *",
+                                                        labelText: (groupRequired == "Y") ? "${lableModel.groupId} *" : "${lableModel.groupId}",
                                                         readOnly: false,
-                                                        maxLength: groupIDCharSize,
+                                                        maxLength: (groupIDCharSize == 0) ? 1 :groupIDCharSize,
                                                         onChanged: (value) {
                                                           binningDetailListModel = null;
                                                           locationController.clear();

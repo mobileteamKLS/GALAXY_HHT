@@ -505,7 +505,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                 needOutlineBorder: true,
                                                 labelText: widget.groupIDRequires == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
                                                 readOnly: false,
-                                                maxLength: widget.groupIDCharSize,
+                                                maxLength: (widget.groupIDCharSize == 0) ? 1 : widget.groupIDCharSize,
                                                 onChanged: (value) {},
                                                 fillColor: Colors.grey.shade100,
                                                 textInputType: TextInputType.text,
@@ -812,7 +812,6 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                           openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
                                                           return;
                                                         }
-
                                                       }
 
                                                       if(int.parse(piecesController.text) > widget.aWBItem.nPX!){
@@ -908,7 +907,6 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                                           openValidationDialog(formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.groupIDCharSize}"]), groupIdFocusNode);
                                                           return;
                                                         }
-
                                                       }
 
 

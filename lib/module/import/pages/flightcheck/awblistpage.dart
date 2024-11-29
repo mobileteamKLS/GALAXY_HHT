@@ -1972,7 +1972,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                                                         CommonUtils.SELECTEDWHETHER = "";
-                                                                        CommonUtils.SELECTEDIMAGELIST.clear();
+                                                                        CommonUtils.SELECTEDDAMAGEIMAGELIST.clear();
                                                                         CommonUtils.shipTotalPcs = 0;
                                                                         CommonUtils.ShipTotalWt = "0.00";
                                                                         CommonUtils.shipDamagePcs = 0;

@@ -503,7 +503,7 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                                 needOutlineBorder: true,
                                                 labelText: widget.groupIDRequires == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
                                                 readOnly: false,
-                                                maxLength: widget.groupIDCharSize,
+                                                maxLength: (widget.groupIDCharSize == 0) ? 1 :widget.groupIDCharSize,
                                                 onChanged: (value) {},
                                                 fillColor: Colors.grey.shade100,
                                                 textInputType: TextInputType.text,
