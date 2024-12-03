@@ -32,6 +32,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:ui' as ui;
 
 import '../../../Ipad/screen/IpadDashBoard.dart';
+import '../../../Ipad/screen/warehouseoperations.dart';
 import '../../../prefrence/savedprefrence.dart';
 import '../../../utils/sizeutils.dart';
 import '../../../utils/validationmsgcodeutils.dart';
@@ -243,7 +244,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   CupertinoPageRoute(
-                                    builder: (context) =>isMobile?DashboardScreen(): IpadDashboard(),
+                                    builder: (context) =>isMobile?DashboardScreen(): WarehouseOperations(),
                                   ),
                                   (route) => false,
                                 );

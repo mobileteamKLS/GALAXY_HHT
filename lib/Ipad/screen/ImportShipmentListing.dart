@@ -7,9 +7,12 @@ import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import 'ImportCreateShipment.dart';
+import 'ShipmentAcceptanceManually.dart';
 
 class ImportShipmentListing extends StatefulWidget {
   const ImportShipmentListing({super.key});
@@ -118,9 +121,22 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              '',
-              style: TextStyle(color: Colors.white),
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                  },
+                  child: Padding(padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  ),
+                ),
+                const Text(
+                  '  Warehouse Operations',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
+                ),
+              ],
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
             toolbarHeight: 80,
@@ -152,7 +168,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 width: 10,
               ),
             ]),
-        // drawer: const Drawer(),
+
         body: Stack(
           children: [
             Container(
@@ -180,7 +196,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                 },
                               ),
                               const Text(
-                                '  SHIPMENT LIST',
+                                '  SHIPMENTS LIST',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 22),
                               ),
@@ -449,10 +465,10 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                Row(
+                const Row(
                   children: [
-                    const Text("MAWB No: "),
-                    Text("MAWB1",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                    Text("MAWB No: "),
+                    Text("MAWB1",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                   ],
                 ),
                 const SizedBox(width: 12),
@@ -507,7 +523,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
         borderRadius: BorderRadius.circular(8),
       ),
       elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -522,9 +538,11 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 const SizedBox(width: 8),
                 buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
                 const SizedBox(width: 8),
-                buildLabel(shipment.houseNo==""?"DIRECT":"CONSOLE", Colors.white,8,isBorder: true,borderColor: Colors.grey),
+                SizedBox(
+                    width: MediaQuery.sizeOf(context).width*0.11,
+                    child: buildLabel(shipment.houseNo==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
                 const SizedBox(width: 20),
-                buildLabel(shipment.shipmentStatus, Colors.lightBlue,20),
+                buildLabel(shipment.shipmentStatus.toUpperCase(), Colors.lightBlue,20),
                 const SizedBox(width: 8),
                 Row(
                   children: [
@@ -545,18 +563,19 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
             const SizedBox(height: 8),
             Row(
               children: [
-                SizedBox(
-                  width: MediaQuery.sizeOf(context).width*0.5,
+                Container(
+
+                  width: MediaQuery.sizeOf(context).width*0.6,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Row(
+                           Row(
                             children: [
                               Text("HAWB No: "),
-                              Text("MAWB1",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              Text(shipment.houseNo==""?" - ":shipment.houseNo,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
                           const SizedBox(height: 8),
@@ -578,7 +597,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                               Text("${shipment.awbPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Row(
                             children: [
                               const Text("Accepted Pcs: "),
@@ -598,7 +617,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                               Text("${shipment.awbWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 4),
                           Row(
                             children: [
                               const Text("Accepted Wt: "),
@@ -612,57 +631,62 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                     ],
                   ),
                 ),
-                const SizedBox(width: 128),
-                // Column(
-                //   mainAxisAlignment: MainAxisAlignment.center,
-                //   children: [
-                //     Row(
-                //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                //       children: [
-                //         Container(
-                //           height: 30,
-                //           margin: const EdgeInsets.only(right: 12),
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(8),
-                //             gradient: const LinearGradient(
-                //               colors: [
-                //                 Color(0xFF0057D8),
-                //                 Color(0xFF1c86ff),
-                //               ],
-                //               begin: Alignment.centerLeft,
-                //               end: Alignment.centerRight,
-                //             ),
-                //           ),
-                //           child: ElevatedButton(
-                //             style: ElevatedButton.styleFrom(
-                //                 backgroundColor: Colors.transparent,
-                //                 shadowColor: Colors.transparent),
-                //             onPressed: null,
-                //             child: const Text(
-                //               'Accepted Shipment',
-                //               style: TextStyle(color: Colors.white),
-                //             ),
-                //           ),
-                //         ),
-                //         const Icon(
-                //           Icons.more_vert_outlined,
-                //           color: MyColor.primaryColorblue,
-                //         ),
-                //         Container(
-                //           margin: const EdgeInsets.only(left: 12),
-                //           decoration: BoxDecoration(
-                //             borderRadius: BorderRadius.circular(5),
-                //             color:Color(0xffF2F7FD),
-                //           ),
-                //           child: const Icon(
-                //             size: 28,
-                //             Icons.keyboard_arrow_right_outlined,
-                //             color: MyColor.primaryColorblue,
-                //           ),
-                //         )
-                //       ],)
-                //   ],
-                // )
+                const SizedBox(width: 2),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          child: Container(
+                            height: 30,
+                            margin: const EdgeInsets.only(right: 12),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF0057D8),
+                                  Color(0xFF1c86ff),
+                                ],
+                                begin: Alignment.centerLeft,
+                                end: Alignment.centerRight,
+                              ),
+                            ),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent),
+                              onPressed: null,
+                              child: const Text(
+                                'Accepted Shipment',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ),
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment ,)));
+                          },
+                        ),
+                        const Icon(
+                          Icons.more_vert_outlined,
+                          color: MyColor.primaryColorblue,
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(left: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            color:Color(0xffF2F7FD),
+                          ),
+                          child: const Icon(
+                            size: 28,
+                            Icons.keyboard_arrow_right_outlined,
+                            color: MyColor.primaryColorblue,
+                          ),
+                        )
+                      ],)
+                  ],
+                )
               ],
             ),
           ],
@@ -1193,9 +1217,11 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
         borderRadius: BorderRadius.circular(radius),
         border: isBorder ? Border.all(color: borderColor, width: borderWidth) : null,
       ),
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        ),
       ),
     );
   }

@@ -53,6 +53,8 @@ class CustomeEditTextWithBorder extends StatefulWidget {
   final double boxHeight;
   final int? maxLength;
   final TextDirection textDirection;
+  final List<TextInputFormatter>? inputFormatters;
+  final noUpperCase;
 
   const CustomeEditTextWithBorder(
       {Key? key,
@@ -86,6 +88,7 @@ class CustomeEditTextWithBorder extends StatefulWidget {
         this.hasIcon = false,
         this.hastextcolor = false,
         this.showErrorText = true,
+        this.noUpperCase = false,
         this.prefixIconcolor,
         this.hintTextcolor,
         this.verticalPadding = 0,
@@ -93,6 +96,7 @@ class CustomeEditTextWithBorder extends StatefulWidget {
         this.onPress,
         this.maxLength = 13,
         this.textDirection = TextDirection.ltr,
+        this.inputFormatters,
         this.boxHeight = 30})
       : super(key: key);
 
@@ -108,7 +112,7 @@ class _ULDCustomTextFieldState extends State<CustomeEditTextWithBorder> {
   @override
   void initState() {
     super.initState();
-    widget.controller?.addListener(_updateTextToUppercase);
+   if(!widget.noUpperCase)widget.controller?.addListener(_updateTextToUppercase);
   }
 
   @override
@@ -140,7 +144,7 @@ class _ULDCustomTextFieldState extends State<CustomeEditTextWithBorder> {
       maxLines: widget.maxLines,
       readOnly: widget.readOnly,
       inputFormatters: <TextInputFormatter>[
-        FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
+        FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z.]")),
       ],
       /*  inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'[A-Z0-9]')), // Allow only alphanumeric characters

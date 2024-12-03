@@ -8,11 +8,13 @@ import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/damagedetailmodel.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
+import '../modal/ShipmentAcceptanceModal.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 
 class CaptureDamageandAccept extends StatefulWidget {
-  const CaptureDamageandAccept({super.key});
+  final ConsignmentAcceptedList shipmentData;
+  const CaptureDamageandAccept({super.key, required this.shipmentData});
 
   @override
   State<CaptureDamageandAccept> createState() => _CaptureDamageandAcceptState();
@@ -38,7 +40,8 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
   bool showMore = false;
   bool isLoading = false;
   bool hasNoRecord = false;
-  late List<ReferenceData14BList> referenceData14BList;
+  bool isSelected = false;
+  late List<DamageData14BList> referenceData14BList;
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -127,7 +130,10 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                   ),],
                               ),
                               onTap: (){
-
+                                setState(() {
+                                  isSelected=false;
+                                });
+                                print("RESET");
                               },
                             )
                           ],
@@ -161,36 +167,39 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
                                                     .width*0.9,
-                                            child: Row(
-                                              children: [
-                                                const Text(
-                                                  'Unserviceable Shipment (12345654)',
-                                                  style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(left: 8),
+                                              child: Row(
+                                                children: [
+                                                   Text(
+                                                    'Unserviceable Shipment (${widget.shipmentData.documentNo})',
+                                                    style: const TextStyle(
+                                                      fontSize: 18,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
                                                   ),
-                                                ),
-                                                Spacer(),
-                                                Theme(
-                                                  data: ThemeData(useMaterial3: false),
-                                                  child: Switch(
-                                                    onChanged: (value) async{
+                                                  Spacer(),
+                                                  Theme(
+                                                    data: ThemeData(useMaterial3: false),
+                                                    child: Switch(
+                                                      onChanged: (value) async{
 
-                                                      setState(()  {
+                                                        setState(()  {
 
-                                                      });
-                                                    },
-                                                    value: true,
-                                                    activeColor: MyColor.primaryColorblue,
-                                                    activeTrackColor: MyColor.bgColorGrey,
+                                                        });
+                                                      },
+                                                      value: true,
+                                                      activeColor: MyColor.primaryColorblue,
+                                                      activeTrackColor: MyColor.bgColorGrey,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
                                             ),
                                           ),
 
@@ -231,9 +240,10 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                                 const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (BuildContext, index) {
                                                   final item = referenceData14BList[index];
-                                                  bool isSelected = item.isSelected == 'Y';
+                                                   isSelected = item.isSelected == 'Y';
 
                                                   return Container(
+                                                    padding: EdgeInsets.only(left: 8),
                                                     decoration: const BoxDecoration(
                                                       border: Border(
                                                         bottom: BorderSide(
@@ -518,17 +528,17 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
             ),
           ],
         ),
-        floatingActionButton: Theme(
-          data: ThemeData(useMaterial3: false),
-          child: FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (_) => CreateShipment()));
-            },
-            backgroundColor: MyColor.primaryColorblue,
-            child: const Icon(Icons.add),
-          ),
-        ),
+        // floatingActionButton: Theme(
+        //   data: ThemeData(useMaterial3: false),
+        //   child: FloatingActionButton(
+        //     onPressed: () {
+        //       Navigator.push(
+        //           context, MaterialPageRoute(builder: (_) => CreateShipment()));
+        //     },
+        //     backgroundColor: MyColor.primaryColorblue,
+        //     child: const Icon(Icons.add),
+        //   ),
+        // ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         extendBody: true,
         bottomNavigationBar: BottomAppBar(
@@ -583,18 +593,19 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
     });
 
     var queryParams = {
-      "FlightSeqNo": 11169,
-      "AWBId": "5323",
-      "SHIPId": "5506",
-      "AirportCode": "BLR",
-      "CompanyCode": 3,
+      "FlightSeqNo": "11169",
+      "AWBId": "596",
+      "SHIPId": "578",
+      "ProblemSeqId": "0",
+      "AirportCode": "JFK",
+      "CompanyCode": "3",
       "CultureCode": "en-US",
-      "UserId": 1,
-      "MenuId": 1
+      "UserId": "1",
+      "MenuId": "1"
     };
     await authService
         .postData(
-      "FlightCheckIn/GetDamageDetails",
+      "AWBDamage/GetDamageDetails",
       queryParams,
     )
         .then((response) {
@@ -613,7 +624,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
       print("is empty record $hasNoRecord");
       setState(() {
         referenceData14BList =
-            resp.map((json) => ReferenceData14BList.fromJson(json)).toList();
+            resp.map((json) => DamageData14BList.fromJson(json)).toList();
         // filteredList = listShipmentDetails;
         print("length--  = ${referenceData14BList.length}");
         isLoading = false;

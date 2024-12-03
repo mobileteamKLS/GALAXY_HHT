@@ -1,11 +1,16 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
+import '../modal/wdoModal.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 import 'createNewDo.dart';
@@ -40,7 +45,7 @@ class _WdoListingState extends State<WdoListing> {
         date: "16 SEP 2024 12:23",
         awb: "AWB",
         shipmentType: "CONSOLE",
-        status: "Generated",
+        status: "GENERATED",
       customRefNo: 123654789,
       deliveredNop: 10,
       nop: 10,
@@ -50,7 +55,7 @@ class _WdoListingState extends State<WdoListing> {
 
 
   ];
-  late List<ShipmentListDetails> shipmentListDetails=[];
+  late List<WdoSearchResult> shipmentListDetails=[];
   late List<ShipmentListDetails> shipmentListDetailsToBind=[];
   final AuthService authService = AuthService();
   bool isLoading = false;
@@ -60,72 +65,82 @@ class _WdoListingState extends State<WdoListing> {
   @override
   void initState() {
     super.initState();
-    // getShipmentListing();
+     getShipmentListing();
   }
 
-  // getShipmentListing() async {
-  //   if (isLoading) return;
-  //   shipmentListDetails = [];
-  //   shipmentListDetailsToBind = [];
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //
-  //   var queryParams = {
-  //     "PageNo": 1,
-  //     "FilterClause": "1=1",
-  //     "OrderByClause": "1",
-  //     "AirportCode": "BLR",
-  //     "CompanyCode": 3,
-  //     "CultureCode": "en-US",
-  //     "UserId": 1,
-  //     "MenuId": 1
-  //   };
-  //   await authService
-  //       .postData(
-  //     "ShipmentCreation/GetShipmentList",
-  //     queryParams,
-  //   )
-  //       .then((response) {
-  //     print("data received ");
-  //     Map<String, dynamic> jsonData = json.decode(response.body);
-  //     List<dynamic> resp = jsonData['ShipmentDetailList'];
-  //     print(jsonData);
-  //     if (jsonData.isEmpty) {
-  //       setState(() {
-  //         hasNoRecord = true;
-  //       });
-  //     }
-  //     else{
-  //       hasNoRecord=false;
-  //     }
-  //     print("is empty record$hasNoRecord");
-  //     shipmentListDetailsToBind =
-  //         resp.map((json) => ShipmentListDetails.fromJSON(json)).toList();
-  //     print("length==  = ${shipmentListDetailsToBind.length}");
-  //     setState(() {
-  //       shipmentListDetails = shipmentListDetailsToBind;
-  //       // filteredList = listShipmentDetails;
-  //       print("length--  = ${shipmentListDetails.length}");
-  //       isLoading = false;
-  //
-  //     });
-  //   }).catchError((onError) {
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //     print(onError);
-  //   });
-  // }
+  getShipmentListing() async {
+    if (isLoading) return;
+    shipmentListDetails = [];
+
+    setState(() {
+      isLoading = true;
+    });
+
+    var queryParams = {
+      "AWBPrefix": "",
+      "AWBNo": "",
+      "HAWBNO": "",
+      "FromDate": "20-11-2024",
+      "ToDate": "02-12-2024"
+    };
+    await authService
+        .sendGetWithBody(
+      "WDO/WDOSearch",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      List<dynamic> resp = jsonData['WDOSearchList'];
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      }
+      else{
+        hasNoRecord=false;
+      }
+      print("is empty record$hasNoRecord");
+
+      setState(() {
+        shipmentListDetails =
+            resp.map((json) => WdoSearchResult.fromJSON(json)).toList();
+        print("length==  = ${shipmentListDetailsToBind.length}");
+        // filteredList = listShipmentDetails;
+        print("length--  = ${shipmentListDetails.length}");
+        isLoading = false;
+
+      });
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              'Imports',
-              style: TextStyle(color: Colors.white),
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                  },
+                  child: Padding(padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  ),
+                ),
+                const Text(
+                  '  Warehouse Operations',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
+                ),
+              ],
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
             toolbarHeight: 80,
@@ -142,17 +157,17 @@ class _WdoListingState extends State<WdoListing> {
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 10,
               ),
@@ -192,57 +207,57 @@ class _WdoListingState extends State<WdoListing> {
                           ),
                           Row(
                             children: [
-                              IconButton(
-                                icon: const Icon(
-                                  Icons.search,
-                                  color: MyColor.primaryColorblue,
-                                ),
-                                onPressed: () {
-                                  print("Search button pressed");
-                                  // showShipmentSearchDialog(context);
-                                },
-                              ),
+                              // IconButton(
+                              //   icon: const Icon(
+                              //     Icons.search,
+                              //     color: MyColor.primaryColorblue,
+                              //   ),
+                              //   onPressed: () {
+                              //     print("Search button pressed");
+                              //     // showShipmentSearchDialog(context);
+                              //   },
+                              // ),
                             ],
                           ),
                         ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 5, left: 20, right: 20, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Showing (0/0)',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        Row(
-                          children: [
-                            GestureDetector(
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.filter_alt_outlined,
-                                    color: MyColor.primaryColorblue,
-                                  ),
-                                  Text(
-                                    ' Filter',
-                                    style: TextStyle(fontSize: 18),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                showShipmentSearchBottomSheet(context);
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.only(
+                  //       top: 5, left: 20, right: 20, bottom: 10),
+                  //   child: Row(
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       const Text(
+                  //         'Showing (0/0)',
+                  //         style: TextStyle(
+                  //             fontWeight: FontWeight.bold, fontSize: 18),
+                  //       ),
+                  //       Row(
+                  //         children: [
+                  //           GestureDetector(
+                  //             child: const Row(
+                  //               children: [
+                  //                 Icon(
+                  //                   Icons.filter_alt_outlined,
+                  //                   color: MyColor.primaryColorblue,
+                  //                 ),
+                  //                 Text(
+                  //                   ' Filter',
+                  //                   style: TextStyle(fontSize: 18),
+                  //                 )
+                  //               ],
+                  //             ),
+                  //             onTap: () {
+                  //               showShipmentSearchBottomSheet(context);
+                  //             },
+                  //           ),
+                  //         ],
+                  //       )
+                  //     ],
+                  //   ),
+                  // ),
                   isLoading
                       ? const Center(
                       child: SizedBox(
@@ -267,10 +282,9 @@ class _WdoListingState extends State<WdoListing> {
                             physics:
                             const NeverScrollableScrollPhysics(),
                             itemBuilder: (BuildContext, index) {
-
-                              WDOlistItem
+                              WdoSearchResult
                               shipmentDetails =
-                              shipmentDetailsListOld
+                              shipmentListDetails
                                   .elementAt(index);
                               return buildShipmentCardV2(
                                   shipmentDetails);
@@ -331,59 +345,59 @@ class _WdoListingState extends State<WdoListing> {
             child: const Icon(Icons.add),
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        extendBody: true,
-        bottomNavigationBar: BottomAppBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 60,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 5,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.chart_pie),
-                    Text("Dashboard"),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.help_outline,
-                      color: MyColor.primaryColorblue,
-                    ),
-                    Text(
-                      "User Help",
-                      style: TextStyle(color: MyColor.primaryColorblue),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // extendBody: true,
+        // bottomNavigationBar: BottomAppBar(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   height: 60,
+        //   color: Colors.white,
+        //   surfaceTintColor: Colors.white,
+        //   shape: const CircularNotchedRectangle(),
+        //   notchMargin: 5,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: <Widget>[
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(CupertinoIcons.chart_pie),
+        //             Text("Dashboard"),
+        //           ],
+        //         ),
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(
+        //               Icons.help_outline,
+        //               color: MyColor.primaryColorblue,
+        //             ),
+        //             Text(
+        //               "User Help",
+        //               style: TextStyle(color: MyColor.primaryColorblue),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
 
-  Widget buildShipmentCardV2(WDOlistItem shipment) {
+  Widget buildShipmentCardV2(WdoSearchResult shipment) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
       elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -396,21 +410,9 @@ class _WdoListingState extends State<WdoListing> {
                   style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
-                buildLabel(shipment.status, Colors.lightBlue,20),
+                buildLabel(shipment.status.toUpperCase(), Colors.lightGreen,20),
                 const SizedBox(width: 8),
-                Row(
-                  children: [
-                    Text(
-                      shipment.date,
-                      style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(width: 8),
-                    const Icon(
-                      Icons.info_outline_rounded,
-                      color: MyColor.primaryColorblue,
-                    ),
-                  ],
-                ),
+
                 const SizedBox(width: 32),
                 Text(
                   shipment.awbNumber,
@@ -419,7 +421,7 @@ class _WdoListingState extends State<WdoListing> {
                 const SizedBox(width: 8),
                 buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
                 const SizedBox(width: 8),
-                buildLabel(shipment.hawbNumber==""?"DIRECT":"CONSOLE", Colors.white,8,isBorder: true,borderColor: Colors.grey),
+                buildLabel(shipment.houseNumber==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey),
 
 
                 // Container(
@@ -450,7 +452,21 @@ class _WdoListingState extends State<WdoListing> {
 
               ],
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Text(
+                  shipment.pfdDateTime,
+                  style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(width: 8),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  color: MyColor.primaryColorblue,
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.start,
@@ -463,10 +479,10 @@ class _WdoListingState extends State<WdoListing> {
                     Row(
                       children: [
                         const Text("HAWB No: "),
-                        Text("${shipment.hawbNumber}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        Text("${shipment.houseNumber}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         const Text("Custom Ref No.: "),
@@ -482,14 +498,14 @@ class _WdoListingState extends State<WdoListing> {
                     Row(
                       children: [
                         const Text("NOP: "),
-                        Text("${shipment.nop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        Text("${shipment.npr}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         const Text("Delivered NOP: "),
-                        Text("${shipment.deliveredNop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        Text("${shipment.deliveredWdonop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                       ],
                     ),
                   ],
@@ -504,11 +520,11 @@ class _WdoListingState extends State<WdoListing> {
                         Text(shipment.flightDetails,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                       ],
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 4),
                     Row(
                       children: [
                         const Text("Re Warehouse: "),
-                        Text(shipment.reWareHouse,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        Text(shipment.reWhDateTime,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                       ],
                     ),
                   ],
@@ -517,51 +533,51 @@ class _WdoListingState extends State<WdoListing> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                      Container(
-                        height: 30,
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF0057D8),
-                              Color(0xFF1c86ff),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                          ),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent),
-                          onPressed: null,
-                          child: const Text(
-                            'Released',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ),
-                        Icon(
-                          Icons.more_vert_outlined,
-                          color: MyColor.primaryColorblue,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color:Color(0xffF2F7FD),
-                          ),
-                          child: Icon(
-                            size: 28,
-                             Icons.keyboard_arrow_right_outlined,
-                            color: MyColor.primaryColorblue,
-                          ),
-                        )
-                    ],)
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //   children: [
+                    //   Container(
+                    //     height: 30,
+                    //     margin: const EdgeInsets.only(right: 12),
+                    //     decoration: BoxDecoration(
+                    //       borderRadius: BorderRadius.circular(8),
+                    //       gradient: const LinearGradient(
+                    //         colors: [
+                    //           Color(0xFF0057D8),
+                    //           Color(0xFF1c86ff),
+                    //         ],
+                    //         begin: Alignment.centerLeft,
+                    //         end: Alignment.centerRight,
+                    //       ),
+                    //     ),
+                    //     child: ElevatedButton(
+                    //       style: ElevatedButton.styleFrom(
+                    //           backgroundColor: Colors.transparent,
+                    //           shadowColor: Colors.transparent),
+                    //       onPressed: null,
+                    //       child: const Text(
+                    //         'Released',
+                    //         style: TextStyle(color: Colors.white),
+                    //       ),
+                    //     ),
+                    //   ),
+                    //     Icon(
+                    //       Icons.more_vert_outlined,
+                    //       color: MyColor.primaryColorblue,
+                    //     ),
+                    //     Container(
+                    //       margin: const EdgeInsets.only(left: 12),
+                    //       decoration: BoxDecoration(
+                    //         borderRadius: BorderRadius.circular(5),
+                    //         color:Color(0xffF2F7FD),
+                    //       ),
+                    //       child: Icon(
+                    //         size: 28,
+                    //          Icons.keyboard_arrow_right_outlined,
+                    //         color: MyColor.primaryColorblue,
+                    //       ),
+                    //     )
+                    // ],)
                   ],
                 )
                

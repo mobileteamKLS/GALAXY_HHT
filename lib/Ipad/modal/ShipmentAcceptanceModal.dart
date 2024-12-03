@@ -78,3 +78,102 @@ class Customer {
   }
 }
 
+class ConsignmentAcceptedList {
+  String documentNo;
+  String houseNo;
+  String nop;
+  double weight;
+  String groupId;
+  int agentId;
+  String commodity;
+  int consignmentRowId;
+  int houseRowId;
+  String acceptanceBy;
+  String acceptanceOn;
+  int totalNpo;
+  double totalWt;
+  int awbId;
+  int shipId;
+
+  ConsignmentAcceptedList({
+    required this.documentNo,
+    required this.houseNo,
+    required this.nop,
+    required this.weight,
+    required this.groupId,
+    required this.agentId,
+    required this.commodity,
+    required this.consignmentRowId,
+    required this.houseRowId,
+    required this.acceptanceBy,
+    required this.acceptanceOn,
+    required this.totalNpo,
+    required this.totalWt,
+    required this.awbId,
+    required this.shipId,
+  });
+
+  factory ConsignmentAcceptedList.fromJSON(Map<String, dynamic> json) => ConsignmentAcceptedList(
+    documentNo: json["DocumentNo"],
+    houseNo: json["HouseNo"],
+    nop: json["NOP"],
+    weight: json["Weight"],
+    groupId: json["GroupId"],
+    agentId: json["AgentId"],
+    commodity: json["Commodity"],
+    consignmentRowId: json["ConsignmentRowID"],
+    houseRowId: json["HouseRowId"],
+    acceptanceBy: json["AcceptanceBy"],
+    acceptanceOn: json["AcceptanceOn"],
+    totalNpo: json["TotalNPO"],
+    totalWt: json["TotalWt"],
+    awbId: json["AWBId"],
+    shipId: json["ShipId"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "DocumentNo": documentNo,
+    "HouseNo": houseNo,
+    "NOP": nop,
+    "Weight": weight,
+    "GroupId": groupId,
+    "AgentId": agentId,
+    "Commodity": commodity,
+    "ConsignmentRowID": consignmentRowId,
+    "HouseRowId": houseRowId,
+    "AcceptanceBy": acceptanceBy,
+    "AcceptanceOn": acceptanceOn,
+    "TotalNPO": totalNpo,
+    "TotalWt": totalWt,
+  };
+}
+
+class DamageData14BList {
+  String? referenceDataIdentifier;
+  String? referenceDescription;
+  String? isSelected;
+
+
+  DamageData14BList(
+      {this.referenceDataIdentifier,
+        this.referenceDescription,
+        this.isSelected,
+   });
+
+  DamageData14BList.fromJson(Map<String, dynamic> json) {
+    referenceDataIdentifier = json['REFERENCE_DATA_IDENTIFIER'];
+    referenceDescription = json['REFERENCE_DESCRIPTION'];
+    isSelected = json['IsSelected'];
+
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['REFERENCE_DATA_IDENTIFIER'] = this.referenceDataIdentifier;
+    data['REFERENCE_DESCRIPTION'] = this.referenceDescription;
+    data['IsSelected'] = this.isSelected;
+
+    return data;
+  }
+}
+

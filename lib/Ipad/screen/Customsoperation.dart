@@ -215,6 +215,7 @@ class AppointmentBooking extends StatefulWidget {
 class _AppointmentBookingState extends State<AppointmentBooking> {
   String? selectedDate = '01 Aug 2024';
   String? selectedTime = '10:00-11:00';
+  bool?  acceptAll;
 
   @override
   Widget build(BuildContext context) {
@@ -290,15 +291,15 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                             ),
                             // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                           ),
-                          icon: Icon(Icons.arrow_drop_down, color: Colors.blue),
-                          style: TextStyle(fontSize: 16, color: Colors.black),
+                          icon: const Icon(Icons.arrow_drop_down, color: Colors.blue),
+                          style: const TextStyle(fontSize: 16, color: Colors.black),
                           dropdownColor: Colors.white,
                         ))),
-                        DataCell(Center(child: Text('60'))),
-                        DataCell(Center(child: Text('-'))),
-                        DataCell(Center(child: Text('10'))),
-                        DataCell(Center(child: Text('-'))),
-                        DataCell(Center(child: Text('-'))),
+                        const DataCell(Center(child: Text('60'))),
+                        const DataCell(Center(child: Text('-'))),
+                        const DataCell(Center(child: Text('10'))),
+                        const DataCell(Center(child: Text('-'))),
+                        const DataCell(Center(child: Text('-'))),
                       ]),
                     ],
                     headingRowColor: MaterialStateProperty.resolveWith(
@@ -322,39 +323,50 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: DataTable(
-                    columns: const [
+                    columns:  [
                       DataColumn(
                           label: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Accept \nAll',
-                            style: TextStyle(
-                              color: MyColor.primaryColorblue,
-                              decoration: TextDecoration.underline,
-                              decorationStyle: TextDecorationStyle.solid,
-                              decorationColor: MyColor.primaryColorblue,
-                              decorationThickness: 2,
-                            ),
+                          Checkbox(
+                            isError: true,
+                            tristate: true,
+                            activeColor:acceptAll==null ? Colors.red:acceptAll!?Colors.green:Colors.grey,
+                            value:acceptAll ,
+                            onChanged: (bool? value) {
+                              setState(() {
+                                acceptAll = value;
+                              });
+                            },
                           ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text(
-                            'Reject\n All',
-                            style: TextStyle(color: Colors.red,
-                              decoration: TextDecoration.underline,
-                              decorationStyle: TextDecorationStyle.solid,
-                              decorationColor: Colors.red,
-                              decorationThickness: 2,
-                            ),
-                          )
+                          // Text(
+                          //   'Accept \nAll',
+                          //   style: TextStyle(
+                          //     color: MyColor.primaryColorblue,
+                          //     decoration: TextDecoration.underline,
+                          //     decorationStyle: TextDecorationStyle.solid,
+                          //     decorationColor: MyColor.primaryColorblue,
+                          //     decorationThickness: 2,
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //   width: 8,
+                          // ),
+                          // Text(
+                          //   'Reject\n All',
+                          //   style: TextStyle(color: Colors.red,
+                          //     decoration: TextDecoration.underline,
+                          //     decorationStyle: TextDecorationStyle.solid,
+                          //     decorationColor: Colors.red,
+                          //     decorationThickness: 2,
+                          //   ),
+                          // )
                         ],
                       )),
-                      DataColumn(label: Text('AWB No.\n')),
-                      DataColumn(label: Text('HAWB No.\n')),
-                      DataColumn(label: Text('Req. For Exam. (RFE) \n Pieces')),
-                      DataColumn(label: Text('Remarks\n')),
+                      const DataColumn(label: Text('AWB No.\n')),
+                      const DataColumn(label: Text('HAWB No.\n')),
+                      const DataColumn(label: Text('Req. For Exam. (RFE) \n Pieces')),
+                      const DataColumn(label: Text('Remarks\n')),
                     ],
                     rows: [
                       _buildDataRow(
@@ -385,7 +397,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                     dataRowColor: MaterialStateProperty.resolveWith(
                       (states) => Color(0xfffafafa),
                     ),
-                    columnSpacing: MediaQuery.sizeOf(context).width * 0.028,
+                    columnSpacing: MediaQuery.sizeOf(context).width * 0.04,
                   ),
                 ),
               ),
@@ -430,15 +442,26 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
         DataCell(
           Theme(
             data: ThemeData(useMaterial3: false),
-            child: Switch(
-              onChanged: (value) async {
-                setState(() {});
+            child: Checkbox(
+              isError: true,
+              tristate: true,
+              activeColor:isOn==null ? Colors.red:isOn!?Colors.green:Colors.grey,
+              value:isOn ,
+              onChanged: (bool? value) {
+                setState(() {
+                  isOn = value!;
+                });
               },
-              value: isOn,
-              activeColor: MyColor.primaryColorblue,
-              activeTrackColor: Colors.grey,
-              inactiveThumbColor: Colors.red,
             ),
+            // Switch(
+            //   onChanged: (value) async {
+            //     setState(() {});
+            //   },
+            //   value: isOn,
+            //   activeColor: MyColor.primaryColorblue,
+            //   activeTrackColor: Colors.grey,
+            //   inactiveThumbColor: Colors.red,
+            // ),
           ),
         ),
         DataCell(Column(

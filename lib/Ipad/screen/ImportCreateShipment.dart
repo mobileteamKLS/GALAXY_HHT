@@ -10,6 +10,8 @@ import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/sizeutils.dart';
 import '../../widget/customebuttons/roundbuttonblue.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
@@ -85,10 +87,10 @@ class _CreateShipmentState extends State<CreateShipment> {
       showDataNotFoundDialog(context, "Flight Date is required.");
       return;
     }
-    if (uldController.text.isEmpty) {
-      showDataNotFoundDialog(context, "ULD is required.");
-      return;
-    }
+    // if (uldController.text.isEmpty) {
+    //   showDataNotFoundDialog(context, "ULD is required.");
+    //   return;
+    // }
     if (dispositionCodeController.text.isEmpty) {
       showDataNotFoundDialog(context, "Disposition Code is required.");
       return;
@@ -180,8 +182,6 @@ class _CreateShipmentState extends State<CreateShipment> {
         }
 
       }
-
-
     }).catchError((onError) {
 
       print(onError);
@@ -193,9 +193,22 @@ class _CreateShipmentState extends State<CreateShipment> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              '',
-              style: TextStyle(color: Colors.white),
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                  },
+                  child: Padding(padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  ),
+                ),
+                const Text(
+                  '  Warehouse Operations',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
+                ),
+              ],
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
             toolbarHeight: 80,
@@ -227,7 +240,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                 width: 10,
               ),
             ]),
-        // drawer: const Drawer(),
+        drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
@@ -804,7 +817,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
-                                                0.44,
+                                                0.435,
                                             child: CustomeEditTextWithBorder(
                                               lablekey: 'MAWB',
                                               hasIcon: false,
@@ -819,10 +832,11 @@ class _CreateShipmentState extends State<CreateShipment> {
                                               onChanged: (String, bool) {},
                                             ),
                                           ),
-                                          SizedBox(
+                                          Container(
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
-                                                0.44,
+                                                0.445,
+                                            padding: EdgeInsets.only(right: 6),
                                             child: CustomeEditTextWithBorder(
                                               lablekey: 'MAWB',
                                               hasIcon: false,

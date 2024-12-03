@@ -25,7 +25,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   //load local language
   Locale? locale = await _loadSavedLanguage();
-  runApp(MyApp(locale: locale));
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) =>  runApp(MyApp(locale: locale)));
+
 }
 
 // check for local language

@@ -97,54 +97,46 @@ class AuthService{
     });
   }
 
-  Future<Post> sendXmlInGetWithBody(apiName, payload) async {
+  Future<Post> sendGetWithBody(apiName, payload) async {
+    print("payload = $payload");
     String url = 'https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName';
-  //
-  //   String xmlContent = '''
-  // <Root>
-  //   <AWBPrefix>125</AWBPrefix>
-  //   <AWBNo>78787787</AWBNo>
-  //   <HAWBNO>HB234</HAWBNO>
-  //   <AirportCity>JFK</AirportCity>
-  //   <Culture>''</Culture>
-  //   <CompanyCode>3</CompanyCode>
-  //   <UserId>1</UserId>
-  // </Root>
-  // ''';
-  //
-  //   // Create the JSON object
-  //   Map<String, dynamic> jsonBody = {
-  //     "InputXML": xmlContent,
-  //   };
-
-    // Convert the map to JSON
+    print("fetch data for API = $url");
     String jsonString = json.encode(payload);
-
-    // Create a request object for GET method
     var request = http.Request('GET', Uri.parse(url));
-
-    // Set headers to indicate the content type (application/json)
     request.headers['Content-Type'] = 'application/json';
-
-    // Add the JSON string in the request body
     request.body = jsonString;
-
     try {
-      // Send the GET request
       var response = await request.send();
       return await handleResponse(response);
-
     } catch (e) {
       throw Exception("Failed request: $e");
     }
   }
+  Future<Post> sendPostWithBody(apiName, payload) async {
+    print("payload = $payload");
+    String url = 'https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName';
+    print("fetch data for API = $url");
+    String jsonString = json.encode(payload);
+
+    var request = http.Request('POST', Uri.parse(url));
+    request.headers['Content-Type'] = 'application/json';
+    request.body = jsonString;
+
+    try {
+      var response = await request.send();
+      return await handleResponse(response);
+    } catch (e) {
+      throw Exception("Failed request: $e");
+    }
+  }
+
+
 }
 
 Future<Post> handleResponse(http.StreamedResponse response) async {
   final int statusCode = response.statusCode;
   final String responseBody = await response.stream.bytesToString();
 
-  print('Response:Successful');
   print('Status code: $statusCode');
 
   if (statusCode == 401) {

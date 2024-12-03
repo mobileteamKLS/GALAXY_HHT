@@ -29,7 +29,8 @@ import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 
 class ShipmentAcceptanceManually extends StatefulWidget {
-  const ShipmentAcceptanceManually({super.key});
+  final ShipmentListDetails? shipmentListDetails;
+  const ShipmentAcceptanceManually({super.key, this.shipmentListDetails});
 
   @override
   State<ShipmentAcceptanceManually> createState() =>
@@ -47,26 +48,125 @@ class _ShipmentAcceptanceManuallyState
   TextEditingController houseController = TextEditingController();
   TextEditingController commodityController = TextEditingController();
   TextEditingController agentController = TextEditingController();
+  TextEditingController totalNOPController = TextEditingController();
+  TextEditingController totalWTController = TextEditingController();
+  TextEditingController masterUnitController = TextEditingController();
+  TextEditingController groupIDController = TextEditingController();
+  TextEditingController rcvNOPController = TextEditingController();
+  TextEditingController rcvWTController = TextEditingController();
+  TextEditingController rcvUnitController = TextEditingController();
   FocusNode prefixFocusNode = FocusNode();
   FocusNode awbFocusNode = FocusNode();
   FocusNode houseFocusNode = FocusNode();
+  FocusNode rcvNOPFocusNode = FocusNode();
+  List<ConsignmentAcceptedList> acceptedPiecesList = [];
+  List<ConsignmentAcceptedList> acceptedConsignment = [];
+  int pieceStatus = 0;
+  int selectedComId=-1;
+  int selectedAgentId=-1;
 
   @override
   void initState() {
     super.initState();
     // awbSearch();
+    masterUnitController.text = "KG";
+    rcvUnitController.text = "KG";
+    setDefaultRemainValues();
     print("-----${commodityListMaster.length}");
-    awbFocusNode.addListener(() {
-      if (!awbFocusNode.hasFocus) {
-        print("LOST focus");
-         leftAWBFocus();
+    awbFocusNode.addListener(
+      () {
+        if (!awbFocusNode.hasFocus) {
+          print("LOST focus");
+          leftAWBFocus();
+        }
+      },
+    );
+
+    rcvNOPFocusNode.addListener(
+      () {
+        if (!rcvNOPFocusNode.hasFocus) {
+          print("LOST focus NOP");
+          if (acceptedConsignment.isNotEmpty) {
+            print("NOt empty");
+            checkPieces();
+          }
+          if(rcvNOPController.text.isEmpty){
+            setState(() {
+              rcvNOPController.text="0";
+              rcvWTController.text="0.00";
+            });
+          }
+        }
+      },
+    );
+
+    houseFocusNode.addListener(
+      () {
+        if (!houseFocusNode.hasFocus) {
+          print("LOST focus house");
+          leftAWBFocus();
+        }
+      },
+    );
+    prefixController.text=widget.shipmentListDetails?.documentNo.substring(0,3)??"";
+    awbController.text=widget.shipmentListDetails?.documentNo.substring(4)??"";
+    houseController.text=widget.shipmentListDetails?.houseNo??"";
+    if(widget.shipmentListDetails!=null){
+      if(houseController.text.isNotEmpty){
+        houseFocusNode.requestFocus();
       }
-    },);
-    houseFocusNode.addListener(() {
-      if (!houseFocusNode.hasFocus) {
-        // leaveDestinationFocus();
+      else{
+        awbFocusNode.requestFocus();
       }
-    },);
+    }
+  }
+
+  clearFieldsOnGet() {
+    totalNOPController.clear();
+    totalWTController.clear();
+    commodityController.clear();
+    agentController.clear();
+    rcvNOPController.text="0";
+    rcvWTController.text="0.00";
+    acceptedPiecesList = [];
+    acceptedConsignment = [];
+    setState(() {
+      pieceStatus = 0;
+    });
+  }
+
+  setDefaultRemainValues(){
+    rcvNOPController.text="0";
+    rcvWTController.text="0.00";
+  }
+
+  checkPieces() {
+    print("checkPieces");
+    if(rcvNOPController.text.isEmpty || rcvNOPController.text=="0"){
+      setState(() {
+        pieceStatus = 0;
+      });
+    }
+    if ((int.parse(rcvNOPController.text) +
+            int.parse(acceptedConsignment.first.nop)) ==
+        acceptedConsignment.first.totalNpo) {
+      setState(() {
+        pieceStatus = 1; //matches
+        print("status $pieceStatus");
+      });
+    } else if ((int.parse(rcvNOPController.text) +
+            int.parse(acceptedConsignment.first.nop)) <
+        acceptedConsignment.first.totalNpo) {
+      setState(() {
+        pieceStatus = 2; //partial
+        print("status $pieceStatus");
+      });
+    }
+    else{
+     setState(() {
+       pieceStatus = 3; //exceeds
+     });
+    }
   }
 
   void showDataNotFoundDialog(BuildContext context, String message) {
@@ -82,7 +182,7 @@ class _ShipmentAcceptanceManuallyState
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
+              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
               SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
               CustomeText(
                 text: message,
@@ -107,11 +207,14 @@ class _ShipmentAcceptanceManuallyState
   }
 
   leftAWBFocus() async {
-    if(awbController.text.length!=8){
+    if(awbController.text.isEmpty){
+      return;
+    }
+    if (awbController.text.length != 8) {
       showDataNotFoundDialog(context, "Please enter a valid AWB No.");
       return;
     }
-    if(prefixController.text.length!=3){
+    if (prefixController.text.length != 3) {
       showDataNotFoundDialog(context, "Please enter a valid AWB No.");
       return;
     }
@@ -121,14 +224,16 @@ class _ShipmentAcceptanceManuallyState
     }
   }
 
-
   awbSearch() async {
     DialogUtils.showLoadingDialog(context);
-    var queryParams ={
-      "InputXML": "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
+    clearFieldsOnGet();
+    var queryParams = {
+      "InputXML":
+          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
     };
 
-    await authService.sendXmlInGetWithBody("ShipmentAcceptance/GetShipmentDetails",queryParams)
+    await authService
+        .sendGetWithBody("ShipmentAcceptance/GetShipmentDetails", queryParams)
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
@@ -138,23 +243,100 @@ class _ShipmentAcceptanceManuallyState
         setState(() {
           hasNoRecord = true;
         });
-      }
-      else{
-        hasNoRecord=false;
+      } else {
+        hasNoRecord = false;
       }
       print("is empty record$hasNoRecord");
       String status = jsonData['ReturnOutput'][0]['Status'];
       String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
 
-      if (status != 'S') {
+      if (status == 'E') {
         print("Error: $statusMessage");
         DialogUtils.hideLoadingDialog(context);
         showDataNotFoundDialog(context, statusMessage);
         return;
+      } else {
+        totalNOPController.text =
+            jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
+        totalWTController.text =
+            jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+      //   houseController.text=
+      // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
+        List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
+        List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
+        setState(() {
+          acceptedPiecesList = accPcsList
+              .map((json) => ConsignmentAcceptedList.fromJSON(json))
+              .toList();
+          acceptedConsignment = accConsignment
+              .map((json) => ConsignmentAcceptedList.fromJSON(json))
+              .toList();
+        });
+        print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
+        print("Acceptance Consignment ${acceptedConsignment.length}");
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
       DialogUtils.hideLoadingDialog(context);
+      print(onError);
+    });
+  }
+
+  acceptShipment() async {
+    if (prefixController.text.isEmpty) {
+      showDataNotFoundDialog(context, "AWB Prefix is required.");
+      return;
+    }
+
+    if (awbController.text.isEmpty) {
+      showDataNotFoundDialog(context, "AWB No is required.");
+      return;
+    }
+
+    if (commodityController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Commodity is required.");
+      return;
+    }
+
+    if (agentController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Agent is required.");
+      return;
+    }
+    if (groupIDController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Group ID is required.");
+      return;
+    }
+
+
+    var queryParams = {
+      "InputXML":
+          "<Root><Type>A</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${groupIDController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>1</UserId><MenuId>0</MenuId></Root>"
+    };
+    // print(queryParams);
+    // return;
+    DialogUtils.showLoadingDialog(context);
+    await authService
+        .postData(
+      "ShipmentAcceptance/CBWShipmentAcceptanceSave",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      String status = jsonData['Status'];
+      String? statusMessage = jsonData['StatusMessage'] ?? "";
+      if (jsonData.isNotEmpty) {
+        DialogUtils.hideLoadingDialog(context);
+        if (status != "S") {
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+        if ((status == "S")) {
+          SnackbarUtil.showSnackbar(context,statusMessage!,
+              const Color(0xff43A047));
+          awbSearch();
+        }
+      }
+    }).catchError((onError) {
       print(onError);
     });
   }
@@ -164,9 +346,22 @@ class _ShipmentAcceptanceManuallyState
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              'Imports',
-              style: TextStyle(color: Colors.white),
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                  },
+                  child: Padding(padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  ),
+                ),
+                const Text(
+                  '  Warehouse Operations',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
+                ),
+              ],
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
             toolbarHeight: 80,
@@ -183,22 +378,22 @@ class _ShipmentAcceptanceManuallyState
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
               const SizedBox(
                 width: 10,
               ),
             ]),
-        drawer: const Drawer(),
+        // drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
@@ -228,7 +423,8 @@ class _ShipmentAcceptanceManuallyState
                                 const Text(
                                   '  Shipment Acceptance',
                                   style: TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 22),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 22),
                                 ),
                               ],
                             ),
@@ -268,7 +464,7 @@ class _ShipmentAcceptanceManuallyState
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         children: [
-                                          SizedBox(
+                                          Container(
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
@@ -293,15 +489,15 @@ class _ShipmentAcceptanceManuallyState
                                                     labelText: "Prefix*",
                                                     readOnly: false,
                                                     focusNode: prefixFocusNode,
-                                                    controller: prefixController,
-                                                    maxLength: 3, onPress: () {},
+                                                    controller:
+                                                        prefixController,
+                                                    maxLength: 3,
+                                                    onPress: () {},
                                                     textInputType:
                                                         TextInputType.number,
                                                     fontSize: 18,
                                                     onChanged:
-                                                        (String, bool) {
-
-                                                        },
+                                                        (String, bool) {},
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -315,7 +511,7 @@ class _ShipmentAcceptanceManuallyState
                                                   width:
                                                       MediaQuery.sizeOf(context)
                                                               .width *
-                                                          0.26,
+                                                          0.25,
                                                   child:
                                                       CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -326,7 +522,7 @@ class _ShipmentAcceptanceManuallyState
                                                         TextInputType.number,
                                                     needOutlineBorder: true,
                                                     labelText: "AWB No*",
-                                                        onPress: () {},
+                                                    onPress: () {},
                                                     focusNode: awbFocusNode,
                                                     readOnly: false,
                                                     controller: awbController,
@@ -343,8 +539,16 @@ class _ShipmentAcceptanceManuallyState
                                                   onTap: () {
                                                     scanQRAWB(false);
                                                   },
-                                                  child: Padding(padding: const EdgeInsets.all(2.0),
-                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            2.0),
+                                                    child: SvgPicture.asset(
+                                                      search,
+                                                      height: SizeConfig
+                                                              .blockSizeVertical *
+                                                          SizeUtils.ICONSIZE2,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -358,25 +562,25 @@ class _ShipmentAcceptanceManuallyState
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                  MediaQuery.sizeOf(context)
-                                                      .height *
-                                                      0.04,
+                                                      MediaQuery.sizeOf(context)
+                                                              .height *
+                                                          0.04,
                                                   width:
-                                                  MediaQuery.sizeOf(context)
-                                                      .width *
-                                                      0.38,
+                                                      MediaQuery.sizeOf(context)
+                                                              .width *
+                                                          0.37,
                                                   child:
-                                                  CustomeEditTextWithBorder(
+                                                      CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
-                                                    textInputType:
-                                                    TextInputType.number,
+                  
                                                     needOutlineBorder: true,
                                                     labelText: "HAWB No*",
                                                     onPress: () {},
                                                     readOnly: false,
+                                                        noUpperCase: true,
                                                     focusNode: houseFocusNode,
                                                     controller: houseController,
                                                     maxLength: 8,
@@ -392,8 +596,16 @@ class _ShipmentAcceptanceManuallyState
                                                   onTap: () {
                                                     scanQRAWB(true);
                                                   },
-                                                  child: Padding(padding: const EdgeInsets.all(2.0),
-                                                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            2.0),
+                                                    child: SvgPicture.asset(
+                                                      search,
+                                                      height: SizeConfig
+                                                              .blockSizeVertical *
+                                                          SizeUtils.ICONSIZE2,
+                                                    ),
                                                   ),
                                                 ),
                                               ],
@@ -410,7 +622,7 @@ class _ShipmentAcceptanceManuallyState
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceAround,
                                         children: [
-                                          SizedBox(
+                                          Container(
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.45,
@@ -433,8 +645,10 @@ class _ShipmentAcceptanceManuallyState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "NoP*",
-                                                    readOnly: false,
-                                                        onPress: () {},
+                                                    controller:
+                                                        totalNOPController,
+                                                    readOnly: true,
+                                                    onPress: () {},
                                                     textInputType:
                                                         TextInputType.number,
                                                     maxLength: 4,
@@ -463,8 +677,10 @@ class _ShipmentAcceptanceManuallyState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Total Weight*",
-                                                        onPress: () {},
-                                                    readOnly: false,
+                                                    controller:
+                                                        totalWTController,
+                                                    onPress: () {},
+                                                    readOnly: true,
                                                     textInputType:
                                                         TextInputType.number,
                                                     maxLength: 4,
@@ -499,8 +715,10 @@ class _ShipmentAcceptanceManuallyState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Unit*",
-                                                        onPress: () {},
-                                                    readOnly: false,
+                                                    controller:
+                                                        masterUnitController,
+                                                    onPress: () {},
+                                                    readOnly: true,
                                                     textInputType:
                                                         TextInputType.number,
                                                     maxLength: 4,
@@ -527,13 +745,14 @@ class _ShipmentAcceptanceManuallyState
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
+                                                    controller:
+                                                        groupIDController,
                                                     needOutlineBorder: true,
                                                     labelText: "Group Id*",
-                                                        onPress: () {},
+                                                    onPress: () {},
                                                     readOnly: false,
-                                                    textInputType:
-                                                        TextInputType.number,
-                                                    maxLength: 4,
+                  
+                                                    maxLength: 8,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -557,71 +776,80 @@ class _ShipmentAcceptanceManuallyState
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: TypeAheadField<
-                                                Commodity>(
+                                            child: TypeAheadField<Commodity>(
                                               controller: commodityController,
-                                              debounceDuration:
-                                              const Duration(milliseconds: 300),
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
                                               suggestionsCallback: (search) =>
                                                   CommodityService.find(search),
                                               itemBuilder: (context, item) {
                                                 return Container(
-                                                  decoration: const BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
-                                                          color: Colors.black, width: 0.2),
+                                                          color: Colors.black,
+                                                          width: 0.2),
                                                       left: BorderSide(
-                                                          color: Colors.black, width: 0.2),
+                                                          color: Colors.black,
+                                                          width: 0.2),
                                                       right: BorderSide(
-                                                          color: Colors.black, width: 0.2),
+                                                          color: Colors.black,
+                                                          width: 0.2),
                                                       bottom: BorderSide
                                                           .none, // No border on the bottom
                                                     ),
                                                   ),
-                                                  padding: const EdgeInsets.all(8.0),
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
                                                   child: Row(
                                                     children: [
-
-                                                      Text(item.commodityType.toUpperCase()),
+                                                      Text(item.commodityType
+                                                          .toUpperCase()),
                                                     ],
                                                   ),
                                                 );
                                               },
-                                              builder: (context, controller, focusNode) =>
+                                              builder: (context, controller,
+                                                      focusNode) =>
                                                   CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    controller: controller,
-                                                    focusNode: focusNode,
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    onPress: () {},
-                                                    labelText: "Commodity/Activity*",
-                                                    readOnly: false,
-
-                                                    fontSize: 18,
-                                                    onChanged: (String, bool) {},
-                                                  ),
-                                              decorationBuilder: (context, child) =>
-                                                  Material(
-                                                    type: MaterialType.card,
-                                                    elevation: 4,
-                                                    borderRadius: BorderRadius.circular(8.0),
-                                                    child: child,
-                                                  ),
+                                                lablekey: 'MAWB',
+                                                controller: controller,
+                                                focusNode: focusNode,
+                                                hasIcon: false,
+                                                hastextcolor: true,
+                                                animatedLabel: true,
+                                                needOutlineBorder: true,
+                                                onPress: () {},
+                                                labelText:
+                                                    "Commodity/Activity*",
+                                                readOnly: false,
+                                                fontSize: 18,
+                                                onChanged: (String, bool) {},
+                                              ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
                                               // itemSeparatorBuilder: (context, index) =>
                                               //     Divider(),
-                                              emptyBuilder: (context) => const Padding(
+                                              emptyBuilder: (context) =>
+                                                  const Padding(
                                                 padding: EdgeInsets.all(8.0),
-                                                child: Text('No Commodity Found',
-                                                    style: TextStyle(fontSize: 16)),
+                                                child: Text(
+                                                    'No Commodity Found',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
                                               ),
                                               onSelected: (value) {
-                                                commodityController.text =
-                                                    value.commodityType
-                                                        .toUpperCase();
-
+                                                commodityController.text = value
+                                                    .commodityType
+                                                    .toUpperCase();
+                                                selectedComId=value.commodityId;
                                               },
                                             ),
                                           ),
@@ -629,71 +857,78 @@ class _ShipmentAcceptanceManuallyState
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: TypeAheadField<
-                                                Customer>(
+                                            child: TypeAheadField<Customer>(
                                               controller: agentController,
-                                              debounceDuration:
-                                              const Duration(milliseconds: 300),
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
                                               suggestionsCallback: (search) =>
                                                   AgentService.find(search),
                                               itemBuilder: (context, item) {
                                                 return Container(
-                                                  decoration: const BoxDecoration(
+                                                  decoration:
+                                                      const BoxDecoration(
                                                     border: Border(
                                                       top: BorderSide(
-                                                          color: Colors.black, width: 0.2),
+                                                          color: Colors.black,
+                                                          width: 0.2),
                                                       left: BorderSide(
-                                                          color: Colors.black, width: 0.2),
+                                                          color: Colors.black,
+                                                          width: 0.2),
                                                       right: BorderSide(
-                                                          color: Colors.black, width: 0.2),
+                                                          color: Colors.black,
+                                                          width: 0.2),
                                                       bottom: BorderSide
                                                           .none, // No border on the bottom
                                                     ),
                                                   ),
-                                                  padding: const EdgeInsets.all(8.0),
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
                                                   child: Row(
                                                     children: [
-
-                                                      Text(item.customerName.toUpperCase()),
+                                                      Text(item.customerName
+                                                          .toUpperCase()),
                                                     ],
                                                   ),
                                                 );
                                               },
-                                              builder: (context, controller, focusNode) =>
+                                              builder: (context, controller,
+                                                      focusNode) =>
                                                   CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    controller: controller,
-                                                    focusNode: focusNode,
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    onPress: () {},
-                                                    labelText: "Agent Code - Name*",
-                                                    readOnly: false,
-
-                                                    fontSize: 18,
-                                                    onChanged: (String, bool) {},
-                                                  ),
-                                              decorationBuilder: (context, child) =>
-                                                  Material(
-                                                    type: MaterialType.card,
-                                                    elevation: 4,
-                                                    borderRadius: BorderRadius.circular(8.0),
-                                                    child: child,
-                                                  ),
+                                                lablekey: 'MAWB',
+                                                controller: controller,
+                                                focusNode: focusNode,
+                                                hasIcon: false,
+                                                hastextcolor: true,
+                                                animatedLabel: true,
+                                                needOutlineBorder: true,
+                                                onPress: () {},
+                                                labelText: "Agent Code - Name*",
+                                                readOnly: false,
+                                                fontSize: 18,
+                                                onChanged: (String, bool) {},
+                                              ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
                                               // itemSeparatorBuilder: (context, index) =>
                                               //     Divider(),
-                                              emptyBuilder: (context) => const Padding(
+                                              emptyBuilder: (context) =>
+                                                  const Padding(
                                                 padding: EdgeInsets.all(8.0),
                                                 child: Text('No Customer Found',
-                                                    style: TextStyle(fontSize: 16)),
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
                                               ),
                                               onSelected: (value) {
-                                                agentController.text =
-                                                    value.customerName
-                                                        .toUpperCase();
-
+                                                agentController.text = value
+                                                    .customerName
+                                                    .toUpperCase();
+                                                selectedAgentId=value.customerId;
                                               },
                                             ),
                                           ),
@@ -706,48 +941,64 @@ class _ShipmentAcceptanceManuallyState
                                       ),
                                       const Row(
                                         children: [
-                                          Text("   CAPTURE RECEIVED SHIPMENT",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16)),
+                                          Text("   CAPTURE RECEIVED SHIPMENT",
+                                              style: TextStyle(
+                                                  color: Colors.black,
+                                                  fontWeight: FontWeight.w800,
+                                                  fontSize: 16)),
                                         ],
                                       ),
                                       SizedBox(
                                         height:
-                                        MediaQuery.sizeOf(context).height *
-                                            0.02,
+                                            MediaQuery.sizeOf(context).height *
+                                                0.02,
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
+                                            MainAxisAlignment.spaceAround,
                                         children: [
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
-                                                .width *
+                                                    .width *
                                                 0.45,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                  MediaQuery.sizeOf(context)
-                                                      .height *
-                                                      0.04,
+                                                      MediaQuery.sizeOf(context)
+                                                              .height *
+                                                          0.04,
                                                   width:
-                                                  MediaQuery.sizeOf(context)
-                                                      .width *
-                                                      0.22,
+                                                      MediaQuery.sizeOf(context)
+                                                              .width *
+                                                          0.22,
                                                   child:
-                                                  CustomeEditTextWithBorder(
+                                                      CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Received NoP*",
+                                                    controller:
+                                                        rcvNOPController,
+                                                    focusNode: rcvNOPFocusNode,
                                                     readOnly: false,
+                                                        onPress: () {},
                                                     textInputType:
-                                                    TextInputType.number,
+                                                        TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
+                                                    onChanged: (String, bool) {
+                                                      print("Change");
+                                                      checkPieces();
+                                                      if(rcvNOPController.text.isEmpty){
+                                                       setState(() {
+                                                         rcvNOPController.text="0";
+                                                         rcvWTController.text="0.00";
+                                                       });
+                                                      }
+                                                    },
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -755,25 +1006,28 @@ class _ShipmentAcceptanceManuallyState
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                  MediaQuery.sizeOf(context)
-                                                      .height *
-                                                      0.04,
+                                                      MediaQuery.sizeOf(context)
+                                                              .height *
+                                                          0.04,
                                                   width:
-                                                  MediaQuery.sizeOf(context)
-                                                      .width *
-                                                      0.20,
+                                                      MediaQuery.sizeOf(context)
+                                                              .width *
+                                                          0.20,
                                                   child:
-                                                  CustomeEditTextWithBorder(
+                                                      CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "Received Weight*",
+                                                        onPress: () {},
+                                                    labelText:
+                                                        "Received Weight*",
                                                     readOnly: false,
+                                                    controller: rcvWTController,
                                                     textInputType:
-                                                    TextInputType.number,
-                                                    maxLength: 4,
+                                                        TextInputType.number,
+                                                    maxLength: 7,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -784,30 +1038,33 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
-                                                .width *
+                                                    .width *
                                                 0.45,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                  MediaQuery.sizeOf(context)
-                                                      .height *
-                                                      0.04,
+                                                      MediaQuery.sizeOf(context)
+                                                              .height *
+                                                          0.04,
                                                   width:
-                                                  MediaQuery.sizeOf(context)
-                                                      .width *
-                                                      0.22,
+                                                      MediaQuery.sizeOf(context)
+                                                              .width *
+                                                          0.22,
                                                   child:
-                                                  CustomeEditTextWithBorder(
+                                                      CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Unit*",
-                                                    readOnly: false,
+                                                    readOnly: true,
+                                                        onPress: () {},
+                                                    controller:
+                                                        rcvUnitController,
                                                     textInputType:
-                                                    TextInputType.number,
+                                                        TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged:
@@ -815,19 +1072,68 @@ class _ShipmentAcceptanceManuallyState
                                                   ),
                                                 ),
                                                 const SizedBox(
-                                                  width: 15,
+                                                  width: 20,
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                  MediaQuery.sizeOf(context)
-                                                      .height *
-                                                      0.04,
+                                                      MediaQuery.sizeOf(context)
+                                                              .height *
+                                                          0.04,
                                                   width:
-                                                  MediaQuery.sizeOf(context)
-                                                      .width *
-                                                      0.20,
-
-
+                                                      MediaQuery.sizeOf(context)
+                                                              .width *
+                                                          0.20,
+                                                  child: pieceStatus == 0
+                                                      ? SizedBox()
+                                                      : pieceStatus == 1
+                                                          ? const Row(
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .check_circle,
+                                                                  color: CupertinoColors
+                                                                      .activeGreen,
+                                                                ),
+                                                                Text(
+                                                                  "  Pieces Matched",
+                                                                  style: TextStyle(
+                                                                      color: CupertinoColors
+                                                                          .activeGreen,fontWeight: FontWeight.w700),
+                                                                )
+                                                              ],
+                                                            )
+                                                          : pieceStatus == 2
+                                                              ? const Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons.info_outlined
+                                                                          ,
+                                                                      color:  CupertinoColors.systemYellow,
+                                                                    ),
+                                                                    Text(
+                                                                      "  Part Received",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              CupertinoColors.systemYellow,fontWeight: FontWeight.w700),
+                                                                    )
+                                                                  ],
+                                                                )
+                                                              : const Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons
+                                                                          .info_outlined,
+                                                                      color: CupertinoColors
+                                                                          .systemRed,
+                                                                    ),
+                                                                    Text(
+                                                                      "  Pieces Mismatched",
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              CupertinoColors.systemRed,fontWeight: FontWeight.w700),
+                                                                    )
+                                                                  ],
+                                                                ),
                                                 )
                                               ],
                                             ),
@@ -839,78 +1145,92 @@ class _ShipmentAcceptanceManuallyState
                                             MediaQuery.sizeOf(context).height *
                                                 0.02,
                                       ),
-
                                     ],
                                   ),
                                 )
-
                               ],
                             ),
                           ),
                         ),
-                        // SizedBox(
-                        //   height: MediaQuery.sizeOf(context).height * 0.015,
-                        // ),
-                        // Container(
-                        //   decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(12.0),
-                        //     color: Colors.white,
-                        //     boxShadow: [
-                        //       BoxShadow(
-                        //         color: Colors.black.withOpacity(0.1),
-                        //         spreadRadius: 2,
-                        //         blurRadius: 8,
-                        //         offset: const Offset(
-                        //             0, 3), // changes position of shadow
-                        //       ),
-                        //     ],
-                        //   ),
-                        //   child: Padding(
-                        //     padding: const EdgeInsets.symmetric(
-                        //         vertical: 14, horizontal: 10),
-                        //     child: Column(
-                        //       crossAxisAlignment: CrossAxisAlignment.start,
-                        //       children: [
-                        //         const Text("  Part Shipment History",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 16),),
-                        //         SizedBox(height: 10,),
-                        //         Container(
-                        //           width: MediaQuery.sizeOf(context).width,
-                        //           color: Color(0xffE4E7EB),
-                        //           padding: EdgeInsets.all(2.0),
-                        //           child: SingleChildScrollView(
-                        //             scrollDirection: Axis.horizontal,
-                        //             child: DataTable(
-                        //               columns: const [
-                        //                 DataColumn(label: Text('Received NoP')),
-                        //                 DataColumn(label: Text('Received Weight')),
-                        //                 DataColumn(label: Text('Unit')),
-                        //                 DataColumn(label: Text('Accepted By')),
-                        //                 DataColumn(label: Text('Accepted On')),
-                        //                 DataColumn(label: Text('Group ID')),
-                        //               ],
-                        //               rows: const [
-                        //                 DataRow(cells: [
-                        //                   DataCell(Text('10')),
-                        //                   DataCell(Text('1000.00')),
-                        //                   DataCell(Text('KG')),
-                        //                   DataCell(Text('-')), // Assuming "-" for empty cells
-                        //                   DataCell(Text('01 AUG 2024 09:30')),
-                        //                   DataCell(Text('-')), // Assuming "-" for empty cells
-                        //                 ]),
-                        //               ],
-                        //               headingRowColor:
-                        //               WidgetStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
-                        //               dataRowColor:  WidgetStateProperty.resolveWith((states) => Color(0xfffafafa)),
-                        //               columnSpacing: 64.0,
-                        //               dataRowHeight: 48.0,
-                        //
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ],
-                        //     ),
-                        //   ),
-                        // ),
+                        SizedBox(
+                          height: MediaQuery.sizeOf(context).height * 0.015,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  "  Part Shipment History",
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 16),
+                                ),
+                                const SizedBox(
+                                  height: 10,
+                                ),
+                                Container(
+                                  width: MediaQuery.sizeOf(context).width,
+                                  color: Color(0xffE4E7EB),
+                                  padding: EdgeInsets.all(2.0),
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: DataTable(
+                                      columns: const [
+                                        DataColumn(label: Text('Received NoP')),
+                                        DataColumn(
+                                            label: Text('Received Weight')),
+                                        DataColumn(label: Text('Unit')),
+                                        DataColumn(label: Text('Accepted By')),
+                                        DataColumn(label: Text('Accepted On')),
+                                        DataColumn(label: Text('Group ID')),
+                                      ],
+                                      rows: acceptedPiecesList.map((item) {
+                                        return DataRow(cells: [
+                                          DataCell(Text(item.nop)),
+                                          DataCell(Text('${item.weight}')),
+                                          const DataCell(Text('KG')),
+                                          DataCell(Text(item.acceptanceBy)),
+                                          DataCell(Text(item.acceptanceOn)),
+                                          DataCell(Text(item.groupId)),
+                                        ]);
+                                      }).toList(),
+                                      headingRowColor:
+                                          MaterialStateColor.resolveWith(
+                                              (states) => Color(0xfff1f1f1)),
+                                      dataRowColor:
+                                          MaterialStateColor.resolveWith(
+                                              (states) => Color(0xfffafafa)),
+                                      columnSpacing:
+                                          acceptedPiecesList.length != 0
+                                              ? MediaQuery.sizeOf(context)
+                                                      .width *
+                                                  0.065
+                                              : 70,
+                                      dataRowHeight: 48.0,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                         SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.015,
                         ),
@@ -936,7 +1256,7 @@ class _ShipmentAcceptanceManuallyState
                               children: [
                                 Row(
                                   mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
                                     SizedBox(
                                       height: 45,
@@ -956,9 +1276,20 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                         ),
                                         onPressed: () {
-                                          Navigator.push(context, MaterialPageRoute(builder: (_)=>const CaptureDamageandAccept()));
+                                          if (acceptedPiecesList.isNotEmpty) {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (_) =>
+                                                        CaptureDamageandAccept(
+                                                          shipmentData:
+                                                              acceptedPiecesList
+                                                                  .first,
+                                                        )));
+                                          } else {}
                                         },
-                                        child: const Text("Capture Damage & Accept"),
+                                        child: const Text(
+                                            "Capture Damage & Accept"),
                                       ),
                                     ),
                                     const SizedBox(
@@ -971,7 +1302,7 @@ class _ShipmentAcceptanceManuallyState
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                          MyColor.primaryColorblue,
+                                              MyColor.primaryColorblue,
                                           textStyle: const TextStyle(
                                             fontSize: 18,
                                             color: Colors.white,
@@ -981,7 +1312,9 @@ class _ShipmentAcceptanceManuallyState
                                                 Radius.circular(8)),
                                           ),
                                         ),
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          acceptShipment();
+                                        },
                                         child: const Text(
                                           "Accept",
                                           style: TextStyle(color: Colors.white),
@@ -1014,55 +1347,54 @@ class _ShipmentAcceptanceManuallyState
             ),
           ],
         ),
-
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        extendBody: true,
-        bottomNavigationBar: BottomAppBar(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          height: 60,
-          color: Colors.white,
-          surfaceTintColor: Colors.white,
-          shape: const CircularNotchedRectangle(),
-          notchMargin: 5,
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(CupertinoIcons.chart_pie),
-                    Text("Dashboard"),
-                  ],
-                ),
-              ),
-              GestureDetector(
-                onTap: () {},
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.help_outline,
-                      color: MyColor.primaryColorblue,
-                    ),
-                    Text(
-                      "User Help",
-                      style: TextStyle(color: MyColor.primaryColorblue),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
+        // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        // extendBody: true,
+        // bottomNavigationBar: BottomAppBar(
+        //   padding: const EdgeInsets.symmetric(horizontal: 10),
+        //   height: 60,
+        //   color: Colors.white,
+        //   surfaceTintColor: Colors.white,
+        //   shape: const CircularNotchedRectangle(),
+        //   notchMargin: 5,
+        //   child: Row(
+        //     mainAxisSize: MainAxisSize.max,
+        //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //     children: <Widget>[
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(CupertinoIcons.chart_pie),
+        //             Text("Dashboard"),
+        //           ],
+        //         ),
+        //       ),
+        //       GestureDetector(
+        //         onTap: () {},
+        //         child: const Column(
+        //           mainAxisAlignment: MainAxisAlignment.center,
+        //           children: [
+        //             Icon(
+        //               Icons.help_outline,
+        //               color: MyColor.primaryColorblue,
+        //             ),
+        //             Text(
+        //               "User Help",
+        //               style: TextStyle(color: MyColor.primaryColorblue),
+        //             ),
+        //           ],
+        //         ),
+        //       ),
+        //     ],
+        //   ),
+        // ),
       ),
     );
   }
 
   Future<void> scanQRAWB(bool isHawb) async {
-    String barcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+    String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scanner overlay
       'Cancel', // Text for the cancel button
       true, // Enable flash option
@@ -1070,30 +1402,28 @@ class _ShipmentAcceptanceManuallyState
     );
 
     print("barcode scann ==== ${barcodeScanResult}");
-    if(barcodeScanResult == "-1"){
-
-    }else{
-
-      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+    if (barcodeScanResult == "-1") {
+    } else {
+      bool specialCharAllow =
+          CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 
-
-      if(false){
-        SnackbarUtil.showSnackbar(context, "Only numeric values are accepted.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      if (false) {
+        SnackbarUtil.showSnackbar(
+            context, "Only numeric values are accepted.", MyColor.colorRed,
+            icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         prefixController.clear();
         awbController.clear();
         // WidgetsBinding.instance.addPostFrameCallback((_) {
         //   FocusScope.of(context).requestFocus(igmNoFocusNode);
         // });
-      }else{
-
+      } else {
         String result = barcodeScanResult.replaceAll(" ", "");
-        if(isHawb){
-          houseController.text=result;
-        }
-        else{
+        if (isHawb) {
+          houseController.text = result;
+        } else {
           String prefix = result.substring(0, 2);
           String awb = result.substring(3);
           prefixController.text = prefix;
@@ -1104,6 +1434,4 @@ class _ShipmentAcceptanceManuallyState
       }
     }
   }
-
-
 }
