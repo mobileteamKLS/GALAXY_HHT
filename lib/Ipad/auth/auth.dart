@@ -1,5 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+
+import '../utils/global.dart';
 class AuthService{
 
   Future<Post> postData(service, payload) async {
@@ -8,7 +10,7 @@ class AuthService{
     return fetchDataPOST(service, payload);
   }
   Future<Post> fetchDataPOST(apiName, payload) async {
-    var newURL = "https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName";
+    var newURL = "${baseUrl}$apiName";
     print("fetch data for API = $newURL");
     // final headers = {
     //   'Content-Type': 'application/json',
@@ -73,7 +75,7 @@ class AuthService{
     return fetchDataGET(service, payload);
   }
   Future<Post> fetchDataGET(apiName, payload) async {
-    var newURL = "https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName";
+    var newURL = "${baseUrl}$apiName";
     print("fetch data for API = $newURL");
     var url = Uri.parse(newURL);
     url = Uri.https(url.authority, url.path, payload);
@@ -99,7 +101,7 @@ class AuthService{
 
   Future<Post> sendGetWithBody(apiName, payload) async {
     print("payload = $payload");
-    String url = 'https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName';
+    String url = "${baseUrl}$apiName";
     print("fetch data for API = $url");
     String jsonString = json.encode(payload);
     var request = http.Request('GET', Uri.parse(url));
@@ -114,7 +116,7 @@ class AuthService{
   }
   Future<Post> sendPostWithBody(apiName, payload) async {
     print("payload = $payload");
-    String url = 'https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/$apiName';
+    String url = "${baseUrl}$apiName";
     print("fetch data for API = $url");
     String jsonString = json.encode(payload);
 

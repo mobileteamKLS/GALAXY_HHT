@@ -35,13 +35,13 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
+    _navigateToLogin();
    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       statusBarColor: Color(0xFFD1E3FC), // Set the color you want here.
       statusBarIconBrightness: Brightness.dark, // Use Brightness.dark for dark icons.
     ));
-    loadDefaultPage(); //load company name api with airportcode
+    //loadDefaultPage(); //load company name api with airportcode
   }
 
   Future<void> loadDefaultPage() async {
@@ -54,40 +54,24 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
   }
+  void _navigateToLogin() {
+    Future.delayed(const Duration(seconds: 3), () {
+      Navigator.of(context).pushReplacement(
+        CupertinoPageRoute(
+          builder: (BuildContext context) => const LogInScreen(
+            isMPinEnable: false,
+            authFlag: "P",
+          ),
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     SizeConfig().init(context);
     return Scaffold(
-      body: BlocConsumer<SplashCubit, SplashState>(
-        listener: (context, state) {
-          if (state is SplashLoaded) {
-            if(state.splashDefaultModel.status == "S"){
-              // Navigate to the next screen on success
-              Timer(
-                const Duration(seconds: 3),
-                    () => Navigator.of(context).pushReplacement(CupertinoPageRoute(
-                  builder: (BuildContext context) => const LogInScreen(isMPinEnable: false, authFlag: "P",),//SignInScreenMethod IpadDashboard
-                )),
-              );
-            }else{
-              // show error message
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: MyColor.colorRed,
-                content: Text(state.splashDefaultModel.statusMessage!, style: const TextStyle(color: MyColor.colorWhite, fontWeight: FontWeight.w500),),
-              ));
-
-            }
-
-          } else if (state is SplashError) {
-            // show error message
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: MyColor.colorRed,
-              content: Text(state.message, style: const TextStyle(color: MyColor.colorWhite, fontWeight: FontWeight.w500),),
-            ));
-          }
-        },
-        builder: (BuildContext context, SplashState state) {
-
-          return Container(
+      body: Container(
             decoration: const BoxDecoration(
               gradient: RadialGradient(
                 center: Alignment.center,
@@ -146,9 +130,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
               ],
             ),
-          );
-        },
-      ),
+          ),
     );
   }
 }

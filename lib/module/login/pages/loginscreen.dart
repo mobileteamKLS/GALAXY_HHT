@@ -241,13 +241,7 @@ class _LogInScreenState extends State<LogInScreen> {
                               if (state is LoginSuccess) {
                                 // navigate to next screen when login success
 
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  CupertinoPageRoute(
-                                    builder: (context) =>isMobile?DashboardScreen(): WarehouseOperations(),
-                                  ),
-                                  (route) => false,
-                                );
+
                   
                               } else if (state is LoginFailure) {
                                 Vibration.vibrate(duration: 500);
@@ -357,11 +351,18 @@ class _LogInScreenState extends State<LogInScreen> {
 
                                         if (isValid) {
                                           // call login api pass parameter
-                                          context.read<LoginCubit>().login(
-                                              userIdController.text.trim(),
-                                              passwordController.text,
-                                              widget.authFlag,
-                                              3);
+                                          // context.read<LoginCubit>().login(
+                                          //     userIdController.text.trim(),
+                                          //     passwordController.text,
+                                          //     widget.authFlag,
+                                          //     3);
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            CupertinoPageRoute(
+                                              builder: (context) =>isMobile?DashboardScreen(): WarehouseOperations(),
+                                            ),
+                                                (route) => false,
+                                          );
                                         } else {}
 
                                       },),
