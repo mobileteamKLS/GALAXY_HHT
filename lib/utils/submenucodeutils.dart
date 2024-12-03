@@ -8,4 +8,7 @@ class SubMenuCodeUtils{
   static int ShipmentDamage = 1289;
 
 
+  static int AirSideRelease = 1281;
+
+
 }

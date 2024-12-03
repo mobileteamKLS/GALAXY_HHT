@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/language/appLocalizations.dart';
 import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/language/model/subMenuModel.dart';
+import 'package:galaxy/module/export/pages/airsiderelease/airsiderelease.dart';
 import 'package:galaxy/module/profile/page/profilepagescreen.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenucubit.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenustate.dart';
@@ -250,13 +251,13 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                         ? GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
-                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation").length,
+                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "VCT Check" && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking").length,
                                       physics:  const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder: (BuildContext context, int index) {
 
                                         List<SubMenuName> filteredSubMenuList = state.subMenuModel.subMenuName!
-                                            .where((menu) => menu.menuName != "Shipment Creation")
+                                            .where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "VCT Check" && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking")
                                             .toList();
 
                                         SubMenuName subMenuName = filteredSubMenuList[index];
@@ -273,7 +274,8 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                             if(menuId == SubMenuCodeUtils.ULDAcceptance){
                                               // navigate to next page using submenu refrelcode
 
-                                              NextScreen(UldAcceptancePage(
+                                              NextScreen(
+                                                  UldAcceptancePage(
                                                 importSubMenuList: importSubMenuList,
                                                 exportSubMenuList: exportSubMenuList,
                                                 title: subMenuTitle,
@@ -282,7 +284,8 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                 menuId: menuId,
                                                 mainMenuName: widget.menuName,), isEnable);
                                               // NextScreen(DemoCodePage(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName,), isEnable);
-                                            } else if(menuId == SubMenuCodeUtils.FlightCheck){
+                                            }
+                                            else if(menuId == SubMenuCodeUtils.FlightCheck){
                                               // navigate to next page using submenu refrelcode
 
                                               NextScreen(FlightCheck(
@@ -293,7 +296,8 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   lableModel: lableModel,
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), isEnable);
-                                            }else if(menuId == SubMenuCodeUtils.Binning){
+                                            }
+                                            else if(menuId == SubMenuCodeUtils.Binning){
                                               NextScreen(Binning(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -302,10 +306,12 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   lableModel: lableModel,
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), "Y");
-                                            }else if(menuId == SubMenuCodeUtils.shipmentCreation){
+                                            }
+                                            else if(menuId == SubMenuCodeUtils.shipmentCreation){
 
                                               NextScreen(Container(), isEnable);
-                                            }else if(menuId == SubMenuCodeUtils.ShipmentDamage){
+                                            }
+                                            else if(menuId == SubMenuCodeUtils.ShipmentDamage){
                                               NextScreen(ShipmentDamagePages(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -315,6 +321,18 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), "Y");
                                             }
+
+                                            else if(menuId == SubMenuCodeUtils.AirSideRelease){
+                                              NextScreen(AirSideRelease(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), "Y");
+                                            }
+
                                           },);
                                       },
 

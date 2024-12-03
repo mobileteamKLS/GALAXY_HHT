@@ -261,7 +261,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
                                       itemCount: state.menuModel.menuName!
-                                          .where((menu) => menu.menuName != "Export" && menu.menuName != "Courier")
+                                          .where((menu) => menu.menuName != "Courier")
                                           .toList()
                                           .length, // Filter the list and update the itemCount
                                       physics: const NeverScrollableScrollPhysics(),
@@ -269,7 +269,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                       itemBuilder: (context, index) {
 
                                         final filteredMenu = state.menuModel.menuName!
-                                            .where((menu) => menu.menuName != "Export" && menu.menuName != "Courier")
+                                            .where((menu) => menu.menuName != "Courier")
                                             .toList();
 
                                         MenuName menuName = filteredMenu[index];

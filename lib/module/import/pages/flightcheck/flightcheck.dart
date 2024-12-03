@@ -1978,7 +1978,6 @@ class _FlightCheckState extends State<FlightCheck>
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
-
                     children: [
                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                       SizedBox(
