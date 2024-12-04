@@ -33,6 +33,7 @@ import 'dart:ui' as ui;
 
 import '../../../Ipad/screen/IpadDashBoard.dart';
 import '../../../Ipad/screen/warehouseoperations.dart';
+import '../../../Ipad/utils/global.dart';
 import '../../../prefrence/savedprefrence.dart';
 import '../../../utils/sizeutils.dart';
 import '../../../utils/validationmsgcodeutils.dart';
@@ -356,6 +357,16 @@ class _LogInScreenState extends State<LogInScreen> {
                                           //     passwordController.text,
                                           //     widget.authFlag,
                                           //     3);
+                                          if(userIdController.text.toUpperCase().contains("CES")){
+                                            setState(() {
+                                              isCES=true;
+                                            });
+                                          }
+                                          else{
+                                            setState(() {
+                                              isCES=false;
+                                            });
+                                          }
                                           Navigator.pushAndRemoveUntil(
                                             context,
                                             CupertinoPageRoute(
@@ -438,7 +449,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                       SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3),
                                       Image.asset(kaleLogisticsLogo, height: SizeConfig.blockSizeVertical * 12,),
                                       SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3),
-                                      CustomeText(text: "App Version ${_splashDefaultData!.appVersion}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w400, textAlign: TextAlign.right),
+                                      CustomeText(text: "App Version 1.0", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w400, textAlign: TextAlign.right),
                                     ],
                                   ));
                             },

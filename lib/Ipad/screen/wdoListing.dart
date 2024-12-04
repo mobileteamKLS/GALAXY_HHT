@@ -11,6 +11,7 @@ import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import '../modal/wdoModal.dart';
+import '../utils/global.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 import 'createNewDo.dart';
@@ -135,8 +136,8 @@ class _WdoListingState extends State<WdoListing> {
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                const Text(
-                  '  Warehouse Operations',
+                 Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
@@ -182,7 +183,7 @@ class _WdoListingState extends State<WdoListing> {
                 children: [
                   Padding(
                     padding:
-                    const EdgeInsets.only(top: 10, left: 20, right: 20),
+                    const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Material(
                       color: Colors.transparent,
                       // Ensures background transparency

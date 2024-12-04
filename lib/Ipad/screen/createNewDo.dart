@@ -15,6 +15,7 @@ import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/wdoModal.dart';
+import '../utils/global.dart';
 import 'ImportShipmentListing.dart';
 
 class CreateNewDO extends StatefulWidget {
@@ -56,8 +57,8 @@ class _CreateNewDOState extends State<CreateNewDO> {
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                const Text(
-                  '  Warehouse Operations',
+                 Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),

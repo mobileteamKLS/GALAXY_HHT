@@ -356,8 +356,8 @@ class _ShipmentAcceptanceManuallyState
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                const Text(
-                  '  Warehouse Operations',
+                 Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),

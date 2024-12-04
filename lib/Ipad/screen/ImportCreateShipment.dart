@@ -16,6 +16,7 @@ import '../../widget/customebuttons/roundbuttonblue.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
+import '../utils/global.dart';
 import '../widget/customIpadTextfield.dart';
 import 'ImportShipmentListing.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
@@ -203,8 +204,8 @@ class _CreateShipmentState extends State<CreateShipment> {
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                const Text(
-                  '  Warehouse Operations',
+                 Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),

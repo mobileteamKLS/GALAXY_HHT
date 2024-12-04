@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/screen/rejectBooking.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
@@ -19,6 +20,8 @@ import 'ImportShipmentListing.dart';
 import 'ShipmentAcceptance.dart';
 import 'ShipmentAcceptanceManually.dart';
 import 'WareHouseLocation.dart';
+import 'acceptBooking.dart';
+import 'appointmentBooking.dart';
 
 class WarehouseOperations extends StatefulWidget {
   const WarehouseOperations({super.key});
@@ -159,8 +162,8 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                const Text(
-                  '  Warehouse Operations',
+                 Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
@@ -203,115 +206,176 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
             Container(
               constraints: const BoxConstraints.expand(),
               color: MyColor.screenBgColor,
-              child:  Column(
-                children: [
-                  const SizedBox(height: 10,),
-                   Padding(
-                    padding:
-                    const EdgeInsets.only(top: 10, left: 20, right: 20),
-                    child: Material(
-                      color: Colors.transparent,
-                      // Ensures background transparency
+              child:   SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: 10,),
+                     Padding(
+                      padding:
+                      EdgeInsets.only(top: 10, left: 20, right: 20),
+                      child: Material(
+                        color: Colors.transparent,
+                        // Ensures background transparency
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Row(
+                            //   children: [
+                            //     GestureDetector(
+                            //       child:  const Icon(Icons.arrow_back_ios,
+                            //           color: MyColor.primaryColorblue),
+                            //       onTap: () {
+                            //         Navigator.pop(context);
+                            //       },
+                            //     ),
+                            //     const Text(
+                            //       '  ',
+                            //       style: TextStyle(
+                            //           fontWeight: FontWeight.bold, fontSize: 22),
+                            //     ),
+                            //   ],
+                            // ),
+                
+                          ],
+                        ),
+                      ),
+                    ),
+                    isCES? SizedBox(height: 20,):SizedBox(),
+                    isCES?Padding(
+                      padding: EdgeInsets.only(
+                          top: 5, left: 20, right: 20, bottom: 10),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Row(
-                          //   children: [
-                          //     GestureDetector(
-                          //       child:  const Icon(Icons.arrow_back_ios,
-                          //           color: MyColor.primaryColorblue),
-                          //       onTap: () {
-                          //         Navigator.pop(context);
-                          //       },
-                          //     ),
-                          //     const Text(
-                          //       '  ',
-                          //       style: TextStyle(
-                          //           fontWeight: FontWeight.bold, fontSize: 22),
-                          //     ),
-                          //   ],
+                          RoundedIconButton(
+                            icon: CupertinoIcons.doc,
+                            text: 'Shipments\nList',
+                            targetPage: ImportShipmentListing(),
+                            containerColor: Color(0xfffcedcf),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                          // SizedBox(width: 40,),
+                          RoundedIconButton(
+                            icon: CupertinoIcons.add,
+                            text: 'Create\nShipment',
+                            targetPage: CreateShipment(),
+                            containerColor: Color(0xffD1E2FB),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                          RoundedIconButton(
+                            icon: CupertinoIcons.cube_box,
+                            text: 'Shipment\nAcceptance',
+                            targetPage: ShipmentAcceptanceManually(),
+                            containerColor: Color(0xffffd7bd),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                
+                
+                        ],
+                      ),
+                    ):SizedBox(),
+                    isCES? SizedBox(height: 20,):SizedBox(),
+                    isCES?Padding(
+                      padding: EdgeInsets.only(
+                          top: 5, left: 20, right: 20, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // RoundedIconButton(
+                          //   icon: Icons.trolley,
+                          //   text: 'Warehouse\nLocation',
+                          //   targetPage: WarehouseLocation(),
+                          //   containerColor: Color(0xffffd1d1),
+                          //   iconColor: MyColor.textColorGrey3,
+                          //   textColor: MyColor.textColorGrey3,
                           // ),
+                          // SizedBox(width: 40,),
+                          RoundedIconButton(
+                            icon: Icons.local_shipping_outlined,
+                            text: 'Warehouse\nDelivery Order',
+                            targetPage: WdoListing(),
+                            containerColor: Color(0xffb4d9b5),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                          // RoundedIconButton(
+                          //   icon: CupertinoIcons.checkmark_rectangle,
+                          //   text: 'Customs\nOperation',
+                          //   targetPage: CustomsOperation(),
+                          //   containerColor: Color(0xffe1d8f0),
+                          //   iconColor: MyColor.textColorGrey3,
+                          //   textColor: MyColor.textColorGrey3,
+                          // ),
+                
+                
+                        ],
+                      ),
+                    ):SizedBox(),
+                    (!isCES)?SizedBox(height: 20,):SizedBox(),
+                    (!isCES)?Padding(
+                      padding: EdgeInsets.only(
+                          top: 5, left: 20, right: 20, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RoundedIconButton(
+                            icon: CupertinoIcons.doc,
+                            text: 'Appointment\nBookings',
+                            targetPage: AppointmentBooking(),
+                            containerColor: Color(0xfffcedcf),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                          // SizedBox(width: 40,),
+                          RoundedIconButton(
+                            icon: Icons.check_circle,
+                            text: 'Accepted\nBookings',
+                            targetPage: AcceptBooking(),
+                            containerColor: Color(0xffb4d9b5),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                          RoundedIconButton(
+                            icon: Icons.cancel,
+                            text: 'Rejected\nBookings',
+                            targetPage: RejectBooking(),
+                            containerColor:Color(0xffffd1d1),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+
 
                         ],
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        top: 5, left: 20, right: 20, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        RoundedIconButton(
-                          icon: CupertinoIcons.doc,
-                          text: 'Shipments\nList',
-                          targetPage: ImportShipmentListing(),
-                          containerColor: Color(0xfffcedcf),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
-                        // SizedBox(width: 40,),
-                        RoundedIconButton(
-                          icon: CupertinoIcons.add,
-                          text: 'Create\nShipment',
-                          targetPage: CreateShipment(),
-                          containerColor: Color(0xffD1E2FB),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
-                        RoundedIconButton(
-                          icon: CupertinoIcons.cube_box,
-                          text: 'Shipment\nAcceptance',
-                          targetPage: ShipmentAcceptanceManually(),
-                          containerColor: Color(0xffffd7bd),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
+                    ):SizedBox(),
+                    (!isCES)?SizedBox(height: 20,):SizedBox(),
+                    (!isCES)?Padding(
+                      padding: EdgeInsets.only(
+                          top: 5, left: 20, right: 20, bottom: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RoundedIconButton(
+                            icon: Icons.search,
+                            text: 'Available For\nExamination',
+                            targetPage: ImportShipmentListing(),
+                            containerColor: Color(0xffe1d8f0),
+                            iconColor: MyColor.textColorGrey3,
+                            textColor: MyColor.textColorGrey3,
+                          ),
+                          // SizedBox(width: 40,),
 
 
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 20,),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                        top: 5, left: 20, right: 20, bottom: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // RoundedIconButton(
-                        //   icon: Icons.trolley,
-                        //   text: 'Warehouse\nLocation',
-                        //   targetPage: WarehouseLocation(),
-                        //   containerColor: Color(0xffffd1d1),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
-                        // SizedBox(width: 40,),
-                        RoundedIconButton(
-                          icon: Icons.local_shipping_outlined,
-                          text: 'Warehouse\nDelivery Order',
-                          targetPage: WdoListing(),
-                          containerColor: Color(0xffb4d9b5),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
-                        // RoundedIconButton(
-                        //   icon: CupertinoIcons.checkmark_rectangle,
-                        //   text: 'Customs\nOperation',
-                        //   targetPage: CustomsOperation(),
-                        //   containerColor: Color(0xffe1d8f0),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
 
-
-                      ],
-                    ),
-                  ),
-
-                ],
+                        ],
+                      ),
+                    ):SizedBox(),
+                
+                  ],
+                ),
               ),
             ),
             Positioned(

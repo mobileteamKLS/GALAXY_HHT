@@ -13,7 +13,7 @@
 
 
     <application
-        android:label="WFS-CES"
+        android:label="WFS-CES Mobility"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

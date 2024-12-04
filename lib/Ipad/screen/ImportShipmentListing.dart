@@ -11,6 +11,7 @@ import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
+import '../utils/global.dart';
 import 'ImportCreateShipment.dart';
 import 'ShipmentAcceptanceManually.dart';
 
@@ -131,8 +132,8 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                const Text(
-                  '  Warehouse Operations',
+                 Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
