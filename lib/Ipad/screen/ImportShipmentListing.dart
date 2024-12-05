@@ -633,61 +633,61 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                   ),
                 ),
                 const SizedBox(width: 2),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        GestureDetector(
-                          child: Container(
-                            height: 30,
-                            margin: const EdgeInsets.only(right: 12),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF0057D8),
-                                  Color(0xFF1c86ff),
-                                ],
-                                begin: Alignment.centerLeft,
-                                end: Alignment.centerRight,
-                              ),
-                            ),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent),
-                              onPressed: null,
-                              child: const Text(
-                                'Accepted Shipment',
-                                style: TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          ),
-                          onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment ,)));
-                          },
-                        ),
-                        const Icon(
-                          Icons.more_vert_outlined,
-                          color: MyColor.primaryColorblue,
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(left: 12),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(5),
-                            color:Color(0xffF2F7FD),
-                          ),
-                          child: const Icon(
-                            size: 28,
-                            Icons.keyboard_arrow_right_outlined,
-                            color: MyColor.primaryColorblue,
-                          ),
-                        )
-                      ],)
-                  ],
-                )
+                // Column(
+                //   mainAxisAlignment: MainAxisAlignment.center,
+                //   children: [
+                //     Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //       children: [
+                //         GestureDetector(
+                //           child: Container(
+                //             height: 30,
+                //             margin: const EdgeInsets.only(right: 12),
+                //             decoration: BoxDecoration(
+                //               borderRadius: BorderRadius.circular(8),
+                //               gradient: const LinearGradient(
+                //                 colors: [
+                //                   Color(0xFF0057D8),
+                //                   Color(0xFF1c86ff),
+                //                 ],
+                //                 begin: Alignment.centerLeft,
+                //                 end: Alignment.centerRight,
+                //               ),
+                //             ),
+                //             child: ElevatedButton(
+                //               style: ElevatedButton.styleFrom(
+                //                   backgroundColor: Colors.transparent,
+                //                   shadowColor: Colors.transparent),
+                //               onPressed: null,
+                //               child: const Text(
+                //                 'Accepted Shipment',
+                //                 style: TextStyle(color: Colors.white),
+                //               ),
+                //             ),
+                //           ),
+                //           onTap: (){
+                //             Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment ,)));
+                //           },
+                //         ),
+                //         const Icon(
+                //           Icons.more_vert_outlined,
+                //           color: MyColor.primaryColorblue,
+                //         ),
+                //         Container(
+                //           margin: const EdgeInsets.only(left: 12),
+                //           decoration: BoxDecoration(
+                //             borderRadius: BorderRadius.circular(5),
+                //             color:Color(0xffF2F7FD),
+                //           ),
+                //           child: const Icon(
+                //             size: 28,
+                //             Icons.keyboard_arrow_right_outlined,
+                //             color: MyColor.primaryColorblue,
+                //           ),
+                //         )
+                //       ],)
+                //   ],
+                // )
               ],
             ),
           ],

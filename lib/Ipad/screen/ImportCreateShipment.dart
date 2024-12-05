@@ -64,10 +64,10 @@ class _CreateShipmentState extends State<CreateShipment> {
       showDataNotFoundDialog(context, "Nop is required.");
       return;
     }
-    if (grossWeightController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Gross Weight is required.");
-      return;
-    }
+    // if (grossWeightController.text.isEmpty) {
+    //   showDataNotFoundDialog(context, "Weight is required.");
+    //   return;
+    // }
     if (originController.text.isEmpty) {
       showDataNotFoundDialog(context, "Origin is required.");
       return;
@@ -88,10 +88,10 @@ class _CreateShipmentState extends State<CreateShipment> {
       showDataNotFoundDialog(context, "Flight Date is required.");
       return;
     }
-    // if (uldController.text.isEmpty) {
-    //   showDataNotFoundDialog(context, "ULD is required.");
-    //   return;
-    // }
+    if (firmsCodeController.text.isEmpty) {
+      showDataNotFoundDialog(context, "FIRMS is required.");
+      return;
+    }
     if (dispositionCodeController.text.isEmpty) {
       showDataNotFoundDialog(context, "Disposition Code is required.");
       return;
@@ -147,9 +147,9 @@ class _CreateShipmentState extends State<CreateShipment> {
       "Airline": flightNoController.text.substring(0, 2),
       "FltNo": flightNoController.text.substring(3),
       "FltDate": "2024-10-25",
-      "ULDType": uldController.text.substring(0, 3),
-      "ULDNumber":uldController.text.substring(3, 8),
-      "ULDOwner": uldController.text.substring(8, 10),
+      "ULDType":uldController.text.isNotEmpty? uldController.text.substring(0, 3):"",
+      "ULDNumber":uldController.text.isNotEmpty?uldController.text.substring(3, 8):"",
+      "ULDOwner": uldController.text.isNotEmpty?uldController.text.substring(8, 10):"",
       "FIRMS": firmsCodeController.text,
       "Disposition":dispositionCodeController.text,
       "FSNId": 0,
@@ -584,7 +584,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           needOutlineBorder:
                                                               true,
                                                           labelText:
-                                                              "Gross Weight*",
+                                                              "Weight",
                                                           readOnly: false,
                                                           controller: grossWeightController,
                                                           textInputType:
@@ -1060,7 +1060,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                    labelText: "FIRMS Code",
+                                                    labelText: "FIRMS Code*",
                                                     controller: firmsCodeController,
                                                     readOnly: false,
                                                     maxLength: 15,

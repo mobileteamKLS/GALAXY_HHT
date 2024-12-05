@@ -181,12 +181,12 @@ class RoundedIconButton extends StatelessWidget {
             Icon(
               icon,
               color: iconColor,
-              size: 72,
+              size: 64,
             ),
             const SizedBox(height: 10),
             Text(
               text,
-              style: TextStyle(color: textColor, fontSize: 32),
+              style: TextStyle(color: textColor, fontSize: 24),
               textAlign: TextAlign.center,
             ),
           ],

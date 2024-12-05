@@ -302,10 +302,10 @@ class _ShipmentAcceptanceManuallyState
       showDataNotFoundDialog(context, "Agent is required.");
       return;
     }
-    if (groupIDController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Group ID is required.");
-      return;
-    }
+    // if (groupIDController.text.isEmpty) {
+    //   showDataNotFoundDialog(context, "Group ID is required.");
+    //   return;
+    // }
 
 
     var queryParams = {
@@ -748,7 +748,7 @@ class _ShipmentAcceptanceManuallyState
                                                     controller:
                                                         groupIDController,
                                                     needOutlineBorder: true,
-                                                    labelText: "Group Id*",
+                                                    labelText: "Group Id",
                                                     onPress: () {},
                                                     readOnly: false,
                   
@@ -822,7 +822,7 @@ class _ShipmentAcceptanceManuallyState
                                                 needOutlineBorder: true,
                                                 onPress: () {},
                                                 labelText:
-                                                    "Commodity/Activity*",
+                                                    "Commodity*",
                                                 readOnly: false,
                                                 fontSize: 18,
                                                 onChanged: (String, bool) {},
@@ -1289,7 +1289,7 @@ class _ShipmentAcceptanceManuallyState
                                           } else {}
                                         },
                                         child: const Text(
-                                            "Capture Damage & Accept"),
+                                            "Capture Damage"),
                                       ),
                                     ),
                                     const SizedBox(

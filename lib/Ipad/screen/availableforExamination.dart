@@ -385,21 +385,55 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                     width: MediaQuery.sizeOf(context).width*0.11,
                     child: buildLabel(shipment.hawb==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
 
-                const SizedBox(width: 8),
-                 Row(
-                  children: [
-                    Text(
-                      shipment.ffeDateTime,
-                      style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: MyColor.primaryColorblue,
-                    ),
-                  ],
-                ),
+                // const SizedBox(width: 8),
+                //  Row(
+                //   children: [
+                //     Text(
+                //       shipment.ffeDateTime,
+                //       style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                //     ),
+                //     SizedBox(width: 8),
+                //     Icon(
+                //       Icons.info_outline_rounded,
+                //       color: MyColor.primaryColorblue,
+                //     ),
+                //   ],
+                // ),
                 //const SizedBox(width: 16),
+                Spacer(),
+                GestureDetector(
+                  child: Container(
+                    height: 30,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF0057D8),
+                          Color(0xFF1c86ff),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent),
+                      onPressed: null,
+                      child: const Text(
+                        'End Examination',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  onTap: (){
+                    print("Save");
+                    endExamination(shipment.examinationRowId.toString());
+
+
+                  },
+                ),
 
               ],
             ),
@@ -408,7 +442,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
               children: [
                 Container(
 
-                  width: MediaQuery.sizeOf(context).width*0.9,
+                  width: MediaQuery.sizeOf(context).width*0.85,
                   child: Column(
                     children: [
                       Row(
@@ -466,7 +500,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 32),
+                                  const SizedBox(width: 28),
                                   Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
@@ -498,40 +532,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                                       ],
                                     ),
                                   ),
-                                  const SizedBox(width: 24),
-                                  GestureDetector(
-                                    child: Container(
-                                      height: 30,
-                                      margin: const EdgeInsets.only(right: 12),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(8),
-                                        gradient: const LinearGradient(
-                                          colors: [
-                                            Color(0xFF0057D8),
-                                            Color(0xFF1c86ff),
-                                          ],
-                                          begin: Alignment.centerLeft,
-                                          end: Alignment.centerRight,
-                                        ),
-                                      ),
-                                      child: ElevatedButton(
-                                        style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.transparent,
-                                            shadowColor: Colors.transparent),
-                                        onPressed: null,
-                                        child: const Text(
-                                          'End Examination',
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ),
-                                    onTap: (){
-                                      print("Save");
-                                      endExamination(shipment.examinationRowId.toString());
 
-
-                                    },
-                                  ),
 
                                 ],
                               ),
@@ -600,8 +601,8 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
-      String? status = jsonData['Status']??"";
-      String? statusMessage = jsonData['StatusMessage'] ?? "";
+      String status = jsonData['RetOutput'][0]['Status'];
+      String? statusMessage = jsonData['RetOutput'][0]['StrMessage']??"";
       if (jsonData.isNotEmpty) {
         DialogUtils.hideLoadingDialog(context);
         if (status != "S") {
@@ -611,8 +612,11 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
           SnackbarUtil.showSnackbar(
               context, statusMessage!, const Color(0xff43A047));
           searchCustomOperationsData();
+
         }
+
       }
+      DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
       print(onError);
     });

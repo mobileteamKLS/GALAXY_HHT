@@ -202,6 +202,8 @@ class _AcceptBookingState extends State<AcceptBooking> {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
+    slotList=[];
+    selectedSlot="";
     var queryParams = {
       "InputXml":
           "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"

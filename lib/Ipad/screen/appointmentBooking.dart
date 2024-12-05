@@ -204,6 +204,8 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
+    slotList=[];
+    selectedSlot="";
     var queryParams = {
       "InputXml":
       "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
@@ -290,7 +292,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
             builder.element('QueueRowID', nest: customExamination.queueRowId);
             builder.element('ElementRowID', nest: customExamination.elementRowId);
             builder.element('ElementGUID', nest: customExamination.elementGuid);
-            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"R":"")); // Placeholder for Status
+            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"":"R")); // Placeholder for Status
             builder.element('RFEPieces', nest: customExamination.col7); // Assuming col5 holds RFEPieces
             builder.element('Remarks', nest: customExamination.col8); // Assuming col6 holds Remarks
           });
@@ -317,7 +319,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
   }
 
   saveBookings() async {
-
+    FocusScope.of(context).requestFocus(FocusNode());
     String xml = buildInputXml(
       saveList: saveList,
       companyCode: "3",
@@ -328,9 +330,11 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     var queryParams = {
       "InputXML":xml
      };
+    bool allNull = isOnList.every((element) => element == null);
 
+    print("---$allNull");
     print(xml);
-return;
+
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
@@ -340,8 +344,8 @@ return;
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
-      String status = jsonData['Status'];
-      String? statusMessage = jsonData['StatusMessage'] ?? "";
+      String status = jsonData['RetOutput'][0]['Status'];
+      String? statusMessage = jsonData['RetOutput'][0]['StrMessage']??"";
       if (jsonData.isNotEmpty) {
         DialogUtils.hideLoadingDialog(context);
         if (status != "S") {
@@ -350,8 +354,11 @@ return;
         if ((status == "S")) {
           SnackbarUtil.showSnackbar(
               context, statusMessage!, const Color(0xff43A047));
+          getSlotTime(slotFilterDate);
         }
+
       }
+      DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
       print(onError);
     });
@@ -584,6 +591,7 @@ return;
                                                 setState(() {
                                                   selectedSlot = value;
                                                 });
+                                                searchCustomOperationsData(slotFilterDate,selectedSlot!);
                                               },
                                               decoration: InputDecoration(
                                                 filled: true,
@@ -692,21 +700,21 @@ return;
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                Checkbox(
-                                                  isError: true,
-                                                  tristate: true,
-                                                  activeColor: acceptAll == null
-                                                      ? Colors.red
-                                                      : acceptAll!
-                                                          ? Colors.green
-                                                          : Colors.grey,
-                                                  value: acceptAll,
-                                                  onChanged: (bool? value) {
-                                                    setState(() {
-                                                      acceptAll = value;
-                                                    });
-                                                  },
-                                                ),
+                                                // Checkbox(
+                                                //   isError: true,
+                                                //   tristate: true,
+                                                //   activeColor: acceptAll == null
+                                                //       ? Colors.red
+                                                //       : acceptAll!
+                                                //           ? Colors.green
+                                                //           : Colors.grey,
+                                                //   value: acceptAll,
+                                                //   onChanged: (bool? value) {
+                                                //     setState(() {
+                                                //       acceptAll = value;
+                                                //     });
+                                                //   },
+                                                // ),
                                                 // Text(
                                                 //   'Accept \nAll',
                                                 //   style: TextStyle(
