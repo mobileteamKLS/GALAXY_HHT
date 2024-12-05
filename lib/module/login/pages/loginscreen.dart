@@ -241,7 +241,25 @@ class _LogInScreenState extends State<LogInScreen> {
                             listener: (context, state) async {
                               if (state is LoginSuccess) {
                                 // navigate to next screen when login success
-
+                                final user = await savedPrefrence.getUserData();
+                                print(user!.userProfile!.userGroup);
+                                if(user!.userProfile!.userGroup=="CES"){
+                                  setState(() {
+                                    isCES=true;
+                                  });
+                                }
+                                else{
+                                  setState(() {
+                                    isCES=false;
+                                  });
+                                }
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (context) => WarehouseOperations(),
+                                  ),
+                                      (route) => false,
+                                );
 
                   
                               } else if (state is LoginFailure) {
@@ -352,28 +370,19 @@ class _LogInScreenState extends State<LogInScreen> {
 
                                         if (isValid) {
                                           // call login api pass parameter
-                                          // context.read<LoginCubit>().login(
-                                          //     userIdController.text.trim(),
-                                          //     passwordController.text,
-                                          //     widget.authFlag,
-                                          //     3);
-                                          if(userIdController.text.toUpperCase().contains("CES")){
-                                            setState(() {
-                                              isCES=true;
-                                            });
-                                          }
-                                          else{
-                                            setState(() {
-                                              isCES=false;
-                                            });
-                                          }
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            CupertinoPageRoute(
-                                              builder: (context) =>isMobile?DashboardScreen(): WarehouseOperations(),
-                                            ),
-                                                (route) => false,
-                                          );
+                                          context.read<LoginCubit>().login(
+                                              userIdController.text.trim(),
+                                              passwordController.text,
+                                              widget.authFlag,
+                                              3);
+
+                                          // Navigator.pushAndRemoveUntil(
+                                          //   context,
+                                          //   CupertinoPageRoute(
+                                          //     builder: (context) =>isMobile?DashboardScreen(): WarehouseOperations(),
+                                          //   ),
+                                          //       (route) => false,
+                                          // );
                                         } else {}
 
                                       },),

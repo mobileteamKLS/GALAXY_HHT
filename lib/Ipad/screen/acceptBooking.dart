@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
@@ -26,17 +27,20 @@ class AcceptBooking extends StatefulWidget {
 class _AcceptBookingState extends State<AcceptBooking> {
   String? _selectedDate = '01 Aug 2024';
   String? selectedTime = '10:00-11:00';
+  String? selectedSlot;
   bool? acceptAll;
   final AuthService authService = AuthService();
   bool isLoading = false;
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExamination> appointBookingList=[];
+  List<CustomExamination> appointBookingList = [];
+  List<Map<String, dynamic>> saveList = [];
+  List<CustomExamination> masterData = [];
   List<bool?> isOnList = [];
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
-
+  List<String> slotList = [];
 
   Future<void> pickDate(BuildContext context, StateSetter setState) async {
     DateTime? pickedDate = await showDatePicker(
@@ -53,7 +57,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
             dialogBackgroundColor: Colors.white,
             // Change dialog background color
             colorScheme: const ColorScheme.light(
-              primary:MyColor.primaryColorblue,
+              primary: MyColor.primaryColorblue,
               onPrimary: Colors.white,
               onSurface: Colors.black,
             ),
@@ -74,7 +78,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
         slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
         print("DATE is $slotFilterDate");
       });
-      searchCustomOperationsData(slotFilterDate);
+      getSlotTime(slotFilterDate);
     }
   }
 
@@ -115,12 +119,13 @@ class _AcceptBookingState extends State<AcceptBooking> {
     );
   }
 
-  searchCustomOperationsData(String date) async {
+  searchCustomOperationsData(String date, String slot) async {
     DialogUtils.showLoadingDialog(context);
-    appointBookingList=[];
+    appointBookingList = [];
+    masterData = [];
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>16:00-17:00</SlotTime></Root>"
+          "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
@@ -149,34 +154,113 @@ class _AcceptBookingState extends State<AcceptBooking> {
       } else {
         List<dynamic> resp = jsonData['CustomExaminationAList'];
         // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
-        if(resp.isEmpty){
+        if (resp.isEmpty) {
           print("No data");
           DialogUtils.hideLoadingDialog(context);
           return;
         }
         setState(() {
-          appointBookingList =resp.where((json) {
-            return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
-          })
+          appointBookingList = resp
+              .where((json) {
+                return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
+              })
+              .map((json) => CustomExamination.fromJSON(json))
+              .toList();
+          masterData = resp
+              .where((json) {
+                return json["ElementRowID"] == -1;
+              })
               .map((json) => CustomExamination.fromJSON(json))
               .toList();
           // resp.map((json) => CustomExamination.fromJSON(json)).toList();
           print("length==  = ${appointBookingList.length}");
           // filteredList = listShipmentDetails;
           print("length--  = ${appointBookingList.length}");
-
         });
         setState(() {
           isOnList = List.generate(appointBookingList.length, (index) => null);
           piecesControllers = List.generate(
               appointBookingList.length,
-                  (index) => TextEditingController(text: appointBookingList[index].col5));
+              (index) =>
+                  TextEditingController(text: appointBookingList[index].col5));
           print("Piecs${appointBookingList.first.col5}");
           remarksControllers = List.generate(
               appointBookingList.length,
-                  (index) => TextEditingController(text: appointBookingList[index].col8));
+              (index) =>
+                  TextEditingController(text: appointBookingList[index].col8));
         });
         print("Piecs${piecesControllers.first.text}");
+      }
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
+      DialogUtils.hideLoadingDialog(context);
+      print(onError);
+    });
+  }
+
+  getSlotTime(String date) async {
+    DialogUtils.showLoadingDialog(context);
+    appointBookingList = [];
+    masterData = [];
+    var queryParams = {
+      "InputXml":
+          "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
+    };
+
+    await authService
+        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      } else {
+        hasNoRecord = false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['RetOutput'][0]['Status'];
+      String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
+
+      if (status == 'E') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, statusMessage);
+        return;
+      } else {
+        List<dynamic> resp = jsonData['CustomExaminationAList'];
+        // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
+        if (resp.isEmpty) {
+          print("No data");
+          DialogUtils.hideLoadingDialog(context);
+          return;
+        }
+        setState(() {
+          List<CustomExamination> headerList = resp
+              .where((json) {
+                return json["ElementRowID"] == -1;
+              })
+              .map((json) => CustomExamination.fromJSON(json))
+              .toList();
+          slotList = headerList
+              .map((exam) =>
+                  '${exam.col3}-${exam.col4}') .toSet()
+              .toList();
+          selectedSlot = slotList.isNotEmpty ? slotList.first : null;
+          print("length==  = ${selectedSlot}");
+          print("length--  = ${slotList.length}");
+        });
+        if (slotList.isEmpty) {
+          print("Slot list is empty.");
+          DialogUtils.hideLoadingDialog(context);
+          return; // Or show a message if needed
+        } else {
+          print("first slot: ${slotList.first}");
+          searchCustomOperationsData(date, slotList.first);
+        }
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
@@ -203,9 +287,9 @@ class _AcceptBookingState extends State<AcceptBooking> {
     var formatter = DateFormat('dd-MM-yyyy');
     String formattedDate = formatter.format(today);
     setState(() {
-      slotFilterDate=formattedDate;
+      slotFilterDate = formattedDate;
     });
-    searchCustomOperationsData(formattedDate);
+    getSlotTime(formattedDate);
   }
 
   @override
@@ -226,9 +310,9 @@ class _AcceptBookingState extends State<AcceptBooking> {
                   ),
                 ),
               ),
-               Text(
-                isCES?'  Warehouse Operations':"  Customs Operation",
-                style: TextStyle(
+              Text(
+                isCES ? '  Warehouse Operations' : "  Customs Operation",
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                     color: Colors.white),
@@ -276,7 +360,8 @@ class _AcceptBookingState extends State<AcceptBooking> {
                 children: [
                   const SizedBox(height: 10),
                   Padding(
-                    padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                    padding:
+                        const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Material(
                       color: Colors.transparent,
                       child: SingleChildScrollView(
@@ -313,167 +398,251 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                   color: Color(0xffE4E7EB),
                                   padding: EdgeInsets.all(2.0),
                                   child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      columns: [
-                                        _buildDataColumn('Slot Date'),
-                                        _buildDataColumn('Slot Start-End Time'),
-                                        _buildDataColumn('Duration(Min)'),
-                                        _buildDataColumn('Station Name(s)'),
-                                        _buildDataColumn('Shipment Count'),
-                                        _buildDataColumn('Pieces'),
-                                        const DataColumn(
-                                            label: Center(child: Text('Weight'))),
-                                        // Last column without divider
-                                      ],
-                                      rows: [
-                                        DataRow(cells: [
-                                          DataCell(GestureDetector(
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  slotFilterDate,
-                                                  style: const TextStyle(
-                                                      fontSize: 16, color: MyColor.primaryColorblue),
+                                      scrollDirection: Axis.horizontal,
+                                      child: DataTable(
+                                        columns: [
+                                          _buildDataColumn('Slot Date'),
+                                          _buildDataColumn(
+                                              'Slot Start-End Time'),
+                                          _buildDataColumn('Duration(Min)'),
+                                          _buildDataColumn('Station Name(s)'),
+                                          _buildDataColumn('Shipment Count'),
+                                          _buildDataColumn('Pieces'),
+                                          const DataColumn(
+                                              label: Center(
+                                                  child: Text('Weight'))),
+                                          // Last column without divider
+                                        ],
+                                        rows: [
+                                          DataRow(cells: [
+                                            DataCell(
+                                              GestureDetector(
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      slotFilterDate,
+                                                      style: const TextStyle(
+                                                          fontSize: 16,
+                                                          color: MyColor
+                                                              .primaryColorblue),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    const Icon(
+                                                        Icons.calendar_today,
+                                                        color: MyColor
+                                                            .primaryColorblue),
+                                                  ],
                                                 ),
-                                                const SizedBox(width: 8),
-                                                const Icon(Icons.calendar_today,
-                                                    color: MyColor.primaryColorblue),
-              
-              
-                                              ],
-                                            ),
-                                            onTap: () {
-                                              pickDate(context, setState);
-                                            },
-                                          ),),
-                                          // DataCell(Center(
-                                          //     child:
-                                          //         DropdownButtonFormField<String>(
-                                          //   value: _selectedDate,
-                                          //   items: [
-                                          //     '01 Aug 2024',
-                                          //     '02 Aug 2024',
-                                          //     '03 Aug 2024'
-                                          //   ]
-                                          //       .map((value) => DropdownMenuItem(
-                                          //             value: value,
-                                          //             child: Text(value),
-                                          //           ))
-                                          //       .toList(),
-                                          //   onChanged: (value) {
-                                          //     _selectedDate = value;
-                                          //   },
-                                          //   decoration: InputDecoration(
-                                          //     filled: true,
-                                          //     fillColor: Color(0xffF5F8FA),
-                                          //     border: OutlineInputBorder(
-                                          //       borderRadius:
-                                          //           BorderRadius.circular(8),
-                                          //       borderSide:
-                                          //           BorderSide.none, // No border
-                                          //     ),
-                                          //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                                          //   ),
-                                          //   icon: const Icon(
-                                          //       Icons.arrow_drop_down,
-                                          //       color: Colors.blue),
-                                          //   style: const TextStyle(
-                                          //       fontSize: 16,
-                                          //       color: Colors.black),
-                                          //   dropdownColor: Colors.white,
-                                          // ))),
-                                          DataCell(Center(
-                                              child:
-                                              DropdownButtonFormField<String>(
-                                                value: selectedTime,
-                                                items: [
-                                                  '10:00-11:00',
-                                                  '11:00-12:00',
-                                                  '12:00-13:00'
-                                                ]
-                                                    .map((value) => DropdownMenuItem(
-                                                  value: value,
-                                                  child: Text(value),
-                                                ))
-                                                    .toList(),
-                                                onChanged: (value) {
-                                                  selectedTime = value;
+                                                onTap: () {
+                                                  pickDate(context, setState);
                                                 },
-                                                decoration: InputDecoration(
-                                                  filled: true,
-                                                  fillColor: Color(0xffF5F8FA),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(8),
-                                                    borderSide:
-                                                    BorderSide.none, // No border
-                                                  ),
-                                                  // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                              ),
+                                            ),
+                                            // DataCell(Center(
+                                            //     child:
+                                            //         DropdownButtonFormField<String>(
+                                            //   value: _selectedDate,
+                                            //   items: [
+                                            //     '01 Aug 2024',
+                                            //     '02 Aug 2024',
+                                            //     '03 Aug 2024'
+                                            //   ]
+                                            //       .map((value) => DropdownMenuItem(
+                                            //             value: value,
+                                            //             child: Text(value),
+                                            //           ))
+                                            //       .toList(),
+                                            //   onChanged: (value) {
+                                            //     _selectedDate = value;
+                                            //   },
+                                            //   decoration: InputDecoration(
+                                            //     filled: true,
+                                            //     fillColor: Color(0xffF5F8FA),
+                                            //     border: OutlineInputBorder(
+                                            //       borderRadius:
+                                            //           BorderRadius.circular(8),
+                                            //       borderSide:
+                                            //           BorderSide.none, // No border
+                                            //     ),
+                                            //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                            //   ),
+                                            //   icon: const Icon(
+                                            //       Icons.arrow_drop_down,
+                                            //       color: Colors.blue),
+                                            //   style: const TextStyle(
+                                            //       fontSize: 16,
+                                            //       color: Colors.black),
+                                            //   dropdownColor: Colors.white,
+                                            // ))),
+                                            DataCell(Center(
+                                                child: DropdownButtonFormField<
+                                                    String>(
+                                              value: selectedSlot,
+                                              // Set the initial selected value
+                                              items: slotList.isNotEmpty
+                                                  ? slotList
+                                                      .map((value) =>
+                                                          DropdownMenuItem<
+                                                              String>(
+                                                            value: value,
+                                                            child: Text(value),
+                                                          ))
+                                                      .toList()
+                                                  : [
+                                                      const DropdownMenuItem<
+                                                          String>(
+                                                        value: '',
+                                                        // or any default value
+                                                        child: Text(''),
+                                                      ),
+                                                    ],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedSlot = value;
+                                                });
+                                                selectedSlot = value;
+                                                searchCustomOperationsData(slotFilterDate,selectedSlot!);
+                                              },
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Color(0xffF5F8FA),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  borderSide: BorderSide
+                                                      .none, // No border
                                                 ),
-                                                icon: const Icon(
-                                                    Icons.arrow_drop_down,
-                                                    color: Colors.blue),
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black),
-                                                dropdownColor: Colors.white,
-                                              ))),
-                                          const DataCell(
-                                              Center(child: Text('60'))),
-                                          const DataCell(
-                                              Center(child: Text('-'))),
-                                          const DataCell(
-                                              Center(child: Text('10'))),
-                                          const DataCell(
-                                              Center(child: Text('-'))),
-                                          const DataCell(
-                                              Center(child: Text('-'))),
-                                        ]),
-                                      ],
-                                      headingRowColor:
-                                      MaterialStateProperty.resolveWith(
-                                            (states) => Color(0xffe6effc),
-                                      ),
-                                      dataRowColor:
-                                      MaterialStateProperty.resolveWith(
-                                            (states) => Color(0xfffafafa),
-                                      ),
-                                      dataRowHeight: 48.0,
-                                      columnSpacing:
-                                      MediaQuery.sizeOf(context).width *
-                                          0.031,
-                                    ),
-                                  ),
+                                                // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                              ),
+                                              icon: const Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.blue,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black,
+                                              ),
+                                              dropdownColor: Colors.white,
+                                            )
+
+                                                //         DropdownButtonFormField<String>(
+                                                //   value: selectedTime,
+                                                //   items: [
+                                                //     '10:00-11:00',
+                                                //     '11:00-12:00',
+                                                //     '12:00-13:00'
+                                                //   ]
+                                                //       .map((value) => DropdownMenuItem(
+                                                //             value: value,
+                                                //             child: Text(value),
+                                                //           ))
+                                                //       .toList(),
+                                                //   onChanged: (value) {
+                                                //     selectedTime = value;
+                                                //   },
+                                                //   decoration: InputDecoration(
+                                                //     filled: true,
+                                                //     fillColor: Color(0xffF5F8FA),
+                                                //     border: OutlineInputBorder(
+                                                //       borderRadius:
+                                                //           BorderRadius.circular(8),
+                                                //       borderSide:
+                                                //           BorderSide.none, // No border
+                                                //     ),
+                                                //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                                //   ),
+                                                //   icon: const Icon(
+                                                //       Icons.arrow_drop_down,
+                                                //       color: Colors.blue),
+                                                //   style: const TextStyle(
+                                                //       fontSize: 16,
+                                                //       color: Colors.black),
+                                                //   dropdownColor: Colors.white,
+                                                // )
+                                                )),
+                                            DataCell(Center(
+                                                child: Text(masterData
+                                                        .isNotEmpty
+                                                    ? masterData[0].col5 ?? ""
+                                                    : ""))),
+                                            DataCell(Center(
+                                                child: Text(masterData
+                                                        .isNotEmpty
+                                                    ? masterData[0].col1 ?? ""
+                                                    : ""))),
+                                            DataCell(Center(
+                                                child: Text(masterData
+                                                        .isNotEmpty
+                                                    ? masterData[0].col6 ?? ""
+                                                    : ""))),
+                                            DataCell(Center(
+                                                child: Text(masterData
+                                                        .isNotEmpty
+                                                    ? masterData[0].col7 ?? ""
+                                                    : ""))),
+                                            DataCell(Center(
+                                                child: Text(masterData
+                                                        .isNotEmpty
+                                                    ? masterData[0].col8 ?? ""
+                                                    : ""))),
+                                          ]),
+                                        ],
+                                        headingRowColor:
+                                            MaterialStateProperty.resolveWith(
+                                          (states) => Color(0xffe6effc),
+                                        ),
+                                        dataRowColor:
+                                            MaterialStateProperty.resolveWith(
+                                          (states) => Color(0xfffafafa),
+                                        ),
+                                        dataRowHeight: 48.0,
+                                        columnSpacing:
+                                            MediaQuery.sizeOf(context).width *
+                                                0.031,
+                                      )),
                                 ),
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 8.0, left: 0.0, bottom: 100),
-                                    child: SizedBox(
-                                      width: MediaQuery.of(context).size.width / 1.01,
-                                      child: ListView.builder(
-                                        physics:
-                                        const NeverScrollableScrollPhysics(),
-                                        itemBuilder: (BuildContext, index) {
-                                  
-                                          CustomExamination
-                                          shipmentDetails =
-                                          appointBookingList
-                                              .elementAt(index);
-                                          return buildShipmentCardV2(
-                                              shipmentDetails);
-                                        },
-                                        itemCount: appointBookingList.length,
-                                        shrinkWrap: true,
-                                        padding: const EdgeInsets.all(2),
+                                (appointBookingList.isNotEmpty)
+                                    ? SingleChildScrollView(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 8.0, left: 0.0, bottom: 100),
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                1.01,
+                                            child: ListView.builder(
+                                              physics:
+                                                  const NeverScrollableScrollPhysics(),
+                                              itemBuilder:
+                                                  (BuildContext, index) {
+                                                CustomExamination
+                                                    shipmentDetails =
+                                                    appointBookingList
+                                                        .elementAt(index);
+                                                return buildShipmentCardV2(
+                                                    shipmentDetails);
+                                              },
+                                              itemCount:
+                                                  appointBookingList.length,
+                                              shrinkWrap: true,
+                                              padding: const EdgeInsets.all(2),
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                    : Container(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                1.5,
+                                        child: Center(
+                                          child: Lottie.asset(
+                                              'assets/images/nodata.json'),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ],
@@ -502,6 +671,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
       ),
     );
   }
+
   Widget buildShipmentCardV2(CustomExamination shipment) {
     return Card(
       shape: RoundedRectangleBorder(
@@ -518,51 +688,59 @@ class _AcceptBookingState extends State<AcceptBooking> {
               children: [
                 Text(
                   shipment.col2,
-                  style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
-                buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
+                buildLabel("AWB", Colors.deepPurpleAccent, 8,
+                    isBorder: true, borderColor: Colors.deepPurpleAccent),
                 const SizedBox(width: 8),
                 SizedBox(
-                    width: MediaQuery.sizeOf(context).width*0.11,
-                    child: buildLabel(shipment.col3==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                    width: MediaQuery.sizeOf(context).width * 0.11,
+                    child: buildLabel(shipment.col3 == "" ? "DIRECT" : "CONSOL",
+                        Colors.white, 8,
+                        isBorder: true, borderColor: Colors.grey)),
                 const SizedBox(width: 8),
-                buildLabel("ACCEPTED", Colors.lightGreen,20),
-                const SizedBox(width: 8),
-                const Row(
-                  children: [
-                    Text(
-                      "",
-                      style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: MyColor.primaryColorblue,
-                    ),
-                  ],
-                ),
-
+                // buildLabel("ACCEPTED", Colors.lightGreen, 20),
+                // const SizedBox(width: 8),
+                // const Row(
+                //   children: [
+                //     Text(
+                //       "",
+                //       style: TextStyle(
+                //           color: Colors.black, fontWeight: FontWeight.bold),
+                //     ),
+                //     SizedBox(width: 8),
+                //     Icon(
+                //       Icons.info_outline_rounded,
+                //       color: MyColor.primaryColorblue,
+                //     ),
+                //   ],
+                // ),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               children: [
                 Container(
-
-                  width: MediaQuery.sizeOf(context).width*0.8,
+                  width: MediaQuery.sizeOf(context).width * 0.8,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width:130,
+                        width: 130,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Row(
                               children: [
                                 Text("HAWB No: "),
-                                Text(shipment.col3==""?" - ":shipment.col3,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                Text(
+                                  shipment.col3 == "" ? " - " : shipment.col3,
+                                  style: TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 8),
@@ -570,10 +748,13 @@ class _AcceptBookingState extends State<AcceptBooking> {
                               children: [
                                 const Text("RFE Pcs: "),
                                 Text(
-                                  "${shipment.col7}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                  "${shipment.col7}",
+                                  style: const TextStyle(
+                                      color: Colors.black,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ],
                             ),
-
                           ],
                         ),
                       ),
@@ -588,11 +769,15 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                 child: Row(
                                   children: [
                                     const Text("Declared PCS: "),
-                                    Text("${shipment.col5}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                    Text(
+                                      "${shipment.col5}",
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ],
                                 ),
                               ),
-
                               const SizedBox(width: 64),
                               SizedBox(
                                 width: 180,
@@ -600,7 +785,12 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const Text("Declared Weight: "),
-                                    Text("${shipment.col6}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                    Text(
+                                      "${shipment.col6}",
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -609,7 +799,12 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   const Text("Unit: "),
-                                  Text("KG",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                  Text(
+                                    "KG",
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ],
                               ),
                             ],
@@ -617,8 +812,31 @@ class _AcceptBookingState extends State<AcceptBooking> {
                           const SizedBox(height: 8),
                           Row(
                             children: [
-                              const Text("Remarks: "),
-                              Text(shipment.col8,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              SizedBox(
+                                width: 186,
+                                child: Row(
+                                  children: [
+                                    const Text("Agent: "),
+                                    Text(
+                                      shipment.col1,
+                                      style: const TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  const Text("Remarks: "),
+                                  Text(
+                                    shipment.col8,
+                                    style: const TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
                         ],
@@ -645,11 +863,9 @@ class _AcceptBookingState extends State<AcceptBooking> {
                       //     // ),
                       //   ],
                       // ),
-
                     ],
                   ),
                 ),
-
               ],
             ),
           ],
@@ -658,20 +874,24 @@ class _AcceptBookingState extends State<AcceptBooking> {
     );
   }
 
-  Widget buildLabel(
-      String text, Color color, double radius,
-      {bool isBorder = false, Color borderColor = Colors.black, double borderWidth = 1.0}) {
+  Widget buildLabel(String text, Color color, double radius,
+      {bool isBorder = false,
+      Color borderColor = Colors.black,
+      double borderWidth = 1.0}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       decoration: BoxDecoration(
         color: color.withOpacity(0.2),
         borderRadius: BorderRadius.circular(radius),
-        border: isBorder ? Border.all(color: borderColor, width: borderWidth) : null,
+        border: isBorder
+            ? Border.all(color: borderColor, width: borderWidth)
+            : null,
       ),
       child: Center(
         child: Text(
           text,
-          style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+              color: Colors.black87, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -720,8 +940,8 @@ class _AcceptBookingState extends State<AcceptBooking> {
               activeColor: isOn == null
                   ? Colors.red
                   : isOn!
-                  ? Colors.green
-                  : Colors.grey,
+                      ? Colors.green
+                      : Colors.grey,
               value: isOn,
               onChanged: (bool? value) {
                 setState(() {
@@ -743,14 +963,18 @@ class _AcceptBookingState extends State<AcceptBooking> {
         DataCell(Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4,),
+            SizedBox(
+              height: 4,
+            ),
             Text(data.col2, style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8,),
+            SizedBox(
+              height: 8,
+            ),
             Row(
               children: [
                 Text('Pieces '),
-                Text('${data.col5}',style: TextStyle(fontWeight: FontWeight.bold)),
-
+                Text('${data.col5}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ],
@@ -758,13 +982,18 @@ class _AcceptBookingState extends State<AcceptBooking> {
         DataCell(Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 4,),
+            SizedBox(
+              height: 4,
+            ),
             Text("${data.col3}", style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 8,),
+            SizedBox(
+              height: 8,
+            ),
             Row(
               children: [
                 Text('Weight '),
-                Text('${data.col6}', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text('${data.col6}',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               ],
             ),
           ],
@@ -773,9 +1002,8 @@ class _AcceptBookingState extends State<AcceptBooking> {
           controller: piecesController,
           decoration: InputDecoration(
             hintText: 'Enter RFE Pieces',
-
             contentPadding:
-            const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: const BorderSide(
@@ -799,11 +1027,11 @@ class _AcceptBookingState extends State<AcceptBooking> {
         DataCell(SizedBox(
           width: MediaQuery.sizeOf(context).width * 0.3,
           child: TextField(
-            controller:remarksController,
+            controller: remarksController,
             decoration: InputDecoration(
               hintText: 'Remarks here',
               contentPadding:
-              const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
+                  const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: const BorderSide(
@@ -830,15 +1058,15 @@ class _AcceptBookingState extends State<AcceptBooking> {
   }
 
   Widget buildRow(
-      BuildContext context, {
-        required String awbNo,
-        required String hawbNo,
-        required String pieces,
-        required String weight,
-        required String agent,
-        required String remarks,
-        required bool isAccepted,
-      }) {
+    BuildContext context, {
+    required String awbNo,
+    required String hawbNo,
+    required String pieces,
+    required String weight,
+    required String agent,
+    required String remarks,
+    required bool isAccepted,
+  }) {
     return Container(
       padding: EdgeInsets.all(8.0),
       color: Color(0xFFF5F8FA), // Background color for rows

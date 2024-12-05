@@ -4,11 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
+import '../../utils/snackbarutil.dart';
 import '../../widget/customebuttons/roundbuttonblue.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
@@ -32,7 +34,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExamination> appointBookingList=[];
+  List<AvailableExamination> appointBookingList=[];
   List<bool?> isOnList = [];
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
@@ -74,7 +76,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
         slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
         print("DATE is $slotFilterDate");
       });
-      searchCustomOperationsData(slotFilterDate);
+      searchCustomOperationsData();
     }
   }
 
@@ -115,12 +117,12 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
     );
   }
 
-  searchCustomOperationsData(String date) async {
+  searchCustomOperationsData() async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList=[];
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>16:00-17:00</SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>C</Mode><SlotDate></SlotDate><SlotTime></SlotTime></Root>"
     };
 
     await authService
@@ -155,28 +157,12 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
           return;
         }
         setState(() {
-          appointBookingList =resp.where((json) {
-            return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
-          })
-              .map((json) => CustomExamination.fromJSON(json))
-              .toList();
-          // resp.map((json) => CustomExamination.fromJSON(json)).toList();
-          print("length==  = ${appointBookingList.length}");
-          // filteredList = listShipmentDetails;
-          print("length--  = ${appointBookingList.length}");
 
+          appointBookingList =
+              resp.map((json) => AvailableExamination.fromJson(json)).toList();
+          print("length==  = ${appointBookingList.length}");
         });
-        setState(() {
-          isOnList = List.generate(appointBookingList.length, (index) => null);
-          piecesControllers = List.generate(
-              appointBookingList.length,
-                  (index) => TextEditingController(text: appointBookingList[index].col5));
-          print("Piecs${appointBookingList.first.col5}");
-          remarksControllers = List.generate(
-              appointBookingList.length,
-                  (index) => TextEditingController(text: appointBookingList[index].col8));
-        });
-        print("Piecs${piecesControllers.first.text}");
+
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
@@ -205,7 +191,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
     setState(() {
       slotFilterDate=formattedDate;
     });
-    searchCustomOperationsData(formattedDate);
+    searchCustomOperationsData();
   }
 
   @override
@@ -296,7 +282,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                                       },
                                     ),
                                     const Text(
-                                      '  Accepted Bookings',
+                                      '  Available For Examination',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22),
@@ -305,151 +291,15 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 10),
+
                             Column(
                               children: [
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  color: Color(0xffE4E7EB),
-                                  padding: EdgeInsets.all(2.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      columns: [
-                                        _buildDataColumn('Slot Date'),
-                                        _buildDataColumn('Slot Start-End Time'),
-                                        _buildDataColumn('Duration(Min)'),
-                                        _buildDataColumn('Station Name(s)'),
-                                        _buildDataColumn('Shipment Count'),
-                                        _buildDataColumn('Pieces'),
-                                        const DataColumn(
-                                            label: Center(child: Text('Weight'))),
-                                        // Last column without divider
-                                      ],
-                                      rows: [
-                                        DataRow(cells: [
-                                          DataCell(GestureDetector(
-                                            child: Row(
-                                              children: [
-                                                Text(
-                                                  slotFilterDate,
-                                                  style: const TextStyle(
-                                                      fontSize: 16, color: MyColor.primaryColorblue),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                const Icon(Icons.calendar_today,
-                                                    color: MyColor.primaryColorblue),
 
-
-                                              ],
-                                            ),
-                                            onTap: () {
-                                              pickDate(context, setState);
-                                            },
-                                          ),),
-                                          // DataCell(Center(
-                                          //     child:
-                                          //         DropdownButtonFormField<String>(
-                                          //   value: _selectedDate,
-                                          //   items: [
-                                          //     '01 Aug 2024',
-                                          //     '02 Aug 2024',
-                                          //     '03 Aug 2024'
-                                          //   ]
-                                          //       .map((value) => DropdownMenuItem(
-                                          //             value: value,
-                                          //             child: Text(value),
-                                          //           ))
-                                          //       .toList(),
-                                          //   onChanged: (value) {
-                                          //     _selectedDate = value;
-                                          //   },
-                                          //   decoration: InputDecoration(
-                                          //     filled: true,
-                                          //     fillColor: Color(0xffF5F8FA),
-                                          //     border: OutlineInputBorder(
-                                          //       borderRadius:
-                                          //           BorderRadius.circular(8),
-                                          //       borderSide:
-                                          //           BorderSide.none, // No border
-                                          //     ),
-                                          //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                                          //   ),
-                                          //   icon: const Icon(
-                                          //       Icons.arrow_drop_down,
-                                          //       color: Colors.blue),
-                                          //   style: const TextStyle(
-                                          //       fontSize: 16,
-                                          //       color: Colors.black),
-                                          //   dropdownColor: Colors.white,
-                                          // ))),
-                                          DataCell(Center(
-                                              child:
-                                              DropdownButtonFormField<String>(
-                                                value: selectedTime,
-                                                items: [
-                                                  '10:00-11:00',
-                                                  '11:00-12:00',
-                                                  '12:00-13:00'
-                                                ]
-                                                    .map((value) => DropdownMenuItem(
-                                                  value: value,
-                                                  child: Text(value),
-                                                ))
-                                                    .toList(),
-                                                onChanged: (value) {
-                                                  selectedTime = value;
-                                                },
-                                                decoration: InputDecoration(
-                                                  filled: true,
-                                                  fillColor: Color(0xffF5F8FA),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(8),
-                                                    borderSide:
-                                                    BorderSide.none, // No border
-                                                  ),
-                                                  // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                                                ),
-                                                icon: const Icon(
-                                                    Icons.arrow_drop_down,
-                                                    color: Colors.blue),
-                                                style: const TextStyle(
-                                                    fontSize: 16,
-                                                    color: Colors.black),
-                                                dropdownColor: Colors.white,
-                                              ))),
-                                          const DataCell(
-                                              Center(child: Text('60'))),
-                                          const DataCell(
-                                              Center(child: Text('-'))),
-                                          const DataCell(
-                                              Center(child: Text('10'))),
-                                          const DataCell(
-                                              Center(child: Text('-'))),
-                                          const DataCell(
-                                              Center(child: Text('-'))),
-                                        ]),
-                                      ],
-                                      headingRowColor:
-                                      MaterialStateProperty.resolveWith(
-                                            (states) => Color(0xffe6effc),
-                                      ),
-                                      dataRowColor:
-                                      MaterialStateProperty.resolveWith(
-                                            (states) => Color(0xfffafafa),
-                                      ),
-                                      dataRowHeight: 48.0,
-                                      columnSpacing:
-                                      MediaQuery.sizeOf(context).width *
-                                          0.031,
-                                    ),
-                                  ),
-                                ),
                                 const SizedBox(
-                                  height: 20,
+                                  height: 10,
                                 ),
-                                SingleChildScrollView(
+                                (appointBookingList.isNotEmpty)
+                                    ? SingleChildScrollView(
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         top: 8.0, left: 0.0, bottom: 100),
@@ -460,7 +310,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                                         const NeverScrollableScrollPhysics(),
                                         itemBuilder: (BuildContext, index) {
 
-                                          CustomExamination
+                                          AvailableExamination
                                           shipmentDetails =
                                           appointBookingList
                                               .elementAt(index);
@@ -473,7 +323,15 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                                       ),
                                     ),
                                   ),
-                                ),
+                                ):   Container(
+                          height:
+                          MediaQuery.of(context).size.height /
+                          1.5,
+                      child: Center(
+                        child: Lottie.asset(
+                            'assets/images/nodata.json'),
+                      ),
+                    ),
                               ],
                             ),
                           ],
@@ -502,7 +360,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
       ),
     );
   }
-  Widget buildShipmentCardV2(CustomExamination shipment) {
+  Widget buildShipmentCardV2(AvailableExamination shipment) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -517,7 +375,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
             Row(
               children: [
                 Text(
-                  shipment.col2,
+                  shipment.awb,
                   style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(width: 8),
@@ -525,14 +383,13 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                 const SizedBox(width: 8),
                 SizedBox(
                     width: MediaQuery.sizeOf(context).width*0.11,
-                    child: buildLabel(shipment.col3==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                    child: buildLabel(shipment.hawb==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+
                 const SizedBox(width: 8),
-                buildLabel("FORWARDED FOR EXAMINATION", Colors.lightGreen,20),
-                const SizedBox(width: 8),
-                const Row(
+                 Row(
                   children: [
                     Text(
-                      "",
+                      shipment.ffeDateTime,
                       style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
                     ),
                     SizedBox(width: 8),
@@ -542,6 +399,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                     ),
                   ],
                 ),
+                //const SizedBox(width: 16),
 
               ],
             ),
@@ -550,102 +408,170 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
               children: [
                 Container(
 
-                  width: MediaQuery.sizeOf(context).width*0.8,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                  width: MediaQuery.sizeOf(context).width*0.9,
+                  child: Column(
                     children: [
-                      SizedBox(
-                        width:130,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text("HAWB No: "),
-                                Text(shipment.col3==""?" - ":shipment.col3,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                const Text("RFE Pcs: "),
-                                Text(
-                                  "${shipment.col7}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                              ],
-                            ),
-
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 32),
-                      Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Row(
-                            children: [
-                              SizedBox(
-                                width: 120,
-                                child: Row(
+                          SizedBox(
+                            width:180,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
                                   children: [
-                                    const Text("Declared PCS: "),
-                                    Text("${shipment.col5}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                    Text("HAWB No: "),
+                                    Text(shipment.hawb==""?" - ":shipment.hawb,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                                   ],
                                 ),
-                              ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    const Text("Commodity: "),
+                                    Text(
+                                      "${shipment.commodity}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
 
-                              const SizedBox(width: 64),
-                              SizedBox(
-                                width: 180,
-                                child: Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    const Text("Declared Weight: "),
-                                    Text("${shipment.col6}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(width: 32),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 24),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text("Unit: "),
-                                  Text("KG",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                  SizedBox(
+                                    width: 120,
+                                    child: Row(
+                                      children: [
+                                        const Text("Declared PCS: "),
+                                        Text("${shipment.totalPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                      ],
+                                    ),
+                                  ),
+
+                                  const SizedBox(width: 64),
+                                  SizedBox(
+                                    width: 180,
+                                    child: Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        const Text("Declared Weight: "),
+                                        Text("${shipment.totalWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 32),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text("Unit: "),
+                                      Text("KG",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                    ],
+                                  ),
                                 ],
                               ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: 120,
+                                    child: Row(
+                                      children: [
+                                        const Text("FFE Pcs: "),
+                                        Text(shipment.forwardNop.toString(),style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 64),
+                                  SizedBox(
+                                    width: 180,
+                                    child: Row(
+                                      children: [
+                                        const Text("FFE By: "),
+                                        Text(shipment.ffeBy.toString(),style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 24),
+                                  GestureDetector(
+                                    child: Container(
+                                      height: 30,
+                                      margin: const EdgeInsets.only(right: 12),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(8),
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(0xFF0057D8),
+                                            Color(0xFF1c86ff),
+                                          ],
+                                          begin: Alignment.centerLeft,
+                                          end: Alignment.centerRight,
+                                        ),
+                                      ),
+                                      child: ElevatedButton(
+                                        style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.transparent,
+                                            shadowColor: Colors.transparent),
+                                        onPressed: null,
+                                        child: const Text(
+                                          'End Examination',
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ),
+                                    onTap: (){
+                                      print("Save");
+                                      endExamination(shipment.examinationRowId.toString());
+
+
+                                    },
+                                  ),
+
+                                ],
+                              ),
+
                             ],
                           ),
-                          const SizedBox(height: 8),
-                          Row(
-                            children: [
-                              const Text("Remarks: "),
-                              Text(shipment.col8,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                            ],
-                          ),
+
+
+
+                          // Column(
+                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                          //   mainAxisAlignment: MainAxisAlignment.start,
+                          //   children: [
+                          //     Row(
+                          //       crossAxisAlignment: CrossAxisAlignment.start,
+                          //       children: [
+                          //         const Text("Declared Weight: "),
+                          //         Text("${shipment.col6}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                          //       ],
+                          //     ),
+                          //     // const SizedBox(height: 4),
+                          //     // Row(
+                          //     //   children: [
+                          //     //     const Text("Unit: "),
+                          //     //     Text(
+                          //     //       "KG",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                          //     //   ],
+                          //     // ),
+                          //   ],
+                          // ),
+
                         ],
                       ),
-
-                      // Column(
-                      //   crossAxisAlignment: CrossAxisAlignment.start,
-                      //   mainAxisAlignment: MainAxisAlignment.start,
-                      //   children: [
-                      //     Row(
-                      //       crossAxisAlignment: CrossAxisAlignment.start,
-                      //       children: [
-                      //         const Text("Declared Weight: "),
-                      //         Text("${shipment.col6}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      //       ],
-                      //     ),
-                      //     // const SizedBox(height: 4),
-                      //     // Row(
-                      //     //   children: [
-                      //     //     const Text("Unit: "),
-                      //     //     Text(
-                      //     //       "KG",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      //     //   ],
-                      //     // ),
-                      //   ],
-                      // ),
-
+                      Row(
+                        children: [
+                          const Text("FFE Date & Time: "),
+                          Text(
+                            "${shipment.ffeDateTime}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -656,6 +582,40 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
         ),
       ),
     );
+  }
+
+  endExamination(String examinationId) async {
+
+    var queryParams = {
+      "InputXML": "<Root><Appointment><Appointment><MessageRowID></MessageRowID><QueueRowID></QueueRowID><ElementRowID></ElementRowID><ElementGUID></ElementGUID><Status></Status><RFEPieces></RFEPieces><Remarks></Remarks></Appointment></Appointment><ForwardExamination><ForwardExamination><ExaminationRowId>$examinationId</ExaminationRowId></ForwardExamination></ForwardExamination><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>C</Mode></Root>"
+    };
+    print(queryParams);
+
+    DialogUtils.showLoadingDialog(context);
+    await authService
+        .postData(
+      "CustomExamination/CustomExaminationSave",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      String? status = jsonData['Status']??"";
+      String? statusMessage = jsonData['StatusMessage'] ?? "";
+      if (jsonData.isNotEmpty) {
+        DialogUtils.hideLoadingDialog(context);
+        if (status != "S") {
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+        if ((status == "S")) {
+          SnackbarUtil.showSnackbar(
+              context, statusMessage!, const Color(0xff43A047));
+          searchCustomOperationsData();
+        }
+      }
+    }).catchError((onError) {
+      print(onError);
+    });
   }
 
   Widget buildLabel(

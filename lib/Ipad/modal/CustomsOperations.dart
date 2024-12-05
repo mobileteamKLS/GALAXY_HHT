@@ -62,3 +62,52 @@ class CustomExamination {
     "Col8": col8,
   };
 }
+
+class AvailableExamination {
+  int examinationRowId;
+  String awb;
+  String hawb;
+  int totalPieces;
+  int totalWeight;
+  String commodity;
+  int forwardNop;
+  String ffeDateTime;
+  String ffeBy;
+
+  AvailableExamination({
+    required this.examinationRowId,
+    required this.awb,
+    required this.hawb,
+    required this.totalPieces,
+    required this.totalWeight,
+    required this.commodity,
+    required this.forwardNop,
+    required this.ffeDateTime,
+    required this.ffeBy,
+  });
+
+  factory AvailableExamination.fromJson(Map<String, dynamic> json) => AvailableExamination(
+    examinationRowId: json["ExaminationRowId"],
+    awb: json["AWB"],
+    hawb: json["HAWB"],
+    totalPieces: json["TotalPieces"],
+    totalWeight: json["TotalWeight"],
+    commodity: json["Commodity"],
+    forwardNop: json["ForwardNOP"],
+    ffeDateTime: json["FFEDateTime"],
+    ffeBy: json["FFEBy"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ExaminationRowId": examinationRowId,
+    "AWB": awb,
+    "HAWB": hawb,
+    "TotalPieces": totalPieces,
+    "TotalWeight": totalWeight,
+    "Commodity": commodity,
+    "ForwardNOP": forwardNop,
+    "FFEDateTime": ffeDateTime,
+    "FFEBy": ffeBy,
+  };
+}
+

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
@@ -28,6 +29,7 @@ class AppointmentBooking extends StatefulWidget {
 class _AppointmentBookingState extends State<AppointmentBooking> {
   String? _selectedDate = '01 Aug 2024';
   String? selectedTime = '10:00-11:00';
+  String? selectedSlot;
   bool? acceptAll = false;
   final AuthService authService = AuthService();
   bool isLoading = false;
@@ -35,11 +37,12 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
   List<CustomExamination> appointBookingList = [];
-  List<CustomExamination> saveList = [];
+  List<Map<String, dynamic>> saveList = [];
   List<CustomExamination> masterData = [];
   List<bool?> isOnList = [];
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
+  List<String>slotList =[];
 
   Future<void> pickDate(BuildContext context, StateSetter setState) async {
     DateTime? pickedDate = await showDatePicker(
@@ -77,7 +80,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
         slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
         print("DATE is $slotFilterDate");
       });
-      searchCustomOperationsData(slotFilterDate);
+      getSlotTime(slotFilterDate);
     }
   }
 
@@ -118,13 +121,13 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     );
   }
 
-  searchCustomOperationsData(String date) async {
+  searchCustomOperationsData(String date,String slot) async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
     var queryParams = {
       "InputXml":
-          "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>16:00-17:00</SlotTime></Root>"
+          "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
@@ -197,8 +200,80 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     });
   }
 
+  getSlotTime(String date) async {
+    DialogUtils.showLoadingDialog(context);
+    appointBookingList = [];
+    masterData = [];
+    var queryParams = {
+      "InputXml":
+      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
+    };
+
+    await authService
+        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      } else {
+        hasNoRecord = false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['RetOutput'][0]['Status'];
+      String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
+
+      if (status == 'E') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, statusMessage);
+        return;
+      } else {
+        List<dynamic> resp = jsonData['CustomExaminationPList'];
+        // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
+        if (resp.isEmpty) {
+          print("No data");
+          DialogUtils.hideLoadingDialog(context);
+          return;
+        }
+        setState(() {
+          List<CustomExamination> headerList = resp
+              .where((json) {
+            return json["ElementRowID"] == -1;
+          })
+              .map((json) => CustomExamination.fromJSON(json))
+              .toList();
+           slotList = headerList
+              .map((exam) => '${exam.col3}-${exam.col4}') .toSet()
+              .toList();
+          selectedSlot = slotList.isNotEmpty ? slotList.first : null;
+          print("length==  = ${slotList}");
+          print("length--  = ${slotList.length}");
+        });
+        if (slotList.isEmpty) {
+          print("Slot list is empty.");
+          DialogUtils.hideLoadingDialog(context);
+          return;  // Or show a message if needed
+        } else {
+          print("first slot: ${slotList.first}");
+          searchCustomOperationsData(date, slotList.first);
+        }
+
+
+      }
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
+      DialogUtils.hideLoadingDialog(context);
+      print(onError);
+    });
+  }
+
   String buildInputXml({
-    required List<CustomExamination> saveList,
+    required List<Map<String, dynamic>> saveList,
     required String companyCode,
     required String userId,
     required String airportCity,
@@ -209,22 +284,24 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     builder.element('Root', nest: () {
       builder.element('Appointment', nest: () {
         for (var item in saveList) {
+          final customExamination = item['item'] as CustomExamination;
           builder.element('Appointment', nest: () {
-            builder.element('MessageRowID', nest: item.messageRowId);
-            builder.element('QueueRowID', nest: item.queueRowId);
-            builder.element('ElementRowID', nest: item.elementRowId);
-            builder.element('ElementGUID', nest: item.elementGuid);
-            builder.element('Status', nest: 'A'); // Placeholder for Status
-            builder.element('RFEPieces', nest: item.col7); // Assuming col5 holds RFEPieces
-            builder.element('Remarks', nest: item.col8); // Assuming col6 holds Remarks
+            builder.element('MessageRowID', nest: customExamination.messageRowId);
+            builder.element('QueueRowID', nest: customExamination.queueRowId);
+            builder.element('ElementRowID', nest: customExamination.elementRowId);
+            builder.element('ElementGUID', nest: customExamination.elementGuid);
+            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"R":"")); // Placeholder for Status
+            builder.element('RFEPieces', nest: customExamination.col7); // Assuming col5 holds RFEPieces
+            builder.element('Remarks', nest: customExamination.col8); // Assuming col6 holds Remarks
           });
         }
       });
 
       builder.element('ForwardExamination', nest: () {
         for (var item in saveList) {
+          final customExamination = item['item'] as CustomExamination;
           builder.element('ForwardExamination', nest: () {
-            builder.element('ExaminationRowId', nest: item.rowId);
+            builder.element('ExaminationRowId', nest: customExamination.rowId);
           });
         }
       });
@@ -253,7 +330,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
      };
 
     print(xml);
-
+return;
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
@@ -283,10 +360,13 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
   void checkboxChanged(bool? value, int index) {
     setState(() {
       isOnList[index] = value;
-      if (value !=null) {
-        saveList.add(appointBookingList[index]);
+      if (value !=false) {
+        // saveList.removeWhere(
+        //         (element) => element["item"] == appointBookingList[index]);
+        saveList.add({"item": appointBookingList[index], "value": value});
       } else {
-        saveList.remove(appointBookingList[index]);
+        saveList.removeWhere(
+                (element) => element["item"] == appointBookingList[index]);
       }
     });
   }
@@ -305,7 +385,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     setState(() {
       slotFilterDate = formattedDate;
     });
-    searchCustomOperationsData(formattedDate);
+    getSlotTime(formattedDate);
   }
 
   @override
@@ -328,7 +408,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
               ),
                Text(
                   isCES?'  Warehouse Operations':"  Customs Operation",
-                style: TextStyle(
+                style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                     color: Colors.white),
@@ -487,40 +567,79 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                                         // ))),
                                         DataCell(Center(
                                             child:
-                                                DropdownButtonFormField<String>(
-                                          value: selectedTime,
-                                          items: [
-                                            '10:00-11:00',
-                                            '11:00-12:00',
-                                            '12:00-13:00'
-                                          ]
-                                              .map((value) => DropdownMenuItem(
-                                                    value: value,
-                                                    child: Text(value),
-                                                  ))
-                                              .toList(),
-                                          onChanged: (value) {
-                                            selectedTime = value;
-                                          },
-                                          decoration: InputDecoration(
-                                            filled: true,
-                                            fillColor: Color(0xffF5F8FA),
-                                            border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                              borderSide:
-                                                  BorderSide.none, // No border
-                                            ),
-                                            // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                                          ),
-                                          icon: const Icon(
-                                              Icons.arrow_drop_down,
-                                              color: Colors.blue),
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black),
-                                          dropdownColor: Colors.white,
-                                        ))),
+                                            DropdownButtonFormField<String>(
+                                              value: selectedSlot, // Set the initial selected value
+                                              items: slotList.isNotEmpty
+                                                  ? slotList.map((value) => DropdownMenuItem<String>(
+                                                value: value,
+                                                child: Text(value),
+                                              )).toList()
+                                                  : [
+                                                const DropdownMenuItem<String>(
+                                                  value: '', // or any default value
+                                                  child: Text(''),
+                                                ),
+                                              ],
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  selectedSlot = value;
+                                                });
+                                              },
+                                              decoration: InputDecoration(
+                                                filled: true,
+                                                fillColor: Color(0xffF5F8FA),
+                                                border: OutlineInputBorder(
+                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderSide: BorderSide.none, // No border
+                                                ),
+                                                // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                              ),
+                                              icon: const Icon(
+                                                Icons.arrow_drop_down,
+                                                color: Colors.blue,
+                                              ),
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black,
+                                              ),
+                                              dropdownColor: Colors.white,
+                                            )
+
+                                          //         DropdownButtonFormField<String>(
+                                        //   value: selectedTime,
+                                        //   items: [
+                                        //     '10:00-11:00',
+                                        //     '11:00-12:00',
+                                        //     '12:00-13:00'
+                                        //   ]
+                                        //       .map((value) => DropdownMenuItem(
+                                        //             value: value,
+                                        //             child: Text(value),
+                                        //           ))
+                                        //       .toList(),
+                                        //   onChanged: (value) {
+                                        //     selectedTime = value;
+                                        //   },
+                                        //   decoration: InputDecoration(
+                                        //     filled: true,
+                                        //     fillColor: Color(0xffF5F8FA),
+                                        //     border: OutlineInputBorder(
+                                        //       borderRadius:
+                                        //           BorderRadius.circular(8),
+                                        //       borderSide:
+                                        //           BorderSide.none, // No border
+                                        //     ),
+                                        //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                        //   ),
+                                        //   icon: const Icon(
+                                        //       Icons.arrow_drop_down,
+                                        //       color: Colors.blue),
+                                        //   style: const TextStyle(
+                                        //       fontSize: 16,
+                                        //       color: Colors.black),
+                                        //   dropdownColor: Colors.white,
+                                        // )
+                                        )),
                                         DataCell(Center(
                                             child: Text(masterData.isNotEmpty
                                                 ? masterData[0].col5 ?? ""
@@ -529,9 +648,15 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                                             child: Text(masterData.isNotEmpty
                                                 ? masterData[0].col1 ?? ""
                                                 : ""))),
-                                        DataCell(Center(child: Text('10'))),
-                                        DataCell(Center(child: Text('-'))),
-                                        DataCell(Center(child: Text('-'))),
+                                        DataCell(Center(child: Text(masterData.isNotEmpty
+                                            ? masterData[0].col6 ?? ""
+                                            : ""))),
+                                        DataCell(Center(child: Text(masterData.isNotEmpty
+                                            ? masterData[0].col7 ?? ""
+                                            : ""))),
+                                        DataCell(Center(child: Text(masterData.isNotEmpty
+                                            ? masterData[0].col8 ?? ""
+                                            : ""))),
                                       ]),
                                     ],
                                     headingRowColor:
@@ -646,7 +771,12 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                                         ),
                                       ),
                                     )
-                                  : SizedBox(),
+                                  :  Container(
+                                height: MediaQuery.of(context).size.height/1.5 ,
+                                child: Center(
+                                  child: Lottie.asset('assets/images/nodata.json'),
+                                ),
+                              ),
                               SizedBox(
                                 height:
                                     MediaQuery.sizeOf(context).height * 0.015,

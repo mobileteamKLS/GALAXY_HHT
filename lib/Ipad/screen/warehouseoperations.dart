@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/screen/rejectBooking.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
+import 'package:galaxy/module/login/pages/loginscreen.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../language/model/dashboardModel.dart';
 import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
+import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
 import '../utils/global.dart';
@@ -22,6 +25,7 @@ import 'ShipmentAcceptanceManually.dart';
 import 'WareHouseLocation.dart';
 import 'acceptBooking.dart';
 import 'appointmentBooking.dart';
+import 'availableforExamination.dart';
 
 class WarehouseOperations extends StatefulWidget {
   const WarehouseOperations({super.key});
@@ -34,6 +38,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
   final AuthService authService = AuthService();
   bool isLoading = false;
   bool hasNoRecord = false;
+
   @override
   void initState() {
     super.initState();
@@ -49,11 +54,11 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
     DialogUtils.showLoadingDialog(context);
 
     var queryParams = {
-      "AirportCode":"BLR",
-      "CompanyCode":"3",
-      "CultureCode":"en-US",
-      "UserId":"1",
-      "MenuId":"1"
+      "AirportCode": "BLR",
+      "CompanyCode": "3",
+      "CultureCode": "en-US",
+      "UserId": "1",
+      "MenuId": "1"
     };
     await authService
         .getData(
@@ -69,13 +74,12 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
         setState(() {
           hasNoRecord = true;
         });
-      }
-      else{
-        hasNoRecord=false;
+      } else {
+        hasNoRecord = false;
       }
       print("is empty record$hasNoRecord");
       String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
+      String statusMessage = jsonData['StatusMessage'] ?? "";
 
       if (status != 'S') {
         print("Error: $statusMessage");
@@ -87,7 +91,6 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
         commodityListMaster = commodities
             .map((commodity) => Commodity.fromJson(commodity))
             .toList();
-
       });
       DialogUtils.hideLoadingDialog(context);
       print("No of commodities ${commodityListMaster.length}");
@@ -96,15 +99,16 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       print(onError);
     });
   }
+
   getCustomerName() async {
     DialogUtils.showLoadingDialog(context);
 
     var queryParams = {
-      "AirportCode":"BLR",
-      "CompanyCode":"3",
-      "CultureCode":"en-US",
-      "UserId":"1",
-      "MenuId":"1"
+      "AirportCode": "BLR",
+      "CompanyCode": "3",
+      "CultureCode": "en-US",
+      "UserId": "1",
+      "MenuId": "1"
     };
     await authService
         .getData(
@@ -120,13 +124,12 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
         setState(() {
           hasNoRecord = true;
         });
-      }
-      else{
-        hasNoRecord=false;
+      } else {
+        hasNoRecord = false;
       }
       print("is empty record$hasNoRecord");
       String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
+      String statusMessage = jsonData['StatusMessage'] ?? "";
 
       if (status != 'S') {
         print("Error: $statusMessage");
@@ -148,6 +151,38 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
     });
   }
 
+  static Future<bool?> showLogoutDialog(BuildContext context, ) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: "Logout",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          content: CustomeText(text: "Are you sure you want to logout?",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "Cancel",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.8,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "Ok",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -156,16 +191,22 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
             title: Row(
               children: [
                 InkWell(
-                  onTap: () {
-                  },
-                  child: Padding(padding: const EdgeInsets.all(2.0),
-                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(
+                      drawer,
+                      height:
+                          SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+                    ),
                   ),
                 ),
-                 Text(
-                  isCES?'  Warehouse Operations':"  Customs Operation",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
+                Text(
+                  isCES ? '  Warehouse Operations' : "  Customs Operation",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: Colors.white),
                 ),
               ],
             ),
@@ -183,36 +224,43 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                 ),
               ),
             ),
-            // actions: [
-            //   SvgPicture.asset(
-            //     usercog,
-            //     height: 25,
-            //   ),
-            //   const SizedBox(
-            //     width: 10,
-            //   ),
-            //   SvgPicture.asset(
-            //     bell,
-            //     height: 25,
-            //   ),
-            //   const SizedBox(
-            //     width: 10,
-            //   ),
-            // ]
-        ),
+            actions: [
+              GestureDetector(
+                child: const Icon(Icons.logout_outlined,
+                    color: Colors.white, size: 36),
+                onTap: () async {
+                  bool? logoutConfirmed = await showLogoutDialog(context);
+                  if (logoutConfirmed == true) {
+                    
+                    Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => const LogInScreen(isMPinEnable: false, authFlag: "P"),), (route) => false,);
+                  }
+                },
+              ),
+              const SizedBox(
+                width: 20,
+              ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+            ]),
         // drawer: const Drawer(),
         body: Stack(
           children: [
             Container(
               constraints: const BoxConstraints.expand(),
               color: MyColor.screenBgColor,
-              child:   SingleChildScrollView(
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(height: 10,),
-                     Padding(
-                      padding:
-                      EdgeInsets.only(top: 10, left: 20, right: 20),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 10, left: 20, right: 20),
                       child: Material(
                         color: Colors.transparent,
                         // Ensures background transparency
@@ -235,145 +283,158 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             //     ),
                             //   ],
                             // ),
-                
                           ],
                         ),
                       ),
                     ),
-                    isCES? SizedBox(height: 20,):SizedBox(),
-                    isCES?Padding(
-                      padding: EdgeInsets.only(
-                          top: 5, left: 20, right: 20, bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RoundedIconButton(
-                            icon: CupertinoIcons.doc,
-                            text: 'Shipments\nList',
-                            targetPage: ImportShipmentListing(),
-                            containerColor: Color(0xfffcedcf),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                          // SizedBox(width: 40,),
-                          RoundedIconButton(
-                            icon: CupertinoIcons.add,
-                            text: 'Create\nShipment',
-                            targetPage: CreateShipment(),
-                            containerColor: Color(0xffD1E2FB),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                          RoundedIconButton(
-                            icon: CupertinoIcons.cube_box,
-                            text: 'Shipment\nAcceptance',
-                            targetPage: ShipmentAcceptanceManually(),
-                            containerColor: Color(0xffffd7bd),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                
-                
-                        ],
-                      ),
-                    ):SizedBox(),
-                    isCES? SizedBox(height: 20,):SizedBox(),
-                    isCES?Padding(
-                      padding: EdgeInsets.only(
-                          top: 5, left: 20, right: 20, bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // RoundedIconButton(
-                          //   icon: Icons.trolley,
-                          //   text: 'Warehouse\nLocation',
-                          //   targetPage: WarehouseLocation(),
-                          //   containerColor: Color(0xffffd1d1),
-                          //   iconColor: MyColor.textColorGrey3,
-                          //   textColor: MyColor.textColorGrey3,
-                          // ),
-                          // SizedBox(width: 40,),
-                          RoundedIconButton(
-                            icon: Icons.local_shipping_outlined,
-                            text: 'Warehouse\nDelivery Order',
-                            targetPage: WdoListing(),
-                            containerColor: Color(0xffb4d9b5),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                          // RoundedIconButton(
-                          //   icon: CupertinoIcons.checkmark_rectangle,
-                          //   text: 'Customs\nOperation',
-                          //   targetPage: CustomsOperation(),
-                          //   containerColor: Color(0xffe1d8f0),
-                          //   iconColor: MyColor.textColorGrey3,
-                          //   textColor: MyColor.textColorGrey3,
-                          // ),
-                
-                
-                        ],
-                      ),
-                    ):SizedBox(),
-                    (!isCES)?SizedBox(height: 20,):SizedBox(),
-                    (!isCES)?Padding(
-                      padding: EdgeInsets.only(
-                          top: 5, left: 20, right: 20, bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RoundedIconButton(
-                            icon: CupertinoIcons.doc,
-                            text: 'Appointment\nBookings',
-                            targetPage: AppointmentBooking(),
-                            containerColor: Color(0xfffcedcf),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                          // SizedBox(width: 40,),
-                          RoundedIconButton(
-                            icon: Icons.check_circle,
-                            text: 'Accepted\nBookings',
-                            targetPage: AcceptBooking(),
-                            containerColor: Color(0xffb4d9b5),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                          RoundedIconButton(
-                            icon: Icons.cancel,
-                            text: 'Rejected\nBookings',
-                            targetPage: RejectBooking(),
-                            containerColor:Color(0xffffd1d1),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-
-
-                        ],
-                      ),
-                    ):SizedBox(),
-                    (!isCES)?SizedBox(height: 20,):SizedBox(),
-                    (!isCES)?Padding(
-                      padding: EdgeInsets.only(
-                          top: 5, left: 20, right: 20, bottom: 10),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          RoundedIconButton(
-                            icon: Icons.search,
-                            text: 'Available For\nExamination',
-                            targetPage: ImportShipmentListing(),
-                            containerColor: Color(0xffe1d8f0),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
-                          // SizedBox(width: 40,),
-
-
-
-                        ],
-                      ),
-                    ):SizedBox(),
-                
+                    isCES
+                        ? SizedBox(
+                            height: 20,
+                          )
+                        : SizedBox(),
+                    isCES
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: 5, left: 20, right: 20, bottom: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RoundedIconButton(
+                                  icon: CupertinoIcons.doc,
+                                  text: 'Shipments\nList',
+                                  targetPage: ImportShipmentListing(),
+                                  containerColor: Color(0xfffcedcf),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                // SizedBox(width: 40,),
+                                RoundedIconButton(
+                                  icon: CupertinoIcons.add,
+                                  text: 'Create\nShipment',
+                                  targetPage: CreateShipment(),
+                                  containerColor: Color(0xffD1E2FB),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                RoundedIconButton(
+                                  icon: CupertinoIcons.cube_box,
+                                  text: 'Shipment\nAcceptance',
+                                  targetPage: ShipmentAcceptanceManually(),
+                                  containerColor: Color(0xffffd7bd),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(),
+                    isCES
+                        ? SizedBox(
+                            height: 20,
+                          )
+                        : SizedBox(),
+                    isCES
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: 5, left: 20, right: 20, bottom: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // RoundedIconButton(
+                                //   icon: Icons.trolley,
+                                //   text: 'Warehouse\nLocation',
+                                //   targetPage: WarehouseLocation(),
+                                //   containerColor: Color(0xffffd1d1),
+                                //   iconColor: MyColor.textColorGrey3,
+                                //   textColor: MyColor.textColorGrey3,
+                                // ),
+                                // SizedBox(width: 40,),
+                                RoundedIconButton(
+                                  icon: Icons.local_shipping_outlined,
+                                  text: 'Warehouse\nDelivery Order',
+                                  targetPage: WdoListing(),
+                                  containerColor: Color(0xffb4d9b5),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                // RoundedIconButton(
+                                //   icon: CupertinoIcons.checkmark_rectangle,
+                                //   text: 'Customs\nOperation',
+                                //   targetPage: CustomsOperation(),
+                                //   containerColor: Color(0xffe1d8f0),
+                                //   iconColor: MyColor.textColorGrey3,
+                                //   textColor: MyColor.textColorGrey3,
+                                // ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(),
+                    (!isCES)
+                        ? SizedBox(
+                            height: 20,
+                          )
+                        : SizedBox(),
+                    (!isCES)
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: 5, left: 20, right: 20, bottom: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RoundedIconButton(
+                                  icon: CupertinoIcons.doc,
+                                  text: 'Appointment\nBookings',
+                                  targetPage: AppointmentBooking(),
+                                  containerColor: Color(0xfffcedcf),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                // SizedBox(width: 40,),
+                                RoundedIconButton(
+                                  icon: Icons.check_circle_outline,
+                                  text: 'Accepted\nBookings',
+                                  targetPage: AcceptBooking(),
+                                  containerColor: Color(0xffb4d9b5),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                RoundedIconButton(
+                                  icon: Icons.cancel_outlined,
+                                  text: 'Rejected\nBookings',
+                                  targetPage: RejectBooking(),
+                                  containerColor: Color(0xffffd1d1),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(),
+                    (!isCES)
+                        ? SizedBox(
+                            height: 20,
+                          )
+                        : SizedBox(),
+                    (!isCES)
+                        ? Padding(
+                            padding: EdgeInsets.only(
+                                top: 5, left: 20, right: 20, bottom: 10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RoundedIconButton(
+                                  icon: Icons.search,
+                                  text: 'Available For\nExamination',
+                                  targetPage: AvailableForExamination(),
+                                  containerColor: Color(0xffe1d8f0),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                // SizedBox(width: 40,),
+                              ],
+                            ),
+                          )
+                        : SizedBox(),
                   ],
                 ),
               ),
@@ -384,10 +445,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
               right: 0,
               child: IgnorePointer(
                 child: CustomPaint(
-                  size: Size(MediaQuery
-                      .of(context)
-                      .size
-                      .width,
+                  size: Size(MediaQuery.of(context).size.width,
                       100), // Adjust the height as needed
                   painter: AppBarPainterGradient(),
                 ),
@@ -440,6 +498,4 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       ),
     );
   }
-
-
 }
