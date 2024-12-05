@@ -22,8 +22,39 @@ class AirSideReleaseCubit extends Cubit<AirSideReleaseState>{
     }
   }
 
+  // getAirsideRelease api call repo
+  Future<void> getAirsideRelease(String locationCode, String scanNumber, int userId, int companyCode, int menuId) async {
+    emit(AirSideMainLoadingState());
+    try {
+      final airSideReleaseSearchModel = await airSideReleaseRepository.getAirsideRelease(locationCode, scanNumber, userId, companyCode, menuId);
+      emit(AirsideReleaseSuccessState(airSideReleaseSearchModel));
+    } catch (e) {
+      emit(AirsideReleaseFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getAirsideShipmentList(int flightSeqNo, int uldSeqNo, String ULDType, int userId, int companyCode, int menuId) async {
+    emit(AirSideMainLoadingState());
+    try {
+      final airsideShipmentListModelData = await airSideReleaseRepository.getListOfAirsideAwb(flightSeqNo, uldSeqNo, ULDType, userId, companyCode, menuId);
+
+      emit(AirsideShipmentListSuccessState(airsideShipmentListModelData));
+    } catch (e) {
+      emit(AirsideShipmentListFailureState(e.toString()));
+    }
+  }
 
 
+  Future<void> releaseULDorTrolley(String doorNo, String gatePassNo, int flightSeqNo, int uldSeqNo, String ULDType, int userId, int companyCode, int menuId) async {
+    emit(AirSideMainLoadingState());
+    try {
+      final airsideReleaseDataModel = await airSideReleaseRepository.releaseULDorTrolley(doorNo, gatePassNo, flightSeqNo, uldSeqNo, ULDType, userId, companyCode, menuId);
+
+      emit(AirsideReleaseDataSuccessState(airsideReleaseDataModel));
+    } catch (e) {
+      emit(AirsideReleaseDataFailureState(e.toString()));
+    }
+  }
 
 
   void resetState() {

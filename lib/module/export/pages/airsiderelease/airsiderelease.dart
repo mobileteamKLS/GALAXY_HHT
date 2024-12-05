@@ -1,4 +1,3 @@
-import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,12 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/export/pages/airsiderelease/airsideshipmetlistpage.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasecubit.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasestate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/custometext.dart';
-import 'package:galaxy/widget/groupidcustomtextfield.dart';
-import 'package:intl/intl.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -37,6 +35,7 @@ import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/airsiderelease/airsidereleasesearchmodel.dart';
 
 class AirSideRelease extends StatefulWidget {
   String mainMenuName;
@@ -79,19 +78,18 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
 
 
-
   FocusNode locationFocusNode = FocusNode();
   FocusNode locationBtnFocusNode = FocusNode();
   FocusNode igmNoFocusNode = FocusNode();
   FocusNode scanBtnFocusNode = FocusNode();
+  FocusNode tempFocusNode = FocusNode();
+  FocusNode releaseAllFocusNode = FocusNode();
 
 
-  DateTime? _selectedDate;
 
 
   bool _isLocationSearchBtnEnable = false;
   bool _isvalidateLocation = false;
-  bool _isDatePickerOpen = false;
 
 
 
@@ -100,8 +98,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
   bool _isOpenULDFlagEnable = false;
 
-  final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
-
+  AirSideReleaseSearchModel? airSideReleaseSearchModel;
+  List<AirsideReleaseDetailList> airsideReleaseDetailList = [];
+  List<AirsideReleaseDetailList> filteredAirsideReleaseDetailList = [];
 
   @override
   void initState() {
@@ -138,8 +137,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
         if(locationController.text.isNotEmpty){
           if(_isvalidateLocation){
             if(igmNoEditingController.text.isNotEmpty){
-
-            //  callFlightCheckULDListApi(context, locationController.text, igmNoEditingController.text, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+              getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
             }
           }else{
             //focus on location feild
@@ -159,6 +157,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
       }
 
     },);
+
+
+
 
   }
 
@@ -185,6 +186,12 @@ class _AirSideReleaseState extends State<AirSideRelease>
         _user = user;
         _splashDefaultData = splashDefaultData;
       });
+
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(locationFocusNode);
+      });
+
     //  context.read<AirSideReleaseCubit>().getPageLoadDefault(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
 
     }
@@ -235,6 +242,15 @@ class _AirSideReleaseState extends State<AirSideRelease>
   void _validateLocationSearchBtn() {
     setState(() {
       _isLocationSearchBtnEnable = locationController.text.isNotEmpty;
+    });
+  }
+
+  void _filterList() {
+    setState(() {
+      filteredAirsideReleaseDetailList = airsideReleaseDetailList
+          .where((item) =>
+      _isOpenULDFlagEnable ? item.isReleased == "Y" : item.isReleased == "N")
+          .toList();
     });
   }
 
@@ -337,7 +353,19 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  _isvalidateLocation = false;
+                                  locationController.clear();
+                                  igmNoEditingController.clear();
+                                  airSideReleaseSearchModel = null;
+                                  airsideReleaseDetailList.clear();
+                                  filteredAirsideReleaseDetailList.clear();
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(locationFocusNode);
+                                  },
+                                  );
+                                  setState(() {
 
+                                  });
                                 },
                               ),
                             ),
@@ -387,395 +415,881 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                   SnackbarUtil.showSnackbar(
                                       context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is AirsideReleaseSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airSideReleaseSearchModel.status == "E"){
+                                    airSideReleaseSearchModel = null;
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airSideReleaseSearchModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(igmNoFocusNode);
+                                    },
+                                    );
+                                  }
+                                  else{
+                                    _isOpenULDFlagEnable = false;
+                                    airSideReleaseSearchModel = state.airSideReleaseSearchModel;
+                                    airsideReleaseDetailList = state.airSideReleaseSearchModel.airsideReleaseDetailList!;
+                                    filteredAirsideReleaseDetailList = airsideReleaseDetailList
+                                        .where((item) => item.isReleased == "N")
+                                        .toList(); // Default filter
+                                    igmNoFocusNode.unfocus();
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(releaseAllFocusNode);
+                                    },
+                                    );
+                                    setState(() {
+
+                                    });
+                                  }
+
+                                }
+                                else if (state is AirsideReleaseFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  airSideReleaseSearchModel = null;
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is AirsideReleaseDataSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airsideReleaseDataModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsideReleaseDataModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                  }
+
+                                }
+                                else if (state is AirsideReleaseDataFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
 
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
                                   child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          // location textfield
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                                top: 0,
-                                                bottom: 0),
-                                            child: Directionality(
-                                              textDirection: textDirection,
-                                              child: Container(
-                                                decoration: BoxDecoration(
-                                                  color: MyColor.colorWhite,
-                                                  borderRadius:BorderRadius.circular(8),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: MyColor.colorBlack.withOpacity(0.09),
-                                                      spreadRadius: 2,
-                                                      blurRadius: 15,
-                                                      offset: const Offset(0, 3), // changes position of shadow
-                                                    ),
-                                                  ],
+                                      // location textfield
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10,
+                                            right: 10,
+                                            top: 0,
+                                            bottom: 0),
+                                        child: Directionality(
+                                          textDirection: textDirection,
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: MyColor.colorWhite,
+                                              borderRadius:BorderRadius.circular(8),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 15,
+                                                  offset: const Offset(0, 3), // changes position of shadow
                                                 ),
-                                                child: Padding(
-                                                  padding: const EdgeInsets.only(
-                                                      left: 12,
-                                                      right: 12,
-                                                      top: 12,
-                                                      bottom: 12),
-                                                  child: Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                          SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                          CustomeText(
-                                                              text: "${lableModel.scanOrManual}",
-                                                              fontColor: MyColor.textColorGrey2,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.start)
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,
-                                                      ),
-                                                      Directionality(
-                                                        textDirection: textDirection,
-                                                        child: Row(
-                                                          children: [
-                                                            // add location in text
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: CustomeEditTextWithBorder(
-                                                                lablekey: "LOCATION",
-                                                                textDirection: textDirection,
-                                                                controller: locationController,
-                                                                focusNode: locationFocusNode,
-                                                                hasIcon: false,
-                                                                hastextcolor: true,
-                                                                animatedLabel: true,
-                                                                needOutlineBorder: true,
-                                                                labelText: "Door *",
-                                                                readOnly: false,
-                                                                maxLength: 15,
-                                                                isShowSuffixIcon: _isvalidateLocation,
-                                                                onChanged: (value, validate) {
-                                                                  setState(() {
-                                                                    _isvalidateLocation = false;
-                                                                  });
-                                                                  if (value.toString().isEmpty) {
-                                                                    _isvalidateLocation = false;
-                                                                  }
-                                                                },
-                                                                fillColor: Colors.grey.shade100,
-                                                                textInputType: TextInputType.text,
-                                                                inputAction: TextInputAction.next,
-                                                                hintTextcolor: MyColor.colorBlack,
-                                                                verticalPadding: 0,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                                boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                                validator: (value) {
-                                                                  if (value!.isEmpty) {
-                                                                    return "Please fill out this field";
-                                                                  } else {
-                                                                    return null;
-                                                                  }
-                                                                },
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                              width: SizeConfig.blockSizeHorizontal,
-                                                            ),
-                                                            // click search button to validate location
-                                                            InkWell(
-                                                              focusNode: locationBtnFocusNode,
-                                                              onTap: () {
-                                                                scanLocationQR();
-
-                                                              },
-                                                              child: Padding(padding: const EdgeInsets.all(8.0),
-                                                                child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
-                                                              ),
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Expanded(
-                                                            flex: 1,
-                                                            child: CustomTextField(
-                                                              textDirection: textDirection,
-                                                              hasIcon: false,
-                                                              hastextcolor: true,
-                                                              animatedLabel: true,
-                                                              needOutlineBorder: true,
-                                                              labelText: "Scan",
-                                                              readOnly: locationController.text.isNotEmpty ? false : true,
-                                                              controller: igmNoEditingController,
-                                                              focusNode: igmNoFocusNode,
-                                                              maxLength: 15,
-                                                              onChanged: (value) {
-                                                                _isOpenULDFlagEnable = false;
-
-                                                                setState(() {});
-                                                              },
-                                                              fillColor: Colors.grey.shade100,
-                                                              textInputType: TextInputType.number,
-                                                              inputAction: TextInputAction.next,
-                                                              hintTextcolor: Colors.black,
-                                                              verticalPadding: 0,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                              digitsOnly: true,
-                                                              validator: (value) {
-                                                                if (value!.isEmpty) {
-                                                                  return "Please fill out this field";
-                                                                } else {
-                                                                  return null;
-                                                                }
-                                                              },
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            width: SizeConfig.blockSizeHorizontal,
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              FocusScope.of(context).unfocus();
-                                                              if(locationController.text.isNotEmpty){
-                                                                if(_isvalidateLocation){
-                                                                  scanQR();
-                                                                }else{
-                                                                  FocusScope.of(context).requestFocus(locationFocusNode);
-                                                                }
-                                                              }else{
-                                                                openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
-                                                              }
-
-                                                            },
-                                                            child: Padding(padding: const EdgeInsets.all(8.0),
-                                                              child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
+                                              ],
                                             ),
-                                          ),
-                                          SizedBox(height: SizeConfig.blockSizeVertical,),
-
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10,
-                                                right: 10,
-                                                top: 0,
-                                                bottom: 0),
-                                            child: Container(
-                                              padding: const EdgeInsets.all(10),
-
-                                              decoration: BoxDecoration(
-                                                color: MyColor.colorWhite,
-                                                borderRadius: BorderRadius.circular(8),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: MyColor.colorBlack.withOpacity(0.09),
-                                                    spreadRadius: 2,
-                                                    blurRadius: 15,
-                                                    offset: Offset(0, 3), // changes position of shadow
-                                                  ),
-                                                ],
-                                              ),
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 12,
+                                                  right: 12,
+                                                  top: 12,
+                                                  bottom: 12),
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-
                                                   Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          CustomeText(
-                                                            text: "BA 199",
-                                                            fontColor: MyColor.colorBlack,
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                            fontWeight: FontWeight.w600,
-                                                            textAlign: TextAlign.start,
-                                                          ),
-                                                          const SizedBox(width: 5),
-                                                          CustomeText(
-                                                          /*  text: " ${widget.flightDetailSummary.flightDate!.replaceAll(" ", "-")}",*/
-                                                            text: "03-DEC-24",
-                                                            fontColor: MyColor.textColorGrey2,
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                            fontWeight: FontWeight.w600,
-                                                            textAlign: TextAlign.start,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          CustomeText(
-                                                              text:  "BLR",
-                                                              fontColor: MyColor.textColorGrey3,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                              fontWeight: FontWeight.w800,
-                                                              textAlign: TextAlign.start),
-                                                          SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                          SvgPicture.asset(arrival, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                          SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                          CustomeText(
-                                                              text:  "DXB",
-                                                              fontColor: MyColor.textColorGrey3,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                              fontWeight: FontWeight.w800,
-                                                              textAlign: TextAlign.start),
-                                                        ],
-                                                      ),
+                                                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                      CustomeText(
+                                                          text: "${lableModel.scanOrManual}",
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.start)
                                                     ],
                                                   ),
-                                                  SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                  Container(
-                                                    padding: const EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      color: MyColor.cardBgColor,
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
+                                                  SizedBox(
+                                                    height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,
+                                                  ),
+                                                  Directionality(
+                                                    textDirection: textDirection,
                                                     child: Row(
                                                       children: [
+                                                        // add location in text
                                                         Expanded(
-                                                            flex: 1,
-                                                            child: Column(
-                                                              children: [
-                                                                CustomeText(
-                                                                    text: "5",
-                                                                    fontColor: MyColor.colorBlack,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    textAlign: TextAlign.center),
+                                                          flex: 1,
+                                                          child: CustomeEditTextWithBorder(
+                                                            lablekey: "LOCATION",
+                                                            textDirection: textDirection,
+                                                            controller: locationController,
+                                                            focusNode: locationFocusNode,
+                                                            hasIcon: false,
+                                                            hastextcolor: true,
+                                                            animatedLabel: true,
+                                                            needOutlineBorder: true,
+                                                            labelText: "Door *",
+                                                            readOnly: false,
+                                                            maxLength: 15,
+                                                            isShowSuffixIcon: _isvalidateLocation,
+                                                            onChanged: (value, validate) {
 
-                                                                CustomeText(
-                                                                    text: "Containers",
-                                                                    fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                    fontWeight: FontWeight.w400,
-                                                                    textAlign: TextAlign.center)
+                                                              igmNoEditingController.clear();
+                                                              airsideReleaseDetailList.clear();
+                                                              filteredAirsideReleaseDetailList.clear();
+                                                              airSideReleaseSearchModel = null;
 
+                                                              setState(() {
+                                                                _isvalidateLocation = false;
+                                                              });
+                                                              if (value.toString().isEmpty) {
+                                                                _isvalidateLocation = false;
+                                                              }
+                                                            },
+                                                            fillColor: Colors.grey.shade100,
+                                                            textInputType: TextInputType.text,
+                                                            inputAction: TextInputAction.next,
+                                                            hintTextcolor: MyColor.colorBlack,
+                                                            verticalPadding: 0,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                            validator: (value) {
+                                                              if (value!.isEmpty) {
+                                                                return "Please fill out this field";
+                                                              } else {
+                                                                return null;
+                                                              }
+                                                            },
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: SizeConfig.blockSizeHorizontal,
+                                                        ),
+                                                        // click search button to validate location
+                                                        InkWell(
+                                                          focusNode: locationBtnFocusNode,
+                                                          onTap: () {
+                                                            scanLocationQR();
 
-
-                                                              ],
-                                                            )),
-
-                                                        Expanded(
-                                                            flex: 1,
-                                                            child: Column(
-                                                              children: [
-                                                                CustomeText(
-                                                                    text: "0",
-                                                                    fontColor: MyColor.colorBlack,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    textAlign: TextAlign.center),
-
-                                                                CustomeText(
-                                                                    text: "Pallets",
-                                                                    fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                    fontWeight: FontWeight.w400,
-                                                                    textAlign: TextAlign.center)
-                                                              ],
-                                                            )),
-
-                                                        Expanded(
-                                                            flex: 1,
-                                                            child: Column(
-                                                              children: [
-                                                                CustomeText(
-                                                                    text: "0",
-                                                                    fontColor: MyColor.colorBlack,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    textAlign: TextAlign.center),
-
-                                                                CustomeText(
-                                                                    text: "BULK / Trolley",
-                                                                    fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                    fontWeight: FontWeight.w400,
-                                                                    textAlign: TextAlign.center)
-                                                              ],
-                                                            )),
+                                                          },
+                                                          child: Padding(padding: const EdgeInsets.all(8.0),
+                                                            child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+                                                          ),
+                                                        )
                                                       ],
                                                     ),
                                                   ),
-                                                  SizedBox(height: SizeConfig.blockSizeVertical,),
-
-                                                /*  RoundedButtonBlue(
-                                                    text: "Release All",
-                                                    press: () async {
-
-
-                                                    },
-                                                  ),*/
-
+                                                  SizedBox(
+                                                    height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
+                                                  ),
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                     children: [
-                                                      Row(
-                                                        children: [
-                                                          SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                          SizedBox(
-                                                            width: SizeConfig.blockSizeHorizontal,
-                                                          ),
-                                                          CustomeText(
-                                                              text: "Show release & offload only",
-                                                              fontColor: MyColor.textColorGrey2,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.start)
-                                                        ],
+                                                      Expanded(
+                                                        flex: 1,
+                                                        child: CustomTextField(
+                                                          textDirection: textDirection,
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          labelText: "Scan",
+                                                          readOnly: locationController.text.isNotEmpty ? false : true,
+                                                          controller: igmNoEditingController,
+                                                          focusNode: igmNoFocusNode,
+                                                          maxLength: 30,
+                                                          onChanged: (value) {
+                                                            _isOpenULDFlagEnable = false;
+                                                            airSideReleaseSearchModel = null;
+                                                            setState(() {});
+                                                          },
+                                                          fillColor: Colors.grey.shade100,
+                                                          textInputType: TextInputType.text,
+                                                          inputAction: TextInputAction.next,
+                                                          hintTextcolor: Colors.black,
+                                                          verticalPadding: 0,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                          circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                          boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                          validator: (value) {
+                                                            if (value!.isEmpty) {
+                                                              return "Please fill out this field";
+                                                            } else {
+                                                              return null;
+                                                            }
+                                                          },
+                                                        ),
                                                       ),
-                                                      Switch(
-                                                        value: _isOpenULDFlagEnable,
-                                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                        activeColor: MyColor.primaryColorblue,
-                                                        inactiveThumbColor: MyColor.thumbColor,
-                                                        inactiveTrackColor: MyColor.textColorGrey2,
-                                                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            _isOpenULDFlagEnable = value;
-                                                          });
-                                                          //call api //
+                                                      SizedBox(
+                                                        width: SizeConfig.blockSizeHorizontal,
+                                                      ),
+                                                      InkWell(
+                                                        onTap: () {
+                                                          FocusScope.of(context).unfocus();
+
+                                                          if(locationController.text.isNotEmpty){
+                                                            if(_isvalidateLocation){
+                                                              if(airSideReleaseSearchModel != null){
+                                                                scanQR();
+                                                              }else{
+                                                                igmNoEditingController.clear();
+                                                                airsideReleaseDetailList.clear();
+                                                                filteredAirsideReleaseDetailList.clear();
+                                                                airSideReleaseSearchModel = null;
+                                                                scanQR();
+                                                              }
+
+                                                            }else{
+                                                              FocusScope.of(context).requestFocus(locationFocusNode);
+                                                            }
+                                                          }else{
+                                                            openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
+                                                          }
+
                                                         },
-                                                      )
+                                                        child: Padding(padding: const EdgeInsets.all(8.0),
+                                                          child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
-
-
 
                                                 ],
                                               ),
                                             ),
                                           ),
-
-
-
-                                        ],
+                                        ),
                                       ),
+                                      SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 10,
+                                            right: 10,
+                                            top: 0,
+                                            bottom: 0),
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+
+                                          decoration: BoxDecoration(
+                                            color: MyColor.colorWhite,
+                                            borderRadius: BorderRadius.circular(8),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: MyColor.colorBlack.withOpacity(0.09),
+                                                spreadRadius: 2,
+                                                blurRadius: 15,
+                                                offset: Offset(0, 3), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
+                                          child: (airSideReleaseSearchModel != null)
+                                              ? Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo}",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: " ${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightDate!.replaceAll(" ", "-")}",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical,),
+                                              Container(
+                                                padding: const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: MyColor.cardBgColor,
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Column(
+                                                          children: [
+                                                            CustomeText(
+                                                                text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.containerCount}",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                fontWeight: FontWeight.w600,
+                                                                textAlign: TextAlign.center),
+
+                                                            CustomeText(
+                                                                text: "Containers",
+                                                                fontColor: MyColor.textColorGrey2,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontWeight: FontWeight.w400,
+                                                                textAlign: TextAlign.center)
+
+
+
+                                                          ],
+                                                        )),
+
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Column(
+                                                          children: [
+                                                            CustomeText(
+                                                                text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.palletCount}",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                fontWeight: FontWeight.w600,
+                                                                textAlign: TextAlign.center),
+
+                                                            CustomeText(
+                                                                text: "Pallets",
+                                                                fontColor: MyColor.textColorGrey2,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontWeight: FontWeight.w400,
+                                                                textAlign: TextAlign.center)
+                                                          ],
+                                                        )),
+
+                                                    Expanded(
+                                                        flex: 1,
+                                                        child: Column(
+                                                          children: [
+                                                            CustomeText(
+                                                                text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.bulkCount}",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                fontWeight: FontWeight.w600,
+                                                                textAlign: TextAlign.center),
+
+                                                            CustomeText(
+                                                                text: "BULK / Trolley",
+                                                                fontColor: MyColor.textColorGrey2,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontWeight: FontWeight.w400,
+                                                                textAlign: TextAlign.center)
+                                                          ],
+                                                        )),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                              RoundedButtonBlue(
+                                                focusNode: releaseAllFocusNode,
+                                                text: "Release All",
+                                                press: () async {
+
+
+                                                },
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical,),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                      SizedBox(
+                                                        width: SizeConfig.blockSizeHorizontal,
+                                                      ),
+                                                      CustomeText(
+                                                          text: "Show release or pending",
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                          fontWeight: FontWeight.w500,
+                                                          textAlign: TextAlign.start)
+                                                    ],
+                                                  ),
+                                                  Switch(
+                                                    value: _isOpenULDFlagEnable,
+                                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                    activeColor: MyColor.primaryColorblue,
+                                                    inactiveThumbColor: MyColor.thumbColor,
+                                                    inactiveTrackColor: MyColor.textColorGrey2,
+                                                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        _isOpenULDFlagEnable = value;
+                                                        _filterList();
+                                                      });
+
+
+
+                                                      //call api //
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical,),
+                                              (airSideReleaseSearchModel != null)
+                                                  ? (airSideReleaseSearchModel!.airsideReleaseDetailList!.isNotEmpty)
+                                                  ? (filteredAirsideReleaseDetailList.isNotEmpty)
+                                                  ? ListView.builder(
+                                                itemCount: (airSideReleaseSearchModel != null)
+                                                    ? filteredAirsideReleaseDetailList.length
+                                                    : 0,
+                                                physics: const NeverScrollableScrollPhysics(),
+                                                shrinkWrap: true,
+                                                controller: scrollController,
+                                                itemBuilder: (context, index) {
+                                                  AirsideReleaseDetailList airSideReleaseDetail = filteredAirsideReleaseDetailList[index];
+
+                                                  List<String> shcCodes = airSideReleaseDetail.sHCCode!.split(',');
+
+
+
+                                                  return InkWell(
+                                                   // focusNode: uldListFocusNode,
+                                                    onTap: () {
+
+
+                                                    },
+                                                    onDoubleTap: () async {
+                                                      var value = await Navigator.push(
+                                                          context,
+                                                          CupertinoPageRoute(
+                                                              builder: (context) => AirsideShipmentListPage(
+                                                                importSubMenuList: widget.importSubMenuList,
+                                                                exportSubMenuList: widget.exportSubMenuList,
+                                                                buttonRightsList: const [],
+                                                                mainMenuName: widget.mainMenuName,
+                                                                uldNo: airSideReleaseDetail.uLDNo!,
+                                                                uldType: airSideReleaseDetail.uLDType!,
+                                                                flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                                                uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
+                                                                menuId: widget.menuId,
+                                                                location: locationController.text,
+                                                                lableModel: lableModel,
+                                                              )));
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                      } else if(value == "Done"){
+                                                        _resumeTimerOnInteraction();
+                                                        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                      }
+                                                    },
+                                                    child: Container(
+                                                      margin: const EdgeInsets.symmetric(vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: MyColor.colorWhite,
+                                                        borderRadius: BorderRadius.circular(8),
+
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                                            spreadRadius: 2,
+                                                            blurRadius: 15,
+                                                            offset: const Offset(0, 3), // changes position of shadow
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: DottedBorder(
+                                                        dashPattern: const [7, 7, 7, 7],
+                                                        strokeWidth: 1,
+                                                        borderType: BorderType.RRect,
+                                                        color: airSideReleaseDetail.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                                                        radius: const Radius.circular(8),
+                                                        child: Container(
+                                                          // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
+                                                          padding: const EdgeInsets.all(8),
+                                                          decoration: BoxDecoration(
+                                                            color: MyColor.colorWhite,
+                                                            borderRadius: BorderRadius.circular(8),
+                                                          ),
+                                                          child: Stack(
+                                                            children: [
+                                                              Column(
+                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.start,
+                                                                    children: [
+                                                                      Expanded(
+                                                                          flex:4,
+                                                                          child: CustomeText(text: "${airSideReleaseDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start)),
+                                                                      (airSideReleaseDetail.isReleased == "N") ? Expanded(
+                                                                        flex: 2,
+                                                                        child: RoundedButtonBlue(text: "Release",
+                                                                          textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                          verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
+                                                                          press: () {
+                                                                            context.read<AirSideReleaseCubit>().releaseULDorTrolley(
+                                                                                locationController.text,
+                                                                                igmNoEditingController.text,
+                                                                                airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                                                                airSideReleaseDetail.uLDSeqNo!,
+                                                                                (airSideReleaseDetail.uLDType == "T") ? "T" : "U",
+                                                                                _user!.userProfile!.userIdentity!,
+                                                                                _splashDefaultData!.companyCode!,
+                                                                                widget.menuId);
+                                                                        },),
+                                                                      ) : const SizedBox()
+                                                                    ],
+                                                                  ),
+                                                                  airSideReleaseDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
+                                                                  Row(
+                                                                    children: [
+                                                                      airSideReleaseDetail.sHCCode!.isNotEmpty
+                                                                          ? Row(
+                                                                        children:shcCodes.asMap().entries.take(3).map((entry) {
+                                                                          int index = entry.key; // Get the index for colorList assignment
+                                                                          String code = entry.value.trim(); // Get the code value and trim it
+
+                                                                          return Padding(
+                                                                            padding: EdgeInsets.only(right: 5.0),
+                                                                            child: AnimatedBuilder(
+                                                                              animation: _colorAnimation,
+                                                                              builder: (context, child) {
+                                                                                return Container(
+                                                                                  padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                                                                  decoration : BoxDecoration(
+                                                                                    borderRadius: BorderRadius.circular(5),
+                                                                                    color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                                                                  child: CustomeText(
+                                                                                    text: code.trim(),
+                                                                                    fontColor: MyColor.textColorGrey3,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    textAlign: TextAlign.center,
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                            ),
+                                                                          );
+                                                                        }).toList(),
+                                                                      )
+                                                                          : SizedBox(),
+                                                                    ],
+                                                                  ),
+                                                                  airSideReleaseDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                  Row(
+                                                                    children: [
+                                                                      CustomeText(
+                                                                        text: "${lableModel.shipment} : ",
+                                                                        fontColor: MyColor.textColorGrey2,
+                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                        fontWeight: FontWeight.w400,
+                                                                        textAlign: TextAlign.start,
+                                                                      ),
+                                                                      const SizedBox(width: 5),
+                                                                      CustomeText(
+                                                                        text: "${airSideReleaseDetail.shipmentCount}",
+                                                                        fontColor: MyColor.colorBlack,
+                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                        fontWeight: FontWeight.w600,
+                                                                        textAlign: TextAlign.start,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(height: SizeConfig.blockSizeVertical * 0.8),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    children: [
+                                                                      (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
+                                                                        children: [
+                                                                          CustomeText(
+                                                                            text: "Temp. : ",
+                                                                            fontColor: MyColor.textColorGrey2,
+                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                            fontWeight: FontWeight.w400,
+                                                                            textAlign: TextAlign.start,
+                                                                          ),
+                                                                          const SizedBox(width: 5),
+                                                                          Container(
+                                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                                            decoration: BoxDecoration(
+                                                                                color: MyColor.dropdownColor,
+                                                                                borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                                            ),
+                                                                            child: InkWell(
+                                                                              child: Row(
+                                                                                mainAxisSize: MainAxisSize.min,
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                      text: (airSideReleaseDetail.rTemp!.isNotEmpty) ? "T - ${airSideReleaseDetail.rTemp}" : "T - 0",
+                                                                                      fontColor: MyColor.textColorGrey3,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w700,
+                                                                                      textAlign: TextAlign.center),
+                                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                                  SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                                                                ],
+                                                                              ),
+                                                                              onTap: () {
+                                                                                openEditTempBottomDialog(
+                                                                                    context,
+                                                                                    airSideReleaseDetail.uLDNo!,
+                                                                                    airSideReleaseDetail.rTemp!,
+                                                                                    airSideReleaseDetail.rTempUnit!,
+                                                                                    index,
+                                                                                    airSideReleaseDetail.uLDSeqNo!,
+                                                                                    lableModel,
+                                                                                    textDirection);
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                          const SizedBox(width: 5),
+                                                                          CustomeText(
+                                                                              text: "${airSideReleaseDetail.rTempUnit}",
+                                                                              fontColor: MyColor.textColorGrey3,
+                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                              fontWeight: FontWeight.w700,
+                                                                              textAlign: TextAlign.center),
+                                                                        ],
+                                                                      ),
+                                                                      (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
+                                                                        children: [
+                                                                          CustomeText(
+                                                                            text: "Battery : ",
+                                                                            fontColor: MyColor.textColorGrey2,
+                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                            fontWeight: FontWeight.w400,
+                                                                            textAlign: TextAlign.start,
+                                                                          ),
+                                                                          const SizedBox(width: 5),
+                                                                          Container(
+                                                                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                                            decoration: BoxDecoration(
+                                                                                color: MyColor.dropdownColor,
+                                                                                borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                                            ),
+                                                                            child: InkWell(
+                                                                              child: Row(
+                                                                                mainAxisSize: MainAxisSize.min,
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                      text: "B - ${airSideReleaseDetail.battery}",
+                                                                                      fontColor: MyColor.textColorGrey3,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w700,
+                                                                                      textAlign: TextAlign.center),
+                                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                                  SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                                                                ],
+                                                                              ),
+                                                                              onTap: () {
+                                                                                openEditBatteryBottomDialog(
+                                                                                    context,
+                                                                                    airSideReleaseDetail.uLDNo!,
+                                                                                    "${airSideReleaseDetail.battery}",
+                                                                                    index,
+                                                                                    airSideReleaseDetail.uLDSeqNo!,
+                                                                                    lableModel,
+                                                                                    textDirection);
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+
+
+
+
+
+                                                                  (airSideReleaseDetail.uLDType == "T") ? const SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                  Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    children: [
+                                                                      Container(
+                                                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                                                        decoration: BoxDecoration(
+                                                                            color: MyColor.dropdownColor,
+                                                                            borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                                        ),
+                                                                        child: InkWell(
+                                                                          child: Row(
+                                                                            mainAxisSize: MainAxisSize.min,
+                                                                            children: [
+                                                                              CustomeText(
+                                                                                  text: "P - ${airSideReleaseDetail.priority}",
+                                                                                  fontColor: MyColor.textColorGrey3,
+                                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                  fontWeight: FontWeight.w700,
+                                                                                  textAlign: TextAlign.center),
+                                                                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                              SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                                                            ],
+                                                                          ),
+                                                                          onTap: () {
+                                                                           /* setState(() {
+                                                                              _selectedIndex = index; // Update the selected index
+                                                                            });*/
+                                                                            openEditPriorityBottomDialog(
+                                                                                context,
+                                                                                airSideReleaseDetail.uLDNo!,
+                                                                                "${airSideReleaseDetail.priority}",
+                                                                                index,
+                                                                                airSideReleaseDetail.uLDSeqNo!,
+                                                                                lableModel,
+                                                                                textDirection);
+                                                                          },
+                                                                        ),
+                                                                      ),
+                                                                      Row(
+                                                                        children: [
+
+                                                                          Container(
+                                                                            padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                                                            decoration : BoxDecoration(
+                                                                                borderRadius: BorderRadius.circular(20),
+                                                                                color: airSideReleaseDetail.isReleased == "Y" ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                                            ),
+                                                                            child: CustomeText(
+                                                                              text: airSideReleaseDetail.isReleased == "Y" ? "Released" : "Pending for release",
+                                                                              fontColor: MyColor.textColorGrey3,
+                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                                                              fontWeight: FontWeight.w400,
+                                                                              textAlign: TextAlign.center,
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+                                                                          InkWell(
+                                                                            onTap: () async {
+                                                                              var value = await Navigator.push(
+                                                                                  context,
+                                                                                  CupertinoPageRoute(
+                                                                                      builder: (context) => AirsideShipmentListPage(
+                                                                                        importSubMenuList: widget.importSubMenuList,
+                                                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                                                        buttonRightsList: const [],
+                                                                                        mainMenuName: widget.mainMenuName,
+                                                                                        uldNo: airSideReleaseDetail.uLDNo!,
+                                                                                        uldType: airSideReleaseDetail.uLDType!,
+                                                                                        flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                                                                        uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
+                                                                                        menuId: widget.menuId,
+                                                                                        location: locationController.text,
+                                                                                        lableModel: lableModel,
+                                                                                      )));
+                                                                              if(value == "true"){
+                                                                                _resumeTimerOnInteraction();
+                                                                                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                                              } else if(value == "Done"){
+                                                                                _resumeTimerOnInteraction();
+                                                                                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                                              }
+                                                                            },
+                                                                            child: Container(
+                                                                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                                                              decoration: BoxDecoration(
+                                                                                  color: MyColor.dropdownColor,
+                                                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                                                              ),
+                                                                              child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  )
+
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              )
+                                                  : Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 20),
+                                                  child: CustomeText(
+                                                      text: "${lableModel.recordNotFound}",
+                                                      // if record not found
+                                                      fontColor: MyColor.textColorGrey,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                      fontWeight: FontWeight.w500,
+                                                      textAlign: TextAlign.center),
+                                                ),
+                                              )
+                                                  : Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 20),
+                                                  child: CustomeText(
+                                                      text: "${lableModel.recordNotFound}",
+                                                      // if record not found
+                                                      fontColor: MyColor.textColorGrey,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                      fontWeight: FontWeight.w500,
+                                                      textAlign: TextAlign.center),
+                                                ),
+                                              ) : Center(
+                                                child: Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 20),
+                                                  child: CustomeText(
+                                                      text: "${lableModel.recordNotFound}",
+                                                      // if record not found
+                                                      fontColor: MyColor.textColorGrey,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                      fontWeight: FontWeight.w500,
+                                                      textAlign: TextAlign.center),
+                                                ),
+                                              )
+
+
+                                            ],
+                                          )
+                                              : Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 20),
+                                              child: CustomeText(
+                                                  text: "${lableModel.recordNotFound}",
+                                                  // if record not found
+                                                  fontColor: MyColor.textColorGrey,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  fontWeight: FontWeight.w500,
+                                                  textAlign: TextAlign.center),
+                                            ),
+                                          )
+                                        ),
+                                      ),
+
+
+
                                     ],
                                   ),
                                 ),
@@ -813,6 +1327,11 @@ class _AirSideReleaseState extends State<AirSideRelease>
         SnackbarUtil.showSnackbar(context, widget.lableModel!.onlyAlphaNumericValueMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         locationController.clear();
+        igmNoEditingController.clear();
+        airsideReleaseDetailList.clear();
+        filteredAirsideReleaseDetailList.clear();
+        airSideReleaseSearchModel = null;
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(locationFocusNode);
         });
@@ -851,7 +1370,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
     }else{
 
-      bool specialCharAllow = CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(barcodeScanResult);
 
 
 
@@ -859,6 +1378,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
       if(specialCharAllow == true){
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
+        airsideReleaseDetailList.clear();
+        filteredAirsideReleaseDetailList.clear();
+        airSideReleaseSearchModel = null;
         igmNoEditingController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(igmNoFocusNode);
@@ -866,41 +1388,31 @@ class _AirSideReleaseState extends State<AirSideRelease>
       }else{
         String result = barcodeScanResult.replaceAll(" ", "");
 
-        String truncatedResult = result.length > 15
+       /* String truncatedResult = result.length > 15
             ? result.substring(0, 15)
-            : result;
+            : result;*/
 
-        igmNoEditingController.text = truncatedResult;
-      //  callFlightCheckULDListApi(context, locationController.text, truncatedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
+        igmNoEditingController.text = result;
+        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
       }
     }
   }
 
-  // flight check ULD List api call function
-  void callFlightCheckULDListApi(
+  //
+  void getAirsideReleaseDetail(
       BuildContext context,
       String locationCode,
       String scan,
-      String flightNo,
-      String flightDate,
       int userId,
       int companyCode,
-      int menuId,
-      int ULDListFlag) {
-/*    context.read<FlightCheckCubit>().getFlightCheckULDList(
+      int menuId) {
+    context.read<AirSideReleaseCubit>().getAirsideRelease(
         locationCode,
         scan,
-        flightNo.replaceAll(" ", ""),
-        flightDate,
         userId,
         companyCode,
-        menuId,
-        ULDListFlag);*/
+        menuId);
   }
-
-
-
-
 
   // validation dialog
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
@@ -913,6 +1425,108 @@ class _AirSideReleaseState extends State<AirSideRelease>
       });
     }
   }
+
+  Future<void> openEditPriorityBottomDialog(BuildContext context, String uldNo, String priority, int index, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
+    FocusScope.of(context).unfocus();
+    String? updatedPriority = await DialogUtils.showPriorityChangeBottomULDDialog(context, uldNo, priority, lableModel, textDirection);
+    if (updatedPriority != null) {
+      int newPriority = int.parse(updatedPriority);
+
+      if (newPriority != 0) {
+        // Call your API to update the priority in the backend
+       /* await callbdPriorityApi(
+            context,
+            flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
+            flightDetails.uLDId!,
+            newPriority,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);*/
+
+        setState(() {
+          // Update the BDPriority for the selected item
+          airsideReleaseDetailList[index].priority = newPriority;
+
+          // Sort the list based on BDPriority
+          airsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
+        });
+      } else {
+        Vibration.vibrate(duration: 500);
+        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      }
+    } else {
+
+    }
+  }
+
+  Future<void> openEditBatteryBottomDialog(BuildContext context, String uldNo, String battery, int index, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
+    FocusScope.of(context).unfocus();
+    String? updatedBattery = await DialogUtils.showBatteryChangeBottomULDDialog(context, uldNo, battery, lableModel, textDirection);
+    if (updatedBattery != null) {
+      if(updatedBattery.isNotEmpty){
+        int newBattery = int.parse(updatedBattery);
+
+        // Call your API to update the priority in the backend
+        /* await callbdPriorityApi(
+            context,
+            flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
+            flightDetails.uLDId!,
+            newPriority,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);*/
+
+        setState(() {
+          // Update the BDPriority for the selected item
+          airsideReleaseDetailList[index].battery = newBattery;
+        });
+      }else{
+        Vibration.vibrate(duration: 500);
+        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      }
+
+    } else {
+
+    }
+  }
+
+  Future<void> openEditTempBottomDialog(BuildContext context, String uldNo, String temp, String tempUnit, int index, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
+    FocusScope.of(context).unfocus();
+    var result = await DialogUtils.showTempretureChangeBottomULDDialog(context, uldNo, temp, tempUnit, lableModel, textDirection);
+    if (result != null) {
+
+      if (result.containsKey('temp')) {
+        String? updatedTemp = result['temp'];
+        String? updatedtUnit = result['tUnit'];
+
+        // Call your API to update the priority in the backend
+        /* await callbdPriorityApi(
+            context,
+            flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
+            flightDetails.uLDId!,
+            newPriority,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);*/
+
+
+        setState(() {
+          // Update the BDPriority for the selected item
+          airsideReleaseDetailList[index].rTemp = updatedTemp;
+          airsideReleaseDetailList[index].rTempUnit = updatedtUnit;
+        });
+      }
+
+
+
+
+
+    } else {
+
+    }
+  }
+
+
 }
 
 

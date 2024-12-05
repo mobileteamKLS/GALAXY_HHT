@@ -3028,8 +3028,7 @@ class _FlightCheckState extends State<FlightCheck>
                 _splashDefaultData!.companyCode!,
                 widget.menuId,
                 (_isOpenULDFlagEnable == true) ? 1 : 0);
-          }
-          else if(value == "Done"){
+          } else if(value == "Done"){
             _resumeTimerOnInteraction();
             callFlightCheckULDListApi(
                 context,
@@ -3133,7 +3132,8 @@ class _FlightCheckState extends State<FlightCheck>
       int index,
       FlightDetailList flightDetails,
       LableModel lableModel,
-      ui.TextDirection textDirection) async {
+      ui.TextDirection textDirection)
+  async {
     FocusScope.of(context).unfocus();
     String? updatedPriority = await DialogUtils.showPriorityChangeBottomULDDialog(context, uldNo, priority, lableModel, textDirection);
     if (updatedPriority != null) {

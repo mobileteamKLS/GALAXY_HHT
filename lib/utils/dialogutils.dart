@@ -2694,5 +2694,387 @@ class DialogUtils {
     );
   }
 
+  static Future<String?> showBatteryChangeBottomULDDialog(BuildContext context, String uldNo, String battery, LableModel lableModel, ui.TextDirection textDirection) {
+    TextEditingController batteryController = TextEditingController();
+    FocusNode batteryFocusNode = FocusNode();
+    batteryController.text = battery;
+
+    return showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,  // Ensures the bottom sheet adjusts when the keyboard is opened
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(batteryFocusNode);
+        });
+
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,  // Adjust for keyboard
+          ),
+          child: FractionallySizedBox(
+            widthFactor: 1,  // Adjust the width to 90% of the screen width
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 16,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomeText(text: "Change Battery", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                        InkWell(
+                            onTap: () {
+                              Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                            },
+                            child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                      ],
+                    ),
+                  ),
+                  CustomDivider(
+                    space: 0,
+                    color: MyColor.textColorGrey,
+                    hascolor: true,
+                    thickness: 1,
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 6),
+                    child: Row(
+                      children: [
+                        SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                        SizedBox(
+                          width: SizeConfig.blockSizeHorizontal,
+                        ),
+                        CustomeText(
+                            text: "Change battery for this ${uldNo}",
+                            fontColor: MyColor.textColorGrey2,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                            fontWeight: FontWeight.w400,
+                            textAlign: TextAlign.start)
+                      ],
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                    child: CustomTextField(
+                      focusNode: batteryFocusNode,
+                      textDirection: textDirection,
+                      hasIcon: false,
+                      hastextcolor: true,
+                      animatedLabel: true,
+                      needOutlineBorder: true,
+                      labelText: "Battery",
+                      readOnly: false,
+                      controller: batteryController,
+                      maxLength: 3,
+                      onChanged: (value, validate) {},
+                      fillColor: Colors.grey.shade100,
+                      textInputType: TextInputType.number,
+                      inputAction: TextInputAction.next,
+                      hintTextcolor: Colors.black,
+                      verticalPadding: 0,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                      digitsOnly: true,
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return "Please fill out this field";
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
+                  ),
+
+                  CustomDivider(
+                    space: 0,
+                    color: MyColor.textColorGrey,
+                    hascolor: true,
+                    thickness: 1,
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: RoundedButtonBlue(
+                            text: "${lableModel.cancel}",
+                            isborderButton: true,
+                            press: () {
+                              Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                            },
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          flex: 1,
+                          child: RoundedButtonBlue(
+                            text: "${lableModel.save}",
+                            press: () {
+                              Navigator.pop(context, batteryController.text);  // Return the text when "Save" is pressed
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<Map<String, String>?> showTempretureChangeBottomULDDialog(BuildContext context, String uldNo, String temp, String tempUnit, LableModel lableModel, ui.TextDirection textDirection) {
+    TextEditingController tempretureController = TextEditingController();
+    FocusNode tempretureFocusNode = FocusNode();
+    tempretureController.text = temp;
+    String tUnit = tempUnit;
+
+    return showModalBottomSheet<Map<String, String>>(
+      context: context,
+      isScrollControlled: true,  // Ensures the bottom sheet adjusts when the keyboard is opened
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(tempretureFocusNode);
+        });
+
+        return StatefulBuilder(builder: (context, setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,  // Adjust for keyboard
+            ),
+            child: FractionallySizedBox(
+              widthFactor: 1,  // Adjust the width to 90% of the screen width
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 16,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomeText(text: "Change Temperature", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                          InkWell(
+                              onTap: () {
+                                Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                              },
+                              child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                        ],
+                      ),
+                    ),
+                    CustomDivider(
+                      space: 0,
+                      color: MyColor.textColorGrey,
+                      hascolor: true,
+                      thickness: 1,
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 6),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal,
+                          ),
+                          CustomeText(
+                              text: "Change temperature for this ${uldNo}",
+                              fontColor: MyColor.textColorGrey2,
+                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                              fontWeight: FontWeight.w400,
+                              textAlign: TextAlign.start)
+                        ],
+                      ),
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex:2,
+                            child: CustomTextField(
+                              focusNode: tempretureFocusNode,
+                              textDirection: textDirection,
+                              hasIcon: false,
+                              hastextcolor: true,
+                              animatedLabel: true,
+                              needOutlineBorder: true,
+                              labelText: "Temperature",
+                              readOnly: false,
+                              controller: tempretureController,
+                              maxLength: 3,
+                              onChanged: (value, validate) {},
+                              fillColor: Colors.grey.shade100,
+                              textInputType: TextInputType.number,
+                              inputAction: TextInputAction.next,
+                              hintTextcolor: Colors.black,
+                              verticalPadding: 0,
+                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                              digitsOnly: true,
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return "Please fill out this field";
+                                } else {
+                                  return null;
+                                }
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: IntrinsicHeight(
+                              child: Row(
+                                children: [
+                                  // Yes Option
+                                  Expanded(
+                                    flex:1,
+                                    child: InkWell(
+                                      onTap: () {
+
+                                      setState(() {
+                                        tUnit = "C";
+                                      });
+
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color:  tUnit == "C" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(10),
+                                            bottomLeft: Radius.circular(10),
+                                          ),
+                                          border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                        ),
+                                        padding: EdgeInsets.symmetric(vertical:5, horizontal: 5),
+                                        child: Center(
+                                            child: CustomeText(text: "C", fontColor:  tUnit == "C" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                  // No Option
+                                  Expanded(
+                                    flex: 1,
+                                    child: InkWell(
+                                      onTap: () {
+
+                                        setState(() {
+                                          tUnit = "F";
+                                        });
+
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: tUnit == "F" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                          borderRadius: BorderRadius.only(
+                                            topRight: Radius.circular(10),
+                                            bottomRight: Radius.circular(10),
+                                          ),
+                                          border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                        ),
+                                        padding: EdgeInsets.symmetric(vertical:5, horizontal: 5),
+                                        child: Center(
+                                            child: CustomeText(text: "F", fontColor: tUnit == "F" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+
+                                ],
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+
+                    CustomDivider(
+                      space: 0,
+                      color: MyColor.textColorGrey,
+                      hascolor: true,
+                      thickness: 1,
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: RoundedButtonBlue(
+                              text: "${lableModel.cancel}",
+                              isborderButton: true,
+                              press: () {
+                                Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 1,
+                            child: RoundedButtonBlue(
+                              text: "${lableModel.save}",
+                              press: () {
+                                Navigator.pop(context, {
+                                  "temp": tempretureController.text,
+                                  "tUnit" : tUnit
+                                });// Return the text when "Save" is pressed
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },);
+
+
+
+      },
+    );
+  }
+
 
 }

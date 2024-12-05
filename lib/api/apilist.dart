@@ -68,4 +68,10 @@ class Apilist{
   static String getShipmentDamageDetailListApi = "/ShipmentDamage/GetDetails";
   static String revokeDamageApi = "/ShipmentDamage/RevokeDamage";
 
+
+  // Export Airside release
+  static String getAirsideReleaseListApi = "/AirsideRelease/Search";
+  static String getAirsideShipmentListApi = "/AirsideRelease/GetAWBDetails";
+  static String getreleaseULDOrTrollyApi = "/AirsideRelease/ReleaseULD";
+
 }
