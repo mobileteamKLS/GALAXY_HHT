@@ -7,8 +7,12 @@ import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
+import '../../utils/snackbarutil.dart';
+import '../../widget/customebuttons/roundbuttonblue.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
+import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/wdoModal.dart';
 import '../utils/global.dart';
@@ -392,6 +396,128 @@ class _WdoListingState extends State<WdoListing> {
     );
   }
 
+  void showDataNotFoundDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
+              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
+              CustomeText(
+                text: message,
+                fontColor: MyColor.colorBlack,
+                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
+                fontWeight: FontWeight.w400,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
+              RoundedButtonBlue(
+                text: "Ok",
+                color: MyColor.primaryColorblue,
+                press: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  releaseWDO(WdoSearchResult data) async {
+
+    // return;
+    var queryParams = {
+      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${data.impShipRowId}</IMPSHIPROWID><ROTATION_NO /><WDOSEQNO>${data.impShipRowId}</WDOSEQNO><PKG_RECD>${data.npr}</PKG_RECD><WT_RECD>${data.wtRec}</WT_RECD><RELEASED_STATUS>0</RELEASED_STATUS><CUSTOMREFNO>${data.impShipRowId??""}</CUSTOMREFNO></WDOObjects></ArrayOfWDOObjects>",
+      "StatusKey": "RELEASE",
+      "AgentName ": "",
+      "AgentCPRNo": "",
+      "VehicleNo": "",
+      "DriverName": "",
+      "SHED_CODE": "KS1",
+      "CustmRefNoValue": "",
+      "isAbandon": "",
+      "AirportCity": "JFK",
+      "CompanyCode": "3",
+      "UserId": "1"
+    };
+    DialogUtils.showLoadingDialog(context);
+    await authService
+        .postData(
+      "WDO/ReleaseWDO",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      String? status = jsonData['Status'];
+      String? statusMessage = jsonData['StatusMessage']??"";
+      if(jsonData.isNotEmpty){
+        DialogUtils.hideLoadingDialog(context);
+        if(status!="S"){
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+        if((status=="S")){
+          SnackbarUtil.showSnackbar(context, "$statusMessage", Color(0xff43A047));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+        }
+
+      }
+    }).catchError((onError) {
+
+      print(onError);
+    });
+  }
+  revokeWDO(WdoSearchResult data) async {
+
+    // return;
+    var queryParams = {
+      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${data.impShipRowId}</IMPSHIPROWID><ROTATION_NO /><WDOSEQNO>${data.impShipRowId}</WDOSEQNO><PKG_RECD>${data.npr}</PKG_RECD><WT_RECD>${data.wtRec}</WT_RECD><RELEASED_STATUS>1</RELEASED_STATUS><CUSTOMREFNO>${data.customRefNo??""}</CUSTOMREFNO></WDOObjects></ArrayOfWDOObjects>",
+      "StatusKey": "REVOKERELEASE",
+      "SHED_CODE": "KS1",
+      "AirportCity": "JFK",
+      "CompanyCode": "3",
+      "UserId": "1"
+    };
+    DialogUtils.showLoadingDialog(context);
+    await authService
+        .postData(
+      "WDO/ReleaseWDO",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      String? status = jsonData['Status'];
+      String? statusMessage = jsonData['StatusMessage']??"";
+      if(jsonData.isNotEmpty){
+        DialogUtils.hideLoadingDialog(context);
+        if(status!="S"){
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+        if((status=="S")){
+          SnackbarUtil.showSnackbar(context, "$statusMessage", Color(0xff43A047));
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+        }
+
+      }
+    }).catchError((onError) {
+
+      print(onError);
+    });
+  }
+
   Widget buildShipmentCardV2(WdoSearchResult shipment) {
     return Card(
       shape: RoundedRectangleBorder(
@@ -534,51 +660,58 @@ class _WdoListingState extends State<WdoListing> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    //   children: [
-                    //   Container(
-                    //     height: 30,
-                    //     margin: const EdgeInsets.only(right: 12),
-                    //     decoration: BoxDecoration(
-                    //       borderRadius: BorderRadius.circular(8),
-                    //       gradient: const LinearGradient(
-                    //         colors: [
-                    //           Color(0xFF0057D8),
-                    //           Color(0xFF1c86ff),
-                    //         ],
-                    //         begin: Alignment.centerLeft,
-                    //         end: Alignment.centerRight,
-                    //       ),
-                    //     ),
-                    //     child: ElevatedButton(
-                    //       style: ElevatedButton.styleFrom(
-                    //           backgroundColor: Colors.transparent,
-                    //           shadowColor: Colors.transparent),
-                    //       onPressed: null,
-                    //       child: const Text(
-                    //         'Released',
-                    //         style: TextStyle(color: Colors.white),
-                    //       ),
-                    //     ),
-                    //   ),
-                    //     Icon(
-                    //       Icons.more_vert_outlined,
-                    //       color: MyColor.primaryColorblue,
-                    //     ),
-                    //     Container(
-                    //       margin: const EdgeInsets.only(left: 12),
-                    //       decoration: BoxDecoration(
-                    //         borderRadius: BorderRadius.circular(5),
-                    //         color:Color(0xffF2F7FD),
-                    //       ),
-                    //       child: Icon(
-                    //         size: 28,
-                    //          Icons.keyboard_arrow_right_outlined,
-                    //         color: MyColor.primaryColorblue,
-                    //       ),
-                    //     )
-                    // ],)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                      Container(
+                        height: 30,
+                        margin: const EdgeInsets.only(right: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFF0057D8),
+                              Color(0xFF1c86ff),
+                            ],
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                          ),
+                        ),
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.transparent,
+                              shadowColor: Colors.transparent),
+                          onPressed: (){
+                            if((shipment.status.toUpperCase())=="GENERATED"){
+                                releaseWDO(shipment);
+                            }
+                            else{
+                                revokeWDO(shipment);
+                            }
+                          },
+                          child:  Text(
+                            (shipment.status.toUpperCase())=="GENERATED"?'Release':"Revoke",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                        // Icon(
+                        //   Icons.more_vert_outlined,
+                        //   color: MyColor.primaryColorblue,
+                        // ),
+                        // Container(
+                        //   margin: const EdgeInsets.only(left: 12),
+                        //   decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(5),
+                        //     color:Color(0xffF2F7FD),
+                        //   ),
+                        //   child: Icon(
+                        //     size: 28,
+                        //      Icons.keyboard_arrow_right_outlined,
+                        //     color: MyColor.primaryColorblue,
+                        //   ),
+                        // )
+                    ],)
                   ],
                 )
                

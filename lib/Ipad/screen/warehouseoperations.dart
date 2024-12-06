@@ -22,7 +22,7 @@ import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 import 'ShipmentAcceptance.dart';
 import 'ShipmentAcceptanceManually.dart';
-import 'WareHouseLocation.dart';
+import 'WarehouseLocation.dart';
 import 'acceptBooking.dart';
 import 'appointmentBooking.dart';
 import 'availableforExamination.dart';
@@ -256,10 +256,10 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 10,
                     ),
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.only(top: 10, left: 20, right: 20),
                       child: Material(
                         color: Colors.transparent,
@@ -293,7 +293,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                           )
                         : SizedBox(),
                     isCES
-                        ? Padding(
+                        ? const Padding(
                             padding: EdgeInsets.only(
                                 top: 5, left: 20, right: 20, bottom: 10),
                             child: Row(
@@ -334,21 +334,21 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                           )
                         : SizedBox(),
                     isCES
-                        ? Padding(
+                        ? const Padding(
                             padding: EdgeInsets.only(
                                 top: 5, left: 20, right: 20, bottom: 10),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                // RoundedIconButton(
-                                //   icon: Icons.trolley,
-                                //   text: 'Warehouse\nLocation',
-                                //   targetPage: WarehouseLocation(),
-                                //   containerColor: Color(0xffffd1d1),
-                                //   iconColor: MyColor.textColorGrey3,
-                                //   textColor: MyColor.textColorGrey3,
-                                // ),
-                                // SizedBox(width: 40,),
+                                RoundedIconButton(
+                                  icon: Icons.trolley,
+                                  text: 'Warehouse\nLocation',
+                                  targetPage: WarehouseLocation(),
+                                  containerColor: Color(0xffffd1d1),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+                                SizedBox(width: 40,),
                                 RoundedIconButton(
                                   icon: Icons.local_shipping_outlined,
                                   text: 'Warehouse\nDelivery Order',

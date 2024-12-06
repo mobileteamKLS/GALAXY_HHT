@@ -125,6 +125,8 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
+    piecesControllers = [];
+    remarksControllers = [];
     var queryParams = {
       "InputXml":
           "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
