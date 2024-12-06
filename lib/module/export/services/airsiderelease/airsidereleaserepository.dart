@@ -7,6 +7,7 @@ import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../import/model/uldacceptance/locationvalidationmodel.dart';
 import '../../model/airsiderelease/airsidereleasedatamodel.dart';
+import '../../model/airsiderelease/airsidereleasepriorityupdatemodel.dart';
 import '../../model/airsiderelease/airsideshipmentlistmodel.dart';
 
 class AirSideReleaseRepository{
@@ -98,7 +99,6 @@ class AirSideReleaseRepository{
       }
     }
   }
-
   // list AWB api call
   Future<AirsideShipmentListModel> getListOfAirsideAwb(int flightSeqNo, int uldSeqNo, String ULDType, int userId, int companyCode, int menuId) async {
 
@@ -149,7 +149,7 @@ class AirSideReleaseRepository{
 
       var payload = {
         "DoorNo" : doorNo,
-        "GatePassNo" : gatePassNo,
+        "GPNo" : gatePassNo,
         "ULDSeqNo": uldSeqNo,
         "ULDType": ULDType,
         "AirportCode": CommonUtils.airportCode,
@@ -163,8 +163,8 @@ class AirSideReleaseRepository{
       print('getListOfAwb: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.getreleaseULDOrTrollyApi,
-          queryParameters: payload
+      Response response = await api.sendRequest.post(Apilist.getreleaseULDOrTrollyApi,
+          data: payload
       );
 
       if (response.statusCode == 200) {
@@ -187,5 +187,47 @@ class AirSideReleaseRepository{
     }
   }
 
+  Future<AirsideReleasePriorityUpdateModel> airsideReleasePriorityUpdate(int SeqNo, int priority, String Mode, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "SeqNo" : SeqNo,
+        "Priority" : priority,
+        "Mode": Mode,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('airsideReleasePriorityUpdateModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.getreleasePriorityUpdateApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        AirsideReleasePriorityUpdateModel airsideReleasePriorityUpdateModel = AirsideReleasePriorityUpdateModel.fromJson(response.data);
+        return airsideReleasePriorityUpdateModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 }

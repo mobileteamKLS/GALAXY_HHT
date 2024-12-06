@@ -31,6 +31,8 @@ class AirsideShipmentListModel {
 }
 
 class AirsideReleaseAWBDetailList {
+  int? expShipRowId;
+  int? emiSeqNo;
   String? aWBNo;
   int? nOP;
   double? weightKg;
@@ -45,7 +47,10 @@ class AirsideReleaseAWBDetailList {
   String? sHCCode;
 
   AirsideReleaseAWBDetailList(
-      {this.aWBNo,
+      {
+        this.expShipRowId,
+        this.emiSeqNo,
+        this.aWBNo,
         this.nOP,
         this.weightKg,
         this.nOG,
@@ -59,6 +64,8 @@ class AirsideReleaseAWBDetailList {
         this.sHCCode});
 
   AirsideReleaseAWBDetailList.fromJson(Map<String, dynamic> json) {
+    expShipRowId = json['ExpShipRowId'];
+    emiSeqNo = json['EMISeqNo'];
     aWBNo = json['AWBNo'];
     nOP = json['NOP'];
     weightKg = json['WeightKg'];
@@ -75,6 +82,8 @@ class AirsideReleaseAWBDetailList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['ExpShipRowId'] = this.expShipRowId;
+    data['EMISeqNo'] = this.emiSeqNo;
     data['AWBNo'] = this.aWBNo;
     data['NOP'] = this.nOP;
     data['WeightKg'] = this.weightKg;

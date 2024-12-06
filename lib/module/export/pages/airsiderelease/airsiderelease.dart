@@ -8,6 +8,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/module/export/pages/airsiderelease/airsideshipmetlistpage.dart';
+import 'package:galaxy/module/export/pages/airsiderelease/esignaturepage.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasecubit.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasestate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
@@ -46,6 +47,7 @@ class AirSideRelease extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
 
+
   AirSideRelease(
       {super.key,
       required this.importSubMenuList,
@@ -63,6 +65,11 @@ class AirSideRelease extends StatefulWidget {
 class _AirSideReleaseState extends State<AirSideRelease>
     with SingleTickerProviderStateMixin {
 
+
+  String signatureRequired = "Y";
+
+  final Set<int> _selectedIndices = {}; // Store selected indices
+  final List<AirsideReleaseDetailList> _selectedItems = [];
 
 
   InactivityTimerManager? inactivityTimerManager;
@@ -248,9 +255,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
   void _filterList() {
     setState(() {
       filteredAirsideReleaseDetailList = airsideReleaseDetailList
-          .where((item) =>
-      _isOpenULDFlagEnable ? item.isReleased == "Y" : item.isReleased == "N")
-          .toList();
+          .where((item) => _isOpenULDFlagEnable ? (item.isReleased == "Y" || item.isReleased == "N") : item.isReleased == "N").toList();
+
+      filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
     });
   }
 
@@ -437,11 +444,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                     filteredAirsideReleaseDetailList = airsideReleaseDetailList
                                         .where((item) => item.isReleased == "N")
                                         .toList(); // Default filter
-                                    igmNoFocusNode.unfocus();
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(releaseAllFocusNode);
-                                    },
-                                    );
+                                    filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
                                     setState(() {
 
                                     });
@@ -459,8 +462,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                       icon: FontAwesomeIcons.times);
                                 }
                                 else if (state is AirsideReleaseDataSuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
+
                                   if(state.airsideReleaseDataModel.status == "E"){
+                                    DialogUtils.hideLoadingDialog(context);
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(
                                         context,
@@ -468,11 +472,42 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                         MyColor.colorRed,
                                         icon: FontAwesomeIcons.times);
                                   }else{
-                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                  }
+                                    if(_selectedItems.isEmpty){
+                                      DialogUtils.hideLoadingDialog(context);
+                                      getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                      SnackbarUtil.showSnackbar(
+                                          context,
+                                          state.airsideReleaseDataModel.statusMessage!,
+                                          MyColor.colorGreen,
+                                          icon: Icons.done);
+                                    }else{
 
+                                    }
+                                  }
                                 }
                                 else if (state is AirsideReleaseDataFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is AirsideReleasePriorityUpdateSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airsideReleasePriorityUpdateModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsideReleasePriorityUpdateModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                  }
+                                }
+                                else if (state is AirsideReleasePriorityUpdateFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(
@@ -519,20 +554,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                      CustomeText(
-                                                          text: "${lableModel.scanOrManual}",
-                                                          fontColor: MyColor.textColorGrey2,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                          fontWeight: FontWeight.w500,
-                                                          textAlign: TextAlign.start)
-                                                    ],
-                                                  ),
+
                                                   SizedBox(
-                                                    height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,
+                                                    height: SizeConfig.blockSizeVertical,
                                                   ),
                                                   Directionality(
                                                     textDirection: textDirection,
@@ -719,16 +743,16 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                       CustomeText(
                                                         text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo}",
                                                         fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                        fontWeight: FontWeight.w800,
                                                         textAlign: TextAlign.start,
                                                       ),
                                                       const SizedBox(width: 5),
                                                       CustomeText(
                                                         text: " ${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightDate!.replaceAll(" ", "-")}",
                                                         fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                        fontWeight: FontWeight.w800,
                                                         textAlign: TextAlign.start,
                                                       ),
                                                     ],
@@ -811,14 +835,57 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical,),
 
-                                              RoundedButtonBlue(
+                                              (_selectedItems.isNotEmpty) ? RoundedButtonBlue(
                                                 focusNode: releaseAllFocusNode,
-                                                text: "Release All",
+                                                text: "Release",
                                                 press: () async {
+                                                  if (_selectedItems.isNotEmpty) {
+
+                                                    if(signatureRequired == "Y"){
+                                                  var value = await Navigator.push(context, CupertinoPageRoute(
+                                                        builder: (context) => ESignaturePage(
+                                                            importSubMenuList: widget.importSubMenuList,
+                                                            exportSubMenuList: widget.exportSubMenuList,
+                                                            title: "E-Sign & Release",
+                                                            selectedItems: _selectedItems,
+                                                            locationCode: locationController.text,
+                                                            refrelCode: widget.refrelCode,
+                                                            menuId: widget.menuId,
+                                                            mainMenuName: widget.mainMenuName),));
+
+                                                  if(value == "true"){
+                                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                    setState(() {
+                                                      _selectedItems.clear();
+                                                    });
+                                                    _resumeTimerOnInteraction();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
 
 
+                                                    }else{
+                                                      for (var item in _selectedItems) {
+                                                        await releaseAirsideDetail(item);
+                                                      }
+
+                                                      setState(() {
+                                                        _selectedItems.clear();
+                                                      });
+                                                    }
+
+
+
+                                                  } else {
+                                                    // If no items are selected, show a warning message
+                                                    ScaffoldMessenger.of(context).showSnackBar(
+                                                      const SnackBar(
+                                                        content: Text("No items selected to release."),
+                                                      ),
+                                                    );
+                                                  }
                                                 },
-                                              ),
+                                              ) : SizedBox(),
                                               SizedBox(height: SizeConfig.blockSizeVertical,),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -830,7 +897,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                         width: SizeConfig.blockSizeHorizontal,
                                                       ),
                                                       CustomeText(
-                                                          text: "Show release or pending",
+                                                          text: "Show release and pending",
                                                           fontColor: MyColor.textColorGrey2,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w500,
@@ -849,8 +916,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                         _isOpenULDFlagEnable = value;
                                                         _filterList();
                                                       });
-
-
 
                                                       //call api //
                                                     },
@@ -872,7 +937,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                   AirsideReleaseDetailList airSideReleaseDetail = filteredAirsideReleaseDetailList[index];
 
                                                   List<String> shcCodes = airSideReleaseDetail.sHCCode!.split(',');
-
+                                                 // final isSelected = _selectedIndices.contains(index);
+                                                  final isSelected = _selectedItems.contains(airSideReleaseDetail);
 
 
                                                   return InkWell(
@@ -931,7 +997,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                           // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
                                                           padding: const EdgeInsets.all(8),
                                                           decoration: BoxDecoration(
-                                                            color: MyColor.colorWhite,
+                                                            color: isSelected ? MyColor.dropdownColor : MyColor.colorWhite,
                                                             borderRadius: BorderRadius.circular(8),
                                                           ),
                                                           child: Stack(
@@ -944,22 +1010,27 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                     children: [
                                                                       Expanded(
                                                                           flex:4,
-                                                                          child: CustomeText(text: "${airSideReleaseDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start)),
+                                                                          child: Row(
+                                                                            children: [
+                                                                              SvgPicture.asset((airSideReleaseDetail.uLDType == "T") ? trolleySvg : (airSideReleaseDetail.uLDType == "P") ? palletsSvg : uldSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
+                                                                              SizedBox(width: 8,),
+                                                                              CustomeText(text: "${airSideReleaseDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                                            ],
+                                                                          )),
                                                                       (airSideReleaseDetail.isReleased == "N") ? Expanded(
                                                                         flex: 2,
-                                                                        child: RoundedButtonBlue(text: "Release",
+                                                                        child: RoundedButtonBlue(text: isSelected ? "Unselect" : "Select",
                                                                           textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                           verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
                                                                           press: () {
-                                                                            context.read<AirSideReleaseCubit>().releaseULDorTrolley(
-                                                                                locationController.text,
-                                                                                igmNoEditingController.text,
-                                                                                airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
-                                                                                airSideReleaseDetail.uLDSeqNo!,
-                                                                                (airSideReleaseDetail.uLDType == "T") ? "T" : "U",
-                                                                                _user!.userProfile!.userIdentity!,
-                                                                                _splashDefaultData!.companyCode!,
-                                                                                widget.menuId);
+
+                                                                           setState(() {
+                                                                             if (isSelected) {
+                                                                               _selectedItems.remove(airSideReleaseDetail); // Deselect
+                                                                             } else {
+                                                                               _selectedItems.add(airSideReleaseDetail); // Select the current object
+                                                                             }
+                                                                           });
                                                                         },),
                                                                       ) : const SizedBox()
                                                                     ],
@@ -1044,7 +1115,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                                 mainAxisSize: MainAxisSize.min,
                                                                                 children: [
                                                                                   CustomeText(
-                                                                                      text: (airSideReleaseDetail.rTemp!.isNotEmpty) ? "T - ${airSideReleaseDetail.rTemp}" : "T - 0",
+                                                                                      text: (airSideReleaseDetail.rTemp!.isNotEmpty) ? "${airSideReleaseDetail.rTemp}\u00B0 ${airSideReleaseDetail.rTempUnit}" : "- ${airSideReleaseDetail.rTempUnit}",
                                                                                       fontColor: MyColor.textColorGrey3,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                       fontWeight: FontWeight.w700,
@@ -1066,13 +1137,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                               },
                                                                             ),
                                                                           ),
-                                                                          const SizedBox(width: 5),
-                                                                          CustomeText(
-                                                                              text: "${airSideReleaseDetail.rTempUnit}",
-                                                                              fontColor: MyColor.textColorGrey3,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                              fontWeight: FontWeight.w700,
-                                                                              textAlign: TextAlign.center),
+
+
                                                                         ],
                                                                       ),
                                                                       (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
@@ -1096,7 +1162,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                                 mainAxisSize: MainAxisSize.min,
                                                                                 children: [
                                                                                   CustomeText(
-                                                                                      text: "B - ${airSideReleaseDetail.battery}",
+                                                                                      text: (airSideReleaseDetail.battery != -1) ? "${airSideReleaseDetail.battery}%" : "-",
                                                                                       fontColor: MyColor.textColorGrey3,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                       fontWeight: FontWeight.w700,
@@ -1161,7 +1227,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                                 index,
                                                                                 airSideReleaseDetail.uLDSeqNo!,
                                                                                 lableModel,
-                                                                                textDirection);
+                                                                                textDirection,
+                                                                              airSideReleaseDetail.uLDType!);
                                                                           },
                                                                         ),
                                                                       ),
@@ -1238,7 +1305,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                 child: Padding(
                                                   padding: const EdgeInsets.symmetric(vertical: 20),
                                                   child: CustomeText(
-                                                      text: "${lableModel.recordNotFound}",
+                                                      text: (_isOpenULDFlagEnable == false) ? "All ULD/Trolley are released":"${lableModel.recordNotFound}",
                                                       // if record not found
                                                       fontColor: MyColor.textColorGrey,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
@@ -1426,7 +1493,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
     }
   }
 
-  Future<void> openEditPriorityBottomDialog(BuildContext context, String uldNo, String priority, int index, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
+  Future<void> openEditPriorityBottomDialog(BuildContext context, String uldNo, String priority, int index, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection, String uldType) async {
     FocusScope.of(context).unfocus();
     String? updatedPriority = await DialogUtils.showPriorityChangeBottomULDDialog(context, uldNo, priority, lableModel, textDirection);
     if (updatedPriority != null) {
@@ -1434,21 +1501,21 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
       if (newPriority != 0) {
         // Call your API to update the priority in the backend
-       /* await callbdPriorityApi(
+        await callPriorityApi(
             context,
-            flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
-            flightDetails.uLDId!,
+            uldSeqNo,
             newPriority,
+            (uldType == "T") ? "T" : "U",
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
-            widget.menuId);*/
+            widget.menuId);
 
         setState(() {
           // Update the BDPriority for the selected item
-          airsideReleaseDetailList[index].priority = newPriority;
+          filteredAirsideReleaseDetailList[index].priority = newPriority;
 
           // Sort the list based on BDPriority
-          airsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
+          filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
         });
       } else {
         Vibration.vibrate(duration: 500);
@@ -1526,6 +1593,24 @@ class _AirSideReleaseState extends State<AirSideRelease>
     }
   }
 
+
+
+  Future<void> releaseAirsideDetail(AirsideReleaseDetailList item) async {
+    await context.read<AirSideReleaseCubit>().releaseULDorTrolley(locationController.text, item.gpNo!, 0, item.uLDSeqNo!, (item.uLDType == "T") ? "T" : "U", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+  }
+
+  // priority chnage api call function
+  Future<void> callPriorityApi(
+      BuildContext context,
+      int seqNo,
+      int priority,
+      String mode,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    await context.read<AirSideReleaseCubit>().airsideReleasePriorityUpdate(
+        seqNo, priority, mode, userId, companyCode, menuId);
+  }
 
 }
 

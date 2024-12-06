@@ -109,5 +109,7 @@ const loginBg = 'assets/images/loginBg.webp';
 const loginbg = 'assets/images/loginbg.jpg';
 
 
-
+const palletsSvg = 'assets/svgImages/pallets.svg';
+const trolleySvg = 'assets/svgImages/trolley.svg';
+const uldSvg = 'assets/svgImages/uld.svg';
 

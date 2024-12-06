@@ -327,7 +327,29 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
                                 }
+                                else if (state is AirsideReleasePriorityUpdateSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airsideReleasePriorityUpdateModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsideReleasePriorityUpdateModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    context.read<AirSideReleaseCubit>().getAirsideShipmentList(widget.flightSeqNo, widget.uldSeqNo, widget.uldType, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
 
+                                  }
+                                }
+                                else if (state is AirsideReleasePriorityUpdateFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -630,7 +652,7 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                                             ),
                                                                                           ],
                                                                                         ),*/
-                                                                                        (widget.uldType == "T") ? Row(
+                                                                                      /*  (widget.uldType == "T") ? Row(
                                                                                           children: [
                                                                                             CustomeText(
                                                                                               text: "Temp. : ",
@@ -673,7 +695,7 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                                                 fontWeight: FontWeight.w700,
                                                                                                 textAlign: TextAlign.center),
                                                                                           ],
-                                                                                        ) : SizedBox()
+                                                                                        ) : SizedBox()*/
                                                                                       ],
                                                                                     ),
                                                                                     SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
@@ -963,14 +985,14 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
       int newPriority = int.parse(updatedPriority);
 
       if (newPriority != 0) {
-    /*    // Call your API to update the priority in the backend
-        await callbdPriorityApi(
+        await callPriorityApi(
             context,
-            awbItm.iMPShipRowId!,
+            awbItm.emiSeqNo!,
             newPriority,
+            "A",
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
-            widget.menuId);*/
+            widget.menuId);
 
         setState(() {
           // Update the BDPriority for the selected item
@@ -999,6 +1021,20 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
         FocusScope.of(context).requestFocus(focuseNode);
       });
     }
+  }
+
+
+  // priority chnage api call function
+  Future<void> callPriorityApi(
+      BuildContext context,
+      int seqNo,
+      int priority,
+      String mode,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    await context.read<AirSideReleaseCubit>().airsideReleasePriorityUpdate(
+        seqNo, priority, mode, userId, companyCode, menuId);
   }
 
 }

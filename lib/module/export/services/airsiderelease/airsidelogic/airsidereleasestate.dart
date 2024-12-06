@@ -1,5 +1,6 @@
 import '../../../../import/model/uldacceptance/locationvalidationmodel.dart';
 import '../../../model/airsiderelease/airsidereleasedatamodel.dart';
+import '../../../model/airsiderelease/airsidereleasepriorityupdatemodel.dart';
 import '../../../model/airsiderelease/airsidereleasesearchmodel.dart';
 import '../../../model/airsiderelease/airsideshipmentlistmodel.dart';
 
@@ -51,4 +52,15 @@ class AirsideReleaseDataSuccessState extends AirSideReleaseState {
 class AirsideReleaseDataFailureState extends AirSideReleaseState {
   final String error;
   AirsideReleaseDataFailureState(this.error);
+}
+
+
+class AirsideReleasePriorityUpdateSuccessState extends AirSideReleaseState {
+  final AirsideReleasePriorityUpdateModel airsideReleasePriorityUpdateModel;
+  AirsideReleasePriorityUpdateSuccessState(this.airsideReleasePriorityUpdateModel);
+}
+
+class AirsideReleasePriorityUpdateFailureState extends AirSideReleaseState {
+  final String error;
+  AirsideReleasePriorityUpdateFailureState(this.error);
 }

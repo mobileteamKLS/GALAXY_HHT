@@ -56,6 +56,17 @@ class AirSideReleaseCubit extends Cubit<AirSideReleaseState>{
     }
   }
 
+  Future<void> airsideReleasePriorityUpdate(int SeqNo, int priority, String Mode, int userId, int companyCode, int menuId) async {
+    emit(AirSideMainLoadingState());
+    try {
+      final airsideReleasePriorityUpdateModel = await airSideReleaseRepository.airsideReleasePriorityUpdate(SeqNo, priority, Mode, userId, companyCode, menuId);
+
+      emit(AirsideReleasePriorityUpdateSuccessState(airsideReleasePriorityUpdateModel));
+    } catch (e) {
+      emit(AirsideReleasePriorityUpdateFailureState(e.toString()));
+    }
+  }
+
 
   void resetState() {
     emit(AirSideMainInitialState());

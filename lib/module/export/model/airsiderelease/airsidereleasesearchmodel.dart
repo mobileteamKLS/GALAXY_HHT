@@ -59,6 +59,7 @@ class AirsideReleaseDetailList {
   int? battery;
   int? priority;
   String? sHCCode;
+  String? gpNo;
 
   AirsideReleaseDetailList(
       {this.uLDSeqNo,
@@ -77,7 +78,8 @@ class AirsideReleaseDetailList {
         this.shipmentCount,
         this.battery,
         this.priority,
-        this.sHCCode});
+        this.sHCCode,
+        this.gpNo});
 
   AirsideReleaseDetailList.fromJson(Map<String, dynamic> json) {
     uLDSeqNo = json['ULDSeqNo'];
@@ -97,6 +99,7 @@ class AirsideReleaseDetailList {
     battery = json['Battery'];
     priority = json['Priority'];
     sHCCode = json['SHCCode'];
+    gpNo = json['GPNo'];
   }
 
   Map<String, dynamic> toJson() {
@@ -118,6 +121,7 @@ class AirsideReleaseDetailList {
     data['Battery'] = this.battery;
     data['Priority'] = this.priority;
     data['SHCCode'] = this.sHCCode;
+    data['GPNo'] = this.gpNo;
     return data;
   }
 }
