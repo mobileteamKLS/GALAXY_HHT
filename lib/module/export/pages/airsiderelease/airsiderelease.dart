@@ -36,6 +36,7 @@ import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/airsiderelease/airsidereleasepageloadmodel.dart';
 import '../../model/airsiderelease/airsidereleasesearchmodel.dart';
 
 class AirSideRelease extends StatefulWidget {
@@ -66,7 +67,13 @@ class _AirSideReleaseState extends State<AirSideRelease>
     with SingleTickerProviderStateMixin {
 
 
-  String signatureRequired = "Y";
+  List<DesignationWiseSignatureSettingList> signatureList = [];
+
+  String signatureRequired = "";
+  String isAirlineSignRequired = "";
+  String iscustomerSignRequired = "";
+  String issecuritySignRequired = "";
+  String iscisfSignRequired = "";
 
   final Set<int> _selectedIndices = {}; // Store selected indices
   final List<AirsideReleaseDetailList> _selectedItems = [];
@@ -194,12 +201,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
         _splashDefaultData = splashDefaultData;
       });
 
-
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(locationFocusNode);
-      });
-
-    //  context.read<AirSideReleaseCubit>().getPageLoadDefault(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
+     context.read<AirSideReleaseCubit>().getPageLoad(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
 
     }
 
@@ -387,6 +389,47 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
+                                else if (state is AirsideReleasePageLoadSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airsidePageLoadModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsidePageLoadModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    signatureRequired = state.airsidePageLoadModel.isAirsideReleaseSignRequired!;
+
+                                    signatureList = state.airsidePageLoadModel.designationWiseSignatureSettingList!;
+
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(locationFocusNode);
+                                    });
+
+                                    setState(() {
+
+                                    });
+                                    /*isAirlineSignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPCSignRequired!;
+                                    iscustomerSignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPASignRequired!;
+                                    issecuritySignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPSSignRequired!;
+                                    iscisfSignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPISignRequired!;
+*/
+
+
+
+                                    /*setState(() {
+
+                                    });*/
+
+                                  }
+                                }
+                                else if (state is AirsideReleasePageLoadFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
                                 else if (state is ValidateLocationSuccessState) {
                                   DialogUtils.hideLoadingDialog(context);
                                   if (state.validateLocationModel.status == "E") {
@@ -508,6 +551,50 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                   }
                                 }
                                 else if (state is AirsideReleasePriorityUpdateFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is AirsideReleaseBatteryUpdateSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airsideReleaseBatteryUpdateModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsideReleaseBatteryUpdateModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                  }
+                                }
+                                else if (state is AirsideReleaseBatteryUpdateFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is AirsideReleaseTempUpdateSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.airsideReleaseTempUpdateModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsideReleaseTempUpdateModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                  }
+                                }
+                                else if (state is AirsideReleaseTempUpdateFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(
@@ -849,9 +936,16 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                             title: "E-Sign & Release",
                                                             selectedItems: _selectedItems,
                                                             locationCode: locationController.text,
+                                                            flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
                                                             refrelCode: widget.refrelCode,
                                                             menuId: widget.menuId,
-                                                            mainMenuName: widget.mainMenuName),));
+                                                            mainMenuName: widget.mainMenuName,
+                                                            isAirlineSignRequired: isAirlineSignRequired,
+                                                            iscustomerSignRequired: iscustomerSignRequired,
+                                                            issecuritySignRequired: issecuritySignRequired,
+                                                            iscisfSignRequired: iscisfSignRequired,
+                                                          signatureList: signatureList,
+                                                        ),));
 
                                                   if(value == "true"){
                                                     getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
@@ -948,29 +1042,38 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
                                                     },
                                                     onDoubleTap: () async {
-                                                      var value = await Navigator.push(
-                                                          context,
-                                                          CupertinoPageRoute(
-                                                              builder: (context) => AirsideShipmentListPage(
-                                                                importSubMenuList: widget.importSubMenuList,
-                                                                exportSubMenuList: widget.exportSubMenuList,
-                                                                buttonRightsList: const [],
-                                                                mainMenuName: widget.mainMenuName,
-                                                                uldNo: airSideReleaseDetail.uLDNo!,
-                                                                uldType: airSideReleaseDetail.uLDType!,
-                                                                flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
-                                                                uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
-                                                                menuId: widget.menuId,
-                                                                location: locationController.text,
-                                                                lableModel: lableModel,
-                                                              )));
-                                                      if(value == "true"){
-                                                        _resumeTimerOnInteraction();
-                                                        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                      } else if(value == "Done"){
-                                                        _resumeTimerOnInteraction();
-                                                        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                      if(airSideReleaseDetail.shipmentCount != 0){
+                                                        var value = await Navigator.push(
+                                                            context,
+                                                            CupertinoPageRoute(
+                                                                builder: (context) => AirsideShipmentListPage(
+                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                  exportSubMenuList: widget.exportSubMenuList,
+                                                                  buttonRightsList: const [],
+                                                                  mainMenuName: widget.mainMenuName,
+                                                                  uldNo: airSideReleaseDetail.uLDNo!,
+                                                                  uldType: airSideReleaseDetail.uLDType!,
+                                                                  flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                                                  uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
+                                                                  menuId: widget.menuId,
+                                                                  location: locationController.text,
+                                                                  lableModel: lableModel,
+                                                                )));
+                                                        if(value == "true"){
+                                                          _resumeTimerOnInteraction();
+                                                          getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                        }
+                                                        else if(value == "Done"){
+                                                          _resumeTimerOnInteraction();
+                                                          getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                        }
+                                                      }else{
+                                                        SnackbarUtil.showSnackbar(context, "No shipment found", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                        Vibration.vibrate(duration: 500);
                                                       }
+
+
                                                     },
                                                     child: Container(
                                                       margin: const EdgeInsets.symmetric(vertical: 4),
@@ -1253,29 +1356,37 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
                                                                           InkWell(
                                                                             onTap: () async {
-                                                                              var value = await Navigator.push(
-                                                                                  context,
-                                                                                  CupertinoPageRoute(
-                                                                                      builder: (context) => AirsideShipmentListPage(
-                                                                                        importSubMenuList: widget.importSubMenuList,
-                                                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                                                        buttonRightsList: const [],
-                                                                                        mainMenuName: widget.mainMenuName,
-                                                                                        uldNo: airSideReleaseDetail.uLDNo!,
-                                                                                        uldType: airSideReleaseDetail.uLDType!,
-                                                                                        flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
-                                                                                        uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
-                                                                                        menuId: widget.menuId,
-                                                                                        location: locationController.text,
-                                                                                        lableModel: lableModel,
-                                                                                      )));
-                                                                              if(value == "true"){
-                                                                                _resumeTimerOnInteraction();
-                                                                                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                                              } else if(value == "Done"){
-                                                                                _resumeTimerOnInteraction();
-                                                                                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+
+                                                                              if(airSideReleaseDetail.shipmentCount != 0){
+                                                                                var value = await Navigator.push(
+                                                                                    context,
+                                                                                    CupertinoPageRoute(
+                                                                                        builder: (context) => AirsideShipmentListPage(
+                                                                                          importSubMenuList: widget.importSubMenuList,
+                                                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                                                          buttonRightsList: const [],
+                                                                                          mainMenuName: widget.mainMenuName,
+                                                                                          uldNo: airSideReleaseDetail.uLDNo!,
+                                                                                          uldType: airSideReleaseDetail.uLDType!,
+                                                                                          flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                                                                          uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
+                                                                                          menuId: widget.menuId,
+                                                                                          location: locationController.text,
+                                                                                          lableModel: lableModel,
+                                                                                        )));
+                                                                                if(value == "true"){
+                                                                                  _resumeTimerOnInteraction();
+                                                                                  getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                                                }
+                                                                                else if(value == "Done"){
+                                                                                  _resumeTimerOnInteraction();
+                                                                                  getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                                                                }
+                                                                              }else{
+                                                                                SnackbarUtil.showSnackbar(context, "No shipment found", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                Vibration.vibrate(duration: 500);
                                                                               }
+
                                                                             },
                                                                             child: Container(
                                                                               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
@@ -1533,15 +1644,13 @@ class _AirSideReleaseState extends State<AirSideRelease>
       if(updatedBattery.isNotEmpty){
         int newBattery = int.parse(updatedBattery);
 
-        // Call your API to update the priority in the backend
-        /* await callbdPriorityApi(
+        await callBatteryApi(
             context,
-            flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
-            flightDetails.uLDId!,
-            newPriority,
+            uldSeqNo,
+            newBattery,
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
-            widget.menuId);*/
+            widget.menuId);
 
         setState(() {
           // Update the BDPriority for the selected item
@@ -1565,6 +1674,16 @@ class _AirSideReleaseState extends State<AirSideRelease>
       if (result.containsKey('temp')) {
         String? updatedTemp = result['temp'];
         String? updatedtUnit = result['tUnit'];
+
+        await callTempApi(
+            context,
+            uldSeqNo,
+            updatedTemp!,
+            updatedtUnit!,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);
+
 
         // Call your API to update the priority in the backend
         /* await callbdPriorityApi(
@@ -1610,6 +1729,31 @@ class _AirSideReleaseState extends State<AirSideRelease>
       int menuId) async {
     await context.read<AirSideReleaseCubit>().airsideReleasePriorityUpdate(
         seqNo, priority, mode, userId, companyCode, menuId);
+  }
+
+
+  // priority chnage api call function
+  Future<void> callBatteryApi(
+      BuildContext context,
+      int seqNo,
+      int batteryStrength,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    await context.read<AirSideReleaseCubit>().airsideReleaseBatteryUpdate(
+        seqNo, batteryStrength, userId, companyCode, menuId);
+  }
+
+  Future<void> callTempApi(
+      BuildContext context,
+      int seqNo,
+      String temp,
+      String tempUnit,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    await context.read<AirSideReleaseCubit>().airsideReleaseTempUpdate(
+        seqNo, int.parse(temp), tempUnit, userId, companyCode, menuId);
   }
 
 }

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,6 +10,7 @@ import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsid
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasestate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/customdivider.dart';
+import 'package:galaxy/widget/custometext.dart';
 import 'package:signature/signature.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
@@ -29,7 +32,9 @@ import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/airsiderelease/airsidereleasepageloadmodel.dart';
 import '../../model/airsiderelease/airsidereleasesearchmodel.dart';
+import '../../model/airsiderelease/designtype.dart';
 
 class ESignaturePage extends StatefulWidget {
   String mainMenuName;
@@ -41,6 +46,12 @@ class ESignaturePage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   List<AirsideReleaseDetailList> selectedItems = [];
   String locationCode;
+  int flightSeqNo;
+  String isAirlineSignRequired;
+  String iscustomerSignRequired;
+  String issecuritySignRequired;
+  String iscisfSignRequired;
+  List<DesignationWiseSignatureSettingList> signatureList;
 
   ESignaturePage(
       {super.key,
@@ -51,8 +62,15 @@ class ESignaturePage extends StatefulWidget {
       required this.selectedItems,
       required this.locationCode,
       this.lableModel,
+      required this.flightSeqNo,
       required this.menuId,
-      required this.mainMenuName});
+      required this.mainMenuName,
+      required this.isAirlineSignRequired,
+      required this.iscustomerSignRequired,
+      required this.issecuritySignRequired,
+      required this.iscisfSignRequired,
+      required this.signatureList,
+      });
 
   @override
   State<ESignaturePage> createState() => _ESignaturePageState();
@@ -67,6 +85,15 @@ class _ESignaturePageState extends State<ESignaturePage> {
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
   final ScrollController scrollController = ScrollController();
+  String signatureUpload = "N";
+
+  final List<DesignType> designTypeList = [
+    DesignType(type: 'C', name: 'EGPC - Airline Rep.', enable: "N"),
+    DesignType(type: 'A', name: 'EGPA - Customer Staff', enable: "N"),
+    DesignType(type: 'S', name: 'EGPS - Security Staff', enable: "N"),
+    DesignType(type: 'I', name: 'EGPI - CISF', enable: "N"),
+  ];
+
 
 
   final List<SignatureController> _controllers = List.generate(
@@ -78,9 +105,59 @@ class _ESignaturePageState extends State<ESignaturePage> {
     ),
   );
 
+
+  SignatureController airlineRepController = SignatureController( penStrokeWidth: 2,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.white);
+
+  String airlineSignDone = "";
+
+  SignatureController customerStaffController = SignatureController( penStrokeWidth: 2,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.white);
+
+  String customerSignDone = "";
+
+  SignatureController securityStaffController = SignatureController( penStrokeWidth: 2,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.white);
+
+  String securitySignDone = "";
+
+
+  SignatureController cisfController = SignatureController( penStrokeWidth: 2,
+      penColor: Colors.black,
+      exportBackgroundColor: Colors.white);
+
+  String cisfSignDone = "";
+
+  String signatureClickBtn = "";
+
+  void updateDesignTypeList() {
+    // Loop through the API response and update the designTypeList
+    for (var designation in widget.signatureList) {
+      for (var designType in designTypeList) {
+        if (designType.name.contains(designation.text!)) {
+          designType.enable = designation.char!; // Update enable property
+        }
+      }
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    updateDesignTypeList();
+
+/*    _controllers = List.generate(
+      designTypeList.length,
+          (index) => SignatureController(
+        penStrokeWidth: 2,
+        penColor: Colors.black,
+        exportBackgroundColor: Colors.white,
+      ),
+    );*/
+
     _loadUser(); //load user data
     selectedItemsC = widget.selectedItems;
   }
@@ -88,6 +165,10 @@ class _ESignaturePageState extends State<ESignaturePage> {
   @override
   void dispose() {
     super.dispose();
+    airlineRepController.dispose();
+    customerStaffController.dispose();
+    securityStaffController.dispose();
+    cisfController.dispose();
     for (var controller in _controllers) {
       controller.dispose();
     }
@@ -166,6 +247,11 @@ class _ESignaturePageState extends State<ESignaturePage> {
             ? ui.TextDirection.rtl
             : ui.TextDirection.ltr;
 
+
+    // Filter enabled design types
+    final List<DesignType> enabledDesignTypes = designTypeList
+        .where((item) => item.enable == "Y")
+        .toList();
     // ui direction change arabic language
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -230,9 +316,10 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                 //add clear text to clear all feild
                                 onClear: () {
                                   setState(() {
-                                    for (var controller in _controllers) {
-                                      controller.clear();
-                                    }
+                                    airlineRepController.clear();
+                                    customerStaffController.clear();
+                                    securityStaffController.clear();
+                                    cisfController.clear();
                                   });
                                 },
                               ),
@@ -283,7 +370,50 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                       MyColor.colorRed,
                                       icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is AirsideSignUploadSuccesState){
 
+                                  if(state.airsideSignUploadModel.status == "E"){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.airsideSignUploadModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  }else{
+                                    if(signatureUpload == "Y"){
+
+                                    /*  if(signatureClickBtn == "C"){
+                                        airlineSignDone = "C";
+                                      }else if(signatureClickBtn == "A"){
+                                        customerSignDone = "A";
+                                      }else if(signatureClickBtn == "S"){
+                                        securitySignDone = "S";
+                                      }else if(signatureClickBtn == "I"){
+                                        cisfSignDone = "I";
+                                      }*/
+
+                                      DialogUtils.hideLoadingDialog(context);
+                                       SnackbarUtil.showSnackbar(
+                                          context,
+                                          state.airsideSignUploadModel.statusMessage!,
+                                          MyColor.colorGreen,
+                                          icon: Icons.done);
+                                    }else{
+
+                                    }
+                                  }
+
+                                }
+                                else if (state is AirsideSignUploadFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(
+                                      context,
+                                      state.error,
+                                      MyColor.colorRed,
+                                      icon: FontAwesomeIcons.times);
+                                }
 
                               },
                               child: Expanded(
@@ -314,6 +444,502 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                           ),
                                           child: Column(
                                             children: [
+
+
+                                            /*  GridView(
+                                                shrinkWrap: true,
+                                                physics: NeverScrollableScrollPhysics(),
+                                                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                                                    crossAxisCount: 2,
+                                                    crossAxisSpacing: 4,
+                                                    mainAxisSpacing: 5,
+                                                    childAspectRatio: 0.9,),
+                                                children: [
+                                                  widget.isAirlineSignRequired == "Y" ? Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 20,
+                                                          offset: const Offset(0, 3), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        // Signature Pad
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 5),
+                                                          child: CustomeText(text: "EGPC - Airline Rep.", fontColor: MyColor.colorBlack, fontSize: 12, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: Container(
+                                                            padding: const EdgeInsets.all(2),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                                  spreadRadius: 2,
+                                                                  blurRadius: 15,
+                                                                  offset: Offset(0, 3), // changes position of shadow
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            child: Signature(
+                                                              controller: airlineRepController,
+                                                              backgroundColor: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                          child: CustomDivider(
+                                                            space: 0,
+                                                            color: Colors.black,
+                                                            hascolor: true,
+                                                            thickness: 1,
+                                                          ),
+                                                        ),
+                                                        // Buttons
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            // Reset Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Reset",
+                                                                  press: () {
+                                                                    airlineRepController.clear();
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            // Record Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Record",
+                                                                  press: () async {
+                                                                    signatureUpload = "N";
+                                                                    print("Signature======= pending");
+
+                                                                    Uint8List? signature = await airlineRepController.toPngBytes();
+                                                                    if(signature != null){
+                                                                      signatureClickBtn = "C";
+                                                                      String base64Image = base64Encode(signature);
+
+                                                                      String signatureImage = generateImageXMLData(base64Image);
+
+                                                                      for (var item in widget.selectedItems) {
+                                                                        await signUpload(item, widget.flightSeqNo, "C", signatureImage);
+                                                                      }
+
+                                                                      setState(() {
+                                                                        signatureUpload = "Y";
+                                                                      });
+
+                                                                      print("Signature======= Success${base64Image}");
+                                                                    }else{
+                                                                      Vibration.vibrate(duration: 500);
+                                                                      SnackbarUtil.showSnackbar(
+                                                                          context,
+                                                                          "Please enter sign first",
+                                                                          MyColor.colorRed,
+                                                                          icon: FontAwesomeIcons.times);
+                                                                    }
+
+                                                                    // Handle recording logic here
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ) : SizedBox(),
+                                                  widget.iscustomerSignRequired == "Y" ? Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 20,
+                                                          offset: const Offset(0, 3), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        // Signature Pad
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 5),
+                                                          child: CustomeText(text: "EGPA - Customer Staff", fontColor: MyColor.colorBlack, fontSize: 12, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: Container(
+                                                            padding: const EdgeInsets.all(2),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                                  spreadRadius: 2,
+                                                                  blurRadius: 15,
+                                                                  offset: Offset(0, 3), // changes position of shadow
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            child: Signature(
+                                                              controller: customerStaffController,
+                                                              backgroundColor: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                          child: CustomDivider(
+                                                            space: 0,
+                                                            color: Colors.black,
+                                                            hascolor: true,
+                                                            thickness: 1,
+                                                          ),
+                                                        ),
+                                                        // Buttons
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            // Reset Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Reset",
+                                                                  press: () {
+                                                                    customerStaffController.clear();
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            // Record Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Record",
+                                                                  press: () async {
+                                                                    signatureUpload = "N";
+                                                                    print("Signature======= pending");
+
+                                                                    Uint8List? signature = await customerStaffController.toPngBytes();
+                                                                    if(signature != null){
+                                                                      signatureClickBtn = "A";
+                                                                      String base64Image = base64Encode(signature);
+
+                                                                      String signatureImage = generateImageXMLData(base64Image);
+
+                                                                      for (var item in widget.selectedItems) {
+                                                                        await signUpload(item, widget.flightSeqNo, "A", signatureImage);
+                                                                      }
+
+                                                                      setState(() {
+                                                                        signatureUpload = "Y";
+                                                                      });
+
+                                                                      print("Signature======= Success${base64Image}");
+                                                                    }else{
+                                                                      Vibration.vibrate(duration: 500);
+                                                                      SnackbarUtil.showSnackbar(
+                                                                          context,
+                                                                          "Please enter sign first",
+                                                                          MyColor.colorRed,
+                                                                          icon: FontAwesomeIcons.times);
+                                                                    }
+
+                                                                    // Handle recording logic here
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ) : SizedBox(),
+                                                  widget.issecuritySignRequired == "Y" ?  Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 20,
+                                                          offset: const Offset(0, 3), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        // Signature Pad
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 5),
+                                                          child: CustomeText(text: "EGPS - Security Staff", fontColor: MyColor.colorBlack, fontSize: 12, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: Container(
+                                                            padding: const EdgeInsets.all(2),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                                  spreadRadius: 2,
+                                                                  blurRadius: 15,
+                                                                  offset: Offset(0, 3), // changes position of shadow
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            child: Signature(
+                                                              controller: securityStaffController,
+                                                              backgroundColor: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                          child: CustomDivider(
+                                                            space: 0,
+                                                            color: Colors.black,
+                                                            hascolor: true,
+                                                            thickness: 1,
+                                                          ),
+                                                        ),
+                                                        // Buttons
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            // Reset Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Reset",
+                                                                  press: () {
+                                                                    securityStaffController.clear();
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            // Record Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Record",
+                                                                  press: () async {
+                                                                    signatureUpload = "N";
+                                                                    print("Signature======= pending");
+
+                                                                    Uint8List? signature = await securityStaffController.toPngBytes();
+                                                                    if(signature != null){
+                                                                      signatureClickBtn = "S";
+                                                                      String base64Image = base64Encode(signature);
+
+                                                                      String signatureImage = generateImageXMLData(base64Image);
+
+                                                                      for (var item in widget.selectedItems) {
+                                                                        await signUpload(item, widget.flightSeqNo, "S", signatureImage);
+                                                                      }
+
+                                                                      setState(() {
+                                                                        signatureUpload = "Y";
+                                                                      });
+
+                                                                      print("Signature======= Success${base64Image}");
+                                                                    }else{
+                                                                      Vibration.vibrate(duration: 500);
+                                                                      SnackbarUtil.showSnackbar(
+                                                                          context,
+                                                                          "Please enter sign first",
+                                                                          MyColor.colorRed,
+                                                                          icon: FontAwesomeIcons.times);
+                                                                    }
+
+                                                                    // Handle recording logic here
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ) : SizedBox(),
+                                                  widget.iscisfSignRequired == "Y" ? Container(
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius: BorderRadius.circular(6),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 1,
+                                                          blurRadius: 20,
+                                                          offset: const Offset(0, 3), // Shadow position
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                      children: [
+                                                        // Signature Pad
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 5),
+                                                          child: CustomeText(text: "EGPI - CISF", fontColor: MyColor.colorBlack, fontSize: 12, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Expanded(
+                                                          flex: 4,
+                                                          child: Container(
+                                                            padding: const EdgeInsets.all(2),
+                                                            decoration: BoxDecoration(
+                                                              borderRadius: BorderRadius.circular(6),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                                  spreadRadius: 2,
+                                                                  blurRadius: 15,
+                                                                  offset: Offset(0, 3), // changes position of shadow
+                                                                ),
+                                                              ],
+                                                            ),
+
+                                                            child: Signature(
+                                                              controller: cisfController,
+                                                              backgroundColor: Colors.white,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        const SizedBox(height: 2),
+                                                        Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                                          child: CustomDivider(
+                                                            space: 0,
+                                                            color: Colors.black,
+                                                            hascolor: true,
+                                                            thickness: 1,
+                                                          ),
+                                                        ),
+                                                        // Buttons
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            // Reset Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Reset",
+                                                                  press: () {
+                                                                    cisfController.clear();
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            // Record Button
+                                                            Expanded(
+                                                              child: Padding(
+                                                                padding: const EdgeInsets.all(8.0),
+                                                                child: RoundedButtonBlue(
+                                                                  verticalPadding: 5,
+                                                                  textSize: 12,
+                                                                  text: "Record",
+                                                                  press: () async {
+                                                                    signatureUpload = "N";
+
+                                                                    print("Signature======= pending");
+
+                                                                    Uint8List? signature = await cisfController.toPngBytes();
+                                                                    if(signature != null){
+                                                                      signatureClickBtn = "I";
+                                                                      String base64Image = base64Encode(signature);
+
+                                                                      String signatureImage = generateImageXMLData(base64Image);
+
+                                                                      for (var item in widget.selectedItems) {
+                                                                        await signUpload(item, widget.flightSeqNo, "I", signatureImage);
+                                                                      }
+
+                                                                      setState(() {
+                                                                        signatureUpload = "Y";
+                                                                      });
+
+                                                                      print("Signature======= Success${base64Image}");
+                                                                    }else{
+                                                                      Vibration.vibrate(duration: 500);
+                                                                      SnackbarUtil.showSnackbar(
+                                                                          context,
+                                                                          "Please enter sign first",
+                                                                          MyColor.colorRed,
+                                                                          icon: FontAwesomeIcons.times);
+                                                                    }
+
+                                                                    // Handle recording logic here
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ) : SizedBox()
+                                                ],
+                                              ),*/
+
+
                                               GridView.builder(
                                                 shrinkWrap: true,
                                                 physics: const NeverScrollableScrollPhysics(),
@@ -321,10 +947,13 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                   crossAxisCount: 2,
                                                   crossAxisSpacing: 4,
                                                   mainAxisSpacing: 5,
-                                                  childAspectRatio: 1.1, // Adjusted aspect ratio for better alignment
+                                                  childAspectRatio: 0.9, // Adjusted aspect ratio for better alignment
                                                 ),
-                                                itemCount: _controllers.length,
+                                                itemCount: enabledDesignTypes.length,
                                                 itemBuilder: (context, index) {
+
+                                                  DesignType designType = enabledDesignTypes[index];
+
                                                   return Container(
                                                     decoration: BoxDecoration(
                                                       color: Colors.white,
@@ -342,19 +971,34 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                       crossAxisAlignment: CrossAxisAlignment.stretch,
                                                       children: [
                                                         // Signature Pad
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(top: 5),
+                                                          child: CustomeText(text: designType.name, fontColor: MyColor.colorBlack, fontSize: 12, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                        ),
+                                                        const SizedBox(height: 2),
                                                         Expanded(
-                                                          flex: 3,
+                                                          flex: 4,
                                                           child: Container(
                                                             padding: const EdgeInsets.all(2),
                                                             decoration: BoxDecoration(
                                                               borderRadius: BorderRadius.circular(6),
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                                  spreadRadius: 2,
+                                                                  blurRadius: 15,
+                                                                  offset: Offset(0, 3), // changes position of shadow
+                                                                ),
+                                                              ],
                                                             ),
+
                                                             child: Signature(
                                                               controller: _controllers[index],
                                                               backgroundColor: Colors.white,
                                                             ),
                                                           ),
                                                         ),
+                                                        const SizedBox(height: 2),
                                                         Padding(
                                                           padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                                           child: CustomDivider(
@@ -364,7 +1008,6 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                             thickness: 1,
                                                           ),
                                                         ),
-                                                        const SizedBox(height: 2),
                                                         // Buttons
                                                         Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -393,9 +1036,32 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                                   textSize: 12,
                                                                   text: "Record",
                                                                   press: () async {
+                                                                    signatureUpload = "N";
+                                                                    print("Signature======= pending");
+
                                                                     Uint8List? signature = await _controllers[index].toPngBytes();
                                                                     if(signature != null){
-                                                                      print("Signature SET======= ${signature.toString()}");
+
+                                                                      String base64Image = base64Encode(signature);
+
+                                                                      String signatureImage = generateImageXMLData(base64Image);
+
+                                                                      for (var item in widget.selectedItems) {
+                                                                        await signUpload(item, widget.flightSeqNo, designType.type, signatureImage);
+                                                                      }
+
+                                                                      setState(() {
+                                                                        signatureUpload = "Y";
+                                                                      });
+
+                                                                      print("Signature======= Success${base64Image}");
+                                                                    }else{
+                                                                      Vibration.vibrate(duration: 500);
+                                                                      SnackbarUtil.showSnackbar(
+                                                                          context,
+                                                                         "Please enter sign first",
+                                                                          MyColor.colorRed,
+                                                                          icon: FontAwesomeIcons.times);
                                                                     }
 
                                                                                                                                       // Handle recording logic here
@@ -491,4 +1157,17 @@ class _ESignaturePageState extends State<ESignaturePage> {
     await context.read<AirSideReleaseCubit>().releaseULDorTrolley(widget.locationCode, item.gpNo!, 0, item.uLDSeqNo!, (item.uLDType == "T") ? "T" : "U", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
   }
 
+  Future<void> signUpload(AirsideReleaseDetailList item, int flightSeqNo,String desigType, String image) async {
+    await context.read<AirSideReleaseCubit>().airsideSignUpload(flightSeqNo, item.uLDSeqNo!, item.gpNo!, desigType, image, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+  }
+
+  String generateImageXMLData(String selectSign) {
+    StringBuffer xmlBuffer = StringBuffer();
+    xmlBuffer.write('<BinaryImageLists>');
+    xmlBuffer.write('<BinaryImageList>');
+    xmlBuffer.write('<BinaryImage>$selectSign</BinaryImage>');
+    xmlBuffer.write('</BinaryImageList>');
+    xmlBuffer.write('</BinaryImageLists>');
+    return xmlBuffer.toString();
+  }
 }

@@ -2697,7 +2697,14 @@ class DialogUtils {
   static Future<String?> showBatteryChangeBottomULDDialog(BuildContext context, String uldNo, String battery, LableModel lableModel, ui.TextDirection textDirection) {
     TextEditingController batteryController = TextEditingController();
     FocusNode batteryFocusNode = FocusNode();
-    batteryController.text = battery;
+    if(battery == "-1"){
+      batteryController.clear();
+    }else{
+      batteryController.text = battery;
+    }
+
+
+    String errorText = "";
 
     return showModalBottomSheet<String>(
       context: context,
@@ -2715,130 +2722,181 @@ class DialogUtils {
           FocusScope.of(context).requestFocus(batteryFocusNode);
         });
 
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,  // Adjust for keyboard
-          ),
-          child: FractionallySizedBox(
-            widthFactor: 1,  // Adjust the width to 90% of the screen width
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 16,
-                      horizontal: 16,
+        return StatefulBuilder(
+          builder:(BuildContext context, StateSetter setState) {
+          return Padding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom,  // Adjust for keyboard
+            ),
+            child: FractionallySizedBox(
+              widthFactor: 1,  // Adjust the width to 90% of the screen width
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16,
+                        horizontal: 16,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomeText(text: "Change Battery", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                          InkWell(
+                              onTap: () {
+                                Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                              },
+                              child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                        ],
+                      ),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomeText(text: "Change Battery", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
-                        InkWell(
-                            onTap: () {
-                              Navigator.pop(context, null);  // Return null when "Cancel" is pressed
-                            },
-                            child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
-                      ],
+                    CustomDivider(
+                      space: 0,
+                      color: MyColor.textColorGrey,
+                      hascolor: true,
+                      thickness: 1,
                     ),
-                  ),
-                  CustomDivider(
-                    space: 0,
-                    color: MyColor.textColorGrey,
-                    hascolor: true,
-                    thickness: 1,
-                  ),
 
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 6),
-                    child: Row(
-                      children: [
-                        SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                        SizedBox(
-                          width: SizeConfig.blockSizeHorizontal,
-                        ),
-                        CustomeText(
-                            text: "Change battery for this ${uldNo}",
-                            fontColor: MyColor.textColorGrey2,
-                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                            fontWeight: FontWeight.w400,
-                            textAlign: TextAlign.start)
-                      ],
-                    ),
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
-                    child: CustomTextField(
-                      focusNode: batteryFocusNode,
-                      textDirection: textDirection,
-                      hasIcon: false,
-                      hastextcolor: true,
-                      animatedLabel: true,
-                      needOutlineBorder: true,
-                      labelText: "Battery",
-                      readOnly: false,
-                      controller: batteryController,
-                      maxLength: 3,
-                      onChanged: (value, validate) {},
-                      fillColor: Colors.grey.shade100,
-                      textInputType: TextInputType.number,
-                      inputAction: TextInputAction.next,
-                      hintTextcolor: Colors.black,
-                      verticalPadding: 0,
-                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                      digitsOnly: true,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "Please fill out this field";
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
-
-                  CustomDivider(
-                    space: 0,
-                    color: MyColor.textColorGrey,
-                    hascolor: true,
-                    thickness: 1,
-                  ),
-
-                  Padding(
-                    padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: RoundedButtonBlue(
-                            text: "${lableModel.cancel}",
-                            isborderButton: true,
-                            press: () {
-                              Navigator.pop(context, null);  // Return null when "Cancel" is pressed
-                            },
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 6),
+                      child: Row(
+                        children: [
+                          SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                          SizedBox(
+                            width: SizeConfig.blockSizeHorizontal,
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 1,
-                          child: RoundedButtonBlue(
-                            text: "${lableModel.save}",
-                            press: () {
-                              Navigator.pop(context, batteryController.text);  // Return the text when "Save" is pressed
-                            },
-                          ),
-                        ),
-                      ],
+                          CustomeText(
+                              text: "Change battery for this ${uldNo}",
+                              fontColor: MyColor.textColorGrey2,
+                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                              fontWeight: FontWeight.w400,
+                              textAlign: TextAlign.start)
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                      child: CustomTextField(
+                        focusNode: batteryFocusNode,
+                        textDirection: textDirection,
+                        hasIcon: false,
+                        hastextcolor: true,
+                        animatedLabel: true,
+                        needOutlineBorder: true,
+                        labelText: "Battery",
+                        readOnly: false,
+                        controller: batteryController,
+                        maxLength: 3,
+                        onChanged: (value, validate) {
+                          if(batteryController.text.isEmpty){
+                            setState(() {
+                              errorText = "";
+                            });
+                          }
+
+                        },
+                        fillColor: Colors.grey.shade100,
+                        textInputType: TextInputType.number,
+                        inputAction: TextInputAction.next,
+                        hintTextcolor: Colors.black,
+                        verticalPadding: 0,
+                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                        digitsOnly: true,
+                        validator: (value) {
+                          if (value!.isEmpty) {
+                            return "Please fill out this field";
+                          } else {
+                            return null;
+                          }
+                        },
+                      ),
+                    ),
+                    if (errorText.isNotEmpty)  // Show error text if not empty
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2, left: 8),
+                        child: CustomeText(
+                          text: errorText,
+                          fontColor: MyColor.colorRed,
+                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+                    SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                    CustomDivider(
+                      space: 0,
+                      color: MyColor.textColorGrey,
+                      hascolor: true,
+                      thickness: 1,
+                    ),
+
+                    Padding(
+                      padding: const EdgeInsets.only(top: 12, right: 12, left: 12, bottom: 12),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: RoundedButtonBlue(
+                              text: "${lableModel.cancel}",
+                              isborderButton: true,
+                              press: () {
+                                Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            flex: 1,
+                            child: RoundedButtonBlue(
+                              text: "${lableModel.save}",
+                              press: () {
+
+                                int? batteryValue = int.tryParse(batteryController.text);
+
+                                if (batteryController.text.isEmpty) {
+                                  setState(() {
+                                    errorText = "Please enter battery level";
+                                  });
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(batteryFocusNode);
+                                  });
+                                  Vibration.vibrate(duration: 500);
+                                  return;
+                                }
+
+                                if (batteryValue! < 0 || batteryValue > 100) {
+                                  setState(() {
+                                    errorText = "Value must be between 0 and 100";
+                                  });
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(batteryFocusNode);
+                                  });
+                                  Vibration.vibrate(duration: 500);
+                                  return;
+                                }
+
+                                Navigator.pop(context, batteryController.text);  // Return the text when "Save" is pressed
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
+          );
+        },);
+
+
+
+
       },
     );
   }
@@ -2847,7 +2905,8 @@ class DialogUtils {
     TextEditingController tempretureController = TextEditingController();
     FocusNode tempretureFocusNode = FocusNode();
     tempretureController.text = temp;
-    String tUnit = tempUnit;
+    String tUnit = (tempUnit.isEmpty) ? "C" : tempUnit;
+    String errorText = "";
 
     return showModalBottomSheet<Map<String, String>>(
       context: context,
@@ -2865,7 +2924,8 @@ class DialogUtils {
           FocusScope.of(context).requestFocus(tempretureFocusNode);
         });
 
-        return StatefulBuilder(builder: (context, setState) {
+        return StatefulBuilder(
+          builder: (context, setState) {
           return Padding(
             padding: EdgeInsets.only(
               bottom: MediaQuery.of(context).viewInsets.bottom,  // Adjust for keyboard
@@ -2874,6 +2934,7 @@ class DialogUtils {
               widthFactor: 1,  // Adjust the width to 90% of the screen width
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Padding(
@@ -2934,17 +2995,21 @@ class DialogUtils {
                               labelText: "Temperature",
                               readOnly: false,
                               controller: tempretureController,
-                              maxLength: 3,
-                              onChanged: (value, validate) {},
+                              maxLength: 4,
+                              onChanged: (value, validate) {
+                                setState(() {
+                                  errorText = "";
+                                });
+                              },
                               fillColor: Colors.grey.shade100,
-                              textInputType: TextInputType.number,
+                              textInputType: TextInputType.text,
                               inputAction: TextInputAction.next,
                               hintTextcolor: Colors.black,
                               verticalPadding: 0,
                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                               circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                               boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                              digitsOnly: true,
+                              tempOnly: true,
                               validator: (value) {
                                 if (value!.isEmpty) {
                                   return "Please fill out this field";
@@ -3026,6 +3091,19 @@ class DialogUtils {
                       ),
                     ),
 
+                    (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                    if (errorText.isNotEmpty)  // Show error text if not empty
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: CustomeText(
+                          text: errorText,
+                          fontColor: MyColor.colorRed,
+                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.start,
+                        ),
+                      ),
+
                     CustomDivider(
                       space: 0,
                       color: MyColor.textColorGrey,
@@ -3053,6 +3131,29 @@ class DialogUtils {
                             child: RoundedButtonBlue(
                               text: "${lableModel.save}",
                               press: () {
+                                int? temperatureValue = int.tryParse(tempretureController.text);
+                                if (tempretureController.text.isEmpty) {
+                                  setState(() {
+                                    errorText = "Please enter temperature level";
+                                  });
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(tempretureFocusNode);
+                                  });
+                                  Vibration.vibrate(duration: 500);
+                                  return;
+                                }
+
+                                if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
+                                  setState(() {
+                                    errorText = "Temperature must be between -100 and 100";
+                                  });
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(tempretureFocusNode);
+                                  });
+                                  Vibration.vibrate(duration: 500);
+                                  return;
+                                }
+
                                 Navigator.pop(context, {
                                   "temp": tempretureController.text,
                                   "tUnit" : tUnit

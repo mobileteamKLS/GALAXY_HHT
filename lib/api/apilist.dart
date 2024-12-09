@@ -70,9 +70,14 @@ class Apilist{
 
 
   // Export Airside release
+  static String getAirsideReleasePageLoadApi = "/AirsideRelease/GetPageLoad";
   static String getAirsideReleaseListApi = "/AirsideRelease/Search";
   static String getAirsideShipmentListApi = "/AirsideRelease/GetAWBDetails";
   static String getreleaseULDOrTrollyApi = "/AirsideRelease/Release";
   static String getreleasePriorityUpdateApi = "/AirsideRelease/PriorityUpdate";
+  static String getSignUploadApi = "/AirsideRelease/SignUpload";
+  static String getBatteryUpdateApi = "/AirsideRelease/BatteryStrengthUpdate";
+  static String getTempratureUpdateApi = "/AirsideRelease/TemperatureUpdate";
+
 
 }

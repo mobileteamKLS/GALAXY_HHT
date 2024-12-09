@@ -1,8 +1,12 @@
 import '../../../../import/model/uldacceptance/locationvalidationmodel.dart';
+import '../../../model/airsiderelease/airsidereleasebatteryupdatemodel.dart';
 import '../../../model/airsiderelease/airsidereleasedatamodel.dart';
+import '../../../model/airsiderelease/airsidereleasepageloadmodel.dart';
 import '../../../model/airsiderelease/airsidereleasepriorityupdatemodel.dart';
 import '../../../model/airsiderelease/airsidereleasesearchmodel.dart';
+import '../../../model/airsiderelease/airsidereleasetempupdatemodel.dart';
 import '../../../model/airsiderelease/airsideshipmentlistmodel.dart';
+import '../../../model/airsiderelease/airsidesignuploadmodel.dart';
 
 class AirSideReleaseState {}
 
@@ -10,7 +14,15 @@ class AirSideReleaseState {}
 class AirSideMainInitialState extends AirSideReleaseState {}
 class AirSideMainLoadingState extends AirSideReleaseState {}
 
+class AirsideReleasePageLoadSuccessState extends AirSideReleaseState {
+  final AirsidePageLoadModel airsidePageLoadModel;
+  AirsideReleasePageLoadSuccessState(this.airsidePageLoadModel);
+}
 
+class AirsideReleasePageLoadFailureState extends AirSideReleaseState {
+  final String error;
+  AirsideReleasePageLoadFailureState(this.error);
+}
 
 class ValidateLocationSuccessState extends AirSideReleaseState {
   final LocationValidationModel validateLocationModel;
@@ -64,3 +76,37 @@ class AirsideReleasePriorityUpdateFailureState extends AirSideReleaseState {
   final String error;
   AirsideReleasePriorityUpdateFailureState(this.error);
 }
+
+class AirsideSignUploadSuccesState extends AirSideReleaseState {
+  final AirsideSignUploadModel airsideSignUploadModel;
+  AirsideSignUploadSuccesState(this.airsideSignUploadModel);
+}
+
+class AirsideSignUploadFailureState extends AirSideReleaseState {
+  final String error;
+  AirsideSignUploadFailureState(this.error);
+}
+
+
+class AirsideReleaseBatteryUpdateSuccessState extends AirSideReleaseState {
+  final AirsideReleaseBatteryUpdateModel airsideReleaseBatteryUpdateModel;
+  AirsideReleaseBatteryUpdateSuccessState(this.airsideReleaseBatteryUpdateModel);
+}
+
+class AirsideReleaseBatteryUpdateFailureState extends AirSideReleaseState {
+  final String error;
+  AirsideReleaseBatteryUpdateFailureState(this.error);
+}
+
+
+class AirsideReleaseTempUpdateSuccessState extends AirSideReleaseState {
+  final AirsideReleaseTempUpdateModel airsideReleaseTempUpdateModel;
+  AirsideReleaseTempUpdateSuccessState(this.airsideReleaseTempUpdateModel);
+}
+
+class AirsideReleaseTempUpdateFailureState extends AirSideReleaseState {
+  final String error;
+  AirsideReleaseTempUpdateFailureState(this.error);
+}
+
+

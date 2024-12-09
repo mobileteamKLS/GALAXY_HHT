@@ -43,6 +43,7 @@ class CustomTextField extends StatefulWidget {
   final double boxHeight;
   final int? maxLength;
   final bool? digitsOnly;
+  final bool? tempOnly;
   final bool? doubleDigitOnly;
   final TextDirection textDirection;
 
@@ -85,6 +86,7 @@ class CustomTextField extends StatefulWidget {
       this.maxLength,
       this.textDirection = TextDirection.ltr,
       this.digitsOnly = false,
+      this.tempOnly = false,
       this.doubleDigitOnly = false,
       this.boxHeight = 30})
       : super(key: key);
@@ -139,6 +141,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   FilteringTextInputFormatter.allow(RegExp("[0-9]")),
                 ] : widget.doubleDigitOnly! ? <TextInputFormatter>[
                   DecimalTextInputFormatter(maxDigitsBeforeDecimal: 7, maxDigitsAfterDecimal: 2),
+                ] : widget.tempOnly! ? <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
                 ] : <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
                 ],
