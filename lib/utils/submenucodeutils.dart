@@ -9,6 +9,7 @@ class SubMenuCodeUtils{
 
 
   static int AirSideRelease = 1281;
+  static int PalletStatck = 1282;
 
 
 }

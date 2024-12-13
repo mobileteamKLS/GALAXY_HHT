@@ -70,10 +70,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
   List<DesignationWiseSignatureSettingList> signatureList = [];
 
   String signatureRequired = "";
-  String isAirlineSignRequired = "";
-  String iscustomerSignRequired = "";
-  String issecuritySignRequired = "";
-  String iscisfSignRequired = "";
 
   final Set<int> _selectedIndices = {}; // Store selected indices
   final List<AirsideReleaseDetailList> _selectedItems = [];
@@ -151,7 +147,12 @@ class _AirSideReleaseState extends State<AirSideRelease>
         if(locationController.text.isNotEmpty){
           if(_isvalidateLocation){
             if(igmNoEditingController.text.isNotEmpty){
-              getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+              if(airsideReleaseDetailList.isEmpty){
+                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+              }else{
+
+              }
+
             }
           }else{
             //focus on location feild
@@ -362,6 +363,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  _selectedItems.clear();
                                   _isvalidateLocation = false;
                                   locationController.clear();
                                   igmNoEditingController.clear();
@@ -410,17 +412,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                     setState(() {
 
                                     });
-                                    /*isAirlineSignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPCSignRequired!;
-                                    iscustomerSignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPASignRequired!;
-                                    issecuritySignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPSSignRequired!;
-                                    iscisfSignRequired = state.airsidePageLoadModel.isAirsideReleaseEGPISignRequired!;
-*/
-
-
-
-                                    /*setState(() {
-
-                                    });*/
 
                                   }
                                 }
@@ -469,6 +460,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.airSideReleaseSearchModel.status == "E"){
                                     airSideReleaseSearchModel = null;
+                                    airsideReleaseDetailList.clear();
+                                    _selectedItems.clear();
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(
                                         context,
@@ -481,6 +474,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                     );
                                   }
                                   else{
+                                    _selectedItems.clear();
                                     _isOpenULDFlagEnable = false;
                                     airSideReleaseSearchModel = state.airSideReleaseSearchModel;
                                     airsideReleaseDetailList = state.airSideReleaseSearchModel.airsideReleaseDetailList!;
@@ -488,6 +482,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                         .where((item) => item.isReleased == "N")
                                         .toList(); // Default filter
                                     filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
+
+
+
                                     setState(() {
 
                                     });
@@ -497,6 +494,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                 else if (state is AirsideReleaseFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   airSideReleaseSearchModel = null;
+                                  airsideReleaseDetailList.clear();
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(
                                       context,
@@ -727,14 +725,16 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                           hastextcolor: true,
                                                           animatedLabel: true,
                                                           needOutlineBorder: true,
-                                                          labelText: "Scan",
+                                                          labelText: "${lableModel.scan}",
                                                           readOnly: locationController.text.isNotEmpty ? false : true,
                                                           controller: igmNoEditingController,
                                                           focusNode: igmNoFocusNode,
                                                           maxLength: 30,
                                                           onChanged: (value) {
+                                                            _selectedItems.clear();
                                                             _isOpenULDFlagEnable = false;
                                                             airSideReleaseSearchModel = null;
+                                                            airsideReleaseDetailList.clear();
                                                             setState(() {});
                                                           },
                                                           fillColor: Colors.grey.shade100,
@@ -759,7 +759,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                       ),
                                                       InkWell(
                                                         onTap: () {
-                                                          FocusScope.of(context).unfocus();
 
                                                           if(locationController.text.isNotEmpty){
                                                             if(_isvalidateLocation){
@@ -818,6 +817,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                             ],
                                           ),
                                           child: (airSideReleaseSearchModel != null)
+                                              ? (airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo != null)
                                               ? Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
@@ -940,10 +940,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                             refrelCode: widget.refrelCode,
                                                             menuId: widget.menuId,
                                                             mainMenuName: widget.mainMenuName,
-                                                            isAirlineSignRequired: isAirlineSignRequired,
-                                                            iscustomerSignRequired: iscustomerSignRequired,
-                                                            issecuritySignRequired: issecuritySignRequired,
-                                                            iscisfSignRequired: iscisfSignRequired,
                                                           signatureList: signatureList,
                                                         ),));
 
@@ -1435,7 +1431,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                       fontWeight: FontWeight.w500,
                                                       textAlign: TextAlign.center),
                                                 ),
-                                              ) : Center(
+                                              )
+                                                  : Center(
                                                 child: Padding(
                                                   padding: const EdgeInsets.symmetric(vertical: 20),
                                                   child: CustomeText(
@@ -1450,6 +1447,18 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
 
                                             ],
+                                          )
+                                              : Center(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 20),
+                                              child: CustomeText(
+                                                  text: "${lableModel.recordNotFound}",
+                                                  // if record not found
+                                                  fontColor: MyColor.textColorGrey,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  fontWeight: FontWeight.w500,
+                                                  textAlign: TextAlign.center),
+                                            ),
                                           )
                                               : Center(
                                             child: Padding(
@@ -1560,15 +1569,25 @@ class _AirSideReleaseState extends State<AirSideRelease>
         filteredAirsideReleaseDetailList.clear();
         airSideReleaseSearchModel = null;
         igmNoEditingController.clear();
+        _selectedItems.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(igmNoFocusNode);
         });
       }else{
+
+        _selectedItems.clear();
+
         String result = barcodeScanResult.replaceAll(" ", "");
 
        /* String truncatedResult = result.length > 15
             ? result.substring(0, 15)
             : result;*/
+
+
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(scanBtnFocusNode);
+        },
+        );
 
         igmNoEditingController.text = result;
         getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);

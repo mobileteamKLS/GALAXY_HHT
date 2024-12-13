@@ -41,24 +41,24 @@ class AirsidePageLoadModel {
 }
 
 class DesignationWiseSignatureSettingList {
-  String? parameterName;
-  String? char;
-  String? text;
+  String? description;
+  String? code;
+  int? priority;
 
   DesignationWiseSignatureSettingList(
-      {this.parameterName, this.char, this.text});
+      {this.description, this.code, this.priority});
 
   DesignationWiseSignatureSettingList.fromJson(Map<String, dynamic> json) {
-    parameterName = json['ParameterName'];
-    char = json['Char'];
-    text = json['Text'];
+    description = json['Description'];
+    code = json['Code'];
+    priority = json['Priority'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['ParameterName'] = this.parameterName;
-    data['Char'] = this.char;
-    data['Text'] = this.text;
+    data['Description'] = this.description;
+    data['Code'] = this.code;
+    data['Priority'] = this.priority;
     return data;
   }
 }

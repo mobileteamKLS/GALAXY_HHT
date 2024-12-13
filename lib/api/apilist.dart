@@ -80,4 +80,16 @@ class Apilist{
   static String getTempratureUpdateApi = "/AirsideRelease/TemperatureUpdate";
 
 
+  //Export PallateStack
+  static String getPalletStackDefaultPageLoadApi = "/PalletStack/GetPageLoad";
+  static String getPalletStackPageLoadApi = "/PalletStack/Search";
+  static String getPalletStacklistApi = "/PalletStack/GetPalletDetails";
+  static String getPalletStackAssignFlightApi = "/PalletStack/AssignFlight";
+  static String getPalletStackULDConditionCodeApi = "/PalletStack/GetULDConditionCodeList";
+  static String getPalletStackUpdateULDConditionCodeApi = "/PalletStack/ULDConditionCodeUpdate";
+  static String addPalletStackApi = "/PalletStack/AddPallet";
+  static String removePalletStackApi = "/PalletStack/RemovePallet";
+  static String revokePalletStackApi = "/PalletStack/RevokeClose";
+  static String reopenClosePalletStackApi = "/PalletStack/ReopenClosePallet";
+
 }

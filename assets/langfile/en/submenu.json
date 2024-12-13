@@ -10,8 +10,8 @@
 
 
     "HHT008" : "Shipment Damage",
-    "HHT009" : "VCT Check",
-    "HHT010" : "Document Upload",
+    "HHT009" : "Pallet Stack",
+    "HHT010" : "AirSide Release",
 
     "HHT011" : "Flight Check-In",
     "HHT012" : "AWB Remarks",

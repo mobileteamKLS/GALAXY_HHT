@@ -28,6 +28,7 @@ import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
 import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
+import '../../export/pages/palletstatck/palletstackpage.dart';
 import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
 import '../../import/pages/shipmentdamage/shipmentdamagepages.dart';
@@ -251,18 +252,18 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                         ? GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
-                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "VCT Check" && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking").length,
+                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking").length,
                                       physics:  const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder: (BuildContext context, int index) {
 
                                         List<SubMenuName> filteredSubMenuList = state.subMenuModel.subMenuName!
-                                            .where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "VCT Check" && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking")
+                                            .where((menu) => menu.menuName != "Shipment Creation"  && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking")
                                             .toList();
 
                                         SubMenuName subMenuName = filteredSubMenuList[index];
 
-                                        String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang!.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
+                                        String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
 
                                         return SubMenuWidget(title: subMenuTitle,
                                           imageUrl: (subMenuName.imageIcon!.isNotEmpty) ? CommonUtils.getSVGImagePath(subMenuName.imageIcon!) : "",
@@ -324,6 +325,17 @@ class _SubMenuPageState extends State<SubMenuPage> {
 
                                             else if(menuId == SubMenuCodeUtils.AirSideRelease){
                                               NextScreen(AirSideRelease(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), "Y");
+                                            }
+
+                                            else if(menuId == SubMenuCodeUtils.PalletStatck){
+                                              NextScreen(PalletStatckPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

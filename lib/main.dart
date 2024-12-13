@@ -13,6 +13,7 @@ import 'package:galaxy/module/splash/page/splashscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'language/appLocalizations.dart';
+import 'module/export/services/palletstack/palletstacklogic/palletstackcubit.dart';
 import 'module/import/services/binning/binninglogic/binningcubit.dart';
 import 'module/splash/service/splashrepository.dart';
 import 'module/import/services/uldacceptance/uldacceptancelogic/uldacceptancecubit.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => BinningCubit(),),
         BlocProvider(create: (context) => ShipmentDamageCubit(),),
         BlocProvider(create: (context) => AirSideReleaseCubit(),),
+        BlocProvider(create: (context) => PalletStackCubit(),),
       ],
       child: MaterialApp(
 

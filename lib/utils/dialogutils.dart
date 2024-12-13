@@ -5,6 +5,8 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/language/model/dashboardModel.dart';
 import 'package:galaxy/language/model/lableModel.dart';
+import 'package:galaxy/module/export/services/palletstack/palletstacklogic/palletstackcubit.dart';
+import 'package:galaxy/module/export/services/palletstack/palletstacklogic/palletstackstate.dart';
 import 'package:galaxy/module/onboarding/sizeconfig.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
@@ -13,10 +15,14 @@ import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:galaxy/utils/validationmsgcodeutils.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttongreen.dart';
 import 'package:galaxy/widget/roundbutton.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vibration/vibration.dart';
 import '../core/images.dart';
+import '../module/export/model/palletstock/designtype.dart';
+import '../module/export/model/palletstock/palletstackuldconditioncodemodel.dart';
 import '../module/import/model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../module/import/pages/uldacceptance/ulddamagedpage.dart';
 import '../module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
@@ -1142,9 +1148,6 @@ class DialogUtils {
     );
   }
 
-
-
-
   static Future<Map<String, String>?> showULDAcceptanceDialog(BuildContext context, String uldNo, LableModel lableModel, ui.TextDirection textDirection, String isGroupIdIsMandatory, String location, int userIdentity, int companyCode, int menuId, String refrelCode, String title, List<ButtonRight> buttonRightsList) {
     TextEditingController uldOwnerController = TextEditingController();
     TextEditingController groupIdController = TextEditingController();
@@ -1428,8 +1431,6 @@ class DialogUtils {
       },
     );
   }
-
-
 
   static Future<Map<String, String>?> showUCRBottomULDDialog(BuildContext context, String uldNo, LableModel lableModel, ui.TextDirection textDirection, String isGroupIdIsMandatory, String location, int userIdentity, int companyCode, int menuId, String title,  List<ButtonRight> buttonRightsList) {
     TextEditingController ucrNumberController = TextEditingController();
@@ -1886,6 +1887,7 @@ class DialogUtils {
       int flightSeqNo,
       int uldSeqNo,
       String locationCode) {
+
     TextEditingController piecesController = TextEditingController();
     TextEditingController weightController = TextEditingController();
 
@@ -3176,6 +3178,962 @@ class DialogUtils {
       },
     );
   }
+
+  static Future<Map<String, String>?> showAssignFlightDialog(
+      BuildContext context,
+      int uldSeqNo,
+      LableModel lableModel,
+      ui.TextDirection textDirection,
+      int userIdentity,
+      int companyCode,
+      int menuId,
+      String title,
+      String flightNo,
+      String flightDate,
+      String uldNo) {
+
+    TextEditingController flightNoEditingController = TextEditingController();
+    TextEditingController dateEditingController = TextEditingController();
+
+    FocusNode flightNoFocusNode = FocusNode();
+    FocusNode dateFocusNode = FocusNode();
+    String errorText = "";
+    bool _isDatePickerOpen = false;
+    DateTime? _selectedDate;
+
+
+
+    Future<void> selectDate(BuildContext context, StateSetter setState) async {
+      _isDatePickerOpen = true;
+
+      final DateTime now = DateTime.now();
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate ?? now,
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100),
+      );
+
+
+      if (flightNoEditingController.text.isNotEmpty) {
+        if (picked != null) {
+          setState(() {
+            _selectedDate = picked;
+            dateEditingController.text = DateFormat('dd-MMM-yy').format(_selectedDate!).toUpperCase();
+          });
+
+        }
+        else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(flightNoFocusNode);
+          },
+          );
+        }
+      } else {
+        setState(() {
+
+          errorText = lableModel.enterFlightNo!;
+          WidgetsBinding.instance.addPostFrameCallback(
+                (_) {
+              FocusScope.of(context).requestFocus(flightNoFocusNode);
+            },
+          );
+        });
+      }
+
+
+      // Ensure the flag is reset even if the dialog is dismissed without selection
+      _isDatePickerOpen = false;
+
+      // Manually unfocus to close the keyboard and ensure consistent behavior
+      dateFocusNode.unfocus();
+    }
+
+
+    Future<void> selectDate1(BuildContext context, void Function(DateTime?) onDatePicked) async {
+      _isDatePickerOpen = true;
+
+      final DateTime now = DateTime.now();
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: _selectedDate ?? now,
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2100),
+      );
+
+      // Pass the picked date to the callback
+      onDatePicked(picked);
+
+      // Ensure the flag is reset even if the dialog is dismissed without selection
+      _isDatePickerOpen = false;
+
+      // Manually unfocus to close the keyboard and ensure consistent behavior
+      dateFocusNode.unfocus();
+    }
+
+
+    dateFocusNode.addListener(() {
+      if (dateFocusNode.hasFocus && !_isDatePickerOpen) {
+        // Use post frame callback to ensure it is called after build
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          selectDate1(context, (pickedDate) {
+            if (pickedDate != null) {
+              _selectedDate = pickedDate;
+              dateEditingController.text = DateFormat('dd-MMM-yy').format(pickedDate).toUpperCase();
+            }
+            _isDatePickerOpen = false; // Ensure the flag is reset
+          });
+        });
+      }
+    });
+
+
+
+    return showModalBottomSheet<Map<String, String>>(
+      backgroundColor: MyColor.colorWhite,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext newContext) {
+
+
+
+
+        return StatefulBuilder(
+            builder:(BuildContext context, StateSetter setState) {
+
+
+
+
+
+              return WillPopScope(
+                onWillPop: () async{
+                  flightNoEditingController.clear();
+                  dateEditingController.clear();
+                  Navigator.pop(context, {
+                    "status": "N",
+                  });
+                  return true; // Allow the modal to close
+                },
+                child: BlocListener<PalletStackCubit, PalletStackState>(listener: (context, state) {
+                  if (state is PalletStackInitialState) {
+                  }
+                  else if (state is PalletStackLoadingState) {
+                    // showing loading dialog in this state
+                    DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                  }
+                  else if (state is PalletStackAssignFlightSuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.palletStackAssignFlightModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                      // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.palletStackAssignFlightModel.statusMessage!;
+                      });
+                    }else{
+
+                      Navigator.pop(context, {
+                        "status": "D",
+                      });
+
+                       SnackbarUtil.showSnackbar(context, state.palletStackAssignFlightModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
+                    }
+                  }
+                  else if (state is PalletStackAssignFlightFailureState){
+                    Vibration.vibrate(duration: 500);
+                    setState(() {
+                      errorText = state.error;
+                    });
+                  }
+
+                },
+
+                  child:Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(newContext).viewInsets.bottom,  // Adjust for keyboard
+                    ),
+                    child: FractionallySizedBox(
+                      widthFactor: 1,  // Adjust the width to 90% of the screen width
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: SizeConfig.blockSizeVertical * 2,
+                            horizontal: SizeConfig.blockSizeHorizontal * 4,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomeText(text: title, fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                  InkWell(
+                                      onTap: () {
+
+                                        flightNoEditingController.clear();
+                                        dateEditingController.clear();
+
+                                        Navigator.pop(context, {
+                                          "status": "N",
+                                        });
+                                      },
+                                      child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                                ],
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              CustomDivider(
+                                space: 0,
+                                color: Colors.black,
+                                hascolor: true,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                  CustomeText(
+                                    text: "Assign flight for this ${uldNo}",
+                                    fontColor: MyColor.textColorGrey2,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w400,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex:1,
+                                    child: Directionality(
+                                      textDirection: textDirection,
+                                      child: CustomeEditTextWithBorder(
+                                        lablekey: "FLIGHT",
+                                        focusNode: flightNoFocusNode,
+                                        nextFocus: dateFocusNode,
+                                        textDirection: textDirection,
+                                        maxLength: 8,
+                                        controller: flightNoEditingController,
+                                        hasIcon: false,
+                                        hastextcolor: true,
+                                        isShowSuffixIcon: flightNoEditingController.text.isEmpty ? false : true,
+                                        animatedLabel: true,
+                                        needOutlineBorder: true,
+                                        labelText: "${lableModel.flightNo} *",
+                                        onChanged: (value, validate) {
+                                          dateEditingController.clear();
+                                          setState(() {
+                                            errorText = "";
+                                          });
+                                        },
+                                        readOnly: false,
+                                        textInputType: TextInputType.text,
+                                        inputAction: TextInputAction.next,
+                                        hintTextcolor: MyColor.colorGrey,
+                                        verticalPadding: 0,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Please fill out this field";
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                  Expanded(
+                                    flex:1,
+                                    child: Directionality(
+                                      textDirection: textDirection,
+                                      child: GroupIdCustomTextField(
+                                        controller: dateEditingController,
+                                        focusNode: dateFocusNode,
+                                        onPress: () => !_isDatePickerOpen
+                                            ? selectDate(context, setState)
+                                            : null,
+                                        hastextcolor: true,
+                                        animatedLabel: true,
+                                        needOutlineBorder: true,
+                                        labelText: "${lableModel.flightDate} *",
+                                        readOnly: true,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            errorText = "";
+                                          });
+                                        },
+                                        textInputType: TextInputType.text,
+                                        inputAction: TextInputAction.next,
+                                        hintTextcolor: MyColor.colorGrey,
+                                        verticalPadding: 0,
+                                        prefixicon: calender,
+                                        isShowSuffixIcon: true,
+                                        isPassword: false,
+                                        hasIcon: true,
+                                        isIcon: true,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                        iconSize: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,
+                                        validator: (value) {
+                                          if (value!.isEmpty) {
+                                            return "Please fill out this field";
+                                          } else {
+                                            return null;
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              if (errorText.isNotEmpty)  // Show error text if not empty
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: CustomeText(
+                                    text: errorText,
+                                    fontColor: MyColor.colorRed,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w500,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                              CustomDivider(
+                                space: 0,
+                                color: Colors.black,
+                                hascolor: true,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      isborderButton: true,
+                                      text: "${lableModel.cancel}",
+                                      press: () {
+                                        Navigator.pop(context, {
+                                          "status": "N",
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      text: "Assign",
+                                      press: () {
+
+                                        if (flightNoEditingController.text.isNotEmpty) {
+                                          if (dateEditingController.text.isNotEmpty) {
+
+                                           /* Navigator.pop(context, {
+                                              "status": "D",
+                                            });*/
+
+                                            context.read<PalletStackCubit>().getPalletAssignFlight(uldSeqNo, flightNoEditingController.text, dateEditingController.text, userIdentity, companyCode, menuId,);
+
+
+
+                                          } else {
+
+                                            setState(() {
+                                              errorText = lableModel.enterFlightDate!;
+                                            });
+
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(dateFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+
+                                          }
+                                        }
+                                        else {
+
+                                          setState(() {
+                                            errorText = lableModel.enterFlightNo!;
+                                          });
+
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(flightNoFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+
+            }
+        );
+      },
+    );
+  }
+
+
+  static Future<Map<String, String>?> showULDConditionCodeDialog(
+      BuildContext context,
+      int uldSeqNo,
+      LableModel lableModel,
+      ui.TextDirection textDirection,
+      int userIdentity,
+      int companyCode,
+      int menuId,
+      String title,
+      String uldNo,
+      List<ULDConditionCodeList> uldConditionCodeList) {
+
+    String errorText = "";
+
+    String conditionName= 'Select';
+    String conditionType = '';
+
+    List<ULDConditionCodeList> conditionList = [];
+
+    conditionList.add(ULDConditionCodeList(referenceDataIdentifier: "", referenceDescription: "Select"));
+    conditionList.addAll(uldConditionCodeList);
+
+
+    return showModalBottomSheet<Map<String, String>>(
+      backgroundColor: MyColor.colorWhite,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext newContext) {
+
+
+
+
+        return StatefulBuilder(
+            builder:(BuildContext context, StateSetter setState) {
+
+              return WillPopScope(
+                onWillPop: () async{
+                  Navigator.pop(context, {
+                    "status": "N",
+                  });
+                  return true; // Allow the modal to close
+                },
+                child: BlocListener<PalletStackCubit, PalletStackState>(listener: (context, state) {
+                  if (state is PalletStackInitialState) {
+                  }
+                  else if (state is PalletStackLoadingState) {
+                    // showing loading dialog in this state
+                    DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                  }
+                  else if (state is PalletStackUpdateULDConditionCodeSuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.palletStackUpdateULDConditionCodeModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                      // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.palletStackUpdateULDConditionCodeModel.statusMessage!;
+                      });
+                    }else{
+
+                      Navigator.pop(context, {
+                        "status": "D",
+                      });
+
+                      SnackbarUtil.showSnackbar(context, state.palletStackUpdateULDConditionCodeModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
+                    }
+                  }
+                  else if (state is PalletStackAssignFlightFailureState){
+                    Vibration.vibrate(duration: 500);
+                    setState(() {
+                      errorText = state.error;
+                    });
+                  }
+
+                },
+
+                  child:Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(newContext).viewInsets.bottom,  // Adjust for keyboard
+                    ),
+                    child: FractionallySizedBox(
+                      widthFactor: 1,  // Adjust the width to 90% of the screen width
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: SizeConfig.blockSizeVertical * 2,
+                            horizontal: SizeConfig.blockSizeHorizontal * 4,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomeText(text: title, fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                  InkWell(
+                                      onTap: () {
+
+
+                                        Navigator.pop(context, {
+                                          "status": "N",
+                                        });
+                                      },
+                                      child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                                ],
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              CustomDivider(
+                                space: 0,
+                                color: Colors.black,
+                                hascolor: true,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                  Flexible(
+                                    child: CustomeText(
+                                      text: "Add/Update ULD Condition code ${uldNo}",
+                                      fontColor: MyColor.textColorGrey2,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                      fontWeight: FontWeight.w400,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+
+                              DropdownButtonHideUnderline(
+                                child: DropdownButton<ULDConditionCodeList>(
+                                  isExpanded: true, // Make the dropdown content full width
+                                  value: null, // Set the value to null so no label is shown when closed
+                                  hint: Container(
+                                    padding: EdgeInsets.all(10),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: MyColor.colorWhite,
+                                      borderRadius:BorderRadius.circular(8),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                          spreadRadius: 2,
+                                          blurRadius: 5,
+                                          offset: const Offset(0, 3), // changes position of shadow
+                                        ),
+                                      ],
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        CustomeText( // Placeholder text when dropdown is closed
+                                          text: conditionName, // Show the label name as hint text
+                                          fontColor: MyColor.colorBlack,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9,
+                                          fontWeight: FontWeight.w500,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        SvgPicture.asset(circleDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3, color: MyColor.colorBlack ,)
+                                      ],
+                                    ),
+                                  ), // Dropdown icon
+                                  iconEnabledColor: Colors.transparent,
+                                  onChanged: (ULDConditionCodeList? newValue) {
+                                    if (newValue != null) {
+                                      String name = newValue.referenceDescription!;
+                                      String type = newValue.referenceDataIdentifier!;
+
+                                      setState(() {
+                                        errorText = "";
+                                        conditionType = type;
+                                        conditionName = name; // Set the language name for display
+                                      });
+
+                                    }
+                                  },
+                                  dropdownColor: Colors.white, // Set dropdown background color to white
+                                  items: conditionList.map<DropdownMenuItem<ULDConditionCodeList>>((ULDConditionCodeList designType) {
+
+                                    return DropdownMenuItem<ULDConditionCodeList>(
+                                      value: designType,
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+
+                                          CustomeText(
+                                            text: designType.referenceDescription ?? '',
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                         /* if (languageCode == _selectedLanguage)
+                                            Icon(Icons.done, color: Colors.black), */// Show done icon for selected language
+                                        ],
+                                      ),
+                                    );
+                                  }).toList() ?? [],
+                                ),
+                              ),
+
+                              (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              if (errorText.isNotEmpty)  // Show error text if not empty
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: CustomeText(
+                                    text: errorText,
+                                    fontColor: MyColor.colorRed,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w500,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                              CustomDivider(
+                                space: 0,
+                                color: Colors.black,
+                                hascolor: true,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      isborderButton: true,
+                                      text: "${lableModel.cancel}",
+                                      press: () {
+                                        Navigator.pop(context, {
+                                          "status": "N",
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      text: "Save",
+                                      press: () {
+
+                                        if (conditionType.isNotEmpty) {
+                                          context.read<PalletStackCubit>().getPalletUpdateULDConditionCode(uldSeqNo, conditionType, userIdentity, companyCode, menuId,);
+                                        }
+                                        else {
+
+                                          setState(() {
+                                            errorText = "Selecte condition code";
+                                          });
+
+                                          Vibration.vibrate(duration: 500);
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+
+            }
+        );
+      },
+    );
+  }
+
+  static Future<Map<String, String>?> showPalletCloseDialog(
+      BuildContext context,
+      int uldSeqNo,
+      LableModel lableModel,
+      ui.TextDirection textDirection,
+      int userIdentity,
+      int companyCode,
+      int menuId,
+      String title,
+      String messageBody,
+      String uldNo) {
+
+    String errorText = "";
+
+
+
+
+    return showModalBottomSheet<Map<String, String>>(
+      backgroundColor: MyColor.colorWhite,
+      context: context,
+      isScrollControlled: true,
+      builder: (BuildContext newContext) {
+
+
+
+
+        return StatefulBuilder(
+            builder:(BuildContext context, StateSetter setState) {
+
+
+
+
+
+              return WillPopScope(
+                onWillPop: () async{
+                  Navigator.pop(context, {
+                    "status": "N",
+                  });
+                  return true; // Allow the modal to close
+                },
+                child: BlocListener<PalletStackCubit, PalletStackState>(listener: (context, state) {
+                  if (state is PalletStackInitialState) {
+                  }
+                  else if (state is PalletStackLoadingState) {
+                    // showing loading dialog in this state
+                    DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                  }
+                  else if (state is RevokePalletStackSuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.revokePalletStackModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                      // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.revokePalletStackModel.statusMessage!;
+                      });
+                    }else{
+
+                      Navigator.pop(context, {
+                        "status": "D",
+                      });
+
+                      SnackbarUtil.showSnackbar(context, state.revokePalletStackModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
+                    }
+                  }
+                  else if (state is RevokePalletStackFailureState){
+                    Vibration.vibrate(duration: 500);
+                    setState(() {
+                      errorText = state.error;
+                    });
+                  }
+                  else if (state is ReopenClosePalletStackASuccessState){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.reopenClosePalletStackModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                      // SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      setState(() {
+                        errorText = state.reopenClosePalletStackModel.statusMessage!;
+                      });
+                    }else{
+
+                      Navigator.pop(context, {
+                        "status": "D",
+                      });
+
+                      SnackbarUtil.showSnackbar(context, state.reopenClosePalletStackModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
+                    }
+                  }
+                  else if (state is ReopenClosePalletStackAFailureState){
+                    Vibration.vibrate(duration: 500);
+                    setState(() {
+                      errorText = state.error;
+                    });
+                  }
+                },
+
+                  child:Padding(
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(newContext).viewInsets.bottom,  // Adjust for keyboard
+                    ),
+                    child: FractionallySizedBox(
+                      widthFactor: 1,  // Adjust the width to 90% of the screen width
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            vertical: SizeConfig.blockSizeVertical * 2,
+                            horizontal: SizeConfig.blockSizeHorizontal * 4,
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  CustomeText(text: title, fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                  InkWell(
+                                      onTap: () {
+
+
+                                        Navigator.pop(context, {
+                                          "status": "N",
+                                        });
+                                      },
+                                      child: SvgPicture.asset(cancel, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,)),
+                                ],
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              CustomDivider(
+                                space: 0,
+                                color: Colors.black,
+                                hascolor: true,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+                              Row(
+                                children: [
+                                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                  Flexible(
+                                    child: CustomeText(
+                                      text: messageBody,
+                                      fontColor: MyColor.textColorGrey2,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                      fontWeight: FontWeight.w500,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(height: SizeConfig.blockSizeVertical),
+
+                              (errorText.isNotEmpty) ? SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              if (errorText.isNotEmpty)  // Show error text if not empty
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: CustomeText(
+                                    text: errorText,
+                                    fontColor: MyColor.colorRed,
+                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                    fontWeight: FontWeight.w500,
+                                    textAlign: TextAlign.start,
+                                  ),
+                                ),
+                              CustomDivider(
+                                space: 0,
+                                color: Colors.black,
+                                hascolor: true,
+                                thickness: 1,
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      isborderButton: true,
+                                      text: "${lableModel.cancel}",
+                                      press: () {
+                                        Navigator.pop(context, {
+                                          "status": "N",
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonGreen(
+                                      color: MyColor.colorRed,
+                                      text: "Re-Open",
+                                      press: () {
+                                        context.read<PalletStackCubit>().reopenClosePalletStackA(uldSeqNo, "R", userIdentity, companyCode, menuId,);
+                                      },
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonGreen(
+                                      color: MyColor.colorRed,
+                                      text: "Revoke",
+                                      press: () {
+                                        context.read<PalletStackCubit>().revokePalletStack(uldSeqNo, userIdentity, companyCode, menuId,);
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+
+            }
+        );
+      },
+    );
+  }
+
+
+  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo,) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: "Close pallet",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              CustomeText(text: "Do you want close pallet ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+            ],
+          ),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+           InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
+
 
 
 }
