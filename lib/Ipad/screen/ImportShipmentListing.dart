@@ -541,7 +541,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 const SizedBox(width: 8),
                 SizedBox(
                     width: MediaQuery.sizeOf(context).width*0.11,
-                    child: buildLabel(shipment.houseNo==""?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                    child: buildLabel((shipment.houseNo.isEmpty)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
                 const SizedBox(width: 20),
                 buildLabel(shipment.shipmentStatus.toUpperCase(), Colors.lightBlue,20),
                 const SizedBox(width: 8),
@@ -576,14 +576,14 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                            Row(
                             children: [
                               Text("HAWB No: "),
-                              Text(shipment.houseNo==""?" - ":shipment.houseNo,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              Text((shipment.houseNo.isEmpty)?" - ":shipment.houseNo,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
                           const SizedBox(height: 8),
                           Row(
                             children: [
                               const Text("Unit: "),
-                              Text(shipment.weightUnit,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              Text(shipment.weightUnit.toUpperCase(),style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
                         ],
@@ -594,7 +594,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                         children: [
                           Row(
                             children: [
-                              const Text("Declared PCS: "),
+                              const Text("Declared Pcs: "),
                               Text("${shipment.awbPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
@@ -614,8 +614,8 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                         children: [
                           Row(
                             children: [
-                              const Text("Declared Weight: "),
-                              Text("${shipment.awbWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              const Text("Declared Wt: "),
+                              Text("${shipment.awbWeight.toStringAsFixed(2)}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
                           const SizedBox(height: 4),
@@ -623,7 +623,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                             children: [
                               const Text("Accepted Wt: "),
                               Text(
-                                "${shipment.acceptedWeight}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                "${shipment.acceptedWeight.toStringAsFixed(2)}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                             ],
                           ),
                         ],

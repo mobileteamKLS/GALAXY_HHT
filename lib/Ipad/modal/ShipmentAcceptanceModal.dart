@@ -78,6 +78,54 @@ class Customer {
   }
 }
 
+class RemainingPcs {
+  String documentNo;
+  String houseNo;
+  String groupId;
+  int agentId;
+  String commodity;
+  int remainingPkg;
+  double remainingWt;
+  int consignmentRowId;
+  int houseRowId;
+
+  RemainingPcs({
+    required this.documentNo,
+    required this.houseNo,
+    required this.groupId,
+    required this.agentId,
+    required this.commodity,
+    required this.remainingPkg,
+    required this.remainingWt,
+    required this.consignmentRowId,
+    required this.houseRowId,
+  });
+
+  factory RemainingPcs.fromJSON(Map<String, dynamic> json) => RemainingPcs(
+    documentNo: json["DocumentNo"],
+    houseNo: json["HouseNo"],
+    groupId: json["GroupId"],
+    agentId: json["AgentId"],
+    commodity: json["Commodity"],
+    remainingPkg: json["RemainingPkg"],
+    remainingWt: json["RemainingWt"],
+    consignmentRowId: json["ConsignmentRowID"],
+    houseRowId: json["HouseRowId"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "DocumentNo": documentNo,
+    "HouseNo": houseNo,
+    "GroupId": groupId,
+    "AgentId": agentId,
+    "Commodity": commodity,
+    "RemainingPkg": remainingPkg,
+    "RemainingWt": remainingWt,
+    "ConsignmentRowID": consignmentRowId,
+    "HouseRowId": houseRowId,
+  };
+}
+
 class ConsignmentAcceptedList {
   String documentNo;
   String houseNo;
@@ -154,17 +202,15 @@ class DamageData14BList {
   String? isSelected;
 
 
-  DamageData14BList(
-      {this.referenceDataIdentifier,
-        this.referenceDescription,
-        this.isSelected,
-   });
+  DamageData14BList({this.referenceDataIdentifier,
+    this.referenceDescription,
+    this.isSelected,
+  });
 
   DamageData14BList.fromJson(Map<String, dynamic> json) {
     referenceDataIdentifier = json['REFERENCE_DATA_IDENTIFIER'];
     referenceDescription = json['REFERENCE_DESCRIPTION'];
     isSelected = json['IsSelected'];
-
   }
 
   Map<String, dynamic> toJson() {
@@ -175,5 +221,6 @@ class DamageData14BList {
 
     return data;
   }
-}
 
+
+}

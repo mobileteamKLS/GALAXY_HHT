@@ -61,6 +61,7 @@ class _ShipmentAcceptanceManuallyState
   FocusNode rcvNOPFocusNode = FocusNode();
   List<ConsignmentAcceptedList> acceptedPiecesList = [];
   List<ConsignmentAcceptedList> acceptedConsignment = [];
+  List<RemainingPcs> remainPiecesList = [];
   int pieceStatus = 0;
   int selectedComId=-1;
   int selectedAgentId=-1;
@@ -86,7 +87,7 @@ class _ShipmentAcceptanceManuallyState
       () {
         if (!rcvNOPFocusNode.hasFocus) {
           print("LOST focus NOP");
-          if (acceptedConsignment.isNotEmpty) {
+          if (remainPiecesList.isNotEmpty) {
             print("NOt empty");
             checkPieces();
           }
@@ -103,6 +104,10 @@ class _ShipmentAcceptanceManuallyState
     houseFocusNode.addListener(
       () {
         if (!houseFocusNode.hasFocus) {
+
+          if(houseController.text.isEmpty){
+            return;
+          }
           print("LOST focus house");
           leftAWBFocus();
         }
@@ -130,6 +135,7 @@ class _ShipmentAcceptanceManuallyState
     rcvWTController.text="0.00";
     acceptedPiecesList = [];
     acceptedConsignment = [];
+    remainPiecesList = [];
     setState(() {
       pieceStatus = 0;
     });
@@ -148,14 +154,14 @@ class _ShipmentAcceptanceManuallyState
       });
     }
     if ((int.parse(rcvNOPController.text) +
-            int.parse(acceptedConsignment.first.nop)) ==
+            remainPiecesList.first.remainingPkg) ==
         acceptedConsignment.first.totalNpo) {
       setState(() {
         pieceStatus = 1; //matches
         print("status $pieceStatus");
       });
     } else if ((int.parse(rcvNOPController.text) +
-            int.parse(acceptedConsignment.first.nop)) <
+        remainPiecesList.first.remainingPkg) <
         acceptedConsignment.first.totalNpo) {
       setState(() {
         pieceStatus = 2; //partial
@@ -225,6 +231,7 @@ class _ShipmentAcceptanceManuallyState
   }
 
   awbSearch() async {
+    FocusScope.of(context).unfocus();
     DialogUtils.showLoadingDialog(context);
     clearFieldsOnGet();
     var queryParams = {
@@ -246,9 +253,9 @@ class _ShipmentAcceptanceManuallyState
       } else {
         hasNoRecord = false;
       }
+      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
       print("is empty record$hasNoRecord");
       String status = jsonData['ReturnOutput'][0]['Status'];
-      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
 
       if (status == 'E') {
         print("Error: $statusMessage");
@@ -256,14 +263,33 @@ class _ShipmentAcceptanceManuallyState
         showDataNotFoundDialog(context, statusMessage);
         return;
       } else {
-        totalNOPController.text =
-            jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
-        totalWTController.text =
-            jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+
       //   houseController.text=
       // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
         List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
         List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
+        List<dynamic> remainingPcsList = jsonData['ConsignmentPending'];
+        if(houseController.text.isEmpty){
+          if(accConsignment.isNotEmpty && accConsignment.length>1){
+            print("multiple house ");
+            DialogUtils.hideLoadingDialog(context);
+            showDataNotFoundDialog(context, "Please enter HAWB No.");
+            return;
+          }
+          else if(accConsignment.isNotEmpty && accConsignment.length==1){
+            houseController.text =
+                jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
+            DialogUtils.hideLoadingDialog(context);
+            awbSearchForHouse();
+          }
+        }
+        totalNOPController.text =
+            jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
+        totalWTController.text =
+            jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+        rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
+        rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
+
         setState(() {
           acceptedPiecesList = accPcsList
               .map((json) => ConsignmentAcceptedList.fromJSON(json))
@@ -271,9 +297,88 @@ class _ShipmentAcceptanceManuallyState
           acceptedConsignment = accConsignment
               .map((json) => ConsignmentAcceptedList.fromJSON(json))
               .toList();
+          remainPiecesList = remainingPcsList
+              .map((json) => RemainingPcs.fromJSON(json))
+              .toList();
         });
         print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
         print("Acceptance Consignment ${acceptedConsignment.length}");
+        print("Acceptance Consignment ${remainPiecesList.length}");
+      }
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
+      DialogUtils.hideLoadingDialog(context);
+      print(onError);
+    });
+  }
+  awbSearchForHouse() async {
+    FocusScope.of(context).unfocus();
+    DialogUtils.showLoadingDialog(context);
+    clearFieldsOnGet();
+    var queryParams = {
+      "InputXML":
+          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
+    };
+
+    await authService
+        .sendGetWithBody("ShipmentAcceptance/GetShipmentDetails", queryParams)
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      } else {
+        hasNoRecord = false;
+      }
+      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
+      print("is empty record$hasNoRecord");
+      String status = jsonData['ReturnOutput'][0]['Status'];
+
+      if (status == 'E') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, statusMessage);
+        return;
+      } else {
+
+      //   houseController.text=
+      // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
+        List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
+        List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
+        List<dynamic> remainingPcsList = jsonData['ConsignmentPending'];
+        if(houseController.text.isEmpty){
+          if(accConsignment.isNotEmpty && accConsignment.length>1){
+            print("multiple house ");
+            DialogUtils.hideLoadingDialog(context);
+            showDataNotFoundDialog(context, "Please enter HAWB No.");
+            return;
+          }
+          else if(accConsignment.isNotEmpty && accConsignment.length>1){
+
+          }
+        }
+        totalNOPController.text =
+            jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
+        totalWTController.text =
+            jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+        setState(() {
+          acceptedPiecesList = accPcsList
+              .map((json) => ConsignmentAcceptedList.fromJSON(json))
+              .toList();
+          acceptedConsignment = accConsignment
+              .map((json) => ConsignmentAcceptedList.fromJSON(json))
+              .toList();
+          remainPiecesList = remainingPcsList
+              .map((json) => RemainingPcs.fromJSON(json))
+              .toList();
+        });
+        print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
+        print("Acceptance Consignment ${acceptedConsignment.length}");
+        print("Acceptance Consignment ${remainPiecesList.length}");
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
@@ -428,6 +533,22 @@ class _ShipmentAcceptanceManuallyState
                                 ),
                               ],
                             ),
+                            // GestureDetector(
+                            //   child: const Row(
+                            //     children: [Icon(CupertinoIcons.restart, color: Colors.grey,),
+                            //       Text(
+                            //         'Reset',
+                            //         style: TextStyle(
+                            //             fontWeight: FontWeight.normal, fontSize: 18,color: MyColor.primaryColorblue),
+                            //       ),],
+                            //   ),
+                            //   onTap: (){
+                            //     setState(() {
+                            //
+                            //     });
+                            //     print("RESET");
+                            //   },
+                            // )
                           ],
                         ),
                         const SizedBox(
@@ -1204,7 +1325,7 @@ class _ShipmentAcceptanceManuallyState
                                       rows: acceptedPiecesList.map((item) {
                                         return DataRow(cells: [
                                           DataCell(Text(item.nop)),
-                                          DataCell(Text('${item.weight}')),
+                                          DataCell(Text(item.weight.toStringAsFixed(2))),
                                           const DataCell(Text('KG')),
                                           DataCell(Text(item.acceptanceBy)),
                                           DataCell(Text(item.acceptanceOn)),

@@ -978,7 +978,8 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
             ),
           ],
         )),
-        DataCell(TextFormField(
+        DataCell(
+          TextFormField(
           controller: piecesController,
           decoration: InputDecoration(
             hintText: 'Enter RFE Pieces',
@@ -1009,7 +1010,8 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
               data.col7 = value;
             });
           },
-        )),
+        ),
+        ),
         DataCell(SizedBox(
           width: MediaQuery.sizeOf(context).width * 0.3,
           child: TextField(

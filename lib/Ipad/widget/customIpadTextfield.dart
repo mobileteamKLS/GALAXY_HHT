@@ -195,6 +195,82 @@ class RoundedIconButton extends StatelessWidget {
     );
   }
 }
+class RoundedIconButtonNew extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final Widget targetPage;
+  final Color containerColor;
+  final Color iconColor;
+  final Color textColor;
+
+  const RoundedIconButtonNew({
+    Key? key,
+    required this.icon,
+    required this.text,
+    required this.targetPage,
+    this.containerColor = Colors.blue,
+    this.iconColor = Colors.white,
+    this.textColor = Colors.black,
+  }) : super(key: key);
+
+  void _navigate(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => targetPage),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _navigate(context),
+      child: Container(
+        width: MediaQuery.sizeOf(context).width*0.29,
+        height:MediaQuery.sizeOf(context).height*0.22 ,
+        decoration: BoxDecoration(
+          color: containerColor,
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              spreadRadius: 2,
+              blurRadius: 2,
+              offset: const Offset(
+                  0, 3), // changes position of shadow
+            ),
+          ],
+        ),
+        padding: EdgeInsets.all(20),
+        child:Column(
+          
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 200,
+              padding: EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xffe1d8f0)
+              ),
+              child: Icon(
+                icon,
+                color: iconColor,
+                size: 64,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              text,
+              style: TextStyle(color: textColor, fontSize: 24),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
 
 class CommodityService {
   static List<Commodity> find(String search) {
