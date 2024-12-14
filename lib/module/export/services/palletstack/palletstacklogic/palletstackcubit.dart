@@ -97,10 +97,10 @@ class PalletStackCubit extends Cubit<PalletStackState>{
     }
   }
 
-  Future<void> addPalletStack(int uldSeqNo, String uldNo, String locationCode,  int userId, int companyCode, int menuId) async {
+  Future<void> addPalletStack(int uldSeqNo, String scan, String locationCode,  int userId, int companyCode, int menuId) async {
     emit(PalletStackLoadingState());
     try {
-      final addPalletStackModel = await palateStackRepository.addPalletStackModel(uldSeqNo, uldNo, locationCode, userId, companyCode, menuId);
+      final addPalletStackModel = await palateStackRepository.addPalletStackModel(uldSeqNo, scan, locationCode, userId, companyCode, menuId);
       emit(AddPalletStackSuccessState(addPalletStackModel));
     } catch (e) {
       emit(AddPalletStackFailureState(e.toString()));

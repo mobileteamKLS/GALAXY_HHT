@@ -1033,8 +1033,8 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
     context.read<PalletStackCubit>().getPalletULDConditionCodeA(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
   }
 
-  void addPalletStack(int uldSeqNo, String uldNo, String locationCode) {
-    context.read<PalletStackCubit>().addPalletStack(uldSeqNo, uldNo, locationCode , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
+  void addPalletStack(int uldSeqNo, String scan, String locationCode) {
+    context.read<PalletStackCubit>().addPalletStack(uldSeqNo, scan, locationCode , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
   }
 
   void removePalletStack(int uldSeqNo) {

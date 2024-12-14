@@ -319,13 +319,13 @@ class PalateStackRepository{
 
 
 
-  Future<AddPalletStackModel> addPalletStackModel(int uldSeqNo, String uldNo, String locationCode, int userId, int companyCode, int menuId) async {
+  Future<AddPalletStackModel> addPalletStackModel(int uldSeqNo, String scan, String locationCode, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
         "ULDSeqNo": uldSeqNo,
-        "PalletNo": uldNo,
+        "Scan": scan,
         "LocationCode": locationCode,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
