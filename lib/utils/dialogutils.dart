@@ -2745,7 +2745,7 @@ class DialogUtils {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomeText(text: "Change Battery", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                          CustomeText(text: "${lableModel.changeBattery}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
                           InkWell(
                               onTap: () {
                                 Navigator.pop(context, null);  // Return null when "Cancel" is pressed
@@ -2770,7 +2770,8 @@ class DialogUtils {
                             width: SizeConfig.blockSizeHorizontal,
                           ),
                           CustomeText(
-                              text: "Change battery for this ${uldNo}",
+                              //text: "Change battery for this ${uldNo}",
+                              text : CommonUtils.formatMessage("${lableModel.chanebetteryforthis}", [uldNo]),
                               fontColor: MyColor.textColorGrey2,
                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                               fontWeight: FontWeight.w400,
@@ -2788,7 +2789,7 @@ class DialogUtils {
                         hastextcolor: true,
                         animatedLabel: true,
                         needOutlineBorder: true,
-                        labelText: "Battery",
+                        labelText: "${lableModel.battery}",
                         readOnly: false,
                         controller: batteryController,
                         maxLength: 3,
@@ -2862,7 +2863,7 @@ class DialogUtils {
 
                                 if (batteryController.text.isEmpty) {
                                   setState(() {
-                                    errorText = "Please enter battery level";
+                                    errorText = "${lableModel.betterymsg}";
                                   });
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(batteryFocusNode);
@@ -2873,7 +2874,7 @@ class DialogUtils {
 
                                 if (batteryValue! < 0 || batteryValue > 100) {
                                   setState(() {
-                                    errorText = "Value must be between 0 and 100";
+                                    errorText = "${lableModel.betteryminimummsg}";
                                   });
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(batteryFocusNode);
@@ -2947,7 +2948,7 @@ class DialogUtils {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CustomeText(text: "Change Temperature", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                          CustomeText(text: "${lableModel.changeTemperature}", fontColor:  MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
                           InkWell(
                               onTap: () {
                                 Navigator.pop(context, null);  // Return null when "Cancel" is pressed
@@ -2972,7 +2973,8 @@ class DialogUtils {
                             width: SizeConfig.blockSizeHorizontal,
                           ),
                           CustomeText(
-                              text: "Change temperature for this ${uldNo}",
+                             // text: "Change temperature for this ${uldNo}",
+                              text : CommonUtils.formatMessage("${lableModel.changeTempforthis}", [uldNo]),
                               fontColor: MyColor.textColorGrey2,
                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                               fontWeight: FontWeight.w400,
@@ -2994,7 +2996,7 @@ class DialogUtils {
                               hastextcolor: true,
                               animatedLabel: true,
                               needOutlineBorder: true,
-                              labelText: "Temperature",
+                              labelText: "${lableModel.temperature}",
                               readOnly: false,
                               controller: tempretureController,
                               maxLength: 4,
@@ -3136,7 +3138,7 @@ class DialogUtils {
                                 int? temperatureValue = int.tryParse(tempretureController.text);
                                 if (tempretureController.text.isEmpty) {
                                   setState(() {
-                                    errorText = "Please enter temperature level";
+                                    errorText = "${lableModel.templevelmsg}";
                                   });
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(tempretureFocusNode);
@@ -3147,7 +3149,7 @@ class DialogUtils {
 
                                 if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
                                   setState(() {
-                                    errorText = "Temperature must be between -100 and 100";
+                                    errorText = "${lableModel.tempminimummsg}";
                                   });
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(tempretureFocusNode);
@@ -3712,7 +3714,7 @@ class DialogUtils {
                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                   Flexible(
                                     child: CustomeText(
-                                      text: "Add/Update ULD Condition code ${uldNo}",
+                                      text: "${lableModel.addupdateconditioncode} ${uldNo}",
                                       fontColor: MyColor.textColorGrey2,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                       fontWeight: FontWeight.w400,
@@ -3833,7 +3835,7 @@ class DialogUtils {
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Save",
+                                      text: "${lableModel.save}",
                                       press: () {
 
                                         if (conditionType.isNotEmpty) {
@@ -3842,7 +3844,7 @@ class DialogUtils {
                                         else {
 
                                           setState(() {
-                                            errorText = "Selecte condition code";
+                                            errorText = "${lableModel.selecteconditioncode}";
                                           });
 
                                           Vibration.vibrate(duration: 500);
@@ -3881,9 +3883,6 @@ class DialogUtils {
 
     String errorText = "";
 
-
-
-
     return showModalBottomSheet<Map<String, String>>(
       backgroundColor: MyColor.colorWhite,
       context: context,
@@ -3895,10 +3894,6 @@ class DialogUtils {
 
         return StatefulBuilder(
             builder:(BuildContext context, StateSetter setState) {
-
-
-
-
 
               return WillPopScope(
                 onWillPop: () async{
@@ -3933,6 +3928,7 @@ class DialogUtils {
                     }
                   }
                   else if (state is RevokePalletStackFailureState){
+                    DialogUtils.hideLoadingDialog(context);
                     Vibration.vibrate(duration: 500);
                     setState(() {
                       errorText = state.error;
@@ -3957,6 +3953,7 @@ class DialogUtils {
                     }
                   }
                   else if (state is ReopenClosePalletStackAFailureState){
+                    DialogUtils.hideLoadingDialog(context);
                     Vibration.vibrate(duration: 500);
                     setState(() {
                       errorText = state.error;
@@ -4059,7 +4056,7 @@ class DialogUtils {
                                     flex: 1,
                                     child: RoundedButtonGreen(
                                       color: MyColor.colorRed,
-                                      text: "Re-Open",
+                                      text: "${lableModel.reOpen}",
                                       press: () {
                                         context.read<PalletStackCubit>().reopenClosePalletStackA(uldSeqNo, "R", userIdentity, companyCode, menuId,);
                                       },
@@ -4070,7 +4067,7 @@ class DialogUtils {
                                     flex: 1,
                                     child: RoundedButtonGreen(
                                       color: MyColor.colorRed,
-                                      text: "Revoke",
+                                      text: "${lableModel.revoke}",
                                       press: () {
                                         context.read<PalletStackCubit>().revokePalletStack(uldSeqNo, userIdentity, companyCode, menuId,);
                                       },
@@ -4094,7 +4091,7 @@ class DialogUtils {
   }
 
 
-  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo,) {
+  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo, LableModel lableModel) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -4103,14 +4100,14 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
-          title: CustomeText(text: "Close pallet",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          title: CustomeText(text: "${lableModel.closepallet}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
 
-              CustomeText(text: "Do you want close pallet ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+              CustomeText(text: "${lableModel.doyouwantclosepallet}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
             ],
           ),
           actions: <Widget>[
@@ -4118,7 +4115,7 @@ class DialogUtils {
                 onTap: () {
                   Navigator.of(context).pop(false);
                 },
-                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
 
@@ -4126,7 +4123,7 @@ class DialogUtils {
                 onTap: () {
                   Navigator.of(context).pop(true);
                 },
-                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
 
           ],
         );

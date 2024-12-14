@@ -484,7 +484,7 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                                 child: RoundedButtonBlue(
                                                                   verticalPadding: 5,
                                                                   textSize: 12,
-                                                                  text: "Reset",
+                                                                  text: "${lableModel.clear}",
                                                                   press: () {
                                                                     controllers[index].clear();
                                                                     setState(() {
@@ -511,12 +511,12 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                                   : RoundedButtonBlue(
                                                                   verticalPadding: 5,
                                                                   textSize: 12,
-                                                                  text: "Record",
+                                                                  text: "${lableModel.record}",
                                                                   press: () async {
                                                                     signatureUpload = "N";
                                                                     print("Signature======= pending");
 
-                                                                    Uint8List? signature = await controllers![index].toPngBytes();
+                                                                    Uint8List? signature = await controllers[index].toPngBytes();
                                                                     if(signature != null){
 
                                                                       String base64Image = base64Encode(signature);
@@ -537,7 +537,7 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                                       Vibration.vibrate(duration: 500);
                                                                       SnackbarUtil.showSnackbar(
                                                                           context,
-                                                                          "Please enter sign first",
+                                                                          "${lableModel.entersignmsg}",
                                                                           MyColor.colorRed,
                                                                           icon: FontAwesomeIcons.times);
                                                                     }
@@ -573,13 +573,13 @@ class _ESignaturePageState extends State<ESignaturePage> {
                                                     Expanded(
                                                       flex: 1,
                                                       child: RoundedButtonBlue(
-                                                        text: "Release",
+                                                        text: "${lableModel.release}",
                                                         press: () async {
 
                                                           if (isSignatureRecorded.contains(false)) {
                                                             SnackbarUtil.showSnackbar(
                                                               context,
-                                                              "Please record all required signatures before release.",
+                                                              "${lableModel.allsignaturerequired}",
                                                               MyColor.colorRed,
                                                               icon: FontAwesomeIcons.times,
                                                             );

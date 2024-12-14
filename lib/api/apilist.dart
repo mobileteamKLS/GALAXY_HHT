@@ -89,7 +89,7 @@ class Apilist{
   static String getPalletStackUpdateULDConditionCodeApi = "/PalletStack/ULDConditionCodeUpdate";
   static String addPalletStackApi = "/PalletStack/AddPallet";
   static String removePalletStackApi = "/PalletStack/RemovePallet";
-  static String revokePalletStackApi = "/PalletStack/RevokeClose";
-  static String reopenClosePalletStackApi = "/PalletStack/ReopenClosePallet";
+  static String revokePalletStackApi = "/PalletStack/RevokeULD";
+  static String reopenClosePalletStackApi = "/PalletStack/PalletStatusUpdate";
 
 }

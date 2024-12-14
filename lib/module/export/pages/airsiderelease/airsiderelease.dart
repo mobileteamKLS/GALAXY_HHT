@@ -659,7 +659,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                             hastextcolor: true,
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
-                                                            labelText: "Door *",
+                                                            labelText: "${lableModel.door} *",
                                                             readOnly: false,
                                                             maxLength: 15,
                                                             isShowSuffixIcon: _isvalidateLocation,
@@ -867,7 +867,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                 textAlign: TextAlign.center),
 
                                                             CustomeText(
-                                                                text: "Containers",
+                                                                text: "${lableModel.containers}",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
                                                                 fontWeight: FontWeight.w400,
@@ -890,7 +890,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                 textAlign: TextAlign.center),
 
                                                             CustomeText(
-                                                                text: "Pallets",
+                                                                text: "${lableModel.pallet}",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
                                                                 fontWeight: FontWeight.w400,
@@ -910,7 +910,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                 textAlign: TextAlign.center),
 
                                                             CustomeText(
-                                                                text: "BULK / Trolley",
+                                                                text: "${lableModel.bULK} / ${lableModel.trolley}",
                                                                 fontColor: MyColor.textColorGrey2,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
                                                                 fontWeight: FontWeight.w400,
@@ -924,7 +924,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
 
                                               (_selectedItems.isNotEmpty) ? RoundedButtonBlue(
                                                 focusNode: releaseAllFocusNode,
-                                                text: "Release",
+                                                text: "${lableModel.release}",
                                                 press: () async {
                                                   if (_selectedItems.isNotEmpty) {
 
@@ -933,7 +933,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                         builder: (context) => ESignaturePage(
                                                             importSubMenuList: widget.importSubMenuList,
                                                             exportSubMenuList: widget.exportSubMenuList,
-                                                            title: "E-Sign & Release",
+                                                            title: "${lableModel.esignRelease}",
                                                             selectedItems: _selectedItems,
                                                             locationCode: locationController.text,
                                                             flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
@@ -969,8 +969,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                   } else {
                                                     // If no items are selected, show a warning message
                                                     ScaffoldMessenger.of(context).showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text("No items selected to release."),
+                                                       SnackBar(
+                                                        content: Text("${lableModel.noitemselected}"),
                                                       ),
                                                     );
                                                   }
@@ -987,7 +987,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                         width: SizeConfig.blockSizeHorizontal,
                                                       ),
                                                       CustomeText(
-                                                          text: "Show release and pending",
+                                                          text: "${lableModel.showreleasepending}",
                                                           fontColor: MyColor.textColorGrey2,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w500,
@@ -1065,7 +1065,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                           getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
                                                         }
                                                       }else{
-                                                        SnackbarUtil.showSnackbar(context, "No shipment found", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                        SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                         Vibration.vibrate(duration: 500);
                                                       }
 
@@ -1118,7 +1118,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                           )),
                                                                       (airSideReleaseDetail.isReleased == "N") ? Expanded(
                                                                         flex: 2,
-                                                                        child: RoundedButtonBlue(text: isSelected ? "Unselect" : "Select",
+                                                                        child: RoundedButtonBlue(text: isSelected ? "${lableModel.unselect}" : "${lableModel.select}",
                                                                           textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                           verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
                                                                           press: () {
@@ -1196,7 +1196,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                       (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
                                                                         children: [
                                                                           CustomeText(
-                                                                            text: "Temp. : ",
+                                                                            text: "${lableModel.temp}. : ",
                                                                             fontColor: MyColor.textColorGrey2,
                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                             fontWeight: FontWeight.w400,
@@ -1243,7 +1243,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                       (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
                                                                         children: [
                                                                           CustomeText(
-                                                                            text: "Battery : ",
+                                                                            text: "${lableModel.battery} : ",
                                                                             fontColor: MyColor.textColorGrey2,
                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                             fontWeight: FontWeight.w400,
@@ -1341,7 +1341,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                                 color: airSideReleaseDetail.isReleased == "Y" ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                                             ),
                                                                             child: CustomeText(
-                                                                              text: airSideReleaseDetail.isReleased == "Y" ? "Released" : "Pending for release",
+                                                                              text: airSideReleaseDetail.isReleased == "Y" ? "${lableModel.released}" : "${lableModel.pendingrelease}",
                                                                               fontColor: MyColor.textColorGrey3,
                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                                                               fontWeight: FontWeight.w400,
@@ -1379,7 +1379,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                                   getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
                                                                                 }
                                                                               }else{
-                                                                                SnackbarUtil.showSnackbar(context, "No shipment found", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                                SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                                 Vibration.vibrate(duration: 500);
                                                                               }
 
@@ -1412,7 +1412,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                 child: Padding(
                                                   padding: const EdgeInsets.symmetric(vertical: 20),
                                                   child: CustomeText(
-                                                      text: (_isOpenULDFlagEnable == false) ? "All ULD/Trolley are released":"${lableModel.recordNotFound}",
+                                                      text: (_isOpenULDFlagEnable == false) ? "${lableModel.alluldtrolleyarerelease}" : "${lableModel.recordNotFound}",
                                                       // if record not found
                                                       fontColor: MyColor.textColorGrey,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,

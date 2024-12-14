@@ -520,7 +520,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                             hastextcolor: true,
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
-                                                            labelText: (requiredLocation == "Y") ? "Location * ": "Location",
+                                                            labelText: (requiredLocation == "Y") ? "${lableModel.location} * ": "${lableModel.location}",
                                                             readOnly: false,
                                                             maxLength: 15,
                                                             isShowSuffixIcon: _isvalidateLocation,
@@ -581,7 +581,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                           hastextcolor: true,
                                                           animatedLabel: true,
                                                           needOutlineBorder: true,
-                                                          labelText: "Scan base pallet",
+                                                          labelText: "${lableModel.scanbasepallet}",
                                                           readOnly:false,
                                                           controller: igmNoEditingController,
                                                           focusNode: igmNoFocusNode,
@@ -742,7 +742,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                       )),
                                                                   Expanded(
                                                                     flex: 1,
-                                                                    child: RoundedButtonBlue(text: "Next",
+                                                                    child: RoundedButtonBlue(text: "${lableModel.next}",
                                                                       textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                       verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,
                                                                       press: () async {
@@ -814,7 +814,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                   Row(
                                                                     children: [
                                                                       CustomeText(
-                                                                        text: "Stack size : ",
+                                                                        text: "${lableModel.stacksize} : ",
                                                                         fontColor: MyColor.textColorGrey2,
                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                         fontWeight: FontWeight.w500,
@@ -833,7 +833,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                   Row(
                                                                     children: [
                                                                       CustomeText(
-                                                                        text: "Scale weight : ",
+                                                                        text: "${lableModel.scaleweight} : ",
                                                                         fontColor: MyColor.textColorGrey2,
                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                         fontWeight: FontWeight.w500,
@@ -888,7 +888,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                               Row(
                                                                 children: [
                                                                   CustomeText(
-                                                                    text: "ULD Condition : ",
+                                                                    text: "${lableModel.uldCondition} : ",
                                                                     fontColor: MyColor.textColorGrey2,
                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                     fontWeight: FontWeight.w500,
@@ -937,7 +937,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                   ),*/
                                                                   Expanded(
                                                                     flex:4,
-                                                                    child: RoundedButtonBlue(text: (palletStackDetail.flightNo!.isEmpty) ? "Assign Flight" : "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo}  ${palletStackDetail.flightDate!.replaceAll(" ", "-")}" /*"Assign flight"*/,
+                                                                    child: RoundedButtonBlue(text: (palletStackDetail.flightNo!.isEmpty) ? "${lableModel.assignFlight}" : "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo}  ${palletStackDetail.flightDate!.replaceAll(" ", "-")}" /*"Assign flight"*/,
                                                                       textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                       verticalPadding: SizeConfig.blockSizeVertical * 0.7,
                                                                       press: () async {
@@ -980,7 +980,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                           color: (palletStackDetail.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                                       ),
                                                                       child: CustomeText(
-                                                                        text: (palletStackDetail.uLDStatus == "O") ? "Open" : "Closed",
+                                                                        text: (palletStackDetail.uLDStatus == "O") ? "${lableModel.open}" : "${lableModel.closed}",
                                                                         fontColor: MyColor.textColorGrey3,
                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                         fontWeight: FontWeight.bold,

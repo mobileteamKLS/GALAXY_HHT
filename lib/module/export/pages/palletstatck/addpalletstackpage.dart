@@ -187,7 +187,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
 
     if(status != "C"){
 
-      bool? exitConfirmed = await DialogUtils.showPalletCompleteDialog(context, widget.uldNo);
+      bool? exitConfirmed = await DialogUtils.showPalletCompleteDialog(context, widget.uldNo, widget.lableModel!);
       if (exitConfirmed == true) {
 
         // Call complete close pallet
@@ -294,7 +294,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                               padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                               child: HeaderWidget(
                                 titleTextColor: MyColor.colorBlack,
-                                title: "Add Pallet",
+                                title: "${lableModel!.addPallet}",
                                 onBack: _onWillPop,
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
@@ -365,7 +365,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
 
                                     List<ULDConditionCodeList> uldConditionCodeList = state.palletStackULDConditionCodeModel.uLDConditionCodeList!;
 
-                                    var result = await DialogUtils.showULDConditionCodeDialog(context, uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "ULD Condition code", uldNo, uldConditionCodeList);
+                                    var result = await DialogUtils.showULDConditionCodeDialog(context, uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "${lableModel.uldConditioncode}", uldNo, uldConditionCodeList);
                                     if (result != null) {
                                       if (result.containsKey('status')) {
                                         String? status = result['status'];
@@ -638,10 +638,10 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                                   SizedBox(height: SizeConfig.blockSizeVertical),
                                                   (widget.flightDepartureStatus == "N")
                                                       ? RoundedButtonBlue(
-                                                    text: "Add Pallet",
+                                                    text: "${lableModel!.addPallet}",
                                                     press: () async {
                                                       if(status == "C"){
-                                                        var result = await DialogUtils.showPalletCloseDialog(context, uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
+                                                        var result = await DialogUtils.showPalletCloseDialog(context, widget.uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
                                                         if (result != null) {
                                                           if (result.containsKey('status')) {
                                                             String? status = result['status'];
@@ -707,8 +707,8 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            CustomeText(text: "Base pallet ${widget.uldNo}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                            CustomeText(text: "Stack size (${filterPalletDetailList.length + 1})", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                            CustomeText(text: "${lableModel.basepallet} ${widget.uldNo}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                            CustomeText(text: "${lableModel.stacksize} ${filterPalletDetailList.length + 1}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
 
                                           ],
                                         ),
@@ -784,7 +784,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                                         Row(
                                                           children: [
                                                             CustomeText(
-                                                              text: "ULD Condition : ",
+                                                              text: "${lableModel.uldCondition} : ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -867,7 +867,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                                             ),
                                                             Expanded(
                                                               flex: 2,
-                                                              child:(widget.flightDepartureStatus == "N") ? RoundedButtonGreen(text: "Remove",
+                                                              child:(widget.flightDepartureStatus == "N") ? RoundedButtonGreen(text: "${lableModel.remove}",
                                                                 color: MyColor.colorRed,
                                                                 textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                 verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,

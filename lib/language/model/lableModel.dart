@@ -445,7 +445,51 @@ class LableModel {
   String? addfoundcargo;
   String? allAWBMatchedDiscrepancy;
 
+  String? door;
+  String? pallet;
+  String? bULK;
+  String? trolley;
+  String? release;
+  String? esignRelease;
+  String? noitemselected;
+  String? showreleasepending;
+  String? unselect;
+  String? temp;
+  String? battery;
+  String? released;
+  String? pendingrelease;
+  String? alluldtrolleyarerelease;
+  String? record;
 
+  String? changeTemperature;
+  String? changeTempforthis;
+  String? temperature;
+  String? templevelmsg;
+  String? tempminimummsg;
+  String? changeBattery;
+  String? chanebetteryforthis;
+  String? betterymsg;
+  String? betteryminimummsg;
+
+  String? entersignmsg;
+  String? allsignaturerequired;
+  String? scanbasepallet;
+  String? stacksize;
+  String? scaleweight;
+  String? uldCondition;
+  String? assignFlight;
+  String? closed;
+  String? open;
+  String? addPallet;
+  String? basepallet;
+  String? remove;
+  String? uldConditioncode;
+  String? addupdateconditioncode;
+  String? selecteconditioncode;
+  String? closedpallet;
+  String? reOpen;
+  String? closepallet;
+  String? doyouwantclosepallet;
 
   String? s654;
   String? s655;
@@ -738,6 +782,36 @@ class LableModel {
         this.addfoundcargo,
         this.allAWBMatchedDiscrepancy,
 
+        this.changeTemperature,
+        this.changeTempforthis,
+        this.temperature,
+        this.templevelmsg,
+        this.tempminimummsg,
+        this.changeBattery,
+        this.chanebetteryforthis,
+        this.betterymsg,
+        this.betteryminimummsg,
+
+        this.entersignmsg,
+        this.allsignaturerequired,
+        this.scanbasepallet,
+        this.stacksize,
+        this.scaleweight,
+        this.uldCondition,
+        this.assignFlight,
+        this.closed,
+        this.open,
+        this.addPallet,
+        this.basepallet,
+        this.remove,
+        this.uldConditioncode,
+        this.addupdateconditioncode,
+        this.selecteconditioncode,
+        this.closedpallet,
+        this.reOpen,
+        this.closepallet,
+        this.doyouwantclosepallet,
+
         this.cLT,
         this.cRB,
         this.cRG,
@@ -883,6 +957,22 @@ class LableModel {
         this.nog,
         this.commodity,
         this.remark,
+        this.door,
+        this.pallet,
+        this.bULK,
+        this.trolley,
+        this.release,
+        this.esignRelease,
+        this.noitemselected,
+        this.showreleasepending,
+        this.unselect,
+        this.temp,
+        this.battery,
+        this.released,
+        this.pendingrelease,
+        this.alluldtrolleyarerelease,
+        this.record,
+
 
         this.save,
         this.s654,
@@ -1330,6 +1420,52 @@ class LableModel {
     enterGhaRepMsg = json['enterGhaRepMsg'];
     enterAirlineRepMsg = json['enterAirlineRepMsg'];
     enterSecurityRepMsg = json['enterSecurityRepMsg'];
+    changeTemperature = json['ChangeTemperature'];
+    changeTempforthis = json['changeTempforthis'];
+    temperature = json['Temperature'];
+    templevelmsg = json['templevelmsg'];
+    tempminimummsg = json['tempminimummsg'];
+    changeBattery = json['ChangeBattery'];
+    chanebetteryforthis = json['chanebetteryforthis'];
+    betterymsg = json['betterymsg'];
+    betteryminimummsg = json['betteryminimummsg'];
+
+
+    door = json['door'];
+    pallet = json['pallet'];
+    bULK = json['BULK'];
+    trolley = json['Trolley'];
+    release = json['Release'];
+    esignRelease = json['esignRelease'];
+    noitemselected = json['noitemselected'];
+    showreleasepending = json['showreleasepending'];
+    unselect = json['Unselect'];
+    temp = json['Temp'];
+    battery = json['Battery'];
+    released = json['Released'];
+    pendingrelease = json['pendingrelease'];
+    alluldtrolleyarerelease = json['alluldtrolleyarerelease'];
+    record = json['Record'];
+
+    entersignmsg = json['entersignmsg'];
+    allsignaturerequired = json['allsignaturerequired'];
+    scanbasepallet = json['scanbasepallet'];
+    stacksize = json['stacksize'];
+    scaleweight = json['scaleweight'];
+    uldCondition = json['uldCondition'];
+    assignFlight = json['assignFlight'];
+    closed = json['closed'];
+    open = json['open'];
+    addPallet = json['addPallet'];
+    basepallet = json['basepallet'];
+    remove = json['remove'];
+    uldConditioncode = json['uldConditioncode'];
+    addupdateconditioncode = json['addupdateconditioncode'];
+    selecteconditioncode = json['selecteconditioncode'];
+    closedpallet = json['closedpallet'];
+    reOpen = json['reOpen'];
+    closepallet = json['closepallet'];
+    doyouwantclosepallet = json['doyouwantclosepallet'];
 
     move = json['move'];
     currentLocation = json['currentLocation'];
@@ -1785,6 +1921,50 @@ class LableModel {
     data['enterGhaRepMsg'] = this.enterGhaRepMsg;
     data['enterAirlineRepMsg'] = this.enterAirlineRepMsg;
     data['enterSecurityRepMsg'] = this.enterSecurityRepMsg;
+
+    data['door'] = this.door;
+    data['pallet'] = this.pallet;
+    data['BULK'] = this.bULK;
+    data['Trolley'] = this.trolley;
+    data['Release'] = this.release;
+    data['esignRelease'] = this.esignRelease;
+    data['noitemselected'] = this.noitemselected;
+    data['showreleasepending'] = this.showreleasepending;
+    data['Unselect'] = this.unselect;
+    data['Temp'] = this.temp;
+    data['Battery'] = this.battery;
+    data['Released'] = this.released;
+    data['pendingrelease'] = this.pendingrelease;
+    data['alluldtrolleyarerelease'] = this.alluldtrolleyarerelease;
+    data['Record'] = this.record;
+    data['ChangeTemperature'] = this.changeTemperature;
+    data['changeTempforthis'] = this.changeTempforthis;
+    data['Temperature'] = this.temperature;
+    data['templevelmsg'] = this.templevelmsg;
+    data['tempminimummsg'] = this.tempminimummsg;
+    data['ChangeBattery'] = this.changeBattery;
+    data['chanebetteryforthis'] = this.chanebetteryforthis;
+    data['betterymsg'] = this.betterymsg;
+    data['betteryminimummsg'] = this.betteryminimummsg;
+    data['entersignmsg'] = this.entersignmsg;
+    data['allsignaturerequired'] = this.allsignaturerequired;
+    data['scanbasepallet'] = this.scanbasepallet;
+    data['stacksize'] = this.stacksize;
+    data['scaleweight'] = this.scaleweight;
+    data['uldCondition'] = this.uldCondition;
+    data['assignFlight'] = this.assignFlight;
+    data['closed'] = this.closed;
+    data['open'] = this.open;
+    data['addPallet'] = this.addPallet;
+    data['basepallet'] = this.basepallet;
+    data['remove'] = this.remove;
+    data['uldConditioncode'] = this.uldConditioncode;
+    data['addupdateconditioncode'] = this.addupdateconditioncode;
+    data['selecteconditioncode'] = this.selecteconditioncode;
+    data['closedpallet'] = this.closedpallet;
+    data['reOpen'] = this.reOpen;
+    data['closepallet'] = this.closepallet;
+    data['doyouwantclosepallet'] = this.doyouwantclosepallet;
 
     data['move'] = this.move;
     data['currentLocation'] = this.currentLocation;
