@@ -185,21 +185,19 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
   Future<bool> _onWillPop() async {
 
 
-    if(status != "C"){
+    if(status == "S"){
 
-      bool? exitConfirmed = await DialogUtils.showPalletCompleteDialog(context, widget.uldNo, widget.lableModel!);
+      bool? exitConfirmed = await DialogUtils.showPalletCompleteDialog(context, widget.uldNo);
       if (exitConfirmed == true) {
 
         // Call complete close pallet
-        context.read<PalletStackCubit>().reopenClosePalletStack(uldSeqNo, "C", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
+        context.read<PalletStackCubit>().reopenClosePalletStack(widget.uldSeqNo, "C", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
       }
       else {
         FocusScope.of(context).unfocus();
         scanNoEditingController.clear();
         Navigator.pop(context, "Done");
       }
-
-
     }
     else{
       FocusScope.of(context).unfocus();
@@ -207,10 +205,6 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
       scanNoEditingController.clear();
       Navigator.pop(context, "Done");
     }
-
-
-
-
 
 
     return false; // Prevents the default back button action
@@ -638,7 +632,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                                   SizedBox(height: SizeConfig.blockSizeVertical),
                                                   (widget.flightDepartureStatus == "N")
                                                       ? RoundedButtonBlue(
-                                                    text: "${lableModel!.addPallet}",
+                                                    text: "${lableModel.addPallet}",
                                                     press: () async {
                                                       if(status == "C"){
                                                         var result = await DialogUtils.showPalletCloseDialog(context, widget.uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
@@ -748,163 +742,177 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                             itemBuilder: (context, index) {
                                               PalletDetailList palletDetailList = filterPalletDetailList[index];
 
-                                              return InkWell(
-                                                // focusNode: uldListFocusNode,
-                                                onTap: () {
+                                              return Directionality(
+                                                textDirection: textDirection,
+                                                child: InkWell(
+                                                  // focusNode: uldListFocusNode,
+                                                  onTap: () {
 
 
-                                                },
-                                                onDoubleTap: () async {
+                                                  },
+                                                  onDoubleTap: () async {
 
 
-                                                },
-                                                child: Container(
-                                                  margin: const EdgeInsets.symmetric(vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color: MyColor.colorWhite,
-                                                    borderRadius: BorderRadius.circular(8),
-
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: MyColor.colorBlack.withOpacity(0.09),
-                                                        spreadRadius: 2,
-                                                        blurRadius: 15,
-                                                        offset: const Offset(0, 3), // changes position of shadow
-                                                      ),
-                                                    ],
-                                                  ),
+                                                  },
                                                   child: Container(
-                                                    padding: const EdgeInsets.all(8),
+                                                    margin: const EdgeInsets.symmetric(vertical: 4),
                                                     decoration: BoxDecoration(
                                                       color: MyColor.colorWhite,
                                                       borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            CustomeText(
-                                                              text: "${lableModel.uldCondition} : ",
-                                                              fontColor: MyColor.textColorGrey2,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.start,
-                                                            ),
-                                                            const SizedBox(width: 5),
-                                                            CustomeText(
-                                                              text: (palletDetailList.uldConditionCode!.isEmpty) ? "-" : "${palletDetailList.uldConditionCode}",
-                                                              fontColor: MyColor.colorBlack,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                              fontWeight: FontWeight.w600,
-                                                              textAlign: TextAlign.start,
-                                                            ),
-                                                            const SizedBox(width: 10),
-                                                            Container(
-                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                                              decoration: BoxDecoration(
-                                                                  color: MyColor.dropdownColor,
-                                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                              ),
-                                                              child: InkWell(
-                                                                child: Row(
-                                                                  mainAxisSize: MainAxisSize.min,
-                                                                  children: [
-                                                                    SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,)
-                                                                  ],
-                                                                ),
-                                                                onTap: () async {
 
-                                                                  if(status == "C"){
-                                                                    var result = await DialogUtils.showPalletCloseDialog(context, uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
-                                                                    if (result != null) {
-                                                                      if (result.containsKey('status')) {
-                                                                        String? status = result['status'];
-                                                                        if(status == "N"){
-                                                                          _resumeTimerOnInteraction();
-                                                                          // Navigator.pop(context);
-                                                                        }else if(status == "D"){
-                                                                          _resumeTimerOnInteraction();
-                                                                          getPalletListDetail(widget.uldSeqNo);
-                                                                        }else{
-                                                                          _resumeTimerOnInteraction();
-                                                                        }
-                                                                      }else{
-                                                                        _resumeTimerOnInteraction();
-                                                                      }
-                                                                    }
-                                                                    else{
-                                                                      _resumeTimerOnInteraction();
-                                                                    }
-                                                                  }
-                                                                  else{
-                                                                    uldSeqNo = palletDetailList.uLDSeqNo!;
-                                                                    uldNo = palletDetailList.uLDNo!;
-                                                                    getULDConditionCodeList();
-                                                                  }
-
-
-
-
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              flex: 5,
-                                                              child: Padding(
-                                                                padding: const EdgeInsets.symmetric(vertical: 8),
-                                                                child: Row(
-                                                                  children: [
-                                                                    SvgPicture.asset(palletsSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
-                                                                    SizedBox(width: 8,),
-                                                                    CustomeText(text: "${palletDetailList.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            Expanded(
-                                                              flex: 2,
-                                                              child:(widget.flightDepartureStatus == "N") ? RoundedButtonGreen(text: "${lableModel.remove}",
-                                                                color: MyColor.colorRed,
-                                                                textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
-                                                                press: () async {
-                                                                  if(status == "C"){
-                                                                    var result = await DialogUtils.showPalletCloseDialog(context, uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
-                                                                    // var result = await DialogUtils.showPalletCloseDialog(context, "Closed pallet", "${widget.uldNo} $statusMessage");
-                                                                    if (result != null) {
-                                                                      if (result.containsKey('status')) {
-                                                                        String? status = result['status'];
-                                                                        if(status == "N"){
-                                                                          _resumeTimerOnInteraction();
-                                                                        }else if(status == "D"){
-                                                                          _resumeTimerOnInteraction();
-                                                                          getPalletListDetail(widget.uldSeqNo);
-                                                                        }else{
-                                                                          _resumeTimerOnInteraction();
-                                                                        }
-                                                                      }else{
-                                                                        _resumeTimerOnInteraction();
-                                                                      }
-                                                                    }
-                                                                    else{
-                                                                      _resumeTimerOnInteraction();
-                                                                    }
-                                                                  }
-                                                                  else{
-                                                                    // remove Pallate logic
-                                                                    removePalletStack(palletDetailList.uLDSeqNo!);
-                                                                  }
-                                                                },) : SizedBox(),
-                                                            )
-                                                          ],
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 2,
+                                                          blurRadius: 15,
+                                                          offset: const Offset(0, 3), // changes position of shadow
                                                         ),
                                                       ],
                                                     ),
-                                                  )
+                                                    child: Container(
+                                                      padding: const EdgeInsets.all(8),
+                                                      decoration: BoxDecoration(
+                                                        color: MyColor.colorWhite,
+                                                        borderRadius: BorderRadius.circular(8),
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              CustomeText(
+                                                                text: "${lableModel.uldCondition} : ",
+                                                                fontColor: MyColor.textColorGrey2,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w500,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                              const SizedBox(width: 5),
+                                                              CustomeText(
+                                                                text: (palletDetailList.uldConditionCode!.isEmpty) ? "-" : "${palletDetailList.uldConditionCode}",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                fontWeight: FontWeight.w600,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                              const SizedBox(width: 10),
+                                                              Container(
+                                                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                                decoration: BoxDecoration(
+                                                                    color: MyColor.dropdownColor,
+                                                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                                ),
+                                                                child: InkWell(
+                                                                  child: Row(
+                                                                    mainAxisSize: MainAxisSize.min,
+                                                                    children: [
+                                                                      SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,)
+                                                                    ],
+                                                                  ),
+                                                                  onTap: () async {
+
+                                                                    if(status == "C"){
+                                                                      var result = await DialogUtils.showPalletCloseDialog(context, widget.uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
+                                                                      if (result != null) {
+                                                                        if (result.containsKey('status')) {
+                                                                          String? status = result['status'];
+                                                                          if(status == "N"){
+                                                                            _resumeTimerOnInteraction();
+                                                                            // Navigator.pop(context);
+                                                                          }else if(status == "D"){
+                                                                            _resumeTimerOnInteraction();
+                                                                            getPalletListDetail(widget.uldSeqNo);
+                                                                          }else{
+                                                                            _resumeTimerOnInteraction();
+                                                                          }
+                                                                        }else{
+                                                                          _resumeTimerOnInteraction();
+                                                                        }
+                                                                      }
+                                                                      else{
+                                                                        _resumeTimerOnInteraction();
+                                                                      }
+                                                                    }
+                                                                    else{
+                                                                      uldSeqNo = palletDetailList.uLDSeqNo!;
+                                                                      uldNo = palletDetailList.uLDNo!;
+                                                                      getULDConditionCodeList();
+                                                                    }
+
+
+
+
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                flex: 5,
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      SvgPicture.asset(palletsSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
+                                                                      SizedBox(width: 8,),
+                                                                      CustomeText(text: "${palletDetailList.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              Expanded(
+                                                                flex: 2,
+                                                                child:(widget.flightDepartureStatus == "N") ? RoundedButtonGreen(text: "${lableModel.remove}",
+                                                                  color: MyColor.colorRed,
+                                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
+                                                                  press: () async {
+                                                                    if(status == "C"){
+                                                                      var result = await DialogUtils.showPalletCloseDialog(context, widget.uldSeqNo, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Closed pallet", "${widget.uldNo} $statusMessage",  uldNo);
+                                                                      // var result = await DialogUtils.showPalletCloseDialog(context, "Closed pallet", "${widget.uldNo} $statusMessage");
+                                                                      if (result != null) {
+                                                                        if (result.containsKey('status')) {
+                                                                          String? status = result['status'];
+                                                                          if(status == "N"){
+                                                                            _resumeTimerOnInteraction();
+                                                                          }else if(status == "D"){
+                                                                            _resumeTimerOnInteraction();
+                                                                            getPalletListDetail(widget.uldSeqNo);
+                                                                          }else{
+                                                                            _resumeTimerOnInteraction();
+                                                                          }
+                                                                        }else{
+                                                                          _resumeTimerOnInteraction();
+                                                                        }
+                                                                      }
+                                                                      else{
+                                                                        _resumeTimerOnInteraction();
+                                                                      }
+                                                                    }
+                                                                    else{
+                                                                      // remove Pallate logic
+
+                                                                      bool? removeConfirmation = await DialogUtils.removePalletDialog(context, widget.uldNo);
+
+                                                                      if (removeConfirmation == true) {
+                                                                        removePalletStack(palletDetailList.uLDSeqNo!);
+                                                                      }
+                                                                      else {
+
+                                                                      }
+
+
+
+                                                                    }
+                                                                  },) : SizedBox(),
+                                                              )
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    )
+                                                  ),
                                                 ),
                                               );
                                             },

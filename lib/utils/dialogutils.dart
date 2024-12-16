@@ -4091,7 +4091,7 @@ class DialogUtils {
   }
 
 
-  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo, LableModel lableModel) {
+  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -4100,14 +4100,14 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
-          title: CustomeText(text: "${lableModel.closepallet}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          title: CustomeText(text: "Close Pallet",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
 
-              CustomeText(text: "${lableModel.doyouwantclosepallet}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+              CustomeText(text: "Do you want to close pallet ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
             ],
           ),
           actions: <Widget>[
@@ -4115,7 +4115,7 @@ class DialogUtils {
                 onTap: () {
                   Navigator.of(context).pop(false);
                 },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
 
@@ -4123,14 +4123,52 @@ class DialogUtils {
                 onTap: () {
                   Navigator.of(context).pop(true);
                 },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
 
           ],
         );
       },
     );
   }
+  static Future<bool?> removePalletDialog(BuildContext context, String uldNo) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
 
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: "Remove Pallet",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              CustomeText(text: "Do you want to remove pallet ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+            ],
+          ),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
 
 
 }

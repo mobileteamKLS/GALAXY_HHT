@@ -686,356 +686,359 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                             itemBuilder: (context, index) {
                                               PalletStackDetail palletStackDetail = palletStackPageLoadModel!.palletStackDetail![index];
 
-                                              return InkWell(
-                                                // focusNode: uldListFocusNode,
-                                                onTap: () {
+                                              return Directionality(
+                                                textDirection: textDirection,
+                                                child: InkWell(
+                                                  // focusNode: uldListFocusNode,
+                                                  onTap: () {
 
 
-                                                },
-                                                onDoubleTap: () async {
+                                                  },
+                                                  onDoubleTap: () async {
 
 
-                                                },
-                                                child: Container(
-                                                  margin: const EdgeInsets.symmetric(vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color: MyColor.colorWhite,
-                                                    borderRadius: BorderRadius.circular(8),
+                                                  },
+                                                  child: Container(
+                                                    margin: const EdgeInsets.symmetric(vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: MyColor.colorWhite,
+                                                      borderRadius: BorderRadius.circular(8),
 
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: MyColor.colorBlack.withOpacity(0.09),
-                                                        spreadRadius: 2,
-                                                        blurRadius: 15,
-                                                        offset: const Offset(0, 3), // changes position of shadow
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: DottedBorder(
-                                                    dashPattern: const [7, 7, 7, 7],
-                                                    strokeWidth: 1,
-                                                    borderType: BorderType.RRect,
-                                                    color: Colors.transparent,
-                                                    radius: const Radius.circular(8),
-                                                    child: Container(
-                                                      padding: const EdgeInsets.all(8),
-                                                      decoration: BoxDecoration(
-                                                        color: MyColor.colorWhite,
-                                                        borderRadius: BorderRadius.circular(8),
-                                                      ),
-                                                      child: Stack(
-                                                        children: [
-                                                          Column(
-                                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                                            children: [
-                                                              Row(
-                                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                                children: [
-                                                                  Expanded(
-                                                                      flex:4,
-                                                                      child: Row(
-                                                                        children: [
-                                                                          SvgPicture.asset(palletsSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
-                                                                          SizedBox(width: 8,),
-                                                                          CustomeText(text: "${palletStackDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                                                        ],
-                                                                      )),
-                                                                  Expanded(
-                                                                    flex: 1,
-                                                                    child: RoundedButtonBlue(text: "${lableModel.next}",
-                                                                      textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                      verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,
-                                                                      press: () async {
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 2,
+                                                          blurRadius: 15,
+                                                          offset: const Offset(0, 3), // changes position of shadow
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: DottedBorder(
+                                                      dashPattern: const [7, 7, 7, 7],
+                                                      strokeWidth: 1,
+                                                      borderType: BorderType.RRect,
+                                                      color: Colors.transparent,
+                                                      radius: const Radius.circular(8),
+                                                      child: Container(
+                                                        padding: const EdgeInsets.all(8),
+                                                        decoration: BoxDecoration(
+                                                          color: MyColor.colorWhite,
+                                                          borderRadius: BorderRadius.circular(8),
+                                                        ),
+                                                        child: Stack(
+                                                          children: [
+                                                            Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                                  children: [
+                                                                    Expanded(
+                                                                        flex:4,
+                                                                        child: Row(
+                                                                          children: [
+                                                                            SvgPicture.asset(palletsSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
+                                                                            SizedBox(width: 8,),
+                                                                            CustomeText(text: "${palletStackDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                                          ],
+                                                                        )),
+                                                                    Expanded(
+                                                                      flex: 1,
+                                                                      child: RoundedButtonBlue(text: "${lableModel.next}",
+                                                                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_0_9,
+                                                                        press: () async {
 
-                                                                        if(requiredLocation == "Y"){
-                                                                          if(locationController.text.isNotEmpty){
-                                                                            if(_isvalidateLocation == true){
-                                                                              String result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AddPalletStatckPage(
-                                                                                  importSubMenuList: widget.importSubMenuList,
-                                                                                  exportSubMenuList: widget.exportSubMenuList,
-                                                                                  title: widget.title,
-                                                                                  flightDepartureStatus: palletStackDetail.isFlightDeparted!,
-                                                                                  locationCode: locationController.text,
-                                                                                  refrelCode: widget.refrelCode,
-                                                                                  uldSeqNo: palletStackDetail.uLDSeqNo!,
-                                                                                  uldNo: palletStackDetail.uLDNo!,
-                                                                                  menuId: widget.menuId,
-                                                                                  uldStatus: palletStackDetail.uLDStatus!,
-                                                                                  mainMenuName: widget.mainMenuName),));
-                                                                              if(result == "Done"){
-                                                                                getPageLoadDetail(igmNoEditingController.text);
-                                                                                _resumeTimerOnInteraction();
-                                                                              }
-                                                                              else{
-                                                                                getPageLoadDetail(igmNoEditingController.text);
-                                                                                _resumeTimerOnInteraction();
+                                                                          if(requiredLocation == "Y"){
+                                                                            if(locationController.text.isNotEmpty){
+                                                                              if(_isvalidateLocation == true){
+                                                                                String result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AddPalletStatckPage(
+                                                                                    importSubMenuList: widget.importSubMenuList,
+                                                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                                                    title: widget.title,
+                                                                                    flightDepartureStatus: palletStackDetail.isFlightDeparted!,
+                                                                                    locationCode: locationController.text,
+                                                                                    refrelCode: widget.refrelCode,
+                                                                                    uldSeqNo: palletStackDetail.uLDSeqNo!,
+                                                                                    uldNo: palletStackDetail.uLDNo!,
+                                                                                    menuId: widget.menuId,
+                                                                                    uldStatus: palletStackDetail.uLDStatus!,
+                                                                                    mainMenuName: widget.mainMenuName),));
+                                                                                if(result == "Done"){
+                                                                                  getPageLoadDetail(igmNoEditingController.text);
+                                                                                  _resumeTimerOnInteraction();
+                                                                                }
+                                                                                else{
+                                                                                  getPageLoadDetail(igmNoEditingController.text);
+                                                                                  _resumeTimerOnInteraction();
+                                                                                }
+                                                                              }else{
+                                                                                openValidationDialog(lableModel.validateLocation!, locationFocusNode);
                                                                               }
                                                                             }else{
-                                                                              openValidationDialog(lableModel.validateLocation!, locationFocusNode);
+                                                                              openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
                                                                             }
+
                                                                           }else{
-                                                                            openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
-                                                                          }
-
-                                                                        }else{
-                                                                          String result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AddPalletStatckPage(
-                                                                              importSubMenuList: widget.importSubMenuList,
-                                                                              exportSubMenuList: widget.exportSubMenuList,
-                                                                              title: widget.title,
-                                                                              flightDepartureStatus: palletStackDetail.isFlightDeparted!,
-                                                                              refrelCode: widget.refrelCode,
-                                                                              uldSeqNo: palletStackDetail.uLDSeqNo!,
-                                                                              uldNo: palletStackDetail.uLDNo!,
-                                                                              menuId: widget.menuId,
-                                                                              uldStatus: palletStackDetail.uLDStatus!,
-                                                                              mainMenuName: widget.mainMenuName,
-                                                                              locationCode: locationController.text,),));
-                                                                          if(result == "Done"){
-                                                                            getPageLoadDetail(igmNoEditingController.text);
-                                                                            _resumeTimerOnInteraction();
-                                                                          }
-                                                                          else{
-                                                                            getPageLoadDetail(igmNoEditingController.text);
-                                                                            _resumeTimerOnInteraction();
-                                                                          }
-                                                                        }
-
-
-                                                                      },
-                                                                    ),
-                                                                  )
-
-                                                                ],
-                                                              ),
-                                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                              Row(
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      CustomeText(
-                                                                        text: "${lableModel.stacksize} : ",
-                                                                        fontColor: MyColor.textColorGrey2,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w500,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                      const SizedBox(width: 5),
-                                                                      CustomeText(
-                                                                        text: "${palletStackDetail.palletSize}",
-                                                                        fontColor: MyColor.colorBlack,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      CustomeText(
-                                                                        text: "${lableModel.scaleweight} : ",
-                                                                        fontColor: MyColor.textColorGrey2,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w500,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                      const SizedBox(width: 5),
-                                                                      CustomeText(
-                                                                        text: CommonUtils.formateToTwoDecimalPlacesValue(palletStackDetail.scaleWeight!),
-                                                                        fontColor: MyColor.colorBlack,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                              Row(
-                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                children: [
-                                                                  Row(
-                                                                    children: [
-                                                                      SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                      CustomeText(
-                                                                        text: (palletStackDetail.uLDLocation == "") ? "-" : "${palletStackDetail.uLDLocation}",
-                                                                        fontColor: MyColor.colorBlack,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      SvgPicture.asset(arrival, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                      CustomeText(
-                                                                        text: (palletStackDetail.uLDDestination == "") ? "-" : "${palletStackDetail.uLDDestination}",
-                                                                        fontColor: MyColor.colorBlack,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-
-                                                                ],
-                                                              ),
-                                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                              Row(
-                                                                children: [
-                                                                  CustomeText(
-                                                                    text: "${lableModel.uldCondition} : ",
-                                                                    fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    textAlign: TextAlign.start,
-                                                                  ),
-                                                                  const SizedBox(width: 5),
-                                                                  CustomeText(
-                                                                    text: (palletStackDetail.uldConditionCode!.isEmpty) ? "-" : "${palletStackDetail.uldConditionCode}",
-                                                                    fontColor: MyColor.colorBlack,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                    fontWeight: FontWeight.w600,
-                                                                    textAlign: TextAlign.start,
-                                                                  ),
-                                                                  const SizedBox(width: 10),
-                                                                  Container(
-                                                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                                                                    decoration: BoxDecoration(
-                                                                        color: MyColor.dropdownColor,
-                                                                        borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                                    ),
-                                                                    child: InkWell(
-                                                                      child: Row(
-                                                                        mainAxisSize: MainAxisSize.min,
-                                                                        children: [
-                                                                          SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,)
-                                                                        ],
-                                                                      ),
-                                                                      onTap: () async {
-                                                                        uldSeqNo = palletStackDetail.uLDSeqNo!;
-                                                                        uldNo = palletStackDetail.uLDNo!;
-                                                                        getULDConditionCodeList();
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                              Row(
-                                                                children: [
-                                                                 /* CustomeText(
-                                                                    text: "Flight : ",
-                                                                    fontColor: MyColor.textColorGrey2,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                    fontWeight: FontWeight.w500,
-                                                                    textAlign: TextAlign.start,
-                                                                  ),*/
-                                                                  Expanded(
-                                                                    flex:4,
-                                                                    child: RoundedButtonBlue(text: (palletStackDetail.flightNo!.isEmpty) ? "${lableModel.assignFlight}" : "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo}  ${palletStackDetail.flightDate!.replaceAll(" ", "-")}" /*"Assign flight"*/,
-                                                                      textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                      verticalPadding: SizeConfig.blockSizeVertical * 0.7,
-                                                                      press: () async {
-
-                                                                      if(palletStackDetail.flightNo!.isEmpty){
-                                                                        var result = await DialogUtils.showAssignFlightDialog(context, palletStackDetail.uLDSeqNo!, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Assign flight", "", "", palletStackDetail.uLDNo!);
-                                                                        if (result != null) {
-                                                                          if (result.containsKey('status')) {
-                                                                            String? status = result['status'];
-
-                                                                            if(status == "N"){
-                                                                              _resumeTimerOnInteraction();
-                                                                            }else if(status == "D"){
-                                                                              _resumeTimerOnInteraction();
+                                                                            String result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => AddPalletStatckPage(
+                                                                                importSubMenuList: widget.importSubMenuList,
+                                                                                exportSubMenuList: widget.exportSubMenuList,
+                                                                                title: widget.title,
+                                                                                flightDepartureStatus: palletStackDetail.isFlightDeparted!,
+                                                                                refrelCode: widget.refrelCode,
+                                                                                uldSeqNo: palletStackDetail.uLDSeqNo!,
+                                                                                uldNo: palletStackDetail.uLDNo!,
+                                                                                menuId: widget.menuId,
+                                                                                uldStatus: palletStackDetail.uLDStatus!,
+                                                                                mainMenuName: widget.mainMenuName,
+                                                                                locationCode: locationController.text,),));
+                                                                            if(result == "Done"){
                                                                               getPageLoadDetail(igmNoEditingController.text);
+                                                                              _resumeTimerOnInteraction();
                                                                             }
-                                                                          }else{
-                                                                            _resumeTimerOnInteraction();
+                                                                            else{
+                                                                              getPageLoadDetail(igmNoEditingController.text);
+                                                                              _resumeTimerOnInteraction();
+                                                                            }
                                                                           }
-                                                                        }
-                                                                        else{
-                                                                          _resumeTimerOnInteraction();
-                                                                        }
-                                                                      }else{
-
-                                                                      }
 
 
-
-                                                                      },),
-                                                                  ),
-
-                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * 12,),
-                                                                  Expanded(
-                                                                    flex:2,
-                                                                    child: Container(
-                                                                      padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.5),
-                                                                      decoration : BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(20),
-                                                                          color: (palletStackDetail.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                                        },
                                                                       ),
-                                                                      child: CustomeText(
-                                                                        text: (palletStackDetail.uLDStatus == "O") ? "${lableModel.open}" : "${lableModel.closed}",
-                                                                        fontColor: MyColor.textColorGrey3,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        textAlign: TextAlign.center,
-                                                                      ),
-                                                                    ),
-                                                                  ),
+                                                                    )
 
-
-
-                                                                  /*Expanded(
-                                                                    flex: 4,
-                                                                    child: Row(
+                                                                  ],
+                                                                ),
+                                                                SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Row(
                                                                       children: [
                                                                         CustomeText(
-                                                                          text: "Flight : ",
+                                                                          text: "${lableModel.stacksize} : ",
                                                                           fontColor: MyColor.textColorGrey2,
-                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                           fontWeight: FontWeight.w500,
                                                                           textAlign: TextAlign.start,
                                                                         ),
-
+                                                                        const SizedBox(width: 5),
                                                                         CustomeText(
-                                                                          text: "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo} / ${palletStackDetail.flightDate!.replaceAll(" ", "-")}",
+                                                                          text: "${palletStackDetail.palletSize}",
                                                                           fontColor: MyColor.colorBlack,
-                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                           fontWeight: FontWeight.w600,
                                                                           textAlign: TextAlign.start,
                                                                         ),
                                                                       ],
                                                                     ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    flex: 2,
-                                                                    child: RoundedButtonBlue(text:  "Next",
-                                                                      textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                      verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
-                                                                      press: () {
-                                                                        Navigator.push(context, CupertinoPageRoute(builder: (context) => AddPalletStatckPage(
-                                                                            importSubMenuList: widget.importSubMenuList,
-                                                                            exportSubMenuList: widget.exportSubMenuList,
-                                                                            title: widget.title,
-                                                                            refrelCode: widget.refrelCode,
-                                                                            uldSeqNo: palletStackDetail.uLDSeqNo!,
-                                                                            uldNo: palletStackDetail.uLDNo!,
-                                                                            menuId: widget.menuId,
-                                                                            uldStatus: palletStackDetail.uLDStatus!,
-                                                                            mainMenuName: widget.mainMenuName),));
-                                                                      },),
-                                                                  )*/
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
+                                                                    Row(
+                                                                      children: [
+                                                                        CustomeText(
+                                                                          text: "${lableModel.scaleweight} : ",
+                                                                          fontColor: MyColor.textColorGrey2,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                          fontWeight: FontWeight.w500,
+                                                                          textAlign: TextAlign.start,
+                                                                        ),
+                                                                        const SizedBox(width: 5),
+                                                                        CustomeText(
+                                                                          text: CommonUtils.formateToTwoDecimalPlacesValue(palletStackDetail.scaleWeight!),
+                                                                          fontColor: MyColor.colorBlack,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          textAlign: TextAlign.start,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                  children: [
+                                                                    Row(
+                                                                      children: [
+                                                                        SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                        SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                        CustomeText(
+                                                                          text: (palletStackDetail.uLDLocation == "") ? "-" : "${palletStackDetail.uLDLocation}",
+                                                                          fontColor: MyColor.colorBlack,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          textAlign: TextAlign.start,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        SvgPicture.asset(arrival, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                        SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                        CustomeText(
+                                                                          text: (palletStackDetail.uLDDestination == "") ? "-" : "${palletStackDetail.uLDDestination}",
+                                                                          fontColor: MyColor.colorBlack,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                          fontWeight: FontWeight.w600,
+                                                                          textAlign: TextAlign.start,
+                                                                        ),
+                                                                      ],
+                                                                    ),
+
+                                                                  ],
+                                                                ),
+                                                                SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                Row(
+                                                                  children: [
+                                                                    CustomeText(
+                                                                      text: "${lableModel.uldCondition} : ",
+                                                                      fontColor: MyColor.textColorGrey2,
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                      fontWeight: FontWeight.w500,
+                                                                      textAlign: TextAlign.start,
+                                                                    ),
+                                                                    const SizedBox(width: 5),
+                                                                    CustomeText(
+                                                                      text: (palletStackDetail.uldConditionCode!.isEmpty) ? "-" : "${palletStackDetail.uldConditionCode}",
+                                                                      fontColor: MyColor.colorBlack,
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                      fontWeight: FontWeight.w600,
+                                                                      textAlign: TextAlign.start,
+                                                                    ),
+                                                                    const SizedBox(width: 10),
+                                                                    Container(
+                                                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                                                                      decoration: BoxDecoration(
+                                                                          color: MyColor.dropdownColor,
+                                                                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                                      ),
+                                                                      child: InkWell(
+                                                                        child: Row(
+                                                                          mainAxisSize: MainAxisSize.min,
+                                                                          children: [
+                                                                            SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,)
+                                                                          ],
+                                                                        ),
+                                                                        onTap: () async {
+                                                                          uldSeqNo = palletStackDetail.uLDSeqNo!;
+                                                                          uldNo = palletStackDetail.uLDNo!;
+                                                                          getULDConditionCodeList();
+                                                                        },
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                Row(
+                                                                  children: [
+                                                                   /* CustomeText(
+                                                                      text: "Flight : ",
+                                                                      fontColor: MyColor.textColorGrey2,
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                      fontWeight: FontWeight.w500,
+                                                                      textAlign: TextAlign.start,
+                                                                    ),*/
+                                                                    Expanded(
+                                                                      flex:4,
+                                                                      child: RoundedButtonBlue(text: (palletStackDetail.flightNo!.isEmpty) ? "${lableModel.assignFlight}" : "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo}  ${palletStackDetail.flightDate!.replaceAll(" ", "-")}" /*"Assign flight"*/,
+                                                                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                        verticalPadding: SizeConfig.blockSizeVertical * 0.7,
+                                                                        press: () async {
+
+                                                                        if(palletStackDetail.flightNo!.isEmpty){
+                                                                          var result = await DialogUtils.showAssignFlightDialog(context, palletStackDetail.uLDSeqNo!, lableModel, textDirection, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, "Assign flight", "", "", palletStackDetail.uLDNo!);
+                                                                          if (result != null) {
+                                                                            if (result.containsKey('status')) {
+                                                                              String? status = result['status'];
+
+                                                                              if(status == "N"){
+                                                                                _resumeTimerOnInteraction();
+                                                                              }else if(status == "D"){
+                                                                                _resumeTimerOnInteraction();
+                                                                                getPageLoadDetail(igmNoEditingController.text);
+                                                                              }
+                                                                            }else{
+                                                                              _resumeTimerOnInteraction();
+                                                                            }
+                                                                          }
+                                                                          else{
+                                                                            _resumeTimerOnInteraction();
+                                                                          }
+                                                                        }else{
+
+                                                                        }
+
+
+
+                                                                        },),
+                                                                    ),
+
+                                                                    SizedBox(width: SizeConfig.blockSizeHorizontal * 12,),
+                                                                    Expanded(
+                                                                      flex:2,
+                                                                      child: Container(
+                                                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.5),
+                                                                        decoration : BoxDecoration(
+                                                                            borderRadius: BorderRadius.circular(20),
+                                                                            color: (palletStackDetail.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                                        ),
+                                                                        child: CustomeText(
+                                                                          text: (palletStackDetail.uLDStatus == "O") ? "${lableModel.open}" : "${lableModel.closed}",
+                                                                          fontColor: MyColor.textColorGrey3,
+                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                          fontWeight: FontWeight.bold,
+                                                                          textAlign: TextAlign.center,
+                                                                        ),
+                                                                      ),
+                                                                    ),
+
+
+
+                                                                    /*Expanded(
+                                                                      flex: 4,
+                                                                      child: Row(
+                                                                        children: [
+                                                                          CustomeText(
+                                                                            text: "Flight : ",
+                                                                            fontColor: MyColor.textColorGrey2,
+                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                            fontWeight: FontWeight.w500,
+                                                                            textAlign: TextAlign.start,
+                                                                          ),
+
+                                                                          CustomeText(
+                                                                            text: "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo} / ${palletStackDetail.flightDate!.replaceAll(" ", "-")}",
+                                                                            fontColor: MyColor.colorBlack,
+                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                            fontWeight: FontWeight.w600,
+                                                                            textAlign: TextAlign.start,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                    Expanded(
+                                                                      flex: 2,
+                                                                      child: RoundedButtonBlue(text:  "Next",
+                                                                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
+                                                                        press: () {
+                                                                          Navigator.push(context, CupertinoPageRoute(builder: (context) => AddPalletStatckPage(
+                                                                              importSubMenuList: widget.importSubMenuList,
+                                                                              exportSubMenuList: widget.exportSubMenuList,
+                                                                              title: widget.title,
+                                                                              refrelCode: widget.refrelCode,
+                                                                              uldSeqNo: palletStackDetail.uLDSeqNo!,
+                                                                              uldNo: palletStackDetail.uLDNo!,
+                                                                              menuId: widget.menuId,
+                                                                              uldStatus: palletStackDetail.uLDStatus!,
+                                                                              mainMenuName: widget.mainMenuName),));
+                                                                        },),
+                                                                    )*/
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
