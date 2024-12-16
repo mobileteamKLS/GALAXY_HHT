@@ -29,6 +29,7 @@ import '../../../widget/design/prostebeziercurve.dart';
 import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
 import '../../export/pages/palletstatck/palletstackpage.dart';
+import '../../export/pages/retriveuld/retriveuldpage.dart';
 import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
 import '../../import/pages/shipmentdamage/shipmentdamagepages.dart';
@@ -252,13 +253,13 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                         ? GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
-                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking").length,
+                                      itemCount: state.subMenuModel.subMenuName!.where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "Vehicle Tracking").length,
                                       physics:  const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder: (BuildContext context, int index) {
 
                                         List<SubMenuName> filteredSubMenuList = state.subMenuModel.subMenuName!
-                                            .where((menu) => menu.menuName != "Shipment Creation"  && menu.menuName != "TDG Acceptance" && menu.menuName != "Vehicle Tracking")
+                                            .where((menu) => menu.menuName != "Shipment Creation" && menu.menuName != "Vehicle Tracking")
                                             .toList();
 
                                         SubMenuName subMenuName = filteredSubMenuList[index];
@@ -331,7 +332,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   refrelCode: refrelCode,
                                                   lableModel: lableModel,
                                                   menuId: menuId,
-                                                  mainMenuName: widget.menuName), "Y");
+                                                  mainMenuName: widget.menuName), isEnable);
                                             }
 
                                             else if(menuId == SubMenuCodeUtils.PalletStatck){
@@ -342,8 +343,20 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   refrelCode: refrelCode,
                                                   lableModel: lableModel,
                                                   menuId: menuId,
-                                                  mainMenuName: widget.menuName), "Y");
+                                                  mainMenuName: widget.menuName), isEnable);
                                             }
+
+                                            else if(menuId == SubMenuCodeUtils.RetriveULD){
+                                              NextScreen(RetriveULDPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }
+
 
                                           },);
                                       },

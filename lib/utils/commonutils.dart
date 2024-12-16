@@ -1,6 +1,8 @@
 
 import 'package:flutter/cupertino.dart';
 
+import '../module/export/model/retriveuld/retriveulddetailmodel.dart';
+
 
 class CommonUtils{
 
@@ -73,6 +75,9 @@ class CommonUtils{
   static String SUFFICIENT = "Y";
   static String EVIDENCE = "Y";
   static String REMARKS = "";
+
+
+  static List<ULDDetailList> SELECTEDULDFORRETRIVE = [];
 
 
   static String getImagePath(String imageName){

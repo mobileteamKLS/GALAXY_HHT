@@ -20,7 +20,6 @@ class PalateStackRepository{
   Api api = Api();
   SavedPrefrence savedPrefrence = SavedPrefrence();
 
-
   Future<PalletStackDefaultPageLoadModel> palletStackDefaultPageLoad(int userId, int companyCode, int menuId) async {
 
     try {
@@ -60,8 +59,6 @@ class PalateStackRepository{
       }
     }
   }
-
-
 
   Future<PalletStackPageLoadModel> palletStackPageLoad(String scan, int userId, int companyCode, int menuId) async {
 
@@ -103,7 +100,6 @@ class PalateStackRepository{
       }
     }
   }
-
 
   // call uld damage locationValidate api call
   Future<LocationValidationModel> locationValidate(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
@@ -147,8 +143,6 @@ class PalateStackRepository{
       }
     }
   }
-
-
 
   Future<PalletStackListModel> palletStackListLoad(int uldSeqNo, int userId, int companyCode, int menuId) async {
 
@@ -234,7 +228,6 @@ class PalateStackRepository{
     }
   }
 
-
   Future<PalletStackULDConditionCodeModel> palletStackULDConditionCodeModel(int userId, int companyCode, int menuId) async {
 
     try {
@@ -316,8 +309,6 @@ class PalateStackRepository{
       }
     }
   }
-
-
 
   Future<AddPalletStackModel> addPalletStackModel(int uldSeqNo, String scan, String locationCode, int userId, int companyCode, int menuId) async {
 
@@ -485,6 +476,5 @@ class PalateStackRepository{
       }
     }
   }
-
 
 }

@@ -92,4 +92,11 @@ class Apilist{
   static String revokePalletStackApi = "/PalletStack/RevokeULD";
   static String reopenClosePalletStackApi = "/PalletStack/PalletStatusUpdate";
 
+
+  // Retrive ULD
+  static String retriveULDTypeList = "/RetriveULD/GetULDTypeList";
+  static String retriveULDDetailList = "/RetriveULD/GetULDDetailList";
+
+
+
 }
