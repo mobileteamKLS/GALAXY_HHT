@@ -564,7 +564,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                 Row(
                                   children: [
                                     Container(
-                                      height:118,
+                                      height:168,
                                       width: MediaQuery.sizeOf(context).width*0.47,
 
                                       decoration: BoxDecoration(
@@ -584,23 +584,36 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 14, horizontal: 10),
-                                      child: DatePicker(
-                                        DateTime.now(),
-                                        initialSelectedDate: DateTime.now(),
-                                        selectionColor: MyColor.primaryColorblue,
-                                        selectedTextColor: Colors.white,
-                                        onDateChange: (date) {
-                                          // New date selected
-                                          setState(() {
-                                            // _selectedValue = date;
-                                          });
-                                        },
+                                            vertical: 10, horizontal: 10),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          const Text(" Slot Date",style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),),
+                                          SizedBox(height: 4,),
+                                          SizedBox(
+                                            height: 104,
+                                            child: DatePicker(
+                                              DateTime.now(),
+                                              initialSelectedDate: DateTime.now(),
+                                              selectionColor: MyColor.primaryColorblue,
+                                              selectedTextColor: Colors.white,
+                                              onDateChange: (date) {
+                                                // New date selected
+                                                setState(() {
+                                                  // _selectedValue = date;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),),
                                     Spacer(),
                                     Container(
-                                      height:118,
+                                      height:168,
                                       width: MediaQuery.sizeOf(context).width*0.47,
 
                                       decoration: BoxDecoration(
@@ -620,54 +633,59 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 14, horizontal: 10),
-                                      child: Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            vertical: 10, horizontal: 10),
+                                      child:Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                const Text("20",style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),),
-                                                Center(
-                                                  child: Text("     Total\nShipments",style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 16,
-                                                    color: Colors.grey[700],
-                                                  ),),
+                                          const Text(" Slot Schedule",style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold,
+                                          ),),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: List.generate(labels.length, (index) {
+                                              final bool isSelected = selectedIndices.contains(index);
+
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (isSelected) {
+                                                      selectedIndices.remove(index);
+                                                    } else {
+                                                      selectedIndices.add(index);
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  margin: EdgeInsets.all(8.0),
+                                                  width: 84,
+                                                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                                  decoration: BoxDecoration(
+                                                    color: isSelected ? MyColor.primaryColorblue : Colors.white,
+                                                    border: Border.all(color: Colors.grey),
+                                                    borderRadius: BorderRadius.circular(8.0),
+                                                  ),
+                                                  child: Column(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Image.asset(
+                                                        imagePaths[index],
+                                                        height: 40,
+                                                        width: 40,
+                                                        color: isSelected ? Colors.white : null,
+                                                      ),
+                                                      SizedBox(height: 8.0),
+                                                      Text(
+                                                        labels[index],
+                                                        style: TextStyle(
+                                                          color: isSelected ? Colors.white : Colors.black,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ],
-                                          ),
-                                          Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text("10",style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),),
-                                                Text("  Total\n Pieces",style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.grey[700],
-                                                ),),
-                                              ],
-                                          ),
-                                          Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                                Text("60",style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.bold,
-                                                ),),
-                                                Text("         Slot\nDuration(Min)",style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.grey[700],
-                                                ),),
-                                              ],
+                                              );
+                                            }),
                                           ),
                                         ],
                                       ),
@@ -679,7 +697,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                 ),
                                 Container(
                                   padding:  const EdgeInsets.symmetric(
-                                    vertical: 14, horizontal: 10),
+                                      vertical: 14, horizontal: 10),
                                   decoration: BoxDecoration(
                                     borderRadius:
                                     BorderRadius.circular(12.0),
@@ -695,285 +713,184 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                       ),
                                     ],
                                   ),
-                                  child:  Row(
+                                  child: Column(
                                     children: [
                                       Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         mainAxisAlignment: MainAxisAlignment.start,
-                                        children: List.generate(labels.length, (index) {
-                                          final bool isSelected = selectedIndices.contains(index);
-
-                                          return GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                if (isSelected) {
-                                                  selectedIndices.remove(index);
-                                                } else {
-                                                  selectedIndices.add(index);
-                                                }
-                                              });
-                                            },
-                                            child: Container(
-                                              margin: EdgeInsets.all(8.0),
-                                              width: 114,
-                                              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                              decoration: BoxDecoration(
-                                                color: isSelected ? MyColor.primaryColorblue : Colors.white,
-                                                border: Border.all(color: Colors.grey),
-                                                borderRadius: BorderRadius.circular(8.0),
-                                              ),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Image.asset(
-                                                    imagePaths[index],
-                                                    height: 50,
-                                                    width: 50,
-                                                    color: isSelected ? Colors.white : null,
-                                                  ),
-                                                  SizedBox(height: 8.0),
-                                                  Text(
-                                                    labels[index],
-                                                    style: TextStyle(
-                                                      color: isSelected ? Colors.white : Colors.black,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                                      Spacer(),
-                                      Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
-                                              Icon(
-                                                Icons
-                                                    .check_circle,
-                                                color: CupertinoColors
-                                                    .activeGreen,
+
+                                              Center(
+                                                child: Text("  Station Name(s):  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+
+                                                ),),
                                               ),
-                                              Text(
-                                                "  Accept All",
-                                                style: TextStyle(
-                                                    color: CupertinoColors
-                                                        .activeGreen,fontWeight: FontWeight.w700),
-                                              )
+                                              Text("Station 1, Station 2,",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
                                             ],
                                           ),
-                                          SizedBox(height: 20,),
-                                          Row(
-                                            children: [
-                                              Icon(
-                                                Icons
-                                                    .cancel,
-                                                color: CupertinoColors
-                                                    .systemRed,
-                                              ),
-                                              Text(
-                                                "  Reject All",
-                                                style: TextStyle(
-                                                    color: CupertinoColors
-                                                        .systemRed,fontWeight: FontWeight.w700),
-                                              )
-                                            ],
-                                          ),
+
+
                                         ],
                                       ),
-                                      SizedBox(width: 32,)
+                                      SizedBox(height: 20,),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              Center(
+                                                child: Text("  Total Pieces  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[700],
+                                                ),),
+                                              ),
+                                              const Text("20",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              Center(
+                                                child: Text("Total Shipments  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[700],
+                                                ),),
+                                              ),
+                                              const Text("20",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              Center(
+                                                child: Text("Slot Duration(Min)  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[700],
+                                                ),),
+                                              ),
+                                              const Text("60  ",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
                                     ],
                                   ),
                                 ),
+
                                 const SizedBox(height: 18,),
                                 Card(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   elevation: 3,
-                                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
                                   child: Padding(
                                     padding: const EdgeInsets.all(12),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Row(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              "125-76758498",
-                                              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                            const Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  "125-76758498",
+                                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                ),
+                                                SizedBox(height: 10,),
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  mainAxisAlignment: MainAxisAlignment.start,
+                                                  children: [
+                                                    Row(
+                                                      mainAxisAlignment: MainAxisAlignment.start,
+                                                      children: [
+                                                        Text(" HAWB No: ",style: TextStyle(fontSize: 16, ),),
+                                                        Text("H12",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16,),),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Row(
+                                                      children: [
+                                                        Text(" Pieces: ",style: TextStyle(fontSize: 16, ),),
+                                                        Text("10",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16,),),
+                                                      ],
+                                                    ),
+                                                    SizedBox(height: 8),
+                                                    Row(
+                                                      children: [
+                                                        Text(" Agent: ",style: TextStyle(fontSize: 16, ),),
+                                                        Text("AGT10001",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16,),),
+                                                      ],
+                                                    ),
+                                                    // Row(
+                                                    //   children: [
+                                                    //     const Text("Unit: "),
+                                                    //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                                    //   ],
+                                                    // ),
+                                                  ],
+                                                ),
+                                              ],
                                             ),
                                             const SizedBox(width: 8),
                                             buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
-                                            const SizedBox(width: 8),
-                                            SizedBox(
-                                                width: MediaQuery.sizeOf(context).width*0.11,
-                                                child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                                            // const SizedBox(width: 8),
+                                            // SizedBox(
+                                            //     width: MediaQuery.sizeOf(context).width*0.11,
+                                            //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
                                             const SizedBox(width: 20),
                                             buildLabel("GEN", Colors.lightBlue,20),
                                             const SizedBox(width: 8),
-                                            Row(
+                                            const Row(
                                               children: [
                                                 Text(
                                                   "10:00-12:00",
-                                                  style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                                                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
                                                 ),
-                                                const SizedBox(width: 8),
-                                                const Icon(
+                                                SizedBox(width: 8),
+                                                Icon(
                                                   Icons.info_outline_rounded,
                                                   color: MyColor.primaryColorblue,
                                                 ),
                                               ],
                                             ),
-
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          children: [
-                                            Container(
-
-                                              width: MediaQuery.sizeOf(context).width*0.8,
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Text("HAWB No: "),
-                                                          Text("H12",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 8),
-                                                      // Row(
-                                                      //   children: [
-                                                      //     const Text("Unit: "),
-                                                      //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                      //   ],
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(width: 32),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const Text("Pieces: "),
-                                                          Text("10",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 4),
-                                                      // Row(
-                                                      //   children: [
-                                                      //     const Text("Accepted Pcs: "),
-                                                      //     Text(
-                                                      //       "",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                      //   ],
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(width: 32),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          const Text("Agent: "),
-                                                          Text("AGT10001",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 4),
-                                                      // Row(
-                                                      //   children: [
-                                                      //     const Text("Accepted Wt: "),
-                                                      //     Text(
-                                                      //       "",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                      //   ],
-                                                      // ),
-                                                    ],
-                                                  ),
-                                                  const SizedBox(width: 32),
-                                                  Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-
-                                                      const SizedBox(height: 4),
-                                                    ],
-                                                  ),
-
-                                                ],
-                                              ),
-                                            ),
-                                            const SizedBox(width: 2),
-                                            // Column(
-                                            //   mainAxisAlignment: MainAxisAlignment.center,
-                                            //   children: [
-                                            //     Row(
-                                            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                            //       children: [
-                                            //         GestureDetector(
-                                            //           child: Container(
-                                            //             height: 30,
-                                            //             margin: const EdgeInsets.only(right: 12),
-                                            //             decoration: BoxDecoration(
-                                            //               borderRadius: BorderRadius.circular(8),
-                                            //               gradient: const LinearGradient(
-                                            //                 colors: [
-                                            //                   Color(0xFF0057D8),
-                                            //                   Color(0xFF1c86ff),
-                                            //                 ],
-                                            //                 begin: Alignment.centerLeft,
-                                            //                 end: Alignment.centerRight,
-                                            //               ),
-                                            //             ),
-                                            //             child: ElevatedButton(
-                                            //               style: ElevatedButton.styleFrom(
-                                            //                   backgroundColor: Colors.transparent,
-                                            //                   shadowColor: Colors.transparent),
-                                            //               onPressed: null,
-                                            //               child: const Text(
-                                            //                 'Accepted Shipment',
-                                            //                 style: TextStyle(color: Colors.white),
-                                            //               ),
-                                            //             ),
-                                            //           ),
-                                            //           onTap: (){
-                                            //             Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment ,)));
-                                            //           },
-                                            //         ),
-                                            //         const Icon(
-                                            //           Icons.more_vert_outlined,
-                                            //           color: MyColor.primaryColorblue,
-                                            //         ),
-                                            //         Container(
-                                            //           margin: const EdgeInsets.only(left: 12),
-                                            //           decoration: BoxDecoration(
-                                            //             borderRadius: BorderRadius.circular(5),
-                                            //             color:Color(0xffF2F7FD),
-                                            //           ),
-                                            //           child: const Icon(
-                                            //             size: 28,
-                                            //             Icons.keyboard_arrow_right_outlined,
-                                            //             color: MyColor.primaryColorblue,
-                                            //           ),
-                                            //         )
-                                            //       ],)
-                                            //   ],
-                                            // )
-                                          ],
-                                        ),
-                                        SizedBox(height: 8,),
-                                        Row(
-                                          children: [
-                                            SizedBox(width: MediaQuery.sizeOf(context).width*0.24,
-                                            child: Row(
+                                            SizedBox(width: 8,),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisAlignment: MainAxisAlignment.start,
                                               children: [
                                                 SizedBox(
-                                                  width:200,
+                                                  width:300,
                                                   child: TextFormField(
                                                     // controller: piecesController,
                                                     decoration: InputDecoration(
@@ -1006,46 +923,53 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                                       });
                                                     },
                                                   ),
+                                                ),
+                                                SizedBox(height: 8,),
+                                                SizedBox(
+                                                  width:300,
+                                                  child: TextFormField(
+                                                    maxLines: 2,
+                                                    // controller: piecesController,
+                                                    decoration: InputDecoration(
+                                                      hintText: 'Enter Remarks',
+                                                      contentPadding:
+                                                      const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
+                                                      border: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        borderSide: const BorderSide(
+                                                          color: MyColor.borderColor,
+                                                        ),
+                                                      ),
+                                                      enabledBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        borderSide: const BorderSide(
+                                                          color: MyColor.borderColor,
+                                                        ),
+                                                      ),
+                                                      focusedBorder: OutlineInputBorder(
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        borderSide: const BorderSide(
+                                                          color: MyColor.primaryColorblue,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        // piecesControllers[index].text = value;
+                                                        // data.col7 = value;
+                                                      });
+                                                    },
+                                                  ),
                                                 )
                                               ],
-                                            ),),
-                                            SizedBox(
-                                              width:500,
-                                              child: TextFormField(
-                                                // controller: piecesController,
-                                                decoration: InputDecoration(
-                                                  hintText: 'Remarks',
-                                                  contentPadding:
-                                                  const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                                                  border: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(12),
-                                                    borderSide: const BorderSide(
-                                                      color: MyColor.borderColor,
-                                                    ),
-                                                  ),
-                                                  enabledBorder: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(12),
-                                                    borderSide: const BorderSide(
-                                                      color: MyColor.borderColor,
-                                                    ),
-                                                  ),
-                                                  focusedBorder: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(12),
-                                                    borderSide: const BorderSide(
-                                                      color: MyColor.primaryColorblue,
-                                                    ),
-                                                  ),
-                                                ),
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    // piecesControllers[index].text = value;
-                                                    // data.col7 = value;
-                                                  });
-                                                },
-                                              ),
-                                            )
+                                            ),
+
+
                                           ],
                                         ),
+                                        const SizedBox(height: 4),
+
+
                                       ],
                                     ),
                                   ),

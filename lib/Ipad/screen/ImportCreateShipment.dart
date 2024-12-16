@@ -17,6 +17,7 @@ import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'ImportShipmentListing.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
@@ -49,6 +50,25 @@ class _CreateShipmentState extends State<CreateShipment> {
   bool isLoading = false;
   bool hasNoRecord = false;
 
+  resetData(){
+    prefixController.clear();
+    awbNoController.clear();
+    houseNoController.clear();
+    nopController.clear();
+    grossWeightController.clear();
+    originController.clear();
+    destinationController.clear();
+    flightNoController.clear();
+    flightDateController.clear();
+    uldController.clear();
+    commTypeController.clear();
+    firmsCodeController.clear();
+    dispositionCodeController.clear();
+    setState(() {
+      modeSelected=0;
+    });
+  }
+
   validatedShipmentDetails() {
     String uld = "PMC12345BA";
     print("${uld.substring(0, 3)}");
@@ -76,10 +96,10 @@ class _CreateShipmentState extends State<CreateShipment> {
       showDataNotFoundDialog(context, "Destination is required.");
       return;
     }
-    if (codeController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Code is required.");
-      return;
-    }
+    // if (codeController.text.isEmpty) {
+    //   showDataNotFoundDialog(context, "Code is required.");
+    //   return;
+    // }
     if (flightNoController.text.isEmpty) {
       showDataNotFoundDialog(context, "Flight No. is required.");
       return;
@@ -166,7 +186,7 @@ class _CreateShipmentState extends State<CreateShipment> {
       "ShipmentCreation/Save",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String status = jsonData['Status'];
@@ -177,9 +197,20 @@ class _CreateShipmentState extends State<CreateShipment> {
           showDataNotFoundDialog(context, statusMessage!);
         }
         if((status=="S")){
-          SnackbarUtil.showSnackbar(context, "Shipment Saved successfully", Color(0xff43A047));
+          //SnackbarUtil.showSnackbar(context, "Shipment Saved successfully", Color(0xff43A047));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "Shipment created successfully",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+        if(isTrue){
           Navigator.pushReplacement(context,
               MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+        }
         }
 
       }
@@ -206,7 +237,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                 ),
                  Text(
                   isCES?'  Warehouse Operations':"  Customs Operation",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
               ],
@@ -275,6 +306,22 @@ class _CreateShipmentState extends State<CreateShipment> {
                                 ),
                               ],
                             ),
+                            GestureDetector(
+                              child: const Row(
+                                children: [Icon(CupertinoIcons.restart, color: MyColor.primaryColorblue,),
+                                  Text(
+                                    ' Reset',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
+                                  ),],
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  resetData();
+                                });
+
+                              },
+                            )
                           ],
                         ),
                         const SizedBox(
@@ -301,7 +348,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  "SHIPMENT CREATION DETAILS",
+                                  "  SHIPMENT CREATION DETAILS",
                                   style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14),
@@ -312,9 +359,10 @@ class _CreateShipmentState extends State<CreateShipment> {
                                 ),
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.start,
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
+                                    SizedBox(width: 10,),
                                     SizedBox(
                                       height: 45,
                                       width: MediaQuery.sizeOf(context).width *
@@ -353,89 +401,88 @@ class _CreateShipmentState extends State<CreateShipment> {
                                         },
                                       ),
                                     ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height:
-                                      MediaQuery.sizeOf(context).height * 0.02,
-                                ),
-                                SizedBox(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      const Icon(
-                                        Icons.info_outline_rounded,
-                                        color: MyColor.textColorGrey2,
-                                      ),
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
+                                    SizedBox(width: MediaQuery.sizeOf(context).width*0.14,),
+                                    SizedBox(
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.info_outline_rounded,
+                                            color:Color(0xffFD8D00),
+                                          ),
+                                          Text.rich(
                                             TextSpan(
-                                              text: "  You are creating a ",
-                                              // Example for first part of text (e.g., "BAY")
-                                              style: GoogleFonts.roboto(
-                                                textStyle: const TextStyle(
-                                                  letterSpacing: 0.5,
-                                                  fontSize: 15,
-                                                  // Smaller size for "BAY"
-                                                  color: MyColor.textColorGrey2,
-                                                  fontWeight: FontWeight.w400,
-                                                ),
-                                              ),
-                                            ),
-                                            modeSelected == 0
-                                                ? TextSpan(
-                                                    text: "DIRECT ",
-                                                    // Example for last part of text (e.g., "AJ")
-                                                    style: GoogleFonts.roboto(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                        letterSpacing: 0.5,
-                                                        fontSize: 15,
-                                                        // Smaller size for "AJ"
-                                                        color: MyColor
-                                                            .textColorGrey2,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                  )
-                                                : TextSpan(
-                                                    text: "CONSOLE ",
-                                                    // Example for last part of text (e.g., "AJ")
-                                                    style: GoogleFonts.roboto(
-                                                      textStyle:
-                                                          const TextStyle(
-                                                        letterSpacing: 0.5,
-                                                        fontSize: 15,
-                                                        // Smaller size for "AJ"
-                                                        color: MyColor
-                                                            .textColorGrey2,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
+                                              children: [
+                                                TextSpan(
+                                                  text: "  You are creating a ",
+
+                                                  style: GoogleFonts.roboto(
+                                                    textStyle: const TextStyle(
+                                                      letterSpacing: 0.5,
+                                                      fontSize: 15,
+
+                                                      color: Color(0xffFD8D00),
+                                                      fontWeight: FontWeight.w400,
                                                     ),
                                                   ),
-                                            TextSpan(
-                                              text: "Shipment",
-                                              // Example for last part of text (e.g., "AJ")
-                                              style: GoogleFonts.roboto(
-                                                textStyle: const TextStyle(
-                                                  letterSpacing: 0.5,
-                                                  fontSize: 15,
-                                                  // Smaller size for "AJ"
-                                                  color: MyColor.textColorGrey2,
-                                                  fontWeight: FontWeight.w400,
                                                 ),
-                                              ),
+                                                modeSelected == 0
+                                                    ? TextSpan(
+                                                  text: "DIRECT ",
+
+                                                  style: GoogleFonts.roboto(
+                                                    textStyle:
+                                                    const TextStyle(
+                                                      letterSpacing: 0.5,
+                                                      fontSize: 15,
+                                                      color: Color(0xffFD8D00),
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                )
+                                                    : TextSpan(
+                                                  text: "CONSOL ",
+
+                                                  style: GoogleFonts.roboto(
+                                                    textStyle:
+                                                    const TextStyle(
+                                                      letterSpacing: 0.5,
+                                                      fontSize: 15,
+                                                      // Smaller size for "AJ"
+                                                      color: Color(0xffFD8D00),
+                                                      fontWeight:
+                                                      FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text: "Shipment",
+
+                                                  style: GoogleFonts.roboto(
+                                                    textStyle: const TextStyle(
+                                                      letterSpacing: 0.5,
+                                                      fontSize: 15,
+
+                                                      color:Color(0xffFD8D00),
+                                                      fontWeight: FontWeight.w400,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                        textAlign: TextAlign.start,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
+                                // SizedBox(
+                                //   height:
+                                //       MediaQuery.sizeOf(context).height * 0.02,
+                                // ),
+
                                 SizedBox(
                                   height:
                                       MediaQuery.sizeOf(context).height * 0.02,
@@ -792,7 +839,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           needOutlineBorder:
                                                               true,
                                                           labelText:
-                                                              "Gross Weight*",
+                                                              "Weight",
                                                           controller: grossWeightController,
                                                           readOnly: false,
                                                           maxLength: 15,
@@ -869,105 +916,95 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                 0.44,
                                             child: Row(
                                               children: [
-                                                SizedBox(
-                                                  height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.1,
-                                                  child:
-                                                      CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Code*",
-                                                    controller: codeController,
-                                                    readOnly: false,
-                                                    maxLength: 15,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
-                                                  ),
-                                                ),
-                                                const SizedBox(
-                                                  width: 15,
-                                                ),
-                                                SizedBox(
-                                                  height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
-                                                  width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.32,
-                                                  child: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.12,
-                                                        child:
-                                                            CustomeEditTextWithBorder(
-                                                          lablekey: 'MAWB',
-                                                          hasIcon: false,
-                                                          hastextcolor: true,
-                                                          animatedLabel: true,
-                                                          needOutlineBorder:
-                                                              true,
-                                                          labelText:
-                                                              "Flight No*",
-                                                          readOnly: false,
-                                                          controller: flightNoController,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                          onChanged:
-                                                              (String, bool) {},
-                                                        ),
+                                                // SizedBox(
+                                                //   height:
+                                                //       MediaQuery.sizeOf(context)
+                                                //               .height *
+                                                //           0.04,
+                                                //   width:
+                                                //       MediaQuery.sizeOf(context)
+                                                //               .width *
+                                                //           0.1,
+                                                //   child:
+                                                //       CustomeEditTextWithBorder(
+                                                //     lablekey: 'MAWB',
+                                                //     hasIcon: false,
+                                                //     hastextcolor: true,
+                                                //     animatedLabel: true,
+                                                //     needOutlineBorder: true,
+                                                //     labelText: "Code*",
+                                                //     controller: codeController,
+                                                //     readOnly: false,
+                                                //     maxLength: 15,
+                                                //     fontSize: 18,
+                                                //     onChanged:
+                                                //         (String, bool) {},
+                                                //   ),
+                                                // ),
+                                                // const SizedBox(
+                                                //   width: 15,
+                                                // ),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .height *
+                                                              0.04,
+                                                      width:
+                                                          MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width *
+                                                              0.165,
+                                                      child:
+                                                          CustomeEditTextWithBorder(
+                                                        lablekey: 'MAWB',
+                                                        hasIcon: false,
+                                                        hastextcolor: true,
+                                                        animatedLabel: true,
+                                                        needOutlineBorder:
+                                                            true,
+                                                        labelText:
+                                                            "Flight No*",
+                                                        readOnly: false,
+                                                        controller: flightNoController,
+                                                        maxLength: 15,
+                                                        fontSize: 18,
+                                                        onChanged:
+                                                            (String, bool) {},
                                                       ),
-                                                      const SizedBox(
-                                                        width: 10,
+                                                    ),
+                                                    const SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .height *
+                                                              0.04,
+                                                      width:
+                                                          MediaQuery.sizeOf(
+                                                                      context)
+                                                                  .width *
+                                                              0.26,
+                                                      child:
+                                                          CustomeEditTextWithBorderDatePicker(
+                                                        lablekey: 'MAWB',
+                                                        controller:
+                                                            flightDateController,
+                                                        labelText:
+                                                            "Flight Date*",
+                                                        readOnly: false,
+                                                        maxLength: 15,
+                                                        fontSize: 18,
                                                       ),
-                                                      SizedBox(
-                                                        height:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .height *
-                                                                0.04,
-                                                        width:
-                                                            MediaQuery.sizeOf(
-                                                                        context)
-                                                                    .width *
-                                                                0.18,
-                                                        child:
-                                                            CustomeEditTextWithBorderDatePicker(
-                                                          lablekey: 'MAWB',
-                                                          controller:
-                                                              flightDateController,
-                                                          labelText:
-                                                              "Flight Date*",
-                                                          readOnly: false,
-                                                          maxLength: 15,
-                                                          fontSize: 18,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
+                                                    ),
+                                                  ],
                                                 )
                                               ],
                                             ),
@@ -1803,40 +1840,15 @@ class _CreateShipmentState extends State<CreateShipment> {
     );
   }
 
-  void showDataNotFoundDialog(BuildContext context, String message) {
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
     );
   }
 }

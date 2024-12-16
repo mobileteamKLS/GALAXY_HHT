@@ -286,7 +286,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                               shipmentDetails =
                               shipmentListDetails
                                   .elementAt(index);
-                              return buildShipmentCardV2(
+                              return buildShipmentCardV3(
                                   shipmentDetails);
                             },
                             itemCount: shipmentListDetails.length,
@@ -688,6 +688,200 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 //       ],)
                 //   ],
                 // )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+  Widget buildShipmentCardV3(ShipmentListDetails shipment) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration:  BoxDecoration(
+                shape: BoxShape.circle,
+                color:shipment.houseNo.isEmpty? const Color(0xffB3D8B4):const Color(0xffFFD6A2),
+              ),
+              child:Text(shipment.houseNo.isEmpty?"D":"C",style: const TextStyle(
+              fontSize: 32,
+              fontWeight: FontWeight.bold,
+            ),),
+            ),
+            const SizedBox(width: 14,),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      shipment.documentNo,
+                      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(width: 8),
+                    buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
+                    // const SizedBox(width: 8),
+                    // SizedBox(
+                    //     width: MediaQuery.sizeOf(context).width*0.11,
+                    //     child: buildLabel((shipment.houseNo.isEmpty)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                    const SizedBox(width: 20),
+                    buildLabel(shipment.shipmentStatus.toUpperCase(), Colors.lightBlue,20),
+                    const SizedBox(width: 8),
+                    Row(
+                      children: [
+                        Text(
+                          shipment.shipStatusDateTime,
+                          style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 8),
+                        const Icon(
+                          Icons.info_outline_rounded,
+                          color: MyColor.primaryColorblue,
+                        ),
+                      ],
+                    ),
+
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Container(
+
+                      width: MediaQuery.sizeOf(context).width*0.6,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                               Row(
+                                children: [
+                                  Text("HAWB No: "),
+                                  Text((shipment.houseNo.isEmpty)?" - ":shipment.houseNo,style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  const Text("Unit: "),
+                                  Text(shipment.weightUnit.toUpperCase(),style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 32),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text("Declared Pcs: "),
+                                  Text("${shipment.awbPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Text("Accepted Pcs: "),
+                                  Text(
+                                    "${shipment.acceptedPieces}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(width: 32),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Text("Declared Wt: "),
+                                  Text("${shipment.awbWeight.toStringAsFixed(2)}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  const Text("Accepted Wt: "),
+                                  Text(
+                                    "${shipment.acceptedWeight.toStringAsFixed(2)}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                ],
+                              ),
+                            ],
+                          ),
+
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    // Column(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     Row(
+                    //       mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //       children: [
+                    //         GestureDetector(
+                    //           child: Container(
+                    //             height: 30,
+                    //             margin: const EdgeInsets.only(right: 12),
+                    //             decoration: BoxDecoration(
+                    //               borderRadius: BorderRadius.circular(8),
+                    //               gradient: const LinearGradient(
+                    //                 colors: [
+                    //                   Color(0xFF0057D8),
+                    //                   Color(0xFF1c86ff),
+                    //                 ],
+                    //                 begin: Alignment.centerLeft,
+                    //                 end: Alignment.centerRight,
+                    //               ),
+                    //             ),
+                    //             child: ElevatedButton(
+                    //               style: ElevatedButton.styleFrom(
+                    //                   backgroundColor: Colors.transparent,
+                    //                   shadowColor: Colors.transparent),
+                    //               onPressed: null,
+                    //               child: const Text(
+                    //                 'Accepted Shipment',
+                    //                 style: TextStyle(color: Colors.white),
+                    //               ),
+                    //             ),
+                    //           ),
+                    //           onTap: (){
+                    //             Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment ,)));
+                    //           },
+                    //         ),
+                    //         const Icon(
+                    //           Icons.more_vert_outlined,
+                    //           color: MyColor.primaryColorblue,
+                    //         ),
+                    //         Container(
+                    //           margin: const EdgeInsets.only(left: 12),
+                    //           decoration: BoxDecoration(
+                    //             borderRadius: BorderRadius.circular(5),
+                    //             color:Color(0xffF2F7FD),
+                    //           ),
+                    //           child: const Icon(
+                    //             size: 28,
+                    //             Icons.keyboard_arrow_right_outlined,
+                    //             color: MyColor.primaryColorblue,
+                    //           ),
+                    //         )
+                    //       ],)
+                    //   ],
+                    // )
+                  ],
+                ),
               ],
             ),
           ],

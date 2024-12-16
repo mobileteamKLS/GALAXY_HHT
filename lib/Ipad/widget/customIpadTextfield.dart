@@ -59,7 +59,7 @@ class CustomeEditTextWithBorderDatePicker extends StatefulWidget {
 }
 
 class _CustomeEditTextWithBorderDatePickerState extends State<CustomeEditTextWithBorderDatePicker> {
-  final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
+  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(
@@ -228,7 +228,7 @@ class RoundedIconButtonNew extends StatelessWidget {
         width: MediaQuery.sizeOf(context).width*0.29,
         height:MediaQuery.sizeOf(context).height*0.22 ,
         decoration: BoxDecoration(
-          color: containerColor,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(8.0),
           boxShadow: [
             BoxShadow(
@@ -251,7 +251,7 @@ class RoundedIconButtonNew extends StatelessWidget {
               padding: EdgeInsets.all(24),
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: Color(0xffe1d8f0)
+                color: containerColor,
               ),
               child: Icon(
                 icon,

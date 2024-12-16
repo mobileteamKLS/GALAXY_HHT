@@ -16,6 +16,7 @@ import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'Customsoperation.dart';
 import 'ImportCreateShipment.dart';
@@ -231,8 +232,25 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                 child: const Icon(Icons.logout_outlined,
                     color: Colors.white, size: 36),
                 onTap: () async {
-                  bool? logoutConfirmed = await showLogoutDialog(context);
-                  if (logoutConfirmed == true) {
+                  //bool? logoutConfirmed = await showLogoutDialog(context);
+                  var userSelection =
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext
+                    context) =>
+                        CustomConfirmDialog(
+                            title:
+                            "Logout Confirm ?",
+                            description:
+                            "Are you sure you want to logout ?",
+                            buttonText:
+                            "Yes",
+                            imagepath:
+                            'assets/images/question.gif',
+                            isMobile:
+                            false),
+                  );
+                  if (userSelection == true) {
                     
                     Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => const LogInScreen(isMPinEnable: false, authFlag: "P"),), (route) => false,);
                   }
@@ -301,7 +319,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: CupertinoIcons.doc,
                                   text: 'Shipments\nList',
                                   targetPage: ImportShipmentListing(),
@@ -310,7 +328,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                 // SizedBox(width: 40,),
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: CupertinoIcons.add,
                                   text: 'Create\nShipment',
                                   targetPage: CreateShipment(),
@@ -318,7 +336,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: CupertinoIcons.cube_box,
                                   text: 'Shipment\nAcceptance',
                                   targetPage: ShipmentAcceptanceManually(),
@@ -342,7 +360,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: Icons.trolley,
                                   text: 'Warehouse\nLocation',
                                   targetPage: WarehouseLocation(),
@@ -351,7 +369,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                 SizedBox(width: 40,),
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: Icons.local_shipping_outlined,
                                   text: 'Warehouse\nDelivery Order',
                                   targetPage: WdoListing(),
@@ -383,7 +401,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: CupertinoIcons.doc,
                                   text: 'Appointment\nBookings',
                                   targetPage: AppointmentBooking(),
@@ -392,7 +410,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                 // SizedBox(width: 40,),
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: Icons.check_circle_outline,
                                   text: 'Accepted\nBookings',
                                   targetPage: AcceptBooking(),
@@ -400,7 +418,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: Icons.cancel_outlined,
                                   text: 'Rejected\nBookings',
                                   targetPage: RejectBooking(),
@@ -418,13 +436,13 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                           )
                         : SizedBox(),
                     (!isCES)
-                        ? Padding(
+                        ? const Padding(
                             padding: EdgeInsets.only(
                                 top: 5, left: 20, right: 20, bottom: 10),
                             child: Row(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RoundedIconButton(
+                                RoundedIconButtonNew(
                                   icon: Icons.search,
                                   text: 'Available For\nExamination',
                                   targetPage: AvailableForExamination(),
@@ -433,14 +451,14 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                  SizedBox(width: 40,),
-                                RoundedIconButtonNew(
-                                  icon: Icons.search,
-                                  text: 'Test \nUI',
-                                  targetPage: AppointmentBookingNew(),
-                                  containerColor: Color(0xfff6f6f6),
-                                  iconColor: MyColor.textColorGrey3,
-                                  textColor: MyColor.textColorGrey3,
-                                ),
+                                // RoundedIconButtonNew(
+                                //   icon: Icons.search,
+                                //   text: 'Test \nUI',
+                                //   targetPage: AppointmentBookingNew(),
+                                //   containerColor:Color(0xffe1d8f0),
+                                //   iconColor: MyColor.textColorGrey3,
+                                //   textColor: MyColor.textColorGrey3,
+                                // ),
                               ],
                             ),
                           )

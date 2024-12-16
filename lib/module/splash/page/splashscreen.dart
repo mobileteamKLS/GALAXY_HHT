@@ -94,7 +94,7 @@ class _SplashScreenState extends State<SplashScreen> {
                       TextSpan(
                         children: [
                           TextSpan(
-                            text: "Kale Logistics", // Example for first part of text (e.g., "BAY")
+                            text: "Kale Info", // Example for first part of text (e.g., "BAY")
                             style: GoogleFonts.roboto(
                               textStyle: TextStyle(
                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, // Smaller size for "BAY"

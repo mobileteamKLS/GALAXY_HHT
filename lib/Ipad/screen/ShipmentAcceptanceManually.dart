@@ -23,6 +23,7 @@ import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
+import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'CaptureDamageAndAccept.dart';
 import 'ImportCreateShipment.dart';
@@ -129,6 +130,25 @@ class _ShipmentAcceptanceManuallyState
   clearFieldsOnGet() {
     totalNOPController.clear();
     totalWTController.clear();
+    groupIDController.clear();
+    commodityController.clear();
+    agentController.clear();
+    rcvNOPController.text="0";
+    rcvWTController.text="0.00";
+    acceptedPiecesList = [];
+    acceptedConsignment = [];
+    remainPiecesList = [];
+    setState(() {
+      pieceStatus = 0;
+    });
+  }
+  resetData() {
+    prefixController.clear();
+    awbController.clear();
+    houseController.clear();
+    groupIDController.clear();
+    totalNOPController.clear();
+    totalWTController.clear();
     commodityController.clear();
     agentController.clear();
     rcvNOPController.text="0";
@@ -154,15 +174,17 @@ class _ShipmentAcceptanceManuallyState
       });
     }
     if ((int.parse(rcvNOPController.text) +
-            remainPiecesList.first.remainingPkg) ==
+        (acceptedConsignment.first.totalNpo-remainPiecesList.first.remainingPkg)) ==
         acceptedConsignment.first.totalNpo) {
       setState(() {
         pieceStatus = 1; //matches
         print("status $pieceStatus");
       });
     } else if ((int.parse(rcvNOPController.text) +
-        remainPiecesList.first.remainingPkg) <
+        (acceptedConsignment.first.totalNpo-remainPiecesList.first.remainingPkg)) <
         acceptedConsignment.first.totalNpo) {
+      print("total pcs ${acceptedConsignment.first.totalNpo}-----${(int.parse(rcvNOPController.text) +
+          remainPiecesList.first.remainingPkg)}");
       setState(() {
         pieceStatus = 2; //partial
         print("status $pieceStatus");
@@ -175,40 +197,15 @@ class _ShipmentAcceptanceManuallyState
     }
   }
 
-  void showDataNotFoundDialog(BuildContext context, String message) {
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
     );
   }
 
@@ -301,6 +298,7 @@ class _ShipmentAcceptanceManuallyState
               .map((json) => RemainingPcs.fromJSON(json))
               .toList();
         });
+        checkPieces();
         print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
         print("Acceptance Consignment ${acceptedConsignment.length}");
         print("Acceptance Consignment ${remainPiecesList.length}");
@@ -365,6 +363,9 @@ class _ShipmentAcceptanceManuallyState
             jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
         totalWTController.text =
             jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+        rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
+        rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
+
         setState(() {
           acceptedPiecesList = accPcsList
               .map((json) => ConsignmentAcceptedList.fromJSON(json))
@@ -376,6 +377,7 @@ class _ShipmentAcceptanceManuallyState
               .map((json) => RemainingPcs.fromJSON(json))
               .toList();
         });
+        checkPieces();
         print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
         print("Acceptance Consignment ${acceptedConsignment.length}");
         print("Acceptance Consignment ${remainPiecesList.length}");
@@ -425,7 +427,7 @@ class _ShipmentAcceptanceManuallyState
       "ShipmentAcceptance/CBWShipmentAcceptanceSave",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String status = jsonData['Status'];
@@ -436,9 +438,19 @@ class _ShipmentAcceptanceManuallyState
           showDataNotFoundDialog(context, statusMessage!);
         }
         if ((status == "S")) {
-          SnackbarUtil.showSnackbar(context,statusMessage!,
-              const Color(0xff43A047));
-          awbSearch();
+          //SnackbarUtil.showSnackbar(context,statusMessage!,              const Color(0xff43A047));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "Shipment created successfully",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            awbSearch();
+          }
         }
       }
     }).catchError((onError) {
@@ -533,22 +545,22 @@ class _ShipmentAcceptanceManuallyState
                                 ),
                               ],
                             ),
-                            // GestureDetector(
-                            //   child: const Row(
-                            //     children: [Icon(CupertinoIcons.restart, color: Colors.grey,),
-                            //       Text(
-                            //         'Reset',
-                            //         style: TextStyle(
-                            //             fontWeight: FontWeight.normal, fontSize: 18,color: MyColor.primaryColorblue),
-                            //       ),],
-                            //   ),
-                            //   onTap: (){
-                            //     setState(() {
-                            //
-                            //     });
-                            //     print("RESET");
-                            //   },
-                            // )
+                            GestureDetector(
+                              child: const Row(
+                                children: [Icon(CupertinoIcons.restart, color: MyColor.primaryColorblue,),
+                                  Text(
+                                    ' Reset',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
+                                  ),],
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  resetData();
+                                });
+
+                              },
+                            )
                           ],
                         ),
                         const SizedBox(
@@ -1212,14 +1224,12 @@ class _ShipmentAcceptanceManuallyState
                                                                 Icon(
                                                                   Icons
                                                                       .check_circle,
-                                                                  color: CupertinoColors
-                                                                      .activeGreen,
+                                                                  color: Color(0xff43A047),
                                                                 ),
                                                                 Text(
                                                                   "  Pieces Matched",
                                                                   style: TextStyle(
-                                                                      color: CupertinoColors
-                                                                          .activeGreen,fontWeight: FontWeight.w700),
+                                                                      color: Color(0xff43A047),fontWeight: FontWeight.w700),
                                                                 )
                                                               ],
                                                             )
@@ -1229,13 +1239,13 @@ class _ShipmentAcceptanceManuallyState
                                                                     Icon(
                                                                       Icons.info_outlined
                                                                           ,
-                                                                      color:  CupertinoColors.systemYellow,
+                                                                      color: Color(0xffFD8D00),
                                                                     ),
                                                                     Text(
                                                                       "  Part Received",
                                                                       style: TextStyle(
                                                                           color:
-                                                                              CupertinoColors.systemYellow,fontWeight: FontWeight.w700),
+                                                                          Color(0xffFD8D00),fontWeight: FontWeight.w700),
                                                                     )
                                                                   ],
                                                                 )
@@ -1244,14 +1254,13 @@ class _ShipmentAcceptanceManuallyState
                                                                     Icon(
                                                                       Icons
                                                                           .info_outlined,
-                                                                      color: CupertinoColors
-                                                                          .systemRed,
+                                                                      color: Color(0xffB00020),
                                                                     ),
                                                                     Text(
                                                                       "  Pieces Mismatched",
                                                                       style: TextStyle(
                                                                           color:
-                                                                              CupertinoColors.systemRed,fontWeight: FontWeight.w700),
+                                                                          Color(0xffB00020),fontWeight: FontWeight.w700),
                                                                     )
                                                                   ],
                                                                 ),
@@ -1434,7 +1443,9 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                         ),
                                         onPressed: () {
-                                          acceptShipment();
+                                          if(pieceStatus!=3) {
+                                            acceptShipment();
+                                          }
                                         },
                                         child: const Text(
                                           "Accept",

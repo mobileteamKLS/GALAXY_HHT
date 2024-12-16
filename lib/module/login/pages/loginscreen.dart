@@ -456,7 +456,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                         ),
                                       ),
                                       SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3),
-                                      Image.asset(kaleLogisticsLogo, height: SizeConfig.blockSizeVertical * 12,),
+                                      Image.asset(kaleInfoLogo, height: SizeConfig.blockSizeVertical * 12,),
                                       SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3),
                                       CustomeText(text: "App Version 1.0", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, fontWeight: FontWeight.w400, textAlign: TextAlign.right),
                                     ],
