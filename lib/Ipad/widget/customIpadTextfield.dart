@@ -322,6 +322,83 @@ class AgentService {
     return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
   }
 }
+class OriginAndDestinationService {
+  static List<OriginDestination> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return originDestinationMaster.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.airportCodeI313);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return originDestinationMaster.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.airportCodeI313);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
+
+class FirmsCodeService {
+  static List<FrmAndDcpCode> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return firmsCodeMaster.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.referenceDataIdentifier);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return firmsCodeMaster.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.referenceDataIdentifier);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
+
+class DispositionCodeService {
+  static List<FrmAndDcpCode> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return dispositionCodeMaster.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.referenceDataIdentifier);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return dispositionCodeMaster.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.referenceDataIdentifier);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
 
 
 

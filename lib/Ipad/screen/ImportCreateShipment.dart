@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,6 +17,7 @@ import '../../widget/customebuttons/roundbuttonblue.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
+import '../modal/ShipmentAcceptanceModal.dart';
 import '../utils/global.dart';
 import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
@@ -49,6 +51,7 @@ class _CreateShipmentState extends State<CreateShipment> {
   final AuthService authService = AuthService();
   bool isLoading = false;
   bool hasNoRecord = false;
+  int selectedComId=-1;
 
   resetData(){
     prefixController.clear();
@@ -866,18 +869,81 @@ class _CreateShipmentState extends State<CreateShipment> {
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.435,
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "Origin*",
+                                            child: TypeAheadField<OriginDestination>(
                                               controller: originController,
-                                              readOnly: false,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
+                                              suggestionsCallback: (search) =>
+                                                  OriginAndDestinationService.find(search),
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(item.airportCodeI313
+                                                          .toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller,
+                                                  focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText:
+                                                    "Origin*",
+                                                    readOnly: false,
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) =>
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    'No Origin Found',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                originController.text = value
+                                                    .airportCodeI313
+                                                    .toUpperCase();
+
+                                              },
                                             ),
                                           ),
                                           Container(
@@ -885,18 +951,81 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     .width *
                                                 0.445,
                                             padding: EdgeInsets.only(right: 6),
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "Destination*",
+                                            child: TypeAheadField<OriginDestination>(
                                               controller: destinationController,
-                                              readOnly: false,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
+                                              suggestionsCallback: (search) =>
+                                                  OriginAndDestinationService.find(search),
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(item.airportCodeI313
+                                                          .toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller,
+                                                  focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText:
+                                                    "Destination*",
+                                                    readOnly: false,
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) =>
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    'No Destination Found',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                destinationController.text = value
+                                                    .airportCodeI313
+                                                    .toUpperCase();
+
+                                              },
                                             ),
                                           ),
                                         ],
@@ -1061,18 +1190,81 @@ class _CreateShipmentState extends State<CreateShipment> {
                                             width: MediaQuery.sizeOf(context)
                                                     .width *
                                                 0.44,
-                                            child: CustomeEditTextWithBorder(
-                                              lablekey: 'MAWB',
-                                              hasIcon: false,
-                                              hastextcolor: true,
-                                              animatedLabel: true,
-                                              needOutlineBorder: true,
-                                              labelText: "Commodity Type",
-                                              readOnly: false,
+                                            child: TypeAheadField<Commodity>(
                                               controller: commTypeController,
-                                              maxLength: 15,
-                                              fontSize: 18,
-                                              onChanged: (String, bool) {},
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
+                                              suggestionsCallback: (search) =>
+                                                  CommodityService.find(search),
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(item.commodityType
+                                                          .toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller,
+                                                  focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText:
+                                                    "Commodity*",
+                                                    readOnly: false,
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) =>
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    'No Commodity Found',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                commTypeController.text = value
+                                                    .commodityType
+                                                    .toUpperCase();
+                                                selectedComId=value.commodityId;
+                                              },
                                             ),
                                           ),
                                           SizedBox(
@@ -1091,19 +1283,81 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               .width *
                                                           0.22,
                                                   child:
-                                                      CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText: "FIRMS Code*",
+                                                  TypeAheadField<FrmAndDcpCode>(
                                                     controller: firmsCodeController,
-                                                    readOnly: false,
-                                                    maxLength: 15,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
+                                                    debounceDuration: const Duration(
+                                                        milliseconds: 300),
+                                                    suggestionsCallback: (search) =>
+                                                        FirmsCodeService.find(search),
+                                                    itemBuilder: (context, item) {
+                                                      return Container(
+                                                        decoration:
+                                                        const BoxDecoration(
+                                                          border: Border(
+                                                            top: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            left: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            right: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            bottom: BorderSide
+                                                                .none, // No border on the bottom
+                                                          ),
+                                                        ),
+                                                        padding:
+                                                        const EdgeInsets.all(8.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(item.referenceDataIdentifier
+                                                                .toUpperCase()),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                    builder: (context, controller,
+                                                        focusNode) =>
+                                                        CustomeEditTextWithBorder(
+                                                          lablekey: 'MAWB',
+                                                          controller: controller,
+                                                          focusNode: focusNode,
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          onPress: () {},
+                                                          labelText:
+                                                          "FIRMS Code*",
+                                                          readOnly: false,
+                                                          fontSize: 18,
+                                                          onChanged: (String, bool) {},
+                                                        ),
+                                                    decorationBuilder:
+                                                        (context, child) => Material(
+                                                      type: MaterialType.card,
+                                                      elevation: 4,
+                                                      borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                      child: child,
+                                                    ),
+                                                    // itemSeparatorBuilder: (context, index) =>
+                                                    //     Divider(),
+                                                    emptyBuilder: (context) =>
+                                                    const Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          'No FIRMS Code Found',
+                                                          style: TextStyle(
+                                                              fontSize: 16)),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      firmsCodeController.text = value
+                                                          .referenceDataIdentifier
+                                                          .toUpperCase();
+
+                                                    },
                                                   ),
                                                 ),
                                                 const SizedBox(
@@ -1119,20 +1373,81 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                               .width *
                                                           0.20,
                                                   child:
-                                                      CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    needOutlineBorder: true,
-                                                    labelText:
-                                                        "Disposition Code*",
-                                                    readOnly: false,
+                                                  TypeAheadField<FrmAndDcpCode>(
                                                     controller: dispositionCodeController,
-                                                    maxLength: 15,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
+                                                    debounceDuration: const Duration(
+                                                        milliseconds: 300),
+                                                    suggestionsCallback: (search) =>
+                                                        DispositionCodeService.find(search),
+                                                    itemBuilder: (context, item) {
+                                                      return Container(
+                                                        decoration:
+                                                        const BoxDecoration(
+                                                          border: Border(
+                                                            top: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            left: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            right: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            bottom: BorderSide
+                                                                .none, // No border on the bottom
+                                                          ),
+                                                        ),
+                                                        padding:
+                                                        const EdgeInsets.all(8.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(item.referenceDataIdentifier
+                                                                .toUpperCase()),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                    builder: (context, controller,
+                                                        focusNode) =>
+                                                        CustomeEditTextWithBorder(
+                                                          lablekey: 'MAWB',
+                                                          controller: controller,
+                                                          focusNode: focusNode,
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          onPress: () {},
+                                                          labelText:
+                                                          "Disposition Code*",
+                                                          readOnly: false,
+                                                          fontSize: 18,
+                                                          onChanged: (String, bool) {},
+                                                        ),
+                                                    decorationBuilder:
+                                                        (context, child) => Material(
+                                                      type: MaterialType.card,
+                                                      elevation: 4,
+                                                      borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                      child: child,
+                                                    ),
+                                                    // itemSeparatorBuilder: (context, index) =>
+                                                    //     Divider(),
+                                                    emptyBuilder: (context) =>
+                                                    const Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          'No Disposition Code Found',
+                                                          style: TextStyle(
+                                                              fontSize: 16)),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      dispositionCodeController.text = value
+                                                          .referenceDataIdentifier
+                                                          .toUpperCase();
+
+                                                    },
                                                   ),
                                                 )
                                               ],

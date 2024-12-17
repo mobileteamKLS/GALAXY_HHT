@@ -78,6 +78,54 @@ class Customer {
   }
 }
 
+class OriginDestination {
+  String airportCodeI313;
+  String cityCodeI313;
+  String nameOfCityI300;
+
+  OriginDestination({
+    required this.airportCodeI313,
+    required this.cityCodeI313,
+    required this.nameOfCityI300,
+  });
+
+  factory OriginDestination.fromJson(Map<String, dynamic> json) => OriginDestination(
+    airportCodeI313: json["AIRPORT_CODE_I313"],
+    cityCodeI313: json["CITY_CODE_I313"],
+    nameOfCityI300: json["NAME_OF_CITY_I300"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "AIRPORT_CODE_I313": airportCodeI313,
+    "CITY_CODE_I313": cityCodeI313,
+    "NAME_OF_CITY_I300": nameOfCityI300,
+  };
+}
+
+class FrmAndDcpCode {
+  String analysisRefTableIdentifier;
+  String referenceDataIdentifier;
+  String referenceDescription;
+
+  FrmAndDcpCode({
+    required this.analysisRefTableIdentifier,
+    required this.referenceDataIdentifier,
+    required this.referenceDescription,
+  });
+
+  factory FrmAndDcpCode.fromJson(Map<String, dynamic> json) => FrmAndDcpCode(
+    analysisRefTableIdentifier: json["ANALYSIS_REF_TABLE_IDENTIFIER"],
+    referenceDataIdentifier: json["REFERENCE_DATA_IDENTIFIER"],
+    referenceDescription: json["REFERENCE_DESCRIPTION"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ANALYSIS_REF_TABLE_IDENTIFIER": analysisRefTableIdentifier,
+    "REFERENCE_DATA_IDENTIFIER": referenceDataIdentifier,
+    "REFERENCE_DESCRIPTION": referenceDescription,
+  };
+}
+
 class RemainingPcs {
   String documentNo;
   String houseNo;
@@ -142,6 +190,7 @@ class ConsignmentAcceptedList {
   double totalWt;
   int awbId;
   int shipId;
+  int flightSeqNo;
 
   ConsignmentAcceptedList({
     required this.documentNo,
@@ -159,6 +208,7 @@ class ConsignmentAcceptedList {
     required this.totalWt,
     required this.awbId,
     required this.shipId,
+    required this.flightSeqNo,
   });
 
   factory ConsignmentAcceptedList.fromJSON(Map<String, dynamic> json) => ConsignmentAcceptedList(
@@ -177,6 +227,7 @@ class ConsignmentAcceptedList {
     totalWt: json["TotalWt"],
     awbId: json["AWBId"],
     shipId: json["ShipId"],
+      flightSeqNo:json["FltSeqNo"]
   );
 
   Map<String, dynamic> toJson() => {
@@ -193,6 +244,7 @@ class ConsignmentAcceptedList {
     "AcceptanceOn": acceptanceOn,
     "TotalNPO": totalNpo,
     "TotalWt": totalWt,
+    "FltSeqNo":flightSeqNo,
   };
 }
 

@@ -51,6 +51,8 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
     await Future.delayed(Duration.zero); // Ensures no synchronous blocking
     getCustomerName();
     getCommodity();
+    getOriginDestination();
+    getFirmsAndDisposition();
   }
 
   getCommodity() async {
@@ -146,6 +148,105 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       });
       DialogUtils.hideLoadingDialog(context);
       print("No of customers ${customerListMaster.length}");
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
+  }
+
+  getOriginDestination() async {
+    DialogUtils.showLoadingDialog(context);
+    originDestinationMaster=[];
+    var queryParams = {
+      "CompanyCode": "3"
+    };
+    await authService
+        .sendGetWithBody(
+      "ShipmentCreation/AirlineData",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      } else {
+        hasNoRecord = false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage'] ?? "";
+
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        return;
+      }
+      final List<dynamic> originDestinationList = jsonData['ReferenceDataListAirline'];
+      setState(() {
+        originDestinationMaster =
+            originDestinationList.map((customer) => OriginDestination.fromJson(customer)).toList();
+      });
+      DialogUtils.hideLoadingDialog(context);
+      print("No of origin and destination ${originDestinationMaster.length}");
+    }).catchError((onError) {
+      setState(() {
+        isLoading = false;
+      });
+      print(onError);
+    });
+  }
+  getFirmsAndDisposition() async {
+    DialogUtils.showLoadingDialog(context);
+    firmsCodeMaster=[];
+    dispositionCodeMaster=[];
+    var queryParams = {
+      "CompanyCode": "3",
+      "AirportCode" : "JFk"
+    };
+    await authService
+        .sendGetWithBody(
+      "ShipmentCreation/FRMDCPData",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      } else {
+        hasNoRecord = false;
+      }
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage'] ?? "";
+
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        return;
+      }
+      final List<dynamic> firmsList = jsonData['ReferenceDataListFRM'];
+      final List<dynamic> dispositionCodeList = jsonData['ReferenceDataListDCP'];
+      setState(() {
+        firmsCodeMaster =
+            firmsList.map((customer) => FrmAndDcpCode.fromJson(customer)).toList();
+        dispositionCodeMaster =
+            dispositionCodeList.map((customer) => FrmAndDcpCode.fromJson(customer)).toList();
+      });
+      DialogUtils.hideLoadingDialog(context);
+      print("No of Firms Code ${firmsCodeMaster.length}");
+      print("No of Disposition Code ${dispositionCodeMaster.length}");
     }).catchError((onError) {
       setState(() {
         isLoading = false;

@@ -142,6 +142,7 @@ class _ShipmentAcceptanceManuallyState
       pieceStatus = 0;
     });
   }
+
   resetData() {
     prefixController.clear();
     awbController.clear();
@@ -230,6 +231,7 @@ class _ShipmentAcceptanceManuallyState
   awbSearch() async {
     FocusScope.of(context).unfocus();
     DialogUtils.showLoadingDialog(context);
+    houseController.clear();
     clearFieldsOnGet();
     var queryParams = {
       "InputXML":
@@ -280,10 +282,14 @@ class _ShipmentAcceptanceManuallyState
             awbSearchForHouse();
           }
         }
-        totalNOPController.text =
-            jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
-        totalWTController.text =
-            jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+        totalNOPController.text =jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
+        totalWTController.text = jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+        commodityController.text = jsonData['ConsignmentAcceptance'][0]['Commodity'].toString();
+        Customer? selectedCustomer = customerListMaster.firstWhere(
+              (customer) => customer.customerId ==jsonData['ConsignmentAcceptance'][0]['AgentId'],
+          orElse: () => Customer(customerId: 0, customerName: ""),
+        );
+        agentController.text=selectedCustomer.customerName;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
 
@@ -363,6 +369,12 @@ class _ShipmentAcceptanceManuallyState
             jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
         totalWTController.text =
             jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
+        commodityController.text = jsonData['ConsignmentAcceptance'][0]['Commodity'].toString();
+        Customer? selectedCustomer = customerListMaster.firstWhere(
+              (customer) => customer.customerId ==jsonData['ConsignmentAcceptance'][0]['AgentId'],
+          orElse: () => Customer(customerId: 0, customerName: ""),
+        );
+        agentController.text=selectedCustomer.customerName;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
 
@@ -413,7 +425,8 @@ class _ShipmentAcceptanceManuallyState
     //   showDataNotFoundDialog(context, "Group ID is required.");
     //   return;
     // }
-
+    print("COMM ID $selectedComId");
+    print("Agent ID $selectedAgentId");
 
     var queryParams = {
       "InputXML":
@@ -979,10 +992,13 @@ class _ShipmentAcceptanceManuallyState
                                                         fontSize: 16)),
                                               ),
                                               onSelected: (value) {
+                                              setState(() {
                                                 commodityController.text = value
                                                     .commodityType
                                                     .toUpperCase();
                                                 selectedComId=value.commodityId;
+                                                print("COMM ID $selectedComId");
+                                              });
                                               },
                                             ),
                                           ),
@@ -1058,10 +1074,13 @@ class _ShipmentAcceptanceManuallyState
                                                         fontSize: 16)),
                                               ),
                                               onSelected: (value) {
-                                                agentController.text = value
-                                                    .customerName
-                                                    .toUpperCase();
-                                                selectedAgentId=value.customerId;
+                                               setState(() {
+                                                 agentController.text = value
+                                                     .customerName
+                                                     .toUpperCase();
+                                                 selectedAgentId=value.customerId;
+                                                 print("Agent ID $selectedAgentId");
+                                               });
                                               },
                                             ),
                                           ),
@@ -1413,7 +1432,7 @@ class _ShipmentAcceptanceManuallyState
                                                     builder: (_) =>
                                                         CaptureDamageandAccept(
                                                           shipmentData:
-                                                              acceptedPiecesList
+                                                          acceptedConsignment
                                                                   .first,
                                                         )));
                                           } else {}
