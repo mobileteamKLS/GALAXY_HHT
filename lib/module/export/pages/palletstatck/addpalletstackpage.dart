@@ -500,26 +500,6 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  /*Row(
-                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                    children: [
-                                                      CustomeText(text: "Base pallet ${widget.uldNo}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w400, textAlign: TextAlign.start),
-                                                      Container(
-                                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.2),
-                                                        decoration : BoxDecoration(
-                                                            borderRadius: BorderRadius.circular(20),
-                                                            color: (widget.uldStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
-                                                        ),
-                                                        child: CustomeText(
-                                                          text: (widget.uldStatus == "O") ? "Open" : "Close",
-                                                          fontColor: MyColor.textColorGrey3,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                                          fontWeight: FontWeight.w500,
-                                                          textAlign: TextAlign.center,
-                                                        ),
-                                                      )
-                                                    ],
-                                                  ),*/
                                                   SizedBox(height: SizeConfig.blockSizeVertical),
                                                   Row(
                                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

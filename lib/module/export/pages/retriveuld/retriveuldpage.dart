@@ -27,6 +27,7 @@ import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customebuttons/roundbuttongreen.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
+import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
@@ -36,6 +37,7 @@ import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/retriveuld/retriveuldlistmodel.dart';
 import '../../model/retriveuld/retriveuldloadmodel.dart';
 import '../../services/retriveuld/retriveuldlogic/retriveuldcubit.dart';
 
@@ -66,6 +68,8 @@ class RetriveULDPage extends StatefulWidget {
 class _RetriveULDPageState extends State<RetriveULDPage>
     with SingleTickerProviderStateMixin {
 
+  RetriveULDDetailLoadModel? retriveULDListModel;
+
   TextEditingController locationController = TextEditingController();
   FocusNode locationFocusNode = FocusNode();
   FocusNode locationBtnFocusNode = FocusNode();
@@ -87,7 +91,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
   int _pageIndex = 0;
   late TabController _tabController;
 
-  final List<String> _tabs = ['ULDType List', 'Retrive ULD'];
+  final List<String> _tabs = ['ULD Type List', 'ULD List'];
 
   @override
   void initState() {
@@ -102,7 +106,6 @@ class _RetriveULDPageState extends State<RetriveULDPage>
         leaveLocationFocus();
       }
     });
-
 
     locationController.addListener(_validateLocationSearchBtn);
 
@@ -353,6 +356,21 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                   SnackbarUtil.showSnackbar(
                                       context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is RetriveULDListSuccessState) {
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.retriveULDListModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.retriveULDListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  } else{
+                                    retriveULDListModel = state.retriveULDListModel;
+                                    setState(() {});
+                                  }
+                                }
+                                else if (state is RetriveULDListFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
                               },
                               child: Expanded(
@@ -414,20 +432,9 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                                           }
                                                           else if (index == 1) {
                                                             setState(() {
+                                                              getULDList();
                                                               _pageIndex = index;
                                                             });
-                                                            /*if (flightCheckULDListModel != null) {
-                                                              callFlightCheckSummaryApi(
-                                                                  context,
-                                                                  flightCheckULDListModel!.flightDetailSummary!.flightSeqNo!,
-                                                                  _user!.userProfile!.userIdentity!,
-                                                                  _splashDefaultData!.companyCode!,
-                                                                  widget.menuId);
-                                                            } else {
-                                                              setState(() {
-                                                                _pageIndex = index;
-                                                              });
-                                                            }*/
                                                           }
 
                                                         },
@@ -531,9 +538,27 @@ class _RetriveULDPageState extends State<RetriveULDPage>
             textDirection: textDirection,
             child: InkWell(
               // focusNode: uldListFocusNode,
-              onTap: () {
-                Navigator.push(context, CupertinoPageRoute(builder: (context) => RetriveULDDetailPage(uldType : uldTypeList.uLDType!, importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "RetriveULD List", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
-              },
+              onTap: () async {
+              var result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => RetriveULDDetailPage(uldType : uldTypeList.uLDType!, importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Retrieve ULD List", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
+              if (result != null) {
+                if (result.containsKey('status')) {
+                  String? status = result['status'];
+
+                  if(status == "R"){
+                    setState(() {
+                      getULDList();
+                      _pageIndex = index;
+                    });
+                  }
+                }else{
+                  _resumeTimerOnInteraction();
+                }
+              }
+              else{
+                _resumeTimerOnInteraction();
+              }
+
+                },
               onDoubleTap: () async {
 
 
@@ -620,7 +645,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                     hastextcolor: true,
                     animatedLabel: true,
                     needOutlineBorder: true,
-                    labelText: (requiredLocation == "Y") ? "${lableModel.location} * ": "${lableModel.location}",
+                    labelText: (requiredLocation == "Y") ? "Requested ${lableModel.location} * ": "Requested ${lableModel.location}",
                     readOnly: false,
                     maxLength: 15,
                     isShowSuffixIcon: _isvalidateLocation,
@@ -667,10 +692,10 @@ class _RetriveULDPageState extends State<RetriveULDPage>
               ],
             ),
           ),
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+          SizedBox(height: SizeConfig.blockSizeVertical),
           RoundedButtonBlue(
             focusNode: retriveBtnFocusNode,
-            text: "Retrive ULD",
+            text: "Retrieve ULD",
             press: () async {
               if(locationController.text.isNotEmpty){
                 if(_isvalidateLocation){
@@ -697,87 +722,199 @@ class _RetriveULDPageState extends State<RetriveULDPage>
             },
           ),
           SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
-           (CommonUtils.SELECTEDULDFORRETRIVE.isNotEmpty)
+           (retriveULDListModel != null)
               ? ListView.builder(
-            itemCount: CommonUtils.SELECTEDULDFORRETRIVE.length,
-            physics: const NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            controller: scrollController,
-            itemBuilder: (context, index) {
-              ULDDetailList item = CommonUtils.SELECTEDULDFORRETRIVE[index];
+             itemCount: retriveULDListModel!.uLDDetailList!.length,
+             physics: const NeverScrollableScrollPhysics(),
+             shrinkWrap: true,
+             controller: scrollController,
+             itemBuilder: (context, index) {
+               ULDDetailList uldDetails = retriveULDListModel!.uLDDetailList![index];
 
-              return Directionality(
-                textDirection: textDirection,
-                child: InkWell(
-                  // focusNode: uldListFocusNode,
-                  onTap: () {
+               //  final isSelected = _selectedItems.contains(airSideReleaseDetail);
 
 
-                  },
-                  onDoubleTap: () async {
+               return Directionality(
+                 textDirection: textDirection,
+                 child: InkWell(
+                   // focusNode: uldListFocusNode,
+                   onTap: () {
 
 
-                  },
-                  child: Container(
-                      margin: const EdgeInsets.symmetric(vertical: 4),
-                      decoration: BoxDecoration(
-                        color: MyColor.colorWhite,
-                        borderRadius: BorderRadius.circular(8),
+                   },
+                   onDoubleTap: () async {
 
-                        boxShadow: [
-                          BoxShadow(
-                            color: MyColor.colorBlack.withOpacity(0.09),
-                            spreadRadius: 2,
-                            blurRadius: 15,
-                            offset: const Offset(0, 3), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: MyColor.colorWhite,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Column(
-                          children: [
 
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 5,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(vertical: 8),
-                                    child: CustomeText(text: item.uLDNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: RoundedButtonGreen(text: "${lableModel.remove}",
-                                    color: MyColor.colorRed,
-                                    textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                    verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
-                                    press: () async {
-                                    setState(() {
-                                      CommonUtils.SELECTEDULDFORRETRIVE.remove(item);
-                                    });
-                                    },),
-                                )
-                              ],
-                            ),
-                          ],
-                        ),
-                      )
-                  ),
-                ),
-              );
-            },
-          )
+
+                   },
+                   child: Container(
+                     margin: const EdgeInsets.symmetric(vertical: 4),
+                     decoration: BoxDecoration(
+                       color: MyColor.colorWhite,
+                       borderRadius: BorderRadius.circular(8),
+
+                       boxShadow: [
+                         BoxShadow(
+                           color: MyColor.colorBlack.withOpacity(0.09),
+                           spreadRadius: 2,
+                           blurRadius: 15,
+                           offset: const Offset(0, 3), // changes position of shadow
+                         ),
+                       ],
+                     ),
+                     child: Container(
+                       // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
+                       padding: const EdgeInsets.all(8),
+                       decoration: BoxDecoration(
+                         color: MyColor.colorWhite,
+                         borderRadius: BorderRadius.circular(8),
+                       ),
+                       child: Stack(
+                         children: [
+                           Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Row(
+                                     children: [
+                                       CustomeText(text: "${uldDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                       SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                       (uldDetails.intact! == "Y")
+                                           ? Padding(
+                                         padding: const EdgeInsets.symmetric(horizontal: 2),
+                                         child:
+                                         Container(
+                                           width: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,  // Set width and height for the circle
+                                           decoration: BoxDecoration(
+                                             shape: BoxShape.circle,
+                                             border: Border.all(  // Add border
+                                               color: MyColor.primaryColorblue,  // Border color
+                                               width: 1.3,  // Border width
+                                             ),
+                                           ),
+                                           child: Center(
+                                             child: CustomeText(
+                                                 text: "I",
+                                                 fontColor: MyColor.primaryColorblue,
+                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                 fontWeight: FontWeight.w500,
+                                                 textAlign: TextAlign.center),
+                                           ),
+                                         ),
+                                       )
+                                           : const SizedBox()
+                                     ],
+                                   ),
+                                   Row(
+                                     children: [
+                                       CustomeText(
+                                         text: "Status : ",
+                                         fontColor: MyColor.textColorGrey2,
+                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                         fontWeight: FontWeight.w400,
+                                         textAlign: TextAlign.start,
+                                       ),
+                                       const SizedBox(width: 5),
+                                       Container(
+                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
+                                         decoration : BoxDecoration(
+                                             borderRadius: BorderRadius.circular(20),
+                                             color: (uldDetails.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                         ),
+                                         child: CustomeText(
+                                           text:  (uldDetails.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
+                                           fontColor: MyColor.textColorGrey3,
+                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                           fontWeight: FontWeight.w500,
+                                           textAlign: TextAlign.center,
+                                         ),
+                                       ),
+                                     ],
+                                   ),
+
+                                 ],
+                               ),
+                               SizedBox(height: SizeConfig.blockSizeVertical),
+
+                               Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Row(
+                                     children: [
+                                       CustomeText(
+                                         text: "${lableModel.stacksize} : ",
+                                         fontColor: MyColor.textColorGrey2,
+                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                         fontWeight: FontWeight.w400,
+                                         textAlign: TextAlign.start,
+                                       ),
+                                       const SizedBox(width: 5),
+                                       CustomeText(
+                                         text: "${uldDetails.stackSize}",
+                                         fontColor: MyColor.colorBlack,
+                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                         fontWeight: FontWeight.w600,
+                                         textAlign: TextAlign.start,
+                                       ),
+                                     ],
+                                   ),
+                                   Row(
+                                     children: [
+                                       SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                       CustomeText(
+                                         text: "${uldDetails.uLDLocation}",
+                                         fontColor: MyColor.colorBlack,
+                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                         fontWeight: FontWeight.w600,
+                                         textAlign: TextAlign.start,
+                                       ),
+                                     ],
+                                   )
+
+
+
+                                 ],
+                               ),
+
+
+                               SizedBox(height: SizeConfig.blockSizeVertical),
+                               Row(
+                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                 children: [
+                                   Expanded(
+                                     flex: 1,
+                                     child: RoundedButtonGreen(
+                                       text: "Cancel Request",
+                                       color: MyColor.colorRed,
+                                       isborderButton: true,
+                                       textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                       verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
+                                       press: () {
+
+                                       },),
+                                   ),
+
+                                 ],
+                               ),
+
+                             ],
+                           ),
+                         ],
+                       ),
+                     ),
+                   ),
+                 ),
+               );
+             },
+           )
               : Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: CustomeText(
-                  text: "ULD Not selected",
+                  text: lableModel.recordNotFound!,
                   // if record not found
                   fontColor: MyColor.textColorGrey,
                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
@@ -852,6 +989,10 @@ class _RetriveULDPageState extends State<RetriveULDPage>
     }
   }
 
+
+  void getULDList(){
+    context.read<RetriveULDCubit>().getULDList(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
+  }
 
 }
 

@@ -94,8 +94,11 @@ class Apilist{
 
 
   // Retrive ULD
-  static String retriveULDTypeList = "/RetriveULD/GetULDTypeList";
-  static String retriveULDDetailList = "/RetriveULD/GetULDDetailList";
+  static String retriveULDTypeList = "/RetrieveULD/GetULDTypeList";
+  static String retriveULDDetailList = "/RetrieveULD/GetULDDetailList";
+  static String retriveULDList = "/RetrieveULD/GetULDList";
+  static String retriveULDSearch = "/RetrieveULD/GetSearchULD";
+  static String addToListApi = "/RetrieveULD/AddToList";
 
 
 

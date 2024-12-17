@@ -4,17 +4,9 @@ import '../../../../api/apilist.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../import/model/uldacceptance/locationvalidationmodel.dart';
-import '../../model/palletstock/addpalletstackmodel.dart';
-import '../../model/palletstock/palletstackassignflightmodel.dart';
-import '../../model/palletstock/palletstackdefaultpageloadmodel.dart';
-import '../../model/palletstock/palletstacklistmodel.dart';
-import '../../model/palletstock/palletstackpageloadmodel.dart';
-import '../../model/palletstock/palletstackuldconditioncodemodel.dart';
-import '../../model/palletstock/palletstackupdateuldconditioncodemodel.dart';
-import '../../model/palletstock/removepalletstackmodel.dart';
-import '../../model/palletstock/reopenClosepalletstackmodel.dart';
-import '../../model/palletstock/revokepalletstackmodel.dart';
+import '../../model/retriveuld/addtolistmodel.dart';
 import '../../model/retriveuld/retriveulddetailmodel.dart';
+import '../../model/retriveuld/retriveuldlistmodel.dart';
 import '../../model/retriveuld/retriveuldloadmodel.dart';
 
 
@@ -105,8 +97,7 @@ class RetriveULDRepository{
     }
   }
 
-
-  Future<RetriveULDDetailLoadModel> retriveULDDetail(String uldType, int userId, int companyCode, int menuId) async {
+  Future<RetriveULDDetailLoadModel> retriveULDDetailList(String uldType, int userId, int companyCode, int menuId) async {
 
     try {
 
@@ -147,5 +138,126 @@ class RetriveULDRepository{
     }
   }
 
+  Future<RetriveULDDetailLoadModel> retriveULDSearch(String scan, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "Scan" : scan,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('RetriveULDDetailModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.retriveULDSearch,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        RetriveULDDetailLoadModel retriveULDDetailLoadModel = RetriveULDDetailLoadModel.fromJson(response.data);
+        return retriveULDDetailLoadModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<RetriveULDDetailLoadModel> retriveULDList(int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('RetriveULDListModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.retriveULDList,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        RetriveULDDetailLoadModel retriveULDListModel = RetriveULDDetailLoadModel.fromJson(response.data);
+        return retriveULDListModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<AddToListModel> addToList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDSeqNo" : uldSeqNo,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('AddToListModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.addToListApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        AddToListModel addToListModel = AddToListModel.fromJson(response.data);
+        return addToListModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 }

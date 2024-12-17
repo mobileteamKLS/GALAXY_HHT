@@ -58,7 +58,7 @@ class _RoundedButtonGreenState extends State<RoundedButtonGreen> {
       onTap: widget.press,
       child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: MyColor.bggradientfirst, width: 1.5),
+              border: Border.all(color: widget.color, width: 1),
               borderRadius: BorderRadius.circular(SizeUtils.BORDERRADIOUS)
           ),
           width: double.infinity,
@@ -70,7 +70,7 @@ class _RoundedButtonGreenState extends State<RoundedButtonGreen> {
               children: [
                 (widget.icon != null) ? SvgPicture.asset(widget.icon!, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,) : SizedBox(),
                 (widget.icon != null) ? const SizedBox(width: 10,) : SizedBox(),
-                CustomeText(text:  widget.text, fontColor: MyColor.bggradientfirst, fontSize: widget.textSize, fontWeight: FontWeight.w500, textAlign: TextAlign.center, textDirection: widget.textDirection,),
+                CustomeText(text:  widget.text, fontColor: widget.color, fontSize: widget.textSize, fontWeight: FontWeight.w500, textAlign: TextAlign.center, textDirection: widget.textDirection,),
               ],
             ),
           )

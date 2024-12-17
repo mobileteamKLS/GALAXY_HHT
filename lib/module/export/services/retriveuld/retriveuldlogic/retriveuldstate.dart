@@ -1,15 +1,8 @@
+import 'package:galaxy/module/export/model/retriveuld/addtolistmodel.dart';
+
 import '../../../../import/model/uldacceptance/locationvalidationmodel.dart';
-import '../../../model/palletstock/addpalletstackmodel.dart';
-import '../../../model/palletstock/palletstackassignflightmodel.dart';
-import '../../../model/palletstock/palletstackdefaultpageloadmodel.dart';
-import '../../../model/palletstock/palletstacklistmodel.dart';
-import '../../../model/palletstock/palletstackpageloadmodel.dart';
-import '../../../model/palletstock/palletstackuldconditioncodemodel.dart';
-import '../../../model/palletstock/palletstackupdateuldconditioncodemodel.dart';
-import '../../../model/palletstock/removepalletstackmodel.dart';
-import '../../../model/palletstock/reopenClosepalletstackmodel.dart';
-import '../../../model/palletstock/revokepalletstackmodel.dart';
 import '../../../model/retriveuld/retriveulddetailmodel.dart';
+import '../../../model/retriveuld/retriveuldlistmodel.dart';
 import '../../../model/retriveuld/retriveuldloadmodel.dart';
 
 
@@ -49,5 +42,40 @@ class RetriveULDDetailFailureState extends RetriveULDState {
   final String error;
   RetriveULDDetailFailureState(this.error);
 }
+
+
+
+
+class RetriveULDSearchSuccessState extends RetriveULDState {
+  final RetriveULDDetailLoadModel retriveULDModel;
+  RetriveULDSearchSuccessState(this.retriveULDModel);
+}
+
+class RetriveULDSearchFailureState extends RetriveULDState {
+  final String error;
+  RetriveULDSearchFailureState(this.error);
+}
+
+class RetriveULDListSuccessState extends RetriveULDState {
+  final RetriveULDDetailLoadModel retriveULDListModel;
+  RetriveULDListSuccessState(this.retriveULDListModel);
+}
+
+class RetriveULDListFailureState extends RetriveULDState {
+  final String error;
+  RetriveULDListFailureState(this.error);
+}
+class AddToListSuccessState extends RetriveULDState {
+  final AddToListModel addToListModel;
+  AddToListSuccessState(this.addToListModel);
+}
+
+class AddToListFailureState extends RetriveULDState {
+  final String error;
+  AddToListFailureState(this.error);
+}
+
+
+
 
 

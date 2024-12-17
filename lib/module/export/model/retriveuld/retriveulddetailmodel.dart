@@ -36,6 +36,9 @@ class ULDDetailList {
   int? stackSize;
   String? uLDLocation;
   String? uLDStatus;
+  String? requestStatus;
+  String? requestLocation;
+  String? requestUser;
 
   ULDDetailList(
       {this.uLDNo,
@@ -43,7 +46,10 @@ class ULDDetailList {
         this.intact,
         this.stackSize,
         this.uLDLocation,
-        this.uLDStatus});
+        this.uLDStatus,
+        this.requestStatus,
+        this.requestLocation,
+        this.requestUser});
 
   ULDDetailList.fromJson(Map<String, dynamic> json) {
     uLDNo = json['ULDNo'];
@@ -52,6 +58,9 @@ class ULDDetailList {
     stackSize = json['StackSize'];
     uLDLocation = json['ULDLocation'];
     uLDStatus = json['ULDStatus'];
+    requestStatus = json['RequestStatus'];
+    requestLocation = json['RequestLocation'];
+    requestUser = json['RequestUser'];
   }
 
   Map<String, dynamic> toJson() {
@@ -62,6 +71,9 @@ class ULDDetailList {
     data['StackSize'] = this.stackSize;
     data['ULDLocation'] = this.uLDLocation;
     data['ULDStatus'] = this.uLDStatus;
+    data['RequestStatus'] = this.requestStatus;
+    data['RequestLocation'] = this.requestLocation;
+    data['RequestUser'] = this.requestUser;
     return data;
   }
 }

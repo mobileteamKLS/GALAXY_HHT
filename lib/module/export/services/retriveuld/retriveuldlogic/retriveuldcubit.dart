@@ -34,18 +34,51 @@ class RetriveULDCubit extends Cubit<RetriveULDState>{
     }
   }
 
-
   // uld detail api call repo
   Future<void> getULDDetailLoad(String uldType, int userId, int companyCode, int menuId) async {
     emit(RetriveULDLoadingState());
     try {
-      final uldDetailModelData = await retriveULDRepository.retriveULDDetail(uldType, userId, companyCode, menuId);
+      final uldDetailModelData = await retriveULDRepository.retriveULDDetailList(uldType, userId, companyCode, menuId);
       emit(RetriveULDDetailSuccessState(uldDetailModelData));
     } catch (e) {
       emit(RetriveULDDetailFailureState(e.toString()));
     }
   }
 
+
+  // uld search api call repo
+  Future<void> getULDSearch(String scan, int userId, int companyCode, int menuId) async {
+    emit(RetriveULDLoadingState());
+    try {
+      final uldDetailModelData = await retriveULDRepository.retriveULDSearch(scan, userId, companyCode, menuId);
+      emit(RetriveULDSearchSuccessState(uldDetailModelData));
+    } catch (e) {
+      emit(RetriveULDSearchFailureState(e.toString()));
+    }
+  }
+
+  // uld list api call repo
+  Future<void> getULDList(int userId, int companyCode, int menuId) async {
+    emit(RetriveULDLoadingState());
+    try {
+      final retrieveULDListData = await retriveULDRepository.retriveULDList(userId, companyCode, menuId);
+      emit(RetriveULDListSuccessState(retrieveULDListData));
+    } catch (e) {
+      emit(RetriveULDListFailureState(e.toString()));
+    }
+  }
+
+
+  // add to list api call repo
+  Future<void> addToList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(RetriveULDLoadingState());
+    try {
+      final addToListData = await retriveULDRepository.addToList(uldSeqNo, userId, companyCode, menuId);
+      emit(AddToListSuccessState(addToListData));
+    } catch (e) {
+      emit(AddToListFailureState(e.toString()));
+    }
+  }
 
   void resetState() {
     emit(RetriveULDInitialState());
