@@ -77,8 +77,6 @@ class CommonUtils{
   static String REMARKS = "";
 
 
-  static List<ULDDetailList> SELECTEDULDFORRETRIVE = [];
-
 
   static String getImagePath(String imageName){
     return "assets/images/${imageName}";

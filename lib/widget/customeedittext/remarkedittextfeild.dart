@@ -140,7 +140,7 @@ class _RemarkCustomTextFieldState extends State<RemarkCustomTextField> {
                 ] : widget.doubleDigitOnly! ? <TextInputFormatter>[
                   DecimalTextInputFormatter(maxDigitsBeforeDecimal: 7, maxDigitsAfterDecimal: 2),
                 ] : <TextInputFormatter>[
-                  FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z ]")),
+                  /*FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z ]")),*/
                 ],
                 //textAlign: TextAlign.left,
                 cursorColor: MyColor.primaryColorblue,

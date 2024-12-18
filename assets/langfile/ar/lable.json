@@ -107,7 +107,7 @@
     "weight" : "وزن",
     "manifest" : "مانيفست",
     "recived" : "تلقى",
-    "discripencies" : "التباينات",
+    "discripencies" : "اختلاف القطع",
     "short" : "قصير",
     "excess" : "إفراط",
     "next" : "القادم",
@@ -170,7 +170,7 @@
     "awbListing" : "قائمة أو بي",
     "detailsForUldNo" : "تفاصيل رقم ULD.",
     "scanAWB" : "مسح أو بي",
-    "showAllShipments" : "إظهار اكتمال الانتظار يو إل دي فقط",
+    "showAllShipments" : "إظهار أدبليوب المكتملة / المعلقة",
     "showMoreDetails" : "عرض المزيد من التفاصيل",
     "showLessDetails" : "إظهار تفاصيل أقل",
 

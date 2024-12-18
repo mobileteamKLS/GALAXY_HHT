@@ -312,6 +312,8 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                 //add clear text to clear all feild
                                 onClear: () {
                                   igmNoEditingController.clear();
+                                  locationController.clear();
+                                  _isvalidateLocation = false;
                                   getPageLoadDetail("");
                                   setState(() {
 

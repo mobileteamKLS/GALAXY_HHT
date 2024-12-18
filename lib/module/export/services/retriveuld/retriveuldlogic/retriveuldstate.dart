@@ -1,6 +1,8 @@
 import 'package:galaxy/module/export/model/retriveuld/addtolistmodel.dart';
 
 import '../../../../import/model/uldacceptance/locationvalidationmodel.dart';
+import '../../../model/retriveuld/canceluldmodel.dart';
+import '../../../model/retriveuld/retrieveuldmodel.dart';
 import '../../../model/retriveuld/retriveulddetailmodel.dart';
 import '../../../model/retriveuld/retriveuldlistmodel.dart';
 import '../../../model/retriveuld/retriveuldloadmodel.dart';
@@ -65,6 +67,7 @@ class RetriveULDListFailureState extends RetriveULDState {
   final String error;
   RetriveULDListFailureState(this.error);
 }
+
 class AddToListSuccessState extends RetriveULDState {
   final AddToListModel addToListModel;
   AddToListSuccessState(this.addToListModel);
@@ -75,7 +78,25 @@ class AddToListFailureState extends RetriveULDState {
   AddToListFailureState(this.error);
 }
 
+class RetrieveULDBtnSuccessState extends RetriveULDState {
+  final RetrieveULDModel retrieveULDModel;
+  RetrieveULDBtnSuccessState(this.retrieveULDModel);
+}
 
+class RetrieveULDBtnFailureState extends RetriveULDState {
+  final String error;
+  RetrieveULDBtnFailureState(this.error);
+}
+
+class CancelULDSuccessState extends RetriveULDState {
+  final CancelULDModel cancelULDModel;
+  CancelULDSuccessState(this.cancelULDModel);
+}
+
+class CancelULDFailureState extends RetriveULDState {
+  final String error;
+  CancelULDFailureState(this.error);
+}
 
 
 

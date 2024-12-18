@@ -87,6 +87,7 @@
     "servicable" : "Serviceable",
     "suggest" : "Suggestion",
 
+
     "ucr" : "UCR",
     "enterUcr" : "Please enter UCR.",
     "uldAcceptMsg" : "Do you want to accept the ULD?",
@@ -110,7 +111,7 @@
     "weight" : "Weight",
     "manifest" : "Manifested",
     "recived" : "Received",
-    "discripencies" : "Discrepancy",
+    "discripencies" : "Pieces Discrepancy",
     "short" : "Short",
     "excess" : "Excess",
     "next" : "Next",
@@ -171,7 +172,7 @@
     "awbListing" : "AWB Listing",
     "detailsForUldNo" : "Details for ULD No.",
     "scanAWB" : "Scan AWB",
-    "showAllShipments" : "Show completion pending AWB only",
+    "showAllShipments" : "Show completed / pending AWB",
     "showMoreDetails" : "Show More Details",
     "showLessDetails" : "Show Less Details",
 
@@ -516,7 +517,7 @@
     "closed" : "Closed",
     "open" : "Open",
     "addPallet" : "Add Pallet",
-    "basepallet" : "Base pallet",
+    "basepallet" : "Base Pallet",
     "remove" : "Remove",
     "uldConditioncode" : "ULD Condition code",
     "addupdateconditioncode" : "Add/Update ULD Condition code",

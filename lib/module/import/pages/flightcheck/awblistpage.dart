@@ -373,7 +373,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
 
 
                                     filterAWBDetailsList = List.from(awbItemList);
-                                    filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+                                    filterAWBDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
 
 
                                     print("CHECK_LIST====== ${awbItemList.length}");
@@ -2323,7 +2323,7 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
           filterAWBDetailsList[index].bDPriority = newPriority;
 
           // Sort the list based on BDPriority
-          filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+          filterAWBDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
         });
       } else {
         Vibration.vibrate(duration: 500);

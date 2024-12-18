@@ -657,25 +657,25 @@ class _RetriveULDDetailPagetate extends State<RetriveULDDetailPage>
                                                                            textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                            verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
                                                                            press: () {
+                                                                             btnClick = "R";
+                                                                            /* Navigator.pop(context, {
+                                                                               "status": "R",
+                                                                               "uldNo" : uldDetails.uLDNo
+                                                                             });*/
                                                                              addToList(uldDetails);
                                                                            },),
                                                                        ),
                                                                        SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
-
-
                                                                        Expanded(
                                                                          flex: 1,
                                                                          child: RoundedButtonBlue(text: "Add To List",
                                                                            textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                            verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
                                                                            press: () {
+                                                                             btnClick = "A";
                                                                              addToList(uldDetails);
                                                                            },),
                                                                        )
-
-
-
-
                                                                      ],
                                                                    ),
 

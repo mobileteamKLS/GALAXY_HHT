@@ -260,7 +260,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
       filteredAirsideReleaseDetailList = airsideReleaseDetailList
           .where((item) => _isOpenULDFlagEnable ? (item.isReleased == "Y" || item.isReleased == "N") : item.isReleased == "N").toList();
 
-      filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
+      filteredAirsideReleaseDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
     });
   }
 
@@ -481,7 +481,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                     filteredAirsideReleaseDetailList = airsideReleaseDetailList
                                         .where((item) => item.isReleased == "N")
                                         .toList(); // Default filter
-                                    filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
+                                    filteredAirsideReleaseDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
 
 
 
@@ -1648,7 +1648,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
           filteredAirsideReleaseDetailList[index].priority = newPriority;
 
           // Sort the list based on BDPriority
-          filteredAirsideReleaseDetailList.sort((a, b) => b.priority!.compareTo(a.priority!));
+          filteredAirsideReleaseDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
         });
       } else {
         Vibration.vibrate(duration: 500);

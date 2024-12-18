@@ -722,7 +722,7 @@ class _CheckAWBPageState extends State<CheckAWBPage> with SingleTickerProviderSt
                                             Row(
                                               children: [
                                                 CustomeText(
-                                                  text: "Suggestive Location : ",
+                                                  text: "Suggested Location : ",
                                                   fontColor: MyColor.textColorGrey2,
                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                   fontWeight: FontWeight.w400,

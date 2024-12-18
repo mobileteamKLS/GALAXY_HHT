@@ -105,7 +105,7 @@
     "weight" : "वज़न",
     "manifest" : "व्यक्त करना",
     "recived" : "प्राप्त हुआ",
-    "discripencies" : "विसंगति",
+    "discripencies" : "टुकड़ों में विसंगति",
     "short" : "लघु",
     "excess" : "अधिकता",
     "next" : "अगला",
@@ -167,7 +167,7 @@
     "awbListing" : "एडब्लूबी लिस्टिंग",
     "detailsForUldNo" : "विवरण के लिए यूएलडी नम्बर.",
     "scanAWB" : "एडब्लूबी स्कैन करें.",
-    "showAllShipments" : "केवल लंबित एडब्लूबी को पूरा दिखाएं.",
+    "showAllShipments" : "पूर्ण / लंबित एडब्लूबी दिखाएँ.",
     "showMoreDetails" : "अधिक विवरण दिखाएं",
     "showLessDetails" : "कम विवरण दिखाएं",
 

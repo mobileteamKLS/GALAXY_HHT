@@ -307,7 +307,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   refrelCode: refrelCode,
                                                   lableModel: lableModel,
                                                   menuId: menuId,
-                                                  mainMenuName: widget.menuName), "Y");
+                                                  mainMenuName: widget.menuName), isEnable);
                                             }
                                             else if(menuId == SubMenuCodeUtils.shipmentCreation){
 
@@ -321,7 +321,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   refrelCode: refrelCode,
                                                   lableModel: lableModel,
                                                   menuId: menuId,
-                                                  mainMenuName: widget.menuName), "Y");
+                                                  mainMenuName: widget.menuName), isEnable);
                                             }
 
                                             else if(menuId == SubMenuCodeUtils.AirSideRelease){

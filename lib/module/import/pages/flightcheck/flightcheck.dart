@@ -623,7 +623,7 @@ class _FlightCheckState extends State<FlightCheck>
                                     if (flightCheckULDListModel!.flightDetailSummary != null) {
                                       originalFlightDetails = List.from(flightCheckULDListModel!.flightDetailList!);
                                       flightDetailsList = List.from(originalFlightDetails);
-                                      flightDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+                                      flightDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
 
 
 
@@ -3155,7 +3155,7 @@ class _FlightCheckState extends State<FlightCheck>
           flightDetailsList[index].bDPriority = newPriority;
 
           // Sort the list based on BDPriority
-          flightDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+          flightDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
         });
       } else {
         Vibration.vibrate(duration: 500);
@@ -3173,7 +3173,7 @@ class _FlightCheckState extends State<FlightCheck>
       if (searchText.isEmpty) {
         // If search text is cleared, revert to original list
         flightDetailsList = List.from(originalFlightDetails);
-        flightDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+        flightDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
       } else {
         // Filter and sort the list based on search text
         flightDetailsList = List.from(originalFlightDetails);

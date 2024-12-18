@@ -641,7 +641,16 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
 
                                                         // Add Pallate logic
 
-                                                        addPalletStack(widget.uldSeqNo, scanNoEditingController.text, widget.locationCode);
+                                                        if(scanNoEditingController.text == ""){
+                                                          Vibration.vibrate(duration: 500);
+                                                          SnackbarUtil.showSnackbar(context, "Please enter scan no.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                            FocusScope.of(context).requestFocus(scanNoFocusNode);
+                                                          });
+                                                        }else{
+                                                          addPalletStack(widget.uldSeqNo, scanNoEditingController.text, widget.locationCode);
+
+                                                        }
 
                                                         /*String validationMessage = UldValidationUtil.validateUldNumberwithSpace1(scanNoEditingController.text);
 
@@ -682,7 +691,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
                                             CustomeText(text: "${lableModel.basepallet} ${widget.uldNo}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                            CustomeText(text: "${lableModel.stacksize} ${filterPalletDetailList.length + 1}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                            CustomeText(text: "${lableModel.stacksize} : ${filterPalletDetailList.length + 1}", fontColor: MyColor.textColorGrey2, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
 
                                           ],
                                         ),

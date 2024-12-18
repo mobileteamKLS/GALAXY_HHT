@@ -80,6 +80,29 @@ class RetriveULDCubit extends Cubit<RetriveULDState>{
     }
   }
 
+  // add to list api call repo
+  Future<void> retrieveULDBtn(String uldSeqNo, String locationCode, int userId, int companyCode, int menuId) async {
+    emit(RetriveULDLoadingState());
+    try {
+      final retrieveULDModel = await retriveULDRepository.retrieveULDBtn(uldSeqNo, locationCode, userId, companyCode, menuId);
+      emit(RetrieveULDBtnSuccessState(retrieveULDModel));
+    } catch (e) {
+      emit(RetrieveULDBtnFailureState(e.toString()));
+    }
+  }
+
+  // add to list api call repo
+  Future<void> cancelULD(int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(RetriveULDLoadingState());
+    try {
+      final cancelULDModel = await retriveULDRepository.cancelULD(uldSeqNo, userId, companyCode, menuId);
+      emit(CancelULDSuccessState(cancelULDModel));
+    } catch (e) {
+      emit(CancelULDFailureState(e.toString()));
+    }
+  }
+
+
   void resetState() {
     emit(RetriveULDInitialState());
   }

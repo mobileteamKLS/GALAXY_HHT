@@ -358,7 +358,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
                                     hawbItemList = List.from(hAwbModel!.flightCheckInHAWBBDList != null ? hAwbModel!.flightCheckInHAWBBDList! : []);
 
                                     filterHAWBDetailsList = List.from(hawbItemList);
-                                    filterHAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+                                    filterHAWBDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
 
                                     setState(() {
 
@@ -1917,7 +1917,7 @@ class _HouseListPageState extends State<HouseListPage> with SingleTickerProvider
           filterHAWBDetailsList[index].bDPriority = newPriority;
 
           // Sort the list based on BDPriority
-          filterHAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+          filterHAWBDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
         });
       } else {
         Vibration.vibrate(duration: 500);

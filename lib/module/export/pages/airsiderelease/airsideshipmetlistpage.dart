@@ -309,7 +309,7 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                     awbItemList = List.from(awbModel!.airsideReleaseAWBDetailList != null ? awbModel!.airsideReleaseAWBDetailList! : []);
 
                                     filterAWBDetailsList = List.from(awbItemList);
-                                    filterAWBDetailsList.sort((a, b) => b.priority!.compareTo(a.priority!));
+                                    filterAWBDetailsList.sort((a, b) => a.priority!.compareTo(b.priority!));
 
 
                                     print("CHECK_LIST====== ${awbItemList.length}");
@@ -999,7 +999,7 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
           filterAWBDetailsList[index].priority = newPriority;
 
           // Sort the list based on BDPriority
-          filterAWBDetailsList.sort((a, b) => b.priority!.compareTo(a.priority!));
+          filterAWBDetailsList.sort((a, b) => a.priority!.compareTo(b.priority!));
         });
       } else {
         Vibration.vibrate(duration: 500);

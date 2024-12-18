@@ -27,7 +27,6 @@ import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customebuttons/roundbuttongreen.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
-import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
@@ -37,7 +36,6 @@ import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/retriveuld/retriveuldlistmodel.dart';
 import '../../model/retriveuld/retriveuldloadmodel.dart';
 import '../../services/retriveuld/retriveuldlogic/retriveuldcubit.dart';
 
@@ -69,6 +67,9 @@ class _RetriveULDPageState extends State<RetriveULDPage>
     with SingleTickerProviderStateMixin {
 
   RetriveULDDetailLoadModel? retriveULDListModel;
+  List<ULDDetailList> sortedList = [];
+  List<bool> isCheckedList = [];
+  bool _isOpenULDFlagEnable = false;
 
   TextEditingController locationController = TextEditingController();
   FocusNode locationFocusNode = FocusNode();
@@ -196,7 +197,15 @@ class _RetriveULDPageState extends State<RetriveULDPage>
 
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
-    Navigator.pop(context, "Done");
+    if(_pageIndex == 1){
+      setState(() {
+        _pageIndex = 0;
+        _tabController.animateTo(0);
+      });
+    }else{
+      Navigator.pop(context, "Done");
+    }
+
 
     return false; // Prevents the default back button action
   }
@@ -284,9 +293,11 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  uldNo = "";
                                   locationController.clear();
                                   _isvalidateLocation = false;
-                                  CommonUtils.SELECTEDULDFORRETRIVE.clear();
+                                  _isOpenULDFlagEnable = false;
+                                  _filterList();
                                   setState(() {
 
                                   });
@@ -363,6 +374,33 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                     SnackbarUtil.showSnackbar(context, state.retriveULDListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   } else{
                                     retriveULDListModel = state.retriveULDListModel;
+                                    // Sort the list: "A" items first
+                                    sortedList = retriveULDListModel!.uLDDetailList!
+                                        .where((item) => item.requestStatus == "A")
+                                        .toList()
+                                      ..addAll(retriveULDListModel!.uLDDetailList!
+                                          .where((item) => item.requestStatus != "A"));
+
+                                    // If uldNo is not blank, move the matching item(s) to the top
+                                    if (uldNo.isNotEmpty) {
+                                      sortedList.sort((a, b) {
+                                        if (a.uLDNo == uldNo) return -1; // Move `uldNo` match to the top
+                                        if (b.uLDNo == uldNo) return 1;
+                                        return 0; // Keep other items in their current order
+                                      });
+                                    }else{
+
+                                    }
+
+                                    // Initialize checkbox states based on requestStatus == "A"
+                                    isCheckedList = sortedList.map((item) => item.requestStatus == "A").toList();
+                                    _isOpenULDFlagEnable = false;
+                                    _filterList();
+
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(locationFocusNode);
+                                    });
+
                                     setState(() {});
                                   }
                                 }
@@ -370,6 +408,40 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is RetrieveULDBtnSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.retrieveULDModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.retrieveULDModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    uldNo = "";
+                                    getULDList();
+                                    SnackbarUtil.showSnackbar(context, state.retrieveULDModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                  }
+                                }
+                                else if (state is RetrieveULDBtnFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                }
+                                else if (state is CancelULDSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.cancelULDModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.cancelULDModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    uldNo = "";
+                                    getULDList();
+                                   // SnackbarUtil.showSnackbar(context, state.cancelULDModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                  }
+                                }
+                                else if (state is CancelULDFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
                                 }
 
                               },
@@ -432,6 +504,9 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                                           }
                                                           else if (index == 1) {
                                                             setState(() {
+                                                              uldNo = "";
+                                                              sortedList.clear();
+                                                              isCheckedList.clear();
                                                               getULDList();
                                                               _pageIndex = index;
                                                             });
@@ -543,11 +618,16 @@ class _RetriveULDPageState extends State<RetriveULDPage>
               if (result != null) {
                 if (result.containsKey('status')) {
                   String? status = result['status'];
-
                   if(status == "R"){
+                    uldNo = result['uldNo'];
+                    print("ULDNO------- $uldNo");
+
+                    sortedList.clear();
+                    isCheckedList.clear();
                     setState(() {
                       getULDList();
-                      _pageIndex = index;
+                      _pageIndex = 1;
+
                     });
                   }
                 }else{
@@ -626,6 +706,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
 
     if (pageIndex == 1) {
       // design of a summary
+
       return Column(
         children: [
           SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
@@ -699,18 +780,48 @@ class _RetriveULDPageState extends State<RetriveULDPage>
             press: () async {
               if(locationController.text.isNotEmpty){
                 if(_isvalidateLocation){
-                  if(CommonUtils.SELECTEDULDFORRETRIVE.isNotEmpty){
-                    String uldSeqNoString = CommonUtils.SELECTEDULDFORRETRIVE
+                 // if(CommonUtils.SELECTEDULDFORRETRIVE.isNotEmpty){
+
+                  List<int> selectedSeqNos = [];
+                  for (int i = 0; i < isCheckedList.length; i++) {
+                    if (isCheckedList[i]) {
+                      selectedSeqNos.add(sortedList[i].uLDSeqNo!);
+                    }
+                  }
+                  if (selectedSeqNos.isNotEmpty) {
+                    // Join selected sequence numbers with `~`
+                    String uldSeqNoString = selectedSeqNos.map((e) => e.toString()).join('~');
+
+                    // Print the formatted string
+                    print("ULD Seq Numbers: $uldSeqNoString");
+
+                    // Call the retrieve function
+                    retrieveULDBtn(uldSeqNoString, locationController.text);
+                  } else {
+                    // Show a snackbar if no ULD is selected
+                    SnackbarUtil.showSnackbar(
+                      context,
+                      "Please select at least one ULD from the list.",
+                      MyColor.colorRed,
+                      icon: FontAwesomeIcons.times,
+                    );
+                    Vibration.vibrate(duration: 500);
+                  }
+
+
+                  /*  String uldSeqNoString = CommonUtils.SELECTEDULDFORRETRIVE
                         .map((item) => item.uLDSeqNo.toString())
                         .join('~');
 
                     // Print the formatted string
                     print("ULD Seq Numbers: $uldSeqNoString");
 
-                  }else{
+                    retrieveULDBtn(uldSeqNoString, locationController.text);*/
+
+                  /*}else{
                     SnackbarUtil.showSnackbar(context, "Please at lease one ULD select from ULD list.",  MyColor.colorRed, icon: FontAwesomeIcons.times);
                     Vibration.vibrate(duration: 500);
-                  }
+                  }*/
                 }else{
                   openValidationDialog("${lableModel.validateLocation}", locationFocusNode);
                 }
@@ -721,18 +832,54 @@ class _RetriveULDPageState extends State<RetriveULDPage>
 
             },
           ),
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          (retriveULDListModel != null)
+              ? (sortedList.isNotEmpty)
+              ?  Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal,
+                  ),
+                  CustomeText(
+                      text: "Show requested by all user",
+                      fontColor: MyColor.textColorGrey2,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.start)
+                ],
+              ),
+              Switch(
+                value: _isOpenULDFlagEnable,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                activeColor: MyColor.primaryColorblue,
+                inactiveThumbColor: MyColor.thumbColor,
+                inactiveTrackColor: MyColor.textColorGrey2,
+                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                onChanged: (value) {
+                  setState(() {
+                    _isOpenULDFlagEnable = value;
+                    _filterList();
+                  });
+
+                  //call api //
+                },
+              )
+            ],
+          ) : SizedBox() : SizedBox(),
+
            (retriveULDListModel != null)
+              ? (sortedList.isNotEmpty)
               ? ListView.builder(
-             itemCount: retriveULDListModel!.uLDDetailList!.length,
+             itemCount: sortedList.length,
              physics: const NeverScrollableScrollPhysics(),
              shrinkWrap: true,
              controller: scrollController,
              itemBuilder: (context, index) {
-               ULDDetailList uldDetails = retriveULDListModel!.uLDDetailList![index];
-
-               //  final isSelected = _selectedItems.contains(airSideReleaseDetail);
-
+               ULDDetailList uldDetails = sortedList[index];
 
                return Directionality(
                  textDirection: textDirection,
@@ -769,139 +916,156 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                          color: MyColor.colorWhite,
                          borderRadius: BorderRadius.circular(8),
                        ),
-                       child: Stack(
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
                          children: [
-                           Column(
-                             crossAxisAlignment: CrossAxisAlignment.start,
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                              children: [
                                Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                  children: [
-                                   Row(
-                                     children: [
-                                       CustomeText(text: "${uldDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                       SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                       (uldDetails.intact! == "Y")
-                                           ? Padding(
-                                         padding: const EdgeInsets.symmetric(horizontal: 2),
-                                         child:
-                                         Container(
-                                           width: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,  // Set width and height for the circle
-                                           decoration: BoxDecoration(
-                                             shape: BoxShape.circle,
-                                             border: Border.all(  // Add border
-                                               color: MyColor.primaryColorblue,  // Border color
-                                               width: 1.3,  // Border width
-                                             ),
-                                           ),
-                                           child: Center(
-                                             child: CustomeText(
-                                                 text: "I",
-                                                 fontColor: MyColor.primaryColorblue,
-                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                 fontWeight: FontWeight.w500,
-                                                 textAlign: TextAlign.center),
-                                           ),
-                                         ),
-                                       )
-                                           : const SizedBox()
-                                     ],
-                                   ),
-                                   Row(
-                                     children: [
-                                       CustomeText(
-                                         text: "Status : ",
-                                         fontColor: MyColor.textColorGrey2,
-                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                         fontWeight: FontWeight.w400,
-                                         textAlign: TextAlign.start,
+                                   if (uldDetails.requestStatus == "A")
+                                     Transform.scale(
+                                       scale : 1.3,
+                                       child: Checkbox(
+                                         value: isCheckedList[index],
+                                         onChanged: (value) {
+                                           setState(() {
+                                             isCheckedList[index] = value ?? false;
+                                           });
+                                         },
+                                         visualDensity: VisualDensity.compact, // Reduces the padding around the checkbox
+                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap, // Shrinks the touch target size
                                        ),
-                                       const SizedBox(width: 5),
-                                       Container(
-                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
-                                         decoration : BoxDecoration(
-                                             borderRadius: BorderRadius.circular(20),
-                                             color: (uldDetails.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                     ),
+                                   (uldDetails.requestStatus == "A") ? SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,) : SizedBox(),
+                                   CustomeText(text: "${uldDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                   (uldDetails.intact! == "Y")
+                                       ? Padding(
+                                     padding: const EdgeInsets.symmetric(horizontal: 2),
+                                     child:
+                                     Container(
+                                       width: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,  // Set width and height for the circle
+                                       decoration: BoxDecoration(
+                                         shape: BoxShape.circle,
+                                         border: Border.all(  // Add border
+                                           color: MyColor.primaryColorblue,  // Border color
+                                           width: 1.3,  // Border width
                                          ),
+                                       ),
+                                       child: Center(
                                          child: CustomeText(
-                                           text:  (uldDetails.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
-                                           fontColor: MyColor.textColorGrey3,
-                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                           fontWeight: FontWeight.w500,
-                                           textAlign: TextAlign.center,
-                                         ),
+                                             text: "I",
+                                             fontColor: MyColor.primaryColorblue,
+                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                             fontWeight: FontWeight.w500,
+                                             textAlign: TextAlign.center),
                                        ),
-                                     ],
-                                   ),
-
-                                 ],
-                               ),
-                               SizedBox(height: SizeConfig.blockSizeVertical),
-
-                               Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                 children: [
-                                   Row(
-                                     children: [
-                                       CustomeText(
-                                         text: "${lableModel.stacksize} : ",
-                                         fontColor: MyColor.textColorGrey2,
-                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                         fontWeight: FontWeight.w400,
-                                         textAlign: TextAlign.start,
-                                       ),
-                                       const SizedBox(width: 5),
-                                       CustomeText(
-                                         text: "${uldDetails.stackSize}",
-                                         fontColor: MyColor.colorBlack,
-                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                         fontWeight: FontWeight.w600,
-                                         textAlign: TextAlign.start,
-                                       ),
-                                     ],
-                                   ),
-                                   Row(
-                                     children: [
-                                       SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                       CustomeText(
-                                         text: "${uldDetails.uLDLocation}",
-                                         fontColor: MyColor.colorBlack,
-                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                         fontWeight: FontWeight.w600,
-                                         textAlign: TextAlign.start,
-                                       ),
-                                     ],
+                                     ),
                                    )
-
-
-
+                                       : const SizedBox()
                                  ],
                                ),
-
-
-                               SizedBox(height: SizeConfig.blockSizeVertical),
                                Row(
-                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                  children: [
-                                   Expanded(
-                                     flex: 1,
-                                     child: RoundedButtonGreen(
-                                       text: "Cancel Request",
-                                       color: MyColor.colorRed,
-                                       isborderButton: true,
-                                       textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                       verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
-                                       press: () {
-
-                                       },),
+                                   CustomeText(
+                                     text: "Status : ",
+                                     fontColor: MyColor.textColorGrey2,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                     fontWeight: FontWeight.w400,
+                                     textAlign: TextAlign.start,
                                    ),
-
+                                   const SizedBox(width: 5),
+                                   Container(
+                                     padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
+                                     decoration : BoxDecoration(
+                                         borderRadius: BorderRadius.circular(20),
+                                         color: (uldDetails.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                     ),
+                                     child: CustomeText(
+                                       text:  (uldDetails.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
+                                       fontColor: MyColor.textColorGrey3,
+                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                       fontWeight: FontWeight.w500,
+                                       textAlign: TextAlign.center,
+                                     ),
+                                   ),
                                  ],
                                ),
 
                              ],
                            ),
+                           SizedBox(height: SizeConfig.blockSizeVertical),
+
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Row(
+                                 children: [
+                                   CustomeText(
+                                     text: "${lableModel.stacksize} : ",
+                                     fontColor: MyColor.textColorGrey2,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                     fontWeight: FontWeight.w400,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                   const SizedBox(width: 5),
+                                   CustomeText(
+                                     text: "${uldDetails.stackSize}",
+                                     fontColor: MyColor.colorBlack,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                     fontWeight: FontWeight.w600,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                 ],
+                               ),
+                               Row(
+                                 children: [
+                                   SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                   SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                   CustomeText(
+                                     text: "${uldDetails.uLDLocation}",
+                                     fontColor: MyColor.colorBlack,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                     fontWeight: FontWeight.w600,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                 ],
+                               )
+
+
+
+                             ],
+                           ),
+
+
+                           SizedBox(height: SizeConfig.blockSizeVertical),
+                           Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Expanded(
+                                 flex: 1,
+                                 child: RoundedButtonGreen(
+                                   text: (uldDetails.requestStatus == "R") ? "Cancel Request" : "Remove from list",
+                                   color: MyColor.colorRed,
+                                   isborderButton: true,
+                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
+                                   press: () async {
+                                     bool? cancelULD = await DialogUtils.cancelULDDialog(context, uldDetails.uLDNo!, (uldDetails.requestStatus == "A") ? "Remove in list" : "Cancel Request", (uldDetails.requestStatus == "A") ? "Do you want to remove from list for this ${uldDetails.uLDNo}?" : "Do you want to cancel request for this ${uldDetails.uLDNo}?");
+                                     if (cancelULD == true) {
+                                       cancelULDFromList(uldDetails.uLDSeqNo!);
+                                     }
+                                     else {
+
+                                     }
+                                     },),
+                               ),
+
+                             ],
+                           ),
+
                          ],
                        ),
                      ),
@@ -910,6 +1074,18 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                );
              },
            )
+              : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: lableModel.recordNotFound!,
+                  // if record not found
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          )
               : Center(
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
@@ -993,6 +1169,63 @@ class _RetriveULDPageState extends State<RetriveULDPage>
   void getULDList(){
     context.read<RetriveULDCubit>().getULDList(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
   }
+
+  void retrieveULDBtn(String uldSeqNo, String locationCode){
+    context.read<RetriveULDCubit>().retrieveULDBtn(uldSeqNo, locationCode, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
+  }
+
+  void cancelULDFromList(int uldSeqNo){
+    context.read<RetriveULDCubit>().cancelULD(uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
+  }
+
+  void _filterList() {
+
+
+
+    setState(() {
+      // Filter and sort the list based on the switch state
+      if (!_isOpenULDFlagEnable) {
+        // Filter the list to show only items where requestUser is "" or "KALE"
+        sortedList = retriveULDListModel!.uLDDetailList!
+            .where((item) => (item.requestUser == "" || item.requestUser == _user!.userProfile!.userId))
+            .where((item) => item.requestStatus == "A")
+            .toList()
+          ..addAll(retriveULDListModel!.uLDDetailList!
+              .where((item) => (item.requestUser == "" || item.requestUser == _user!.userProfile!.userId) && item.requestStatus != "A"));
+
+        // Sort by uLDNo if provided
+        if (uldNo.isNotEmpty) {
+          sortedList.sort((a, b) {
+            if (a.uLDNo == uldNo) return -1; // Move `uldNo` match to the top
+            if (b.uLDNo == uldNo) return 1;
+            return 0; // Keep other items in their current order
+          });
+        }
+      }
+      else {
+        // When switch is ON, restore the full list
+        sortedList = retriveULDListModel!.uLDDetailList!
+            .where((item) => item.requestStatus == "A")
+            .toList()
+          ..addAll(retriveULDListModel!.uLDDetailList!
+              .where((item) => item.requestStatus != "A"));
+
+        // Sort by uLDNo if provided
+        if (uldNo.isNotEmpty) {
+          sortedList.sort((a, b) {
+            if (a.uLDNo == uldNo) return -1; // Move `uldNo` match to the top
+            if (b.uLDNo == uldNo) return 1;
+            return 0; // Keep other items in their current order
+          });
+        }
+      }
+
+      // Initialize checkbox states based on requestStatus == "A"
+      isCheckedList = sortedList.map((item) => item.requestStatus == "A").toList();
+    });
+  }
+
+
 
 }
 
