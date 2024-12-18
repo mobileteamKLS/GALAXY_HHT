@@ -19,6 +19,7 @@ import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/warehouseLocationModal.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import 'ImportShipmentListing.dart';
 import 'package:xml/xml.dart';
 
@@ -41,6 +42,7 @@ class _WarehouseLocationState
   List<TextEditingController> groupIdControllers = [];
   List<TextEditingController> locationControllers = [];
   List<TextEditingController> nopControllers = [];
+  List<TextEditingController> weightControllers = [];
   List<bool> editStates = [];
   @override
   void initState() {
@@ -57,26 +59,19 @@ class _WarehouseLocationState
     required String mode,
   }) {
     final builder = XmlBuilder();
-
-    builder.element('Root', nest: () {
       builder.element('LOCS', nest: () {
-        for (var item in wareHouseLocationList.where((w) => w.iwSeqNo == 0)) {
+        //.where((w) => w.iwSeqNo == 0)
+        for (var item in wareHouseLocationList) {
           builder.element('LOC', nest: () {
             builder.element('LocCode', nest: item.locCode);
             builder.element('NOP', nest: item.nop.toString());
-            builder.element('Weight', nest: item.weight.toString());
-            builder.element('Volume', nest: '0'); // Default volume
+            builder.element('Weight', nest: item.weight.toStringAsFixed(2));
+            builder.element('Volume', nest: '0');
             builder.element('GroupId', nest: item.groupId);
           });
         }
       });
-      builder.element('ISID', nest: iSId);
-      builder.element('IWSeqNo', nest: iWSeqNo);
-      builder.element('CompanyCode', nest: companyCode);
-      builder.element('UserId', nest: userId);
-      builder.element('AirportCity', nest: airportCity);
-      builder.element('Mode', nest: mode);
-    });
+
 
     final xmlDocument = builder.buildDocument();
     return xmlDocument.toXmlString(pretty: true, indent: '  ');
@@ -122,44 +117,20 @@ class _WarehouseLocationState
   //   return jsonEncode(data);
   // }
 
-  void showDataNotFoundDialog(BuildContext context, String message) {
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
     );
   }
 
   searchWarehouseLocationDetails() async{
+    print("API call");
     if(prefixController.text.isEmpty){
       return;
     }
@@ -213,6 +184,10 @@ class _WarehouseLocationState
               wareHouseLocationList.length,
                   (index) =>
                   TextEditingController(text: wareHouseLocationList[index].nop.toString()));
+          weightControllers = List.generate(
+              wareHouseLocationList.length,
+                  (index) =>
+                  TextEditingController(text: wareHouseLocationList[index].weight.toString()));
           editStates = List.generate(wareHouseLocationList.length, (_) => false);
         });
         print("wareHouseShipmentList Length  ${wareHouseShipmentList.length}");
@@ -252,7 +227,7 @@ class _WarehouseLocationState
     // }
     String xml = buildInputXmlSaveUpdate(
       wareHouseLocationList: wareHouseLocationList,
-      iSId: '${wareHouseLocationList.first.isid.toString()}',
+      iSId: '${wareHouseShipmentList.first.impshiprowid.toString()}',
       iWSeqNo: '',
       airportCity: "JFK",
       companyCode: "3",
@@ -260,10 +235,16 @@ class _WarehouseLocationState
       userId: "1",
     );
 
-    print(xml);
-    // return;
+    print("Save XML   $xml");
+     // return;
     var queryParams = {
-      "InputXML":xml
+      "LocXML": "$xml",
+      "ISID": "${wareHouseShipmentList.first.impshiprowid.toString()}",
+      "IWSeqNo": "",
+      "AirportCity": "JFK",
+      "CompanyCode": "3",
+      "Mode": "S",
+      "UserId": "1"
     };
     DialogUtils.showLoadingDialog(context);
     await authService
@@ -271,7 +252,7 @@ class _WarehouseLocationState
       "WarehouseLocation/WarehouseLocationSaveUpdate",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String? status = jsonData['Status'];
@@ -279,12 +260,34 @@ class _WarehouseLocationState
       if(jsonData.isNotEmpty){
         DialogUtils.hideLoadingDialog(context);
         if(status!="S"){
-          showDataNotFoundDialog(context, statusMessage!);
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/warn.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            searchWarehouseLocationDetails();
+          }
         }
         if((status=="S")){
-          SnackbarUtil.showSnackbar(context, "$statusMessage", Color(0xff43A047));
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            searchWarehouseLocationDetails();
+            // Navigator.pushReplacement(context,
+            //     MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          }
         }
 
       }
@@ -307,10 +310,10 @@ class _WarehouseLocationState
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
-      "WDO/GenerateWDO",
+      "WarehouseLocation/WarehouseLocationSaveUpdate",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String? status = jsonData['Status'];
@@ -321,9 +324,20 @@ class _WarehouseLocationState
           showDataNotFoundDialog(context, statusMessage!);
         }
         if((status=="S")){
-          SnackbarUtil.showSnackbar(context, "$statusMessage", Color(0xff43A047));
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            searchWarehouseLocationDetails();
+            // Navigator.pushReplacement(context,
+            //     MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          }
         }
 
       }
@@ -337,12 +351,34 @@ class _WarehouseLocationState
 
   void addBlankRow() {
     setState(() {
-      wareHouseLocationList.add(WarehouseLocationList(nop: 0, sequenceNumber: '', locCode: '', weight: 0.0, whInTime: null, whOutTime: null, groupId: '', isid: wareHouseLocationList.first.isid, iwSeqNo: 0));
+      wareHouseLocationList.add(WarehouseLocationList(nop: 0, sequenceNumber: '', locCode: '', weight: 0.00, whInTime: null, whOutTime: null, groupId: '', isid: 0, iwSeqNo: 0));
       groupIdControllers.add(TextEditingController());
       locationControllers.add(TextEditingController());
       nopControllers.add(TextEditingController());
+      weightControllers.add(TextEditingController());
       editStates.add(true);
     });
+  }
+
+  double calculateWeight(int enteredNOP){
+    int rcvNop=wareHouseShipmentList[0].npr;
+    double rcvWt=wareHouseShipmentList[0].weight;
+    double actWt=0.00;
+    if(enteredNOP.isNaN){
+      rcvNop=0;
+    }
+    else{
+      if(enteredNOP==0){
+        showDataNotFoundDialog(context,"NOP should be greater than 0.");
+      }
+      else if(rcvNop != null && rcvNop != 0){
+         actWt = roundNumber((enteredNOP / rcvNop!) * rcvWt, 2);
+      }
+    }
+    return actWt;
+  }
+  double roundNumber(double value, int decimals) {
+    return (value * (10 ^ decimals)).round() / (10 ^ decimals);
   }
 
 
@@ -488,11 +524,13 @@ class _WarehouseLocationState
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
+                                                    controller: prefixController,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Prefix*",
                                                     readOnly: false,
+                                                    onPress: () {},
                                                     maxLength: 3,
                                                     textInputType:
                                                     TextInputType.number,
@@ -519,12 +557,14 @@ class _WarehouseLocationState
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
+                                                    controller: awbController,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     textInputType:
                                                     TextInputType.number,
                                                     needOutlineBorder: true,
                                                     labelText: "AWB No*",
+                                                    onPress: () {},
                                                     readOnly: false,
                                                     maxLength: 8,
                                                     fontSize: 18,
@@ -599,6 +639,7 @@ class _WarehouseLocationState
 
                                                   ),
                                                   onTap: (){
+                                                    print("Searc");
                                                     searchWarehouseLocationDetails();
                                                   },
                                                 ),
@@ -619,7 +660,7 @@ class _WarehouseLocationState
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              _buildDetailColumn('Declared Pcs', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].npr ?? "" : ""}'),
+                                              _buildDetailColumn('Accepted Pcs', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].npr ?? "" : ""}'),
                                               SizedBox(height: 20),
                                               _buildDetailColumn('Flight No.', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].flightNo ?? "" : ""}'),
 
@@ -628,7 +669,7 @@ class _WarehouseLocationState
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              _buildDetailColumn('Declared Weight', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].weight ?? "" : ""}'),
+                                              _buildDetailColumn('Accepted Wt', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].weight.toStringAsFixed(2) ?? "" : ""}'),
                                               SizedBox(height: 20),
                                               _buildDetailColumn('Flight Date', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].sta ?? "" : ""}'),
 
@@ -638,22 +679,22 @@ class _WarehouseLocationState
                                           Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
-                                              _buildDetailColumn('Accepted Pcs.', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].inWhnop ?? "" : ""}'),
+                                              _buildDetailColumn('Located Pcs', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].inWhnop ?? "" : ""}'),
                                               SizedBox(height: 20),
                                               _buildDetailColumn('Commodity', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].commodity ?? "" : ""}'),
 
                                             ],
                                           ),
 
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              _buildDetailColumn('Accepted Wt.', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].wtPreDel ?? "" : ""}'),
-                                              SizedBox(height: 20),
-                                              _buildDetailColumn('NOG', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].nog ?? "" : ""}'),
-
-                                            ],
-                                          ),
+                                          // Column(
+                                          //   crossAxisAlignment: CrossAxisAlignment.start,
+                                          //   children: [
+                                          //     _buildDetailColumn('Accepted Wt.', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].wtPreDel ?? "" : ""}'),
+                                          //     SizedBox(height: 20),
+                                          //     _buildDetailColumn('NOG', '${wareHouseShipmentList.isNotEmpty ? wareHouseShipmentList[0].nog ?? "" : ""}'),
+                                          //
+                                          //   ],
+                                          // ),
                                         ],
                                       ),
 
@@ -694,11 +735,11 @@ class _WarehouseLocationState
                                   children: [
                                     const Text("  Current Location",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 20),),
                                     GestureDetector(
-                                      child: Row(
+                                      child: const Row(
                                         children: [
-                                          const Icon(Icons.add,
+                                          Icon(Icons.add,
                                               color: MyColor.primaryColorblue),
-                                          const Text(
+                                          Text(
                                             ' Add Row',
                                             style: TextStyle(
                                                fontSize: 18,color:  MyColor.primaryColorblue),
@@ -718,15 +759,16 @@ class _WarehouseLocationState
                                   padding: const EdgeInsets.all(2.0),
                                   child: SingleChildScrollView(
                                     scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      columns: const [
-                                        DataColumn(label: Text('Action')),
-                                        DataColumn(label: Text('Group Id')),
-                                        DataColumn(label: Text('Location')),
-                                        DataColumn(label: Text('NOP')),
-                                        DataColumn(label: Text('In Time')),
+                                      child: DataTable(
+                                        columns:  [
+                                          DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Action'))))),
+                                          DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Group Id'))))),
+                                          DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Location'))))),
+                                          DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('NOP'))))),
+                                          DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Weight'))))),
+                                          DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('In Time'))))),
 
-                                      ],
+                                        ],
                                       rows:  List.generate(
                                           wareHouseLocationList.length,
                                               (index) {
@@ -736,6 +778,7 @@ class _WarehouseLocationState
                                               groupIdController: groupIdControllers[index],
                                               locationIdController: locationControllers[index],
                                               nopController: nopControllers[index],
+                                              weightController: weightControllers[index]
                                             );
                                           }),
                                       headingRowColor:
@@ -910,54 +953,58 @@ class _WarehouseLocationState
     required TextEditingController groupIdController,
     required TextEditingController locationIdController,
     required TextEditingController nopController,
+    required TextEditingController weightController,
   }) {
     return DataRow(cells: [
       DataCell(
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            InkWell(
-              onTap: () {},
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: SvgPicture.asset(
-                  search,
-                  height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+        SizedBox(
+          width:  MediaQuery.sizeOf(context).width*0.15,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              InkWell(
+                onTap: () {},
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: SvgPicture.asset(
+                    search,
+                    height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16), // Space between icons
-            InkWell(
-              onTap: () {
-                setState(() {
-                  editStates[index] = !editStates[index];
-                });
-              },
-              child: Padding(
-                padding: const EdgeInsets.all(2.0),
-                child: SvgPicture.asset(
-                  pen,
-                  height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+              const SizedBox(width: 16), // Space between icons
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    editStates[index] = !editStates[index];
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.all(2.0),
+                  child: SvgPicture.asset(
+                    pen,
+                    height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(width: 16),
-            GestureDetector(
-              child: const Icon(
-                Icons.delete,
-                color: Colors.red,
-                size: 30,
+              const SizedBox(width: 16),
+              GestureDetector(
+                child: const Icon(
+                  Icons.delete,
+                  color: Colors.red,
+                  size: 30,
+                ),
+                onTap: (){
+                  deleteLocation(data);
+                },
               ),
-              onTap: (){
-                deleteLocation(data);
-              },
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       DataCell(SizedBox(
         height: 45,
-        width: 150,
+        width:  MediaQuery.sizeOf(context).width*0.15,
         child: TextFormField(
           controller: groupIdController,
           enabled:  editStates[index],
@@ -995,7 +1042,7 @@ class _WarehouseLocationState
       )),
       DataCell(SizedBox(
         height: 45,
-        width: 150,
+        width: MediaQuery.sizeOf(context).width*0.15,
         child: TextFormField(
           controller: locationIdController,
           enabled:  editStates[index],
@@ -1032,14 +1079,22 @@ class _WarehouseLocationState
       )),
       DataCell(SizedBox(
         height: 45,
-        width: 150,
+        width:  MediaQuery.sizeOf(context).width*0.15,
         child: TextFormField(
           controller: nopController,
+          textAlign: TextAlign.right,
           enabled:  editStates[index],
           onChanged: (value) {
             setState(() {
+              if(value.isEmpty){
+                weightControllers[index].clear();
+              }
               nopControllers[index].text = value;
               data.nop = int.parse(value);
+              double calWt=calculateWeight(int.parse(value));
+              print("Calculated WT $calWt");
+              weightControllers[index].text=calWt.toStringAsFixed(2);
+              data.weight=calWt;
             });
           },
           decoration: InputDecoration(
@@ -1067,7 +1122,45 @@ class _WarehouseLocationState
           ),
         ),
       )),
-       DataCell(Text((data.whInTime!=null)?DateFormat('dd MMM yyyy, HH:mm').format(DateTime.parse(data.whInTime.toString())):"")),
+      DataCell(SizedBox(
+        height: 45,
+        width:  MediaQuery.sizeOf(context).width*0.15,
+        child: TextFormField(
+          controller: weightController,
+          textAlign: TextAlign.right,
+          enabled:  editStates[index],
+          onChanged: (value) {
+            setState(() {
+              weightControllers[index].text = value;
+              data.weight=double.parse(value);
+            });
+          },
+          decoration: InputDecoration(
+            hintText: 'Weight',
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: MyColor.borderColor,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: MyColor.borderColor,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: MyColor.primaryColorblue,
+              ),
+            ),
+          ),
+        ),
+      )),
+       DataCell(SizedBox(width: MediaQuery.sizeOf(context).width*0.18,child: Text((data.whInTime!=null)?DateFormat('dd MMM yyyy, HH:mm').format(DateTime.parse(data.whInTime.toString())):""))),
     ]);
   }
 

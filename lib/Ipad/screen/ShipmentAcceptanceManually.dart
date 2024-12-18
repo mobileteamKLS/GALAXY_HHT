@@ -228,7 +228,7 @@ class _ShipmentAcceptanceManuallyState
     }
   }
 
-  awbSearch() async {
+    awbSearch() async {
     FocusScope.of(context).unfocus();
     DialogUtils.showLoadingDialog(context);
     houseController.clear();
@@ -284,12 +284,16 @@ class _ShipmentAcceptanceManuallyState
         }
         totalNOPController.text =jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
         totalWTController.text = jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
-        commodityController.text = jsonData['ConsignmentAcceptance'][0]['Commodity'].toString();
+
         Customer? selectedCustomer = customerListMaster.firstWhere(
               (customer) => customer.customerId ==jsonData['ConsignmentAcceptance'][0]['AgentId'],
           orElse: () => Customer(customerId: 0, customerName: ""),
         );
+        Commodity? selectedComm=commodityListMaster.firstWhere(
+                (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
+            orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
         agentController.text=selectedCustomer.customerName;
+        commodityController.text = selectedComm.commodityType;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
 
@@ -369,11 +373,15 @@ class _ShipmentAcceptanceManuallyState
             jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
         totalWTController.text =
             jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
-        commodityController.text = jsonData['ConsignmentAcceptance'][0]['Commodity'].toString();
         Customer? selectedCustomer = customerListMaster.firstWhere(
               (customer) => customer.customerId ==jsonData['ConsignmentAcceptance'][0]['AgentId'],
           orElse: () => Customer(customerId: 0, customerName: ""),
         );
+        Commodity? selectedComm=commodityListMaster.firstWhere(
+              (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
+          orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
+        agentController.text=selectedCustomer.customerName;
+        commodityController.text = selectedComm.commodityType;
         agentController.text=selectedCustomer.customerName;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
