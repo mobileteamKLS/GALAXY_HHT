@@ -463,7 +463,7 @@ class _ShipmentAcceptanceManuallyState
           bool isTrue=await showDialog(
             context: context,
             builder: (BuildContext context) => CustomAlertMessageDialogNew(
-              description: "Shipment created successfully",
+              description: "$statusMessage",
               buttonText: "Okay",
               imagepath:'assets/images/successchk.gif',
               isMobile: false,

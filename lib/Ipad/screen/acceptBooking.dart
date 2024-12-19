@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:date_picker_timeline/date_picker_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -41,6 +42,21 @@ class _AcceptBookingState extends State<AcceptBooking> {
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
   List<String> slotList = [];
+  DateTime? pickedDateFromPicker;
+  final List<Map<String, String>> slotData = [
+    {"label": "Before 6 AM", "time": "00:00-05:59"},
+    {"label": "6 AM - 12 PM", "time": "06:00-11:59"},
+    {"label": "12 PM - 6 PM", "time": "12:00-17:59"},
+    {"label": "After 6 PM", "time": "18:00-23:59"},
+  ];
+  final List<String> imagePaths = [
+    'assets/images/sunrise.png',
+    'assets/images/midday.png',
+    'assets/images/sunset.png',
+    'assets/images/moon.png',
+  ];
+  final Set<int> selectedIndices = {};
+  Set<String> selectedTimes = {};
 
   Future<void> pickDate(BuildContext context, StateSetter setState) async {
     DateTime? pickedDate = await showDatePicker(
@@ -78,7 +94,9 @@ class _AcceptBookingState extends State<AcceptBooking> {
         slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
         print("DATE is $slotFilterDate");
       });
-      getSlotTime(slotFilterDate);
+      // getSlotTime(slotFilterDate);
+      searchCustomOperationsData(slotFilterDate,"00:00-05:59,06:00-11:59,12:00-17:59,18:00-23:59");
+
     }
   }
 
@@ -280,6 +298,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
   @override
   void initState() {
     super.initState();
+    pickedDateFromPicker=DateTime.now();
     fetchMasterData();
   }
 
@@ -291,7 +310,8 @@ class _AcceptBookingState extends State<AcceptBooking> {
     setState(() {
       slotFilterDate = formattedDate;
     });
-    getSlotTime(formattedDate);
+    //getSlotTime(formattedDate);
+    searchCustomOperationsData(formattedDate,"00:00-05:59,06:00-11:59,12:00-17:59,18:00-23:59");
   }
 
   @override
@@ -395,213 +415,304 @@ class _AcceptBookingState extends State<AcceptBooking> {
                             SizedBox(height: 10),
                             Column(
                               children: [
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  color: Color(0xffE4E7EB),
-                                  padding: EdgeInsets.all(2.0),
-                                  child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: DataTable(
-                                        columns: [
-                                          _buildDataColumn('Slot Date'),
-                                          _buildDataColumn(
-                                              'Slot Start-End Time'),
-                                          _buildDataColumn('Duration(Min)'),
-                                          _buildDataColumn('Station Name(s)'),
-                                          _buildDataColumn('Shipment Count'),
-                                          _buildDataColumn('Pieces'),
-                                          const DataColumn(
-                                              label: Center(
-                                                  child: Text('Weight'))),
-                                          // Last column without divider
+                                Row(
+                                  children: [
+                                    Container(
+                                      height:168,
+                                      width: MediaQuery.sizeOf(context).width*0.47,
+
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(12.0),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                            Colors.black.withOpacity(0.1),
+                                            spreadRadius: 2,
+                                            blurRadius: 8,
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
+                                          ),
                                         ],
-                                        rows: [
-                                          DataRow(cells: [
-                                            DataCell(
-                                              GestureDetector(
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      slotFilterDate,
-                                                      style: const TextStyle(
-                                                          fontSize: 16,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text(" Slot Date",style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),),
+                                                GestureDetector(
+                                                  child: Row(
+                                                    children: [
+                                                      Text(
+                                                        slotFilterDate,
+                                                        style: const TextStyle(
+                                                            fontSize: 16,
+                                                            color: MyColor
+                                                                .primaryColorblue),
+                                                      ),
+                                                      const SizedBox(width: 8),
+                                                      const Icon(Icons.calendar_today,
                                                           color: MyColor
                                                               .primaryColorblue),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    const Icon(
-                                                        Icons.calendar_today,
-                                                        color: MyColor
-                                                            .primaryColorblue),
-                                                  ],
+                                                    ],
+                                                  ),
+                                                  onTap: () {
+                                                    pickDate(context, setState);
+                                                  },
                                                 ),
-                                                onTap: () {
-                                                  pickDate(context, setState);
+                                              ],
+                                            ),
+                                            SizedBox(height: 4,),
+                                            SizedBox(
+                                              height: 104,
+                                              child: DatePicker(
+                                                pickedDateFromPicker!,
+                                                key: ValueKey(pickedDateFromPicker),
+                                                initialSelectedDate:pickedDateFromPicker!,
+                                                selectionColor: MyColor.primaryColorblue,
+                                                selectedTextColor: Colors.white,
+                                                onDateChange: (date) {
+                                                  // New date selected
+                                                  setState(() {
+
+                                                    pickedDateFromPicker = date;
+
+                                                  });
                                                 },
                                               ),
                                             ),
-                                            // DataCell(Center(
-                                            //     child:
-                                            //         DropdownButtonFormField<String>(
-                                            //   value: _selectedDate,
-                                            //   items: [
-                                            //     '01 Aug 2024',
-                                            //     '02 Aug 2024',
-                                            //     '03 Aug 2024'
-                                            //   ]
-                                            //       .map((value) => DropdownMenuItem(
-                                            //             value: value,
-                                            //             child: Text(value),
-                                            //           ))
-                                            //       .toList(),
-                                            //   onChanged: (value) {
-                                            //     _selectedDate = value;
-                                            //   },
-                                            //   decoration: InputDecoration(
-                                            //     filled: true,
-                                            //     fillColor: Color(0xffF5F8FA),
-                                            //     border: OutlineInputBorder(
-                                            //       borderRadius:
-                                            //           BorderRadius.circular(8),
-                                            //       borderSide:
-                                            //           BorderSide.none, // No border
-                                            //     ),
-                                            //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                                            // SizedBox(
+                                            //   height: 120,
+                                            //   child:  Column(
+                                            //     mainAxisAlignment: MainAxisAlignment.center,
+                                            //     children: [
+                                            //       EasyDateTimeLine(
+                                            //         initialDate: DateTime.now(),
+                                            //         onDateChange: (selectedDate) {
+                                            //           //[selectedDate] the new date selected.
+                                            //         },
+                                            //         activeColor: const Color(0xffFFBF9B),
+                                            //         dayProps: const EasyDayProps(
+                                            //           dayStructure: DayStructure.dayNumDayStr,
+                                            //           inactiveBorderRadius: 48.0,
+                                            //           height: 56.0,
+                                            //           width: 56.0,
+                                            //           activeDayNumStyle: TextStyle(
+                                            //             fontSize: 18.0,
+                                            //             fontWeight: FontWeight.bold,
+                                            //           ),
+                                            //           inactiveDayNumStyle: TextStyle(
+                                            //             fontSize: 18.0,
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     ],
                                             //   ),
-                                            //   icon: const Icon(
-                                            //       Icons.arrow_drop_down,
-                                            //       color: Colors.blue),
-                                            //   style: const TextStyle(
-                                            //       fontSize: 16,
-                                            //       color: Colors.black),
-                                            //   dropdownColor: Colors.white,
-                                            // ))),
-                                            DataCell(Center(
-                                                child: DropdownButtonFormField<
-                                                    String>(
-                                              value: selectedSlot,
-                                              // Set the initial selected value
-                                              items: slotList.isNotEmpty
-                                                  ? slotList
-                                                      .map((value) =>
-                                                          DropdownMenuItem<
-                                                              String>(
-                                                            value: value,
-                                                            child: Text(value),
-                                                          ))
-                                                      .toList()
-                                                  : [
-                                                      const DropdownMenuItem<
-                                                          String>(
-                                                        value: '',
-                                                        // or any default value
-                                                        child: Text(''),
-                                                      ),
-                                                    ],
-                                              onChanged: (value) {
-                                                setState(() {
-                                                  selectedSlot = value;
-                                                });
-                                                selectedSlot = value;
-                                                searchCustomOperationsData(slotFilterDate,selectedSlot!);
-                                              },
-                                              decoration: InputDecoration(
-                                                filled: true,
-                                                fillColor: Color(0xffF5F8FA),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  borderSide: BorderSide
-                                                      .none, // No border
-                                                ),
-                                                // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                                              ),
-                                              icon: const Icon(
-                                                Icons.arrow_drop_down,
-                                                color: Colors.blue,
-                                              ),
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                color: Colors.black,
-                                              ),
-                                              dropdownColor: Colors.white,
-                                            )
+                                            // ),
+                                          ],
+                                        ),
+                                      ),),
+                                    Spacer(),
+                                    Container(
+                                      height:168,
+                                      width: MediaQuery.sizeOf(context).width*0.47,
 
-                                                //         DropdownButtonFormField<String>(
-                                                //   value: selectedTime,
-                                                //   items: [
-                                                //     '10:00-11:00',
-                                                //     '11:00-12:00',
-                                                //     '12:00-13:00'
-                                                //   ]
-                                                //       .map((value) => DropdownMenuItem(
-                                                //             value: value,
-                                                //             child: Text(value),
-                                                //           ))
-                                                //       .toList(),
-                                                //   onChanged: (value) {
-                                                //     selectedTime = value;
-                                                //   },
-                                                //   decoration: InputDecoration(
-                                                //     filled: true,
-                                                //     fillColor: Color(0xffF5F8FA),
-                                                //     border: OutlineInputBorder(
-                                                //       borderRadius:
-                                                //           BorderRadius.circular(8),
-                                                //       borderSide:
-                                                //           BorderSide.none, // No border
-                                                //     ),
-                                                //     // contentPadding: EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-                                                //   ),
-                                                //   icon: const Icon(
-                                                //       Icons.arrow_drop_down,
-                                                //       color: Colors.blue),
-                                                //   style: const TextStyle(
-                                                //       fontSize: 16,
-                                                //       color: Colors.black),
-                                                //   dropdownColor: Colors.white,
-                                                // )
-                                                )),
-                                            DataCell(Center(
-                                                child: Text(masterData
-                                                        .isNotEmpty
-                                                    ? masterData[0].col5 ?? ""
-                                                    : ""))),
-                                            DataCell(Center(
-                                                child: Text(masterData
-                                                        .isNotEmpty
-                                                    ? masterData[0].col1 ?? ""
-                                                    : ""))),
-                                            DataCell(Center(
-                                                child: Text(masterData
-                                                        .isNotEmpty
-                                                    ? masterData[0].col6 ?? ""
-                                                    : ""))),
-                                            DataCell(Center(
-                                                child: Text(masterData
-                                                        .isNotEmpty
-                                                    ? masterData[0].col7 ?? ""
-                                                    : ""))),
-                                            DataCell(Center(
-                                                child: Text(masterData
-                                                        .isNotEmpty
-                                                    ? masterData[0].col8 ?? ""
-                                                    : ""))),
-                                          ]),
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(12.0),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                            Colors.black.withOpacity(0.1),
+                                            spreadRadius: 2,
+                                            blurRadius: 8,
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
+                                          ),
                                         ],
-                                        headingRowColor:
-                                            MaterialStateProperty.resolveWith(
-                                          (states) => Color(0xffe6effc),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child:Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(" Slot Schedule",style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: List.generate(slotData.length, (index) {
+                                                final bool isSelected = selectedIndices.contains(index);
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    setState(() {
+                                                      if (isSelected) {
+                                                        selectedIndices.remove(index);
+                                                        selectedTimes.remove(slotData[index]["time"]);
+                                                      } else {
+                                                        selectedIndices.add(index);
+                                                        selectedTimes.add(slotData[index]["time"]!);
+                                                      }
+                                                    });
+                                                    print("Selected Times: ${selectedTimes.join(', ')}");
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.all(8.0),
+                                                    width: 84,
+                                                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                                    decoration: BoxDecoration(
+                                                      color: isSelected ? MyColor.primaryColorblue : Colors.white,
+                                                      border: Border.all(color: Colors.grey),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Image.asset(
+                                                          imagePaths[index],
+                                                          height: 40,
+                                                          width: 40,
+                                                          color: isSelected ? Colors.white : null,
+                                                        ),
+                                                        SizedBox(height: 8.0),
+                                                        Text(
+                                                          slotData[index]['label']!,
+                                                          style: TextStyle(
+                                                            color: isSelected ? Colors.white : Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                            ),
+                                          ],
                                         ),
-                                        dataRowColor:
-                                            MaterialStateProperty.resolveWith(
-                                          (states) => Color(0xfffafafa),
-                                        ),
-                                        dataRowHeight: 48.0,
-                                        columnSpacing:
-                                            MediaQuery.sizeOf(context).width *
-                                                0.031,
-                                      )),
+                                      ),),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                Container(
+                                  padding:  const EdgeInsets.symmetric(
+                                      vertical: 14, horizontal: 10),
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(12.0),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color:
+                                        Colors.black.withOpacity(0.1),
+                                        spreadRadius: 2,
+                                        blurRadius: 8,
+                                        offset: const Offset(0,
+                                            3), // changes position of shadow
+                                      ),
+                                    ],
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+
+                                              Center(
+                                                child: Text("  Station Name(s):  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 18,
+
+                                                ),),
+                                              ),
+                                              Text("Station 1, Station 2,",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+
+
+                                        ],
+                                      ),
+                                      SizedBox(height: 20,),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              Center(
+                                                child: Text("  Total Pieces  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[700],
+                                                ),),
+                                              ),
+                                              const Text("20",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              Center(
+                                                child: Text("Total Shipments  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[700],
+                                                ),),
+                                              ),
+                                              const Text("20",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+
+                                              Center(
+                                                child: Text("Slot Duration(Min)  ",style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 16,
+                                                  color: Colors.grey[700],
+                                                ),),
+                                              ),
+                                              const Text("60  ",style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 20,
@@ -631,7 +742,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                               itemCount:
                                                   appointBookingList.length,
                                               shrinkWrap: true,
-                                              padding: const EdgeInsets.all(2),
+
                                             ),
                                           ),
                                         ),
@@ -680,7 +791,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
         borderRadius: BorderRadius.circular(8),
       ),
       elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -705,20 +816,20 @@ class _AcceptBookingState extends State<AcceptBooking> {
                 const SizedBox(width: 8),
                 // buildLabel("ACCEPTED", Colors.lightGreen, 20),
                 // const SizedBox(width: 8),
-                // const Row(
-                //   children: [
-                //     Text(
-                //       "",
-                //       style: TextStyle(
-                //           color: Colors.black, fontWeight: FontWeight.bold),
-                //     ),
-                //     SizedBox(width: 8),
-                //     Icon(
-                //       Icons.info_outline_rounded,
-                //       color: MyColor.primaryColorblue,
-                //     ),
-                //   ],
-                // ),
+                const Row(
+                  children: [
+                    Text(
+                      "Slot",
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: MyColor.primaryColorblue,
+                    ),
+                  ],
+                ),
               ],
             ),
             const SizedBox(height: 8),

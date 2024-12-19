@@ -1,6 +1,7 @@
 
 class WdoSearchResult {
   String wdoNo;
+  String wdoSeqNo;
   String rNo;
   String awbNumber;
   String houseNumber;
@@ -25,6 +26,7 @@ class WdoSearchResult {
 
   WdoSearchResult({
     required this.wdoNo,
+    required this.wdoSeqNo,
     required this.rNo,
     required this.awbNumber,
     required this.houseNumber,
@@ -50,6 +52,7 @@ class WdoSearchResult {
 
   factory WdoSearchResult.fromJSON(Map<String, dynamic> json) => WdoSearchResult(
     wdoNo: json["WDO_NO"],
+    wdoSeqNo: json["WdSeqno"],
     rNo: json["RNo"],
     awbNumber: json["AWB_NUMBER"],
     houseNumber: json["HOUSE_NUMBER"],

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:intl/intl.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
@@ -16,6 +17,8 @@ import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/wdoModal.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
+import '../widget/customIpadTextfield.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
 import 'createNewDo.dart';
@@ -61,19 +64,267 @@ class _WdoListingState extends State<WdoListing> {
 
   ];
   late List<WdoSearchResult> shipmentListDetails=[];
-  late List<ShipmentListDetails> shipmentListDetailsToBind=[];
+
   final AuthService authService = AuthService();
   bool isLoading = false;
   bool hasNoRecord = false;
-
+  late TextEditingController fromDateController;
+  late TextEditingController toDateController;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-     getShipmentListing();
+    fromDateController = TextEditingController(text: _formatDate(DateTime.now()));
+    toDateController = TextEditingController(text: _formatDate(DateTime.now()));
+    DateTime now = DateTime.now();
+    String todayDate = DateFormat('dd-MM-yyyy').format(now);
+     getWDOListing(todayDate,todayDate);
   }
 
-  getShipmentListing() async {
+  Future<void> showWDOSearchDialog(BuildContext outerContext) async {
+    TextEditingController bookingNoController = TextEditingController();
+    TextEditingController shippingBillNoController = TextEditingController();
+
+    Future<void> _selectDate(
+        BuildContext context, TextEditingController controller,
+        {bool isFromDate = false}) async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        //initialEntryMode: DatePickerEntryMode.calendarOnly,
+        initialDate: isFromDate
+            ? DateTime.now().subtract(const Duration(days: 2))
+            : DateTime.now(),
+        firstDate: DateTime(2020),
+        lastDate: DateTime(2101),
+        builder: (BuildContext context, Widget? child) {
+          return Theme(
+            data: ThemeData(
+              useMaterial3: false,
+              primaryColor: MyColor.primaryColorblue,
+
+              dialogBackgroundColor: Colors.white,
+              // Change dialog background color
+              colorScheme: const ColorScheme.light(
+                primary: MyColor.primaryColorblue,
+                onPrimary: Colors.white,
+                onSurface: Colors.black,
+              ),
+              textButtonTheme: TextButtonThemeData(
+                style: TextButton.styleFrom(
+                  foregroundColor:MyColor.primaryColorblue,
+                ),
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
+
+      if (picked != null) {
+        controller.text = DateFormat('dd/MM/yyyy').format(picked);
+      }
+    }
+
+    void search() async {
+      String fromDate = fromDateController.text.trim();
+      String toDate = toDateController.text.trim();
+
+      if (fromDate.isEmpty || toDate.isEmpty) {
+        await Future.delayed(const Duration(milliseconds: 100));
+
+        return;
+      }
+      DateTime fromDateTime = DateFormat('dd/MM/yyyy').parse(fromDate);
+      DateTime toDateTime = DateFormat('dd/MM/yyyy').parse(toDate);
+
+      String formattedFromDate = DateFormat('dd-MM-yyyy').format(fromDateTime);
+      String formattedToDate = DateFormat('dd-MM-yyyy').format(toDateTime);
+
+      getWDOListing(formattedFromDate.toString(), formattedToDate.toString());
+
+
+      Navigator.pop(context);
+    }
+
+    return showDialog(
+      context: context,
+      barrierColor: Color(0x01000000),
+      builder: (BuildContext context) {
+        return Align(
+          alignment: Alignment.topCenter,
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.75,
+            width: MediaQuery.of(context).size.width*0.5,
+            child: Dialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              insetPadding: const EdgeInsets.all(0),
+              child: Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: MyColor.cardBgColor),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 2,
+                      blurRadius: 8,
+                      offset: const Offset(
+                          0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(16.0),
+                child: SingleChildScrollView(
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text("WDO Search",
+                            style: TextStyle(
+                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        const SizedBox(
+                          width: double.infinity,
+                          child: Divider(color: Colors.grey),
+                        ),
+                        // Gray horizontal line
+                        const SizedBox(height: 16),
+
+                        const SizedBox(height: 16),
+                        CustomeEditTextWithBorderDatePicker(
+                          lablekey: 'MAWB',
+                          controller:
+                          fromDateController,
+                          labelText:
+                          "From Date",
+                          readOnly: false,
+                          maxLength: 15,
+                          fontSize: 18,
+                        ),
+
+                        // TextField(
+                        //   controller: fromDateController,
+                        //   decoration: InputDecoration(
+                        //     labelText: "From Date",
+                        //     suffixIcon: IconButton(
+                        //       icon: const Icon(Icons.calendar_today),
+                        //       onPressed: () => _selectDate(
+                        //           context, fromDateController,
+                        //           isFromDate: true),
+                        //     ),
+                        //     border: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(6),
+                        //     ),
+                        //   ),
+                        // ),
+                        const SizedBox(height: 16),
+                        CustomeEditTextWithBorderDatePicker(
+                          lablekey: 'MAWB',
+                          controller:
+                          toDateController,
+                          labelText:
+                          "To Date",
+                          readOnly: false,
+                          maxLength: 15,
+                          fontSize: 18,
+                        ),
+
+                        // TextField(
+                        //   controller: toDateController,
+                        //   decoration: InputDecoration(
+                        //     labelText: "To Date",
+                        //     suffixIcon: IconButton(
+                        //       icon: const Icon(Icons.calendar_today),
+                        //       onPressed: () => _selectDate(context, toDateController),
+                        //     ),
+                        //     border: OutlineInputBorder(
+                        //       borderRadius: BorderRadius.circular(6),
+                        //     ),
+                        //   ),
+                        // ),
+                        SizedBox(
+                            height: MediaQuery.sizeOf(context).height * 0.09),
+                        const SizedBox(
+                          width: double.infinity,
+                          child: Divider(color: Colors.grey),
+                        ),
+                        const SizedBox(height: 16),
+
+                        ElevatedButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              search();
+                            }
+
+                            // Navigator.pop(context); // Close dialog after search
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: MyColor.primaryColorblue,
+                            minimumSize: const Size.fromHeight(50),
+                          ),
+                          child: const Text("SEARCH",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                        const SizedBox(height: 16),
+                        // Space between buttons
+
+                        OutlinedButton(
+                          onPressed: () {
+                            bookingNoController.clear();
+                            shippingBillNoController.clear();
+                            fromDateController.text = _formatDate(DateTime.now());
+                            toDateController.text = _formatDate(DateTime.now());
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: const BorderSide(color:  MyColor.primaryColorblue),
+                            minimumSize: const Size.fromHeight(50),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          child: const Text(
+                            "RESET",
+                            style: TextStyle(
+                                color:  MyColor.primaryColorblue), // Blue text
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        // Space between buttons
+                        // Cancel button
+                        TextButton(
+                          onPressed: () {
+                            bookingNoController.clear();
+                            shippingBillNoController.clear();
+                            fromDateController.text =_formatDate(DateTime.now());
+                            toDateController.text = _formatDate(DateTime.now());
+                            Navigator.pop(context);
+                          },
+                          style: TextButton.styleFrom(
+                            minimumSize: const Size.fromHeight(50),
+                          ),
+                          child: const Text(
+                            "CANCEL",
+                            style: TextStyle(color:  MyColor.primaryColorblue),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return DateFormat('dd/MM/yyyy').format(date);
+  }
+
+  getWDOListing(String fromDate, String toDate) async {
     if (isLoading) return;
     shipmentListDetails = [];
 
@@ -82,11 +333,11 @@ class _WdoListingState extends State<WdoListing> {
     });
 
     var queryParams = {
-      "AWBPrefix": "",
-      "AWBNo": "",
+      "AWBPrefix": "125",
+      "AWBNo": "12120076",
       "HAWBNO": "",
-      "FromDate": "20-11-2024",
-      "ToDate": "02-12-2024"
+      "FromDate": "$fromDate",
+      "ToDate": "$toDate"
     };
     await authService
         .sendGetWithBody(
@@ -104,14 +355,15 @@ class _WdoListingState extends State<WdoListing> {
         });
       }
       else{
-        hasNoRecord=false;
+       setState(() {
+         hasNoRecord=false;
+       });
       }
       print("is empty record$hasNoRecord");
 
       setState(() {
         shipmentListDetails =
             resp.map((json) => WdoSearchResult.fromJSON(json)).toList();
-        print("length==  = ${shipmentListDetailsToBind.length}");
         // filteredList = listShipmentDetails;
         print("length--  = ${shipmentListDetails.length}");
         isLoading = false;
@@ -228,41 +480,39 @@ class _WdoListingState extends State<WdoListing> {
                       ),
                     ),
                   ),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //       top: 5, left: 20, right: 20, bottom: 10),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       const Text(
-                  //         'Showing (0/0)',
-                  //         style: TextStyle(
-                  //             fontWeight: FontWeight.bold, fontSize: 18),
-                  //       ),
-                  //       Row(
-                  //         children: [
-                  //           GestureDetector(
-                  //             child: const Row(
-                  //               children: [
-                  //                 Icon(
-                  //                   Icons.filter_alt_outlined,
-                  //                   color: MyColor.primaryColorblue,
-                  //                 ),
-                  //                 Text(
-                  //                   ' Filter',
-                  //                   style: TextStyle(fontSize: 18),
-                  //                 )
-                  //               ],
-                  //             ),
-                  //             onTap: () {
-                  //               showShipmentSearchBottomSheet(context);
-                  //             },
-                  //           ),
-                  //         ],
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 5, left: 20, right: 20, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          '',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.search,
+                                    color: MyColor.primaryColorblue,
+                                  ),
+
+                                ],
+                              ),
+                              onTap: () {
+                                // showShipmentSearchBottomSheet(context);
+                                showWDOSearchDialog(context);
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                   isLoading
                       ? const Center(
                       child: SizedBox(
@@ -294,7 +544,7 @@ class _WdoListingState extends State<WdoListing> {
                               return buildShipmentCardV2(
                                   shipmentDetails);
                             },
-                            itemCount: shipmentDetailsListOld.length,
+                            itemCount: shipmentListDetails.length,
                             shrinkWrap: true,
                             padding: const EdgeInsets.all(2),
                           ),
@@ -396,40 +646,15 @@ class _WdoListingState extends State<WdoListing> {
     );
   }
 
-  void showDataNotFoundDialog(BuildContext context, String message) {
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
     );
   }
 
@@ -437,7 +662,7 @@ class _WdoListingState extends State<WdoListing> {
 
     // return;
     var queryParams = {
-      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${data.impShipRowId}</IMPSHIPROWID><ROTATION_NO /><WDOSEQNO>${data.impShipRowId}</WDOSEQNO><PKG_RECD>${data.npr}</PKG_RECD><WT_RECD>${data.wtRec}</WT_RECD><RELEASED_STATUS>0</RELEASED_STATUS><CUSTOMREFNO>${data.impShipRowId??""}</CUSTOMREFNO></WDOObjects></ArrayOfWDOObjects>",
+      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${data.impShipRowId}</IMPSHIPROWID><ROTATION_NO /><WDOSEQNO>${data.wdoSeqNo}</WDOSEQNO><PKG_RECD>${data.npr}</PKG_RECD><WT_RECD>${data.wtRec}</WT_RECD><RELEASED_STATUS>0</RELEASED_STATUS><CUSTOMREFNO>${data.impShipRowId??""}</CUSTOMREFNO></WDOObjects></ArrayOfWDOObjects>",
       "StatusKey": "RELEASE",
       "AgentName ": "",
       "AgentCPRNo": "",
@@ -456,7 +681,7 @@ class _WdoListingState extends State<WdoListing> {
       "WDO/ReleaseWDO",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String? status = jsonData['Status'];
@@ -467,9 +692,18 @@ class _WdoListingState extends State<WdoListing> {
           showDataNotFoundDialog(context, statusMessage!);
         }
         if((status=="S")){
-          SnackbarUtil.showSnackbar(context, "$statusMessage", Color(0xff43A047));
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+
+          }
         }
 
       }
@@ -482,7 +716,7 @@ class _WdoListingState extends State<WdoListing> {
 
     // return;
     var queryParams = {
-      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${data.impShipRowId}</IMPSHIPROWID><ROTATION_NO /><WDOSEQNO>${data.impShipRowId}</WDOSEQNO><PKG_RECD>${data.npr}</PKG_RECD><WT_RECD>${data.wtRec}</WT_RECD><RELEASED_STATUS>1</RELEASED_STATUS><CUSTOMREFNO>${data.customRefNo??""}</CUSTOMREFNO></WDOObjects></ArrayOfWDOObjects>",
+      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${data.impShipRowId}</IMPSHIPROWID><ROTATION_NO /><WDOSEQNO>${data.wdoSeqNo}</WDOSEQNO><PKG_RECD>${data.npr}</PKG_RECD><WT_RECD>${data.wtRec}</WT_RECD><RELEASED_STATUS>1</RELEASED_STATUS><CUSTOMREFNO>${data.customRefNo??""}</CUSTOMREFNO></WDOObjects></ArrayOfWDOObjects>",
       "StatusKey": "REVOKERELEASE",
       "SHED_CODE": "KS1",
       "AirportCity": "JFK",
@@ -492,10 +726,10 @@ class _WdoListingState extends State<WdoListing> {
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
-      "WDO/ReleaseWDO",
+      "WDO/RevokeWDO",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String? status = jsonData['Status'];
@@ -506,9 +740,18 @@ class _WdoListingState extends State<WdoListing> {
           showDataNotFoundDialog(context, statusMessage!);
         }
         if((status=="S")){
-          SnackbarUtil.showSnackbar(context, "$statusMessage", Color(0xff43A047));
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+
+          }
         }
 
       }
@@ -596,105 +839,122 @@ class _WdoListingState extends State<WdoListing> {
             const SizedBox(height: 6),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(
+                  width: MediaQuery.sizeOf(context).width*0.73,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(width: 4),
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width*0.22,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text("HAWB No: "),
+                                Text("${shipment.houseNumber}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Text("Custom Ref No.: "),
+                                Text("${shipment.customRefNo}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
 
-                const SizedBox(width: 4),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Text("HAWB No: "),
-                        Text("${shipment.houseNumber}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text("Custom Ref No.: "),
-                        Text("${shipment.customRefNo}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                  ],
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width*0.18,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text("NOP: "),
+                                Text("${shipment.npr}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Text("Delivered NOP: "),
+                                Text("${shipment.deliveredWdonop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(
+                        width: MediaQuery.sizeOf(context).width*0.3,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                const Text("Flight Details: "),
+                                Text(shipment.flightDetails,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Text("Re Warehouse: "),
+                                Text(shipment.reWhDateTime,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    ],
+                  ),
                 ),
-                const SizedBox(width: 24),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Text("NOP: "),
-                        Text("${shipment.npr}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text("Delivered NOP: "),
-                        Text("${shipment.deliveredWdonop}",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 24),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        const Text("Flight Details: "),
-                        Text(shipment.flightDetails,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text("Re Warehouse: "),
-                        Text(shipment.reWhDateTime,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 64),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                      Container(
-                        height: 30,
-                        margin: const EdgeInsets.only(right: 12),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF0057D8),
-                              Color(0xFF1c86ff),
-                            ],
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
+                        Container(
+                          height: 30,
+                          margin: const EdgeInsets.only(right: 12),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF0057D8),
+                                Color(0xFF1c86ff),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.centerRight,
+                            ),
                           ),
-                        ),
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent),
-                          onPressed: (){
-                            if((shipment.status.toUpperCase())=="GENERATED"){
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent),
+                            onPressed: (){
+                              if((shipment.status.toUpperCase())=="GENERATED"){
                                 releaseWDO(shipment);
-                            }
-                            else{
+                              }else if((shipment.status.toUpperCase())=="REVOKED"){
+                                releaseWDO(shipment);
+                              }
+                              else{
                                 revokeWDO(shipment);
-                            }
-                          },
-                          child:  Text(
-                            (shipment.status.toUpperCase())=="GENERATED"?'Release':"Revoke",
-                            style: TextStyle(color: Colors.white),
+                              }
+                            },
+                            child:  Text(
+                              (shipment.status.toUpperCase())=="GENERATED"?'Release':(shipment.status.toUpperCase())=="REVOKED"?"Release":"Revoke",
+                              style: TextStyle(color: Colors.white),
+                            ),
                           ),
                         ),
-                      ),
                         // Icon(
                         //   Icons.more_vert_outlined,
                         //   color: MyColor.primaryColorblue,
@@ -711,10 +971,9 @@ class _WdoListingState extends State<WdoListing> {
                         //     color: MyColor.primaryColorblue,
                         //   ),
                         // )
-                    ],)
+                      ],)
                   ],
                 )
-               
               ],
             ),
 

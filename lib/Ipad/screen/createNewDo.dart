@@ -519,7 +519,9 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                             Radius.circular(8)),
                                       ),
                                     ),
-                                    onPressed: () {},
+                                    onPressed: () {
+                                      saveShipmentDetails();
+                                    },
                                     child: const Text(
                                       "Generate",
                                       style: TextStyle(color: Colors.white),

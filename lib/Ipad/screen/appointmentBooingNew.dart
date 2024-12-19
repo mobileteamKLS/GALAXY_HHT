@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:date_picker_timeline/date_picker_widget.dart';
+import 'package:easy_date_timeline/easy_date_timeline.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -17,6 +19,7 @@ import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/CustomsOperations.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import '../widget/horizontalCalendar.dart';
 import 'ImportShipmentListing.dart';
 import 'package:xml/xml.dart';
@@ -28,8 +31,8 @@ class AppointmentBookingNew extends StatefulWidget {
   State<AppointmentBookingNew> createState() => _AppointmentBookingNewState();
 }
 
-class _AppointmentBookingNewState extends State<AppointmentBookingNew> with SingleTickerProviderStateMixin {
-  String? _selectedDate = '01 Aug 2024';
+class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
+  DateTime _selectedDate = DateTime.now();
   String? selectedTime = '10:00-11:00';
   String? selectedSlot;
   bool? acceptAll = false;
@@ -45,92 +48,42 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
   List<String>slotList =[];
-  late TabController _tabController;
+
+  DateTime? pickedDateFromPicker;
+  bool isOn=true;
+  @override
+  void initState() {
+    super.initState();
+    pickedDateFromPicker=DateTime.now();
 
 
+    // fetchMasterData();
+  }
 
   @override
   void dispose() {
-    _tabController.dispose();
+
     super.dispose();
   }
 
-  Future<void> pickDate(BuildContext context, StateSetter setState) async {
-    DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: selectedDate ?? DateTime.now(),
-      firstDate: DateTime(2001),
-      lastDate: DateTime(2101),
-      builder: (BuildContext context, Widget? child) {
-        return Theme(
-          data: ThemeData(
-            useMaterial3: false,
-            primaryColor: MyColor.primaryColorblue,
+  String formatTime(int value) => value.toString().padLeft(2, '0');
+  int activeIndex = 0;
 
-            dialogBackgroundColor: Colors.white,
-            // Change dialog background color
-            colorScheme: const ColorScheme.light(
-              primary: MyColor.primaryColorblue,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: MyColor.primaryColorblue,
-              ),
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
+  final List<Map<String, String>> slotData = [
+    {"label": "Before 6 AM", "time": "00:00-05:59"},
+    {"label": "6 AM - 12 PM", "time": "06:00-11:59"},
+    {"label": "12 PM - 6 PM", "time": "12:00-17:59"},
+    {"label": "After 6 PM", "time": "18:00-23:59"},
+  ];
+  final List<String> imagePaths = [
+    'assets/images/sunrise.png',
+    'assets/images/midday.png',
+    'assets/images/sunset.png',
+    'assets/images/moon.png',
+  ];
+  final Set<int> selectedIndices = {};
+  Set<String> selectedTimes = {};
 
-    if (pickedDate != null && pickedDate != selectedDate) {
-      setState(() {
-        selectedDate = pickedDate;
-        slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
-        print("DATE is $slotFilterDate");
-      });
-      getSlotTime(slotFilterDate);
-    }
-  }
-
-  void showDataNotFoundDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 
   searchCustomOperationsData(String date,String slot) async {
     DialogUtils.showLoadingDialog(context);
@@ -287,48 +240,15 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
     });
   }
 
-  String buildInputXml({
-    required List<Map<String, dynamic>> saveList,
-    required String companyCode,
-    required String userId,
-    required String airportCity,
-    required String mode,
-  }) {
-    final builder = XmlBuilder();
-
-    builder.element('Root', nest: () {
-      builder.element('Appointment', nest: () {
-        for (var item in saveList) {
-          final customExamination = item['item'] as CustomExamination;
-          builder.element('Appointment', nest: () {
-            builder.element('MessageRowID', nest: customExamination.messageRowId);
-            builder.element('QueueRowID', nest: customExamination.queueRowId);
-            builder.element('ElementRowID', nest: customExamination.elementRowId);
-            builder.element('ElementGUID', nest: customExamination.elementGuid);
-            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"":"R")); // Placeholder for Status
-            builder.element('RFEPieces', nest: customExamination.col7); // Assuming col5 holds RFEPieces
-            builder.element('Remarks', nest: customExamination.col8); // Assuming col6 holds Remarks
-          });
-        }
-      });
-
-      builder.element('ForwardExamination', nest: () {
-        for (var item in saveList) {
-          final customExamination = item['item'] as CustomExamination;
-          builder.element('ForwardExamination', nest: () {
-            builder.element('ExaminationRowId', nest: customExamination.rowId);
-          });
-        }
-      });
-
-      builder.element('CompanyCode', nest: companyCode);
-      builder.element('UserId', nest: userId);
-      builder.element('AirportCity', nest: airportCity);
-      builder.element('Mode', nest: mode);
+  void fetchMasterData() async {
+    await Future.delayed(Duration.zero);
+    DateTime today = DateTime.now();
+    var formatter = DateFormat('dd-MM-yyyy');
+    String formattedDate = formatter.format(today);
+    setState(() {
+      slotFilterDate = formattedDate;
     });
-
-    final xmlDocument = builder.buildDocument();
-    return xmlDocument.toXmlString(pretty: true, indent: '  ');
+    getSlotTime(formattedDate);
   }
 
   saveBookings() async {
@@ -377,91 +297,9 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
     });
   }
 
-  void checkboxChanged(bool? value, int index) {
-    setState(() {
-      isOnList[index] = value;
-      if (value !=false) {
-        // saveList.removeWhere(
-        //         (element) => element["item"] == appointBookingList[index]);
-        saveList.add({"item": appointBookingList[index], "value": value});
-      } else {
-        saveList.removeWhere(
-                (element) => element["item"] == appointBookingList[index]);
-      }
-    });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _tabController = new TabController(length: 4, vsync: this);
-    // fetchMasterData();
-  }
-
-  void fetchMasterData() async {
-    await Future.delayed(Duration.zero);
-    DateTime today = DateTime.now();
-    var formatter = DateFormat('dd-MM-yyyy');
-    String formattedDate = formatter.format(today);
-    setState(() {
-      slotFilterDate = formattedDate;
-    });
-    getSlotTime(formattedDate);
-  }
-
-  int startHour = 10;
-
-  void incrementTimeSlot() {
-    setState(() {
-      startHour = (startHour + 1) % 24;
-    });
-  }
-
-  void decrementTimeSlot() {
-    setState(() {
-      startHour = (startHour - 1) < 0 ? 23 : startHour - 1;
-    });
-  }
-
-  Widget buildLabel(
-      String text, Color color, double radius,
-      {bool isBorder = false, Color borderColor = Colors.black, double borderWidth = 1.0}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(radius),
-        border: isBorder ? Border.all(color: borderColor, width: borderWidth) : null,
-      ),
-      child: Center(
-        child: Text(
-          text,
-          style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
-  }
-
-  String formatTime(int value) => value.toString().padLeft(2, '0');
-  int activeIndex = 0;
-
-  final List<String> labels = [
-    "Before 6 AM",
-    "6 AM - 12 PM",
-    "12 PM - 6 PM",
-    "After 6 PM"
-  ];
-  final List<String> imagePaths = [
-    'assets/images/sunrise.png',
-    'assets/images/midday.png',
-    'assets/images/sunset.png',
-    'assets/images/moon.png',
-  ];
-  final Set<int> selectedIndices = {};
-
   @override
   Widget build(BuildContext context) {
-    int endHour = (startHour + 1) % 24;
+
     return Scaffold(
       backgroundColor: MyColor.screenBgColor,
       appBar: AppBar(
@@ -588,26 +426,82 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          const Text(" Slot Date",style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              const Text(" Slot Date",style: TextStyle(
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),),
+                                              GestureDetector(
+                                                child: Row(
+                                                  children: [
+                                                    Text(
+                                                      slotFilterDate,
+                                                      style: const TextStyle(
+                                                          fontSize: 16,
+                                                          color: MyColor
+                                                              .primaryColorblue),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    const Icon(Icons.calendar_today,
+                                                        color: MyColor
+                                                            .primaryColorblue),
+                                                  ],
+                                                ),
+                                                onTap: () {
+                                                  pickDate(context, setState);
+                                                },
+                                              ),
+                                            ],
+                                          ),
                                           SizedBox(height: 4,),
                                           SizedBox(
                                             height: 104,
                                             child: DatePicker(
-                                              DateTime.now(),
-                                              initialSelectedDate: DateTime.now(),
+                                              pickedDateFromPicker!,
+                                              key: ValueKey(pickedDateFromPicker),
+                                              initialSelectedDate:pickedDateFromPicker!,
                                               selectionColor: MyColor.primaryColorblue,
                                               selectedTextColor: Colors.white,
                                               onDateChange: (date) {
                                                 // New date selected
                                                 setState(() {
-                                                  // _selectedValue = date;
+
+                                                    pickedDateFromPicker = date;
+
                                                 });
                                               },
                                             ),
                                           ),
+                                          // SizedBox(
+                                          //   height: 120,
+                                          //   child:  Column(
+                                          //     mainAxisAlignment: MainAxisAlignment.center,
+                                          //     children: [
+                                          //       EasyDateTimeLine(
+                                          //         initialDate: DateTime.now(),
+                                          //         onDateChange: (selectedDate) {
+                                          //           //[selectedDate] the new date selected.
+                                          //         },
+                                          //         activeColor: const Color(0xffFFBF9B),
+                                          //         dayProps: const EasyDayProps(
+                                          //           dayStructure: DayStructure.dayNumDayStr,
+                                          //           inactiveBorderRadius: 48.0,
+                                          //           height: 56.0,
+                                          //           width: 56.0,
+                                          //           activeDayNumStyle: TextStyle(
+                                          //             fontSize: 18.0,
+                                          //             fontWeight: FontWeight.bold,
+                                          //           ),
+                                          //           inactiveDayNumStyle: TextStyle(
+                                          //             fontSize: 18.0,
+                                          //           ),
+                                          //         ),
+                                          //       )
+                                          //     ],
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                     ),),
@@ -643,18 +537,20 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                           ),),
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.start,
-                                            children: List.generate(labels.length, (index) {
+                                            children: List.generate(slotData.length, (index) {
                                               final bool isSelected = selectedIndices.contains(index);
-
                                               return GestureDetector(
                                                 onTap: () {
                                                   setState(() {
                                                     if (isSelected) {
                                                       selectedIndices.remove(index);
+                                                      selectedTimes.remove(slotData[index]["time"]);
                                                     } else {
                                                       selectedIndices.add(index);
+                                                      selectedTimes.add(slotData[index]["time"]!);
                                                     }
                                                   });
+                                                  print("Selected Times: ${selectedTimes.join(', ')}");
                                                 },
                                                 child: Container(
                                                   margin: EdgeInsets.all(8.0),
@@ -676,7 +572,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                                       ),
                                                       SizedBox(height: 8.0),
                                                       Text(
-                                                        labels[index],
+                                                        slotData[index]['label']!,
                                                         style: TextStyle(
                                                           color: isSelected ? Colors.white : Colors.black,
                                                         ),
@@ -963,6 +859,34 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
                                                 )
                                               ],
                                             ),
+                                            Center(
+                                              child: Container(
+
+                                                padding: EdgeInsets.symmetric(vertical: 40,horizontal: 48),
+                                                child: Theme(
+                                                  data: ThemeData(useMaterial3: false),
+                                                  child: Transform.scale(
+                                                    scale: 2.5,
+                                                    child: Checkbox(
+                                                      isError: true,
+                                                      tristate: true,
+                                                      activeColor: isOn == null
+                                                          ? Colors.red
+                                                          : isOn!
+                                                          ? Colors.green
+                                                          : Colors.grey,
+                                                      value: isOn,
+                                                      onChanged: (bool? value) {
+                                                        setState(() {
+                                                          // onCheckboxChanged(value);
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+
+                                                ),
+                                              ),
+                                            ),
 
 
                                           ],
@@ -1005,8 +929,140 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
       ),
     );
   }
+  void checkboxChanged(bool? value, int index) {
+    setState(() {
+      isOnList[index] = value;
+      if (value !=false) {
+        // saveList.removeWhere(
+        //         (element) => element["item"] == appointBookingList[index]);
+        saveList.add({"item": appointBookingList[index], "value": value});
+      } else {
+        saveList.removeWhere(
+                (element) => element["item"] == appointBookingList[index]);
+      }
+    });
+  }
 
-  // DataColumn _buildDataColumn(String label) {
+  String buildInputXml({
+    required List<Map<String, dynamic>> saveList,
+    required String companyCode,
+    required String userId,
+    required String airportCity,
+    required String mode,
+  }) {
+    final builder = XmlBuilder();
+
+    builder.element('Root', nest: () {
+      builder.element('Appointment', nest: () {
+        for (var item in saveList) {
+          final customExamination = item['item'] as CustomExamination;
+          builder.element('Appointment', nest: () {
+            builder.element('MessageRowID', nest: customExamination.messageRowId);
+            builder.element('QueueRowID', nest: customExamination.queueRowId);
+            builder.element('ElementRowID', nest: customExamination.elementRowId);
+            builder.element('ElementGUID', nest: customExamination.elementGuid);
+            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"":"R")); // Placeholder for Status
+            builder.element('RFEPieces', nest: customExamination.col7); // Assuming col5 holds RFEPieces
+            builder.element('Remarks', nest: customExamination.col8); // Assuming col6 holds Remarks
+          });
+        }
+      });
+
+      builder.element('ForwardExamination', nest: () {
+        for (var item in saveList) {
+          final customExamination = item['item'] as CustomExamination;
+          builder.element('ForwardExamination', nest: () {
+            builder.element('ExaminationRowId', nest: customExamination.rowId);
+          });
+        }
+      });
+
+      builder.element('CompanyCode', nest: companyCode);
+      builder.element('UserId', nest: userId);
+      builder.element('AirportCity', nest: airportCity);
+      builder.element('Mode', nest: mode);
+    });
+
+    final xmlDocument = builder.buildDocument();
+    return xmlDocument.toXmlString(pretty: true, indent: '  ');
+  }
+
+  Future<void> pickDate(BuildContext context, StateSetter setState) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2001),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData(
+            useMaterial3: false,
+            primaryColor: MyColor.primaryColorblue,
+
+            dialogBackgroundColor: Colors.white,
+            // Change dialog background color
+            colorScheme: const ColorScheme.light(
+              primary: MyColor.primaryColorblue,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: MyColor.primaryColorblue,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+        pickedDateFromPicker=pickedDate;
+        slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+        print("DATE is $slotFilterDate");
+      });
+      getSlotTime(slotFilterDate);
+    }
+  }
+
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
+    );
+  }
+
+  Widget buildLabel(
+      String text, Color color, double radius,
+      {bool isBorder = false, Color borderColor = Colors.black, double borderWidth = 1.0}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(radius),
+        border: isBorder ? Border.all(color: borderColor, width: borderWidth) : null,
+      ),
+      child: Center(
+        child: Text(
+          text,
+          style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
+
+
+
+// DataColumn _buildDataColumn(String label) {
   //   return DataColumn(
   //     label: Stack(
   //       alignment: Alignment.centerRight,
@@ -1024,159 +1080,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> with Sing
   //     ),
   //   );
   // }
-  DataColumn _buildDataColumn(String label) {
-    return DataColumn(
-      label: Text(label),
-    );
-  }
 
-  DataRow _buildDataRow({
-    required CustomExamination data,
-    required bool? isOn,
-    required int index,
-    required ValueChanged<bool?> onCheckboxChanged,
-    required TextEditingController piecesController,
-    required TextEditingController remarksController,
-  }) {
-    return DataRow(
-      cells: [
-        DataCell(
-          Theme(
-            data: ThemeData(useMaterial3: false),
-            child: Checkbox(
-              isError: true,
-              tristate: true,
-              activeColor: isOn == null
-                  ? Colors.red
-                  : isOn!
-                  ? Colors.green
-                  : Colors.grey,
-              value: isOn,
-              onChanged: (bool? value) {
-                setState(() {
-                  onCheckboxChanged(value);
-                });
-              },
-            ),
-            // Switch(
-            //   onChanged: (value) async {
-            //     setState(() {});
-            //   },
-            //   value: isOn,
-            //   activeColor: MyColor.primaryColorblue,
-            //   activeTrackColor: Colors.grey,
-            //   inactiveThumbColor: Colors.red,
-            // ),
-          ),
-        ),
-        DataCell(Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(
-              height: 4,
-            ),
-            Text(data.col2, style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                const Text('Pieces '),
-                Text('${data.col5}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ],
-        )),
-        DataCell(Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(
-              height: 4,
-            ),
-            Text("${data.col3}", style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(
-              height: 8,
-            ),
-            Row(
-              children: [
-                Text('Weight '),
-                Text('${data.col6}',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ],
-            ),
-          ],
-        )),
-        DataCell(TextFormField(
-          controller: piecesController,
-          decoration: InputDecoration(
-            hintText: 'Enter RFE Pieces',
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: MyColor.primaryColorblue,
-              ),
-            ),
-          ),
-          onChanged: (value) {
-            setState(() {
-              piecesControllers[index].text = value;
-              data.col7 = value;
-            });
-          },
-        )),
-        DataCell(SizedBox(
-          width: MediaQuery.sizeOf(context).width * 0.3,
-          child: TextField(
-            controller: remarksController,
-            onChanged: (value) {
-              setState(() {
-                remarksControllers[index].text = value;
-                data.col8 = value;
-              });
-            },
-            decoration: InputDecoration(
-              hintText: 'Remarks here',
-              contentPadding:
-              const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: MyColor.borderColor,
-                ),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: MyColor.borderColor,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: const BorderSide(
-                  color: MyColor.primaryColorblue,
-                ),
-              ),
-            ),
-          ),
-        )),
-      ],
-    );
-  }
 }
 
 class DatePickerCustom extends StatefulWidget {
