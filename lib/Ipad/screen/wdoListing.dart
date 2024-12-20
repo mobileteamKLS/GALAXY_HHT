@@ -70,6 +70,8 @@ class _WdoListingState extends State<WdoListing> {
   bool hasNoRecord = false;
   late TextEditingController fromDateController;
   late TextEditingController toDateController;
+  late TextEditingController prefixController=TextEditingController();
+  late TextEditingController suffixController=TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -79,7 +81,7 @@ class _WdoListingState extends State<WdoListing> {
     toDateController = TextEditingController(text: _formatDate(DateTime.now()));
     DateTime now = DateTime.now();
     String todayDate = DateFormat('dd-MM-yyyy').format(now);
-     getWDOListing(todayDate,todayDate);
+     getWDOListing(todayDate,todayDate,"","");
   }
 
   Future<void> showWDOSearchDialog(BuildContext outerContext) async {
@@ -141,7 +143,7 @@ class _WdoListingState extends State<WdoListing> {
       String formattedFromDate = DateFormat('dd-MM-yyyy').format(fromDateTime);
       String formattedToDate = DateFormat('dd-MM-yyyy').format(toDateTime);
 
-      getWDOListing(formattedFromDate.toString(), formattedToDate.toString());
+      getWDOListing(formattedFromDate.toString(), formattedToDate.toString(),prefixController.text.trim(),suffixController.text.trim());
 
 
       Navigator.pop(context);
@@ -190,7 +192,81 @@ class _WdoListingState extends State<WdoListing> {
                         ),
                         // Gray horizontal line
                         const SizedBox(height: 16),
-
+                        SizedBox(
+                          width:
+                          MediaQuery.sizeOf(context)
+                              .width *
+                              0.44,
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                height:
+                                MediaQuery.sizeOf(
+                                    context)
+                                    .height *
+                                    0.04,
+                                width:
+                                MediaQuery.sizeOf(
+                                    context)
+                                    .width *
+                                    0.1,
+                                child:
+                                CustomeEditTextWithBorder(
+                                  lablekey: 'MAWB',
+                                  hasIcon: false,
+                                  hastextcolor: true,
+                                  animatedLabel: true,
+                                  needOutlineBorder:
+                                  true,
+                                  labelText: "Prefix*",
+                                  readOnly: false,
+                                  maxLength: 3,
+                                  textInputType:
+                                  TextInputType
+                                      .number,
+                                  fontSize: 18,
+                                  controller: prefixController,
+                                  onChanged:
+                                      (String, bool) {},
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 15,
+                              ),
+                              SizedBox(
+                                height:
+                                MediaQuery.sizeOf(
+                                    context)
+                                    .height *
+                                    0.04,
+                                width:
+                                MediaQuery.sizeOf(
+                                    context)
+                                    .width *
+                                    0.32,
+                                child:
+                                CustomeEditTextWithBorder(
+                                  lablekey: 'MAWB',
+                                  hasIcon: false,
+                                  hastextcolor: true,
+                                  animatedLabel: true,
+                                  textInputType:
+                                  TextInputType
+                                      .number,
+                                  needOutlineBorder:
+                                  true,
+                                  labelText: "AWB No*",
+                                  readOnly: false,
+                                  controller: suffixController,
+                                  maxLength: 8,
+                                  fontSize: 18,
+                                  onChanged:
+                                      (String, bool) {},
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
                         const SizedBox(height: 16),
                         CustomeEditTextWithBorderDatePicker(
                           lablekey: 'MAWB',
@@ -324,7 +400,7 @@ class _WdoListingState extends State<WdoListing> {
     return DateFormat('dd/MM/yyyy').format(date);
   }
 
-  getWDOListing(String fromDate, String toDate) async {
+  getWDOListing(String fromDate, String toDate,String awbPrefix,String awbSuffix) async {
     if (isLoading) return;
     shipmentListDetails = [];
 
@@ -333,8 +409,8 @@ class _WdoListingState extends State<WdoListing> {
     });
 
     var queryParams = {
-      "AWBPrefix": "125",
-      "AWBNo": "12120076",
+      "AWBPrefix": "$awbPrefix",
+      "AWBNo": "$awbSuffix",
       "HAWBNO": "",
       "FromDate": "$fromDate",
       "ToDate": "$toDate"
@@ -702,7 +778,12 @@ class _WdoListingState extends State<WdoListing> {
             ),
           );
           if(isTrue){
+            DateTime fromDateTime = DateFormat('dd/MM/yyyy').parse(fromDateController.text.trim());
+            DateTime toDateTime = DateFormat('dd/MM/yyyy').parse(toDateController.text.trim());
 
+            String formattedFromDate = DateFormat('dd-MM-yyyy').format(fromDateTime);
+            String formattedToDate = DateFormat('dd-MM-yyyy').format(toDateTime);
+            getWDOListing(formattedFromDate.toString(), formattedToDate.toString(),"","");
           }
         }
 
@@ -750,7 +831,11 @@ class _WdoListingState extends State<WdoListing> {
             ),
           );
           if(isTrue){
-
+            DateTime fromDateTime = DateFormat('dd/MM/yyyy').parse(fromDateController.text.trim());
+            DateTime toDateTime = DateFormat('dd/MM/yyyy').parse(toDateController.text.trim());
+            String formattedFromDate = DateFormat('dd-MM-yyyy').format(fromDateTime);
+            String formattedToDate = DateFormat('dd-MM-yyyy').format(toDateTime);
+            getWDOListing(formattedFromDate.toString(), formattedToDate.toString(),"","");
           }
         }
 

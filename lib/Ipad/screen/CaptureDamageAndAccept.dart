@@ -123,7 +123,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
         body: Stack(
           children: [
             Container(
-              constraints: const BoxConstraints.expand(),
+
               color: MyColor.screenBgColor,
               child: Padding(
                 padding: EdgeInsets.only(top: 20, left: 20, right: 20),
@@ -200,7 +200,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  height: MediaQuery.sizeOf(context).height*0.55,
+
                                   child: Column(
                                     children: [
                                       Row(
@@ -222,20 +222,20 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                                     ),
                                                   ),
                                                   Spacer(),
-                                                  Theme(
-                                                    data: ThemeData(useMaterial3: false),
-                                                    child: Switch(
-                                                      onChanged: (value) async{
-
-                                                        setState(()  {
-
-                                                        });
-                                                      },
-                                                      value: true,
-                                                      activeColor: MyColor.primaryColorblue,
-                                                      activeTrackColor: MyColor.bgColorGrey,
-                                                    ),
-                                                  ),
+                                                  // Theme(
+                                                  //   data: ThemeData(useMaterial3: false),
+                                                  //   child: Switch(
+                                                  //     onChanged: (value) async{
+                                                  //
+                                                  //       setState(()  {
+                                                  //
+                                                  //       });
+                                                  //     },
+                                                  //     value: true,
+                                                  //     activeColor: MyColor.primaryColorblue,
+                                                  //     activeTrackColor: MyColor.bgColorGrey,
+                                                  //   ),
+                                                  // ),
                                                 ],
                                               ),
                                             ),
@@ -408,9 +408,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                               height: 100,
                                               width: 100,
                                               child: CircularProgressIndicator()))
-                                          : Expanded(
-                                        child: SingleChildScrollView(
-                                          child: Padding(
+                                          : Padding(
                                             padding: const EdgeInsets.only(
                                                 top: 8.0, left: 0.0, bottom: 100),
                                             child: SizedBox(
@@ -421,60 +419,58 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                                 child: const Center(
                                                   child: Text("NO RECORD FOUND"),
                                                 ),
-                                              )
-                                                  :  ListView.builder(
+                                              ):    ListView.builder(
                                                 physics:
                                                 const NeverScrollableScrollPhysics(),
-                                                itemBuilder: (BuildContext, index) {
-                                                  final item = referenceData14BList[index];
-                                                   isSelected = item.isSelected == 'Y';
+                                        itemBuilder: (BuildContext, index) {
+                                          final item = referenceData14BList[index];
+                                          isSelected = item.isSelected == 'Y';
 
-                                                  return Container(
-                                                    padding: EdgeInsets.only(left: 8),
-                                                    decoration: const BoxDecoration(
-                                                      border: Border(
-                                                        bottom: BorderSide(
-                                                          color: Color(0XFFE4E7EB),
-                                                          width: 1.5,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    width: MediaQuery.of(context).size.width * 0.9,
-                                                    child: Row(
-                                                      children: [
-                                                        Text(
-                                                          item.referenceDescription!,
-                                                          style: const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight: FontWeight.w600,
-                                                          ),
-                                                        ),
-                                                        const Spacer(),
-                                                        Theme(
-                                                          data: ThemeData(useMaterial3: false),
-                                                          child: Switch(
-                                                            onChanged: (value) {
-                                                              setState(() {
-                                                                referenceData14BList[index].isSelected = value ? 'Y' : 'N';
-                                                              });
-                                                            },
-                                                            value: isSelected,
-                                                            activeColor: MyColor.primaryColorblue,
-                                                            activeTrackColor: Colors.grey,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                                itemCount: referenceData14BList.length,
-                                                shrinkWrap: true,
-                                                padding: const EdgeInsets.all(2),
+                                          return Container(
+                                            padding: EdgeInsets.only(left: 8),
+                                            decoration: const BoxDecoration(
+                                              border: Border(
+                                                bottom: BorderSide(
+                                                  color: Color(0XFFE4E7EB),
+                                                  width: 1.5,
+                                                ),
                                               ),
                                             ),
+                                            width: MediaQuery.of(context).size.width * 0.9,
+                                            child: Row(
+                                              children: [
+                                                Text(
+                                                  item.referenceDescription!,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                const Spacer(),
+                                                Theme(
+                                                  data: ThemeData(useMaterial3: false),
+                                                  child: Switch(
+                                                    onChanged: (value) {
+                                                      setState(() {
+                                                        referenceData14BList[index].isSelected = value ? 'Y' : 'N';
+                                                      });
+                                                    },
+                                                    value: isSelected,
+                                                    activeColor: MyColor.primaryColorblue,
+                                                    activeTrackColor: Colors.grey,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        itemCount: referenceData14BList.length,
+                                        shrinkWrap: true,
+                                        padding: const EdgeInsets.all(2),
+                                      )
+                                                ,
+                                            ),
                                           ),
-                                        ),
-                                      ),
 
 
 
@@ -702,9 +698,13 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                     ),
                                   ],
                                 ),
+
                               ],
                             ),
                           ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.sizeOf(context).height * 0.09,
                         ),
                       ],
                     ),

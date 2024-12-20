@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -16,6 +17,7 @@ import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/wdoModal.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import 'ImportShipmentListing.dart';
 
 class CreateNewDO extends StatefulWidget {
@@ -470,7 +472,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                     needOutlineBorder: true,
                                     controller: customRefController,
                                     onPress: () {},
-                                    labelText: "Custom Reference Number",
+                                    labelText: "Custom Reference Number*",
                                     readOnly: false,
                                     maxLength: 20,
                                     fontSize: 18,
@@ -598,40 +600,15 @@ class _CreateNewDOState extends State<CreateNewDO> {
     );
   }
 
-  void showDataNotFoundDialog(BuildContext context, String message) {
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
     );
   }
 
@@ -715,7 +692,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
       "WDO/GenerateWDO",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String status = jsonData['Status'];
@@ -726,9 +703,19 @@ class _CreateNewDOState extends State<CreateNewDO> {
           showDataNotFoundDialog(context, statusMessage!);
         }
         if((status=="S")){
-          SnackbarUtil.showSnackbar(context, "Shipment Saved successfully", Color(0xff43A047));
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const WdoListing()));
+          }
         }
 
       }

@@ -687,7 +687,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
                               const SizedBox(
                                 height: 20,
                               ),
-                              (appointBookingList.isNotEmpty)
+                              (!hasNoRecord)
                                   ? Container(
                                       width: MediaQuery.sizeOf(context).width,
                                       color: Color(0xffE4E7EB),

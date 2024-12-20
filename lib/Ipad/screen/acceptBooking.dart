@@ -35,14 +35,12 @@ class _AcceptBookingState extends State<AcceptBooking> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExamination> appointBookingList = [];
+  List<CustomExaminationNew> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
   List<CustomExamination> masterData = [];
-  List<bool?> isOnList = [];
-  List<TextEditingController> piecesControllers = [];
-  List<TextEditingController> remarksControllers = [];
-  List<String> slotList = [];
-  DateTime? pickedDateFromPicker;
+  DateTime pickedDateFromPicker=DateTime.now();
+  DatePickerController pickedDateFromPickerController=DatePickerController();
+  final ValueNotifier<DateTime> selectedDateNotifier = ValueNotifier<DateTime>(DateTime.now());
   final List<Map<String, String>> slotData = [
     {"label": "Before 6 AM", "time": "00:00-05:59"},
     {"label": "6 AM - 12 PM", "time": "06:00-11:59"},
@@ -57,6 +55,9 @@ class _AcceptBookingState extends State<AcceptBooking> {
   ];
   final Set<int> selectedIndices = {};
   Set<String> selectedTimes = {};
+  late GlobalKey datePickerKey;
+  int totalPcs=0;
+  double totalWeight=0.00;
 
   Future<void> pickDate(BuildContext context, StateSetter setState) async {
     DateTime? pickedDate = await showDatePicker(
@@ -91,15 +92,17 @@ class _AcceptBookingState extends State<AcceptBooking> {
     if (pickedDate != null && pickedDate != selectedDate) {
       setState(() {
         selectedDate = pickedDate;
+        pickedDateFromPicker=pickedDate;
         slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+        selectedDateNotifier.value = pickedDate;
         print("DATE is $slotFilterDate");
       });
-      // getSlotTime(slotFilterDate);
-      searchCustomOperationsData(slotFilterDate,"00:00-05:59,06:00-11:59,12:00-17:59,18:00-23:59");
+      // pickedDateFromPickerController.animateToDate(pickedDateFromPicker);
+
+     // searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
 
     }
   }
-
   void showDataNotFoundDialog(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -136,11 +139,12 @@ class _AcceptBookingState extends State<AcceptBooking> {
       },
     );
   }
-
   searchCustomOperationsData(String date, String slot) async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
+     totalPcs=0;
+     totalWeight=0.00;
     var queryParams = {
       "InputXml":
           "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
@@ -153,13 +157,6 @@ class _AcceptBookingState extends State<AcceptBooking> {
       Map<String, dynamic> jsonData = json.decode(response.body);
 
       print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      } else {
-        hasNoRecord = false;
-      }
       print("is empty record$hasNoRecord");
       String status = jsonData['RetOutput'][0]['Status'];
       String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
@@ -174,11 +171,17 @@ class _AcceptBookingState extends State<AcceptBooking> {
         // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
         if (resp.isEmpty) {
           print("No data");
+          setState(() {
+            hasNoRecord=true;
+          });
           DialogUtils.hideLoadingDialog(context);
           return;
         }
         setState(() {
-          appointBookingList = resp
+          hasNoRecord=false;
+        });
+        setState(() {
+          List<CustomExamination> tempList = resp
               .where((json) {
                 return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
               })
@@ -190,24 +193,16 @@ class _AcceptBookingState extends State<AcceptBooking> {
               })
               .map((json) => CustomExamination.fromJSON(json))
               .toList();
-          // resp.map((json) => CustomExamination.fromJSON(json)).toList();
-          print("length==  = ${appointBookingList.length}");
-          // filteredList = listShipmentDetails;
-          print("length--  = ${appointBookingList.length}");
+                print("length==  = ${masterData.length}");
+                print(masterData.toList());
+
+                appointBookingList=mergeLists(tempList,masterData);
+                totalPcs = masterData.fold(0, (sum, pc) => sum + int.parse(pc.col7));
+                totalWeight = masterData.fold(0, (sum, wt) => sum + double.parse(wt.col8));
+
+
         });
-        setState(() {
-          isOnList = List.generate(appointBookingList.length, (index) => null);
-          piecesControllers = List.generate(
-              appointBookingList.length,
-              (index) =>
-                  TextEditingController(text: appointBookingList[index].col5));
-          print("Piecs${appointBookingList.first.col5}");
-          remarksControllers = List.generate(
-              appointBookingList.length,
-              (index) =>
-                  TextEditingController(text: appointBookingList[index].col8));
-        });
-        print("Piecs${piecesControllers.first.text}");
+
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
@@ -215,90 +210,113 @@ class _AcceptBookingState extends State<AcceptBooking> {
       print(onError);
     });
   }
-
-  getSlotTime(String date) async {
-    DialogUtils.showLoadingDialog(context);
-    appointBookingList = [];
-    masterData = [];
-    slotList=[];
-    selectedSlot="";
-    var queryParams = {
-      "InputXml":
-          "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
+  List<CustomExaminationNew> mergeLists(List<CustomExamination> listA, List<CustomExamination> listB) {
+    Map<int, CustomExamination> mapB = {
+      for (var item in listB) item.queueRowId: item,
     };
+    List<CustomExaminationNew> result = listA.map((itemA) {
+      CustomExamination? matchingItemB = mapB[itemA.queueRowId];
+      return CustomExaminationNew(
+        rowId: itemA.rowId,
+        messageRowId: itemA.messageRowId,
+        queueRowId: itemA.queueRowId,
+        elementRowId: itemA.elementRowId,
+        elementGuid: itemA.elementGuid,
+        col1: itemA.col1,
+        col2: itemA.col2,
+        col3: itemA.col3,
+        col4: itemA.col4,
+        col5: itemA.col5,
+        col6: itemA.col6,
+        col7: itemA.col7,
+        col8: itemA.col8,
+        slot: "${matchingItemB?.col3}-${matchingItemB?.col4}",
+      );
+    }).toList();
 
-    await authService
-        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
-        .then((response) {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      } else {
-        hasNoRecord = false;
-      }
-      print("is empty record$hasNoRecord");
-      String status = jsonData['RetOutput'][0]['Status'];
-      String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
-
-      if (status == 'E') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        showDataNotFoundDialog(context, statusMessage);
-        return;
-      } else {
-        List<dynamic> resp = jsonData['CustomExaminationAList'];
-        // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
-        if (resp.isEmpty) {
-          print("No data");
-          DialogUtils.hideLoadingDialog(context);
-          return;
-        }
-        setState(() {
-          List<CustomExamination> headerList = resp
-              .where((json) {
-                return json["ElementRowID"] == -1;
-              })
-              .map((json) => CustomExamination.fromJSON(json))
-              .toList();
-          slotList = headerList
-              .map((exam) =>
-                  '${exam.col3}-${exam.col4}') .toSet()
-              .toList();
-          selectedSlot = slotList.isNotEmpty ? slotList.first : null;
-          print("length==  = ${selectedSlot}");
-          print("length--  = ${slotList.length}");
-        });
-        if (slotList.isEmpty) {
-          print("Slot list is empty.");
-          DialogUtils.hideLoadingDialog(context);
-          return; // Or show a message if needed
-        } else {
-          print("first slot: ${slotList.first}");
-          searchCustomOperationsData(date, slotList.first);
-        }
-      }
-      DialogUtils.hideLoadingDialog(context);
-    }).catchError((onError) {
-      DialogUtils.hideLoadingDialog(context);
-      print(onError);
-    });
+    return result;
   }
 
-  void checkboxChanged(bool? value, int index) {
-    setState(() {
-      isOnList[index] = value;
-    });
-  }
+
+  // getSlotTime(String date) async {
+  //   DialogUtils.showLoadingDialog(context);
+  //   appointBookingList = [];
+  //   masterData = [];
+  //   slotList=[];
+  //   selectedSlot="";
+  //   var queryParams = {
+  //     "InputXml":
+  //         "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
+  //   };
+  //
+  //   await authService
+  //       .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
+  //       .then((response) {
+  //     print("data received ");
+  //     Map<String, dynamic> jsonData = json.decode(response.body);
+  //
+  //     print(jsonData);
+  //     if (jsonData.isEmpty) {
+  //       setState(() {
+  //         hasNoRecord = true;
+  //       });
+  //     } else {
+  //       hasNoRecord = false;
+  //     }
+  //     print("is empty record$hasNoRecord");
+  //     String status = jsonData['RetOutput'][0]['Status'];
+  //     String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
+  //
+  //     if (status == 'E') {
+  //       print("Error: $statusMessage");
+  //       DialogUtils.hideLoadingDialog(context);
+  //       showDataNotFoundDialog(context, statusMessage);
+  //       return;
+  //     } else {
+  //       List<dynamic> resp = jsonData['CustomExaminationAList'];
+  //       // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
+  //       if (resp.isEmpty) {
+  //         print("No data");
+  //         DialogUtils.hideLoadingDialog(context);
+  //         return;
+  //       }
+  //       setState(() {
+  //         List<CustomExamination> headerList = resp
+  //             .where((json) {
+  //               return json["ElementRowID"] == -1;
+  //             })
+  //             .map((json) => CustomExamination.fromJSON(json))
+  //             .toList();
+  //         slotList = headerList
+  //             .map((exam) =>
+  //                 '${exam.col3}-${exam.col4}') .toSet()
+  //             .toList();
+  //         selectedSlot = slotList.isNotEmpty ? slotList.first : null;
+  //         print("length==  = ${selectedSlot}");
+  //         print("length--  = ${slotList.length}");
+  //       });
+  //       if (slotList.isEmpty) {
+  //         print("Slot list is empty.");
+  //         DialogUtils.hideLoadingDialog(context);
+  //         return; // Or show a message if needed
+  //       } else {
+  //         print("first slot: ${slotList.first}");
+  //         searchCustomOperationsData(date, slotList.first);
+  //       }
+  //     }
+  //     DialogUtils.hideLoadingDialog(context);
+  //   }).catchError((onError) {
+  //     DialogUtils.hideLoadingDialog(context);
+  //     print(onError);
+  //   });
+  // }
+
+
 
   @override
   void initState() {
     super.initState();
-    pickedDateFromPicker=DateTime.now();
+    datePickerKey = GlobalKey();
     fetchMasterData();
   }
 
@@ -311,7 +329,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
       slotFilterDate = formattedDate;
     });
     //getSlotTime(formattedDate);
-    searchCustomOperationsData(formattedDate,"00:00-05:59,06:00-11:59,12:00-17:59,18:00-23:59");
+    searchCustomOperationsData(formattedDate,"");
   }
 
   @override
@@ -452,14 +470,14 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                 GestureDetector(
                                                   child: Row(
                                                     children: [
-                                                      Text(
-                                                        slotFilterDate,
-                                                        style: const TextStyle(
-                                                            fontSize: 16,
-                                                            color: MyColor
-                                                                .primaryColorblue),
-                                                      ),
-                                                      const SizedBox(width: 8),
+                                                      // Text(
+                                                      //   slotFilterDate,
+                                                      //   style: const TextStyle(
+                                                      //       fontSize: 16,
+                                                      //       color: MyColor
+                                                      //           .primaryColorblue),
+                                                      // ),
+                                                      // const SizedBox(width: 8),
                                                       const Icon(Icons.calendar_today,
                                                           color: MyColor
                                                               .primaryColorblue),
@@ -474,19 +492,24 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                             SizedBox(height: 4,),
                                             SizedBox(
                                               height: 104,
-                                              child: DatePicker(
-                                                pickedDateFromPicker!,
-                                                key: ValueKey(pickedDateFromPicker),
-                                                initialSelectedDate:pickedDateFromPicker!,
-                                                selectionColor: MyColor.primaryColorblue,
-                                                selectedTextColor: Colors.white,
-                                                onDateChange: (date) {
-                                                  // New date selected
-                                                  setState(() {
-
-                                                    pickedDateFromPicker = date;
-
-                                                  });
+                                              child: ValueListenableBuilder<DateTime>(
+                                                valueListenable: selectedDateNotifier,
+                                                builder: (context, selectedDate, _) {
+                                                  return DatePicker(
+                                                    pickedDateFromPicker,
+                                                    initialSelectedDate: selectedDate,
+                                                    selectionColor: MyColor.primaryColorblue,
+                                                    selectedTextColor: Colors.white,
+                                                    onDateChange: (date) {
+                                                      setState(() {
+                                                        selectedDateNotifier.value = date;
+                                                        var formatter = DateFormat('dd-MM-yyyy');
+                                                        String formattedDate = formatter.format(date);
+                                                        slotFilterDate=formattedDate;
+                                                        searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+                                                      });
+                                                    },
+                                                  );
                                                 },
                                               ),
                                             ),
@@ -557,6 +580,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                 final bool isSelected = selectedIndices.contains(index);
                                                 return GestureDetector(
                                                   onTap: () {
+
                                                     setState(() {
                                                       if (isSelected) {
                                                         selectedIndices.remove(index);
@@ -567,6 +591,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                       }
                                                     });
                                                     print("Selected Times: ${selectedTimes.join(', ')}");
+                                                    searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.all(8.0),
@@ -627,35 +652,35 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                   ),
                                   child: Column(
                                     children: [
+                                      // Row(
+                                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                                      //   mainAxisAlignment: MainAxisAlignment.start,
+                                      //   children: [
+                                      //     Row(
+                                      //       mainAxisAlignment: MainAxisAlignment.start,
+                                      //       children: [
+                                      //
+                                      //         Center(
+                                      //           child: Text("  Station Name(s):  ",style: TextStyle(
+                                      //             fontWeight: FontWeight.bold,
+                                      //             fontSize: 18,
+                                      //
+                                      //           ),),
+                                      //         ),
+                                      //         Text("Station 1, Station 2,",style: TextStyle(
+                                      //           fontSize: 20,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),),
+                                      //       ],
+                                      //     ),
+                                      //
+                                      //
+                                      //   ],
+                                      // ),
+                                      // SizedBox(height: 20,),
                                       Row(
                                         crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-
-                                              Center(
-                                                child: Text("  Station Name(s):  ",style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-
-                                                ),),
-                                              ),
-                                              Text("Station 1, Station 2,",style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),),
-                                            ],
-                                          ),
-
-
-                                        ],
-                                      ),
-                                      SizedBox(height: 20,),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
@@ -668,7 +693,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                   color: Colors.grey[700],
                                                 ),),
                                               ),
-                                              const Text("20",style: TextStyle(
+                                               Text("$totalPcs",style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),),
@@ -685,29 +710,13 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                   color: Colors.grey[700],
                                                 ),),
                                               ),
-                                              const Text("20",style: TextStyle(
+                                               Text("${totalWeight.toStringAsFixed(2)}",style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),),
                                             ],
                                           ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
 
-                                              Center(
-                                                child: Text("Slot Duration(Min)  ",style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.grey[700],
-                                                ),),
-                                              ),
-                                              const Text("60  ",style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),),
-                                            ],
-                                          ),
 
                                         ],
                                       ),
@@ -717,7 +726,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                 const SizedBox(
                                   height: 20,
                                 ),
-                                (appointBookingList.isNotEmpty)
+                                (!hasNoRecord)
                                     ? SingleChildScrollView(
                                         child: Padding(
                                           padding: const EdgeInsets.only(
@@ -732,7 +741,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                   const NeverScrollableScrollPhysics(),
                                               itemBuilder:
                                                   (BuildContext, index) {
-                                                CustomExamination
+                                                CustomExaminationNew
                                                     shipmentDetails =
                                                     appointBookingList
                                                         .elementAt(index);
@@ -785,7 +794,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
     );
   }
 
-  Widget buildShipmentCardV2(CustomExamination shipment) {
+  Widget buildShipmentCardV2(CustomExaminationNew shipment) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -816,10 +825,10 @@ class _AcceptBookingState extends State<AcceptBooking> {
                 const SizedBox(width: 8),
                 // buildLabel("ACCEPTED", Colors.lightGreen, 20),
                 // const SizedBox(width: 8),
-                const Row(
+                 Row(
                   children: [
                     Text(
-                      "Slot",
+                      "${shipment.slot!}",
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
@@ -841,7 +850,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 130,
+                        width: 160,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

@@ -10,6 +10,7 @@ import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import 'package:galaxy/Ipad/utils/global.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
@@ -125,6 +126,13 @@ class _ShipmentAcceptanceManuallyState
         awbFocusNode.requestFocus();
       }
     }
+  }
+
+
+  @override
+  void dispose() {
+    super.dispose();
+    DialogUtils.showLoadingDialog(context);
   }
 
   clearFieldsOnGet() {
@@ -293,6 +301,8 @@ class _ShipmentAcceptanceManuallyState
                 (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
             orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
         agentController.text=selectedCustomer.customerName;
+        selectedAgentId=selectedCustomer.customerId;
+        selectedComId=selectedComm.commodityId;
         commodityController.text = selectedComm.commodityType;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
@@ -383,6 +393,8 @@ class _ShipmentAcceptanceManuallyState
         agentController.text=selectedCustomer.customerName;
         commodityController.text = selectedComm.commodityType;
         agentController.text=selectedCustomer.customerName;
+        selectedAgentId=selectedCustomer.customerId;
+        selectedComId=selectedComm.commodityId;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
 
@@ -407,6 +419,13 @@ class _ShipmentAcceptanceManuallyState
       DialogUtils.hideLoadingDialog(context);
       print(onError);
     });
+  }
+
+  String formatDate(String inputDateString) {
+    DateFormat inputFormat = DateFormat("MM/dd/yyyy h:mm:ss a");
+    DateTime parsedDate = inputFormat.parse(inputDateString);
+    DateFormat outputFormat = DateFormat("dd MMM yy HH:mm");
+    return outputFormat.format(parsedDate);
   }
 
   acceptShipment() async {
@@ -588,6 +607,7 @@ class _ShipmentAcceptanceManuallyState
                           height: 10,
                         ),
                         Container(
+
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
                             color: Colors.white,
@@ -1364,7 +1384,7 @@ class _ShipmentAcceptanceManuallyState
                                           DataCell(Text(item.weight.toStringAsFixed(2))),
                                           const DataCell(Text('KG')),
                                           DataCell(Text(item.acceptanceBy)),
-                                          DataCell(Text(item.acceptanceOn)),
+                                          DataCell(Text(formatDate(item.acceptanceOn))),
                                           DataCell(Text(item.groupId)),
                                         ]);
                                       }).toList(),
@@ -1378,7 +1398,7 @@ class _ShipmentAcceptanceManuallyState
                                           acceptedPiecesList.length != 0
                                               ? MediaQuery.sizeOf(context)
                                                       .width *
-                                                  0.065
+                                                  0.072
                                               : 70,
                                       dataRowHeight: 48.0,
                                     ),

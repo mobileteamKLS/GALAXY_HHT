@@ -41,7 +41,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExamination> appointBookingList = [];
+  List<CustomExaminationNew> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
   List<CustomExamination> masterData = [];
   List<bool?> isOnList = [];
@@ -49,26 +49,9 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   List<TextEditingController> remarksControllers = [];
   List<String>slotList =[];
 
-  DateTime? pickedDateFromPicker;
-  bool isOn=true;
-  @override
-  void initState() {
-    super.initState();
-    pickedDateFromPicker=DateTime.now();
-
-
-    // fetchMasterData();
-  }
-
-  @override
-  void dispose() {
-
-    super.dispose();
-  }
-
-  String formatTime(int value) => value.toString().padLeft(2, '0');
-  int activeIndex = 0;
-
+  DateTime pickedDateFromPicker=DateTime.now();
+  DatePickerController pickedDateFromPickerController=DatePickerController();
+  final ValueNotifier<DateTime> selectedDateNotifier = ValueNotifier<DateTime>(DateTime.now());
   final List<Map<String, String>> slotData = [
     {"label": "Before 6 AM", "time": "00:00-05:59"},
     {"label": "6 AM - 12 PM", "time": "06:00-11:59"},
@@ -83,14 +66,36 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   ];
   final Set<int> selectedIndices = {};
   Set<String> selectedTimes = {};
+  late GlobalKey datePickerKey;
+  int totalPcs=0;
+  double totalWeight=0.00;
 
+  bool isOn=true;
+  @override
+  void initState() {
+    super.initState();
+    datePickerKey = GlobalKey();
+    fetchMasterData();
+  }
 
-  searchCustomOperationsData(String date,String slot) async {
+  @override
+  void dispose() {
+
+    super.dispose();
+  }
+
+  String formatTime(int value) => value.toString().padLeft(2, '0');
+  int activeIndex = 0;
+
+  searchCustomOperationsData(String date, String slot) async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
-    piecesControllers = [];
-    remarksControllers = [];
+    totalPcs=0;
+    totalWeight=0.00;
+    setState(() {
+      hasNoRecord=true;
+    });
     var queryParams = {
       "InputXml":
       "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
@@ -103,13 +108,6 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       Map<String, dynamic> jsonData = json.decode(response.body);
 
       print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      } else {
-        hasNoRecord = false;
-      }
       print("is empty record$hasNoRecord");
       String status = jsonData['RetOutput'][0]['Status'];
       String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
@@ -124,11 +122,17 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
         // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
         if (resp.isEmpty) {
           print("No data");
+          setState(() {
+            hasNoRecord=true;
+          });
           DialogUtils.hideLoadingDialog(context);
           return;
         }
         setState(() {
-          appointBookingList = resp
+          hasNoRecord=false;
+        });
+        setState(() {
+          List<CustomExamination> tempList = resp
               .where((json) {
             return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
           })
@@ -140,11 +144,14 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
           })
               .map((json) => CustomExamination.fromJSON(json))
               .toList();
-          // resp.map((json) => CustomExamination.fromJSON(json)).toList();
-          print("length==  = ${appointBookingList.length}");
-          // filteredList = listShipmentDetails;
-          print("length--  = ${appointBookingList.length}");
+          print("length==  = ${masterData.length}");
+          print(masterData.toList());
+
+          appointBookingList=mergeLists(tempList,masterData);
+          totalPcs = masterData.fold(0, (sum, pc) => sum + int.parse(pc.col7));
+          totalWeight = masterData.fold(0, (sum, wt) => sum + double.parse(wt.col8));
         });
+
         setState(() {
           isOnList = List.generate(appointBookingList.length, (index) => false);
           piecesControllers = List.generate(
@@ -157,80 +164,6 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                   (index) =>
                   TextEditingController(text: appointBookingList[index].col8));
         });
-        print("Piecs${piecesControllers.first.text}");
-      }
-      DialogUtils.hideLoadingDialog(context);
-    }).catchError((onError) {
-      DialogUtils.hideLoadingDialog(context);
-      print(onError);
-    });
-  }
-
-  getSlotTime(String date) async {
-    DialogUtils.showLoadingDialog(context);
-    appointBookingList = [];
-    masterData = [];
-    slotList=[];
-    selectedSlot="";
-    var queryParams = {
-      "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
-    };
-
-    await authService
-        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
-        .then((response) {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      } else {
-        hasNoRecord = false;
-      }
-      print("is empty record$hasNoRecord");
-      String status = jsonData['RetOutput'][0]['Status'];
-      String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
-
-      if (status == 'E') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        showDataNotFoundDialog(context, statusMessage);
-        return;
-      } else {
-        List<dynamic> resp = jsonData['CustomExaminationPList'];
-        // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
-        if (resp.isEmpty) {
-          print("No data");
-          DialogUtils.hideLoadingDialog(context);
-          return;
-        }
-        setState(() {
-          List<CustomExamination> headerList = resp
-              .where((json) {
-            return json["ElementRowID"] == -1;
-          })
-              .map((json) => CustomExamination.fromJSON(json))
-              .toList();
-          slotList = headerList
-              .map((exam) => '${exam.col3}-${exam.col4}') .toSet()
-              .toList();
-          selectedSlot = slotList.isNotEmpty ? slotList.first : null;
-          print("length==  = ${slotList}");
-          print("length--  = ${slotList.length}");
-        });
-        if (slotList.isEmpty) {
-          print("Slot list is empty.");
-          DialogUtils.hideLoadingDialog(context);
-          return;  // Or show a message if needed
-        } else {
-          print("first slot: ${slotList.first}");
-          searchCustomOperationsData(date, slotList.first);
-        }
-
 
       }
       DialogUtils.hideLoadingDialog(context);
@@ -239,6 +172,8 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       print(onError);
     });
   }
+
+
 
   void fetchMasterData() async {
     await Future.delayed(Duration.zero);
@@ -248,7 +183,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     setState(() {
       slotFilterDate = formattedDate;
     });
-    getSlotTime(formattedDate);
+    searchCustomOperationsData(formattedDate,"");
   }
 
   saveBookings() async {
@@ -274,7 +209,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       "CustomExamination/CustomExaminationSave",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String status = jsonData['RetOutput'][0]['Status'];
@@ -285,9 +220,19 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
           showDataNotFoundDialog(context, statusMessage!);
         }
         if ((status == "S")) {
-          SnackbarUtil.showSnackbar(
-              context, statusMessage!, const Color(0xff43A047));
-          getSlotTime(slotFilterDate);
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            searchCustomOperationsData(slotFilterDate,selectedTimes.join(','));
+          }
+
         }
 
       }
@@ -397,7 +342,6 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                             ),
                             SizedBox(height: 20),
                             Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Row(
                                   children: [
@@ -423,88 +367,93 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 10),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              const Text(" Slot Date",style: TextStyle(
-                                                fontSize: 18,
-                                                fontWeight: FontWeight.bold,
-                                              ),),
-                                              GestureDetector(
-                                                child: Row(
-                                                  children: [
-                                                    Text(
-                                                      slotFilterDate,
-                                                      style: const TextStyle(
-                                                          fontSize: 16,
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text(" Slot Date",style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),),
+                                                GestureDetector(
+                                                  child: Row(
+                                                    children: [
+                                                      // Text(
+                                                      //   slotFilterDate,
+                                                      //   style: const TextStyle(
+                                                      //       fontSize: 16,
+                                                      //       color: MyColor
+                                                      //           .primaryColorblue),
+                                                      // ),
+                                                      // const SizedBox(width: 8),
+                                                      const Icon(Icons.calendar_today,
                                                           color: MyColor
                                                               .primaryColorblue),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    const Icon(Icons.calendar_today,
-                                                        color: MyColor
-                                                            .primaryColorblue),
-                                                  ],
+                                                    ],
+                                                  ),
+                                                  onTap: () {
+                                                    pickDate(context, setState);
+                                                  },
                                                 ),
-                                                onTap: () {
-                                                  pickDate(context, setState);
+                                              ],
+                                            ),
+                                            SizedBox(height: 4,),
+                                            SizedBox(
+                                              height: 104,
+                                              child: ValueListenableBuilder<DateTime>(
+                                                valueListenable: selectedDateNotifier,
+                                                builder: (context, selectedDate, _) {
+                                                  return DatePicker(
+                                                    pickedDateFromPicker,
+                                                    initialSelectedDate: selectedDate,
+                                                    selectionColor: MyColor.primaryColorblue,
+                                                    selectedTextColor: Colors.white,
+                                                    onDateChange: (date) {
+                                                      setState(() {
+                                                        selectedDateNotifier.value = date;
+                                                        var formatter = DateFormat('dd-MM-yyyy');
+                                                        String formattedDate = formatter.format(date);
+                                                        slotFilterDate=formattedDate;
+                                                        searchCustomOperationsData(formattedDate,"${selectedTimes.join(',')}");
+                                                      });
+                                                    },
+                                                  );
                                                 },
                                               ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 4,),
-                                          SizedBox(
-                                            height: 104,
-                                            child: DatePicker(
-                                              pickedDateFromPicker!,
-                                              key: ValueKey(pickedDateFromPicker),
-                                              initialSelectedDate:pickedDateFromPicker!,
-                                              selectionColor: MyColor.primaryColorblue,
-                                              selectedTextColor: Colors.white,
-                                              onDateChange: (date) {
-                                                // New date selected
-                                                setState(() {
-
-                                                    pickedDateFromPicker = date;
-
-                                                });
-                                              },
                                             ),
-                                          ),
-                                          // SizedBox(
-                                          //   height: 120,
-                                          //   child:  Column(
-                                          //     mainAxisAlignment: MainAxisAlignment.center,
-                                          //     children: [
-                                          //       EasyDateTimeLine(
-                                          //         initialDate: DateTime.now(),
-                                          //         onDateChange: (selectedDate) {
-                                          //           //[selectedDate] the new date selected.
-                                          //         },
-                                          //         activeColor: const Color(0xffFFBF9B),
-                                          //         dayProps: const EasyDayProps(
-                                          //           dayStructure: DayStructure.dayNumDayStr,
-                                          //           inactiveBorderRadius: 48.0,
-                                          //           height: 56.0,
-                                          //           width: 56.0,
-                                          //           activeDayNumStyle: TextStyle(
-                                          //             fontSize: 18.0,
-                                          //             fontWeight: FontWeight.bold,
-                                          //           ),
-                                          //           inactiveDayNumStyle: TextStyle(
-                                          //             fontSize: 18.0,
-                                          //           ),
-                                          //         ),
-                                          //       )
-                                          //     ],
-                                          //   ),
-                                          // ),
-                                        ],
-                                      ),
-                                    ),),
+                                            // SizedBox(
+                                            //   height: 120,
+                                            //   child:  Column(
+                                            //     mainAxisAlignment: MainAxisAlignment.center,
+                                            //     children: [
+                                            //       EasyDateTimeLine(
+                                            //         initialDate: DateTime.now(),
+                                            //         onDateChange: (selectedDate) {
+                                            //           //[selectedDate] the new date selected.
+                                            //         },
+                                            //         activeColor: const Color(0xffFFBF9B),
+                                            //         dayProps: const EasyDayProps(
+                                            //           dayStructure: DayStructure.dayNumDayStr,
+                                            //           inactiveBorderRadius: 48.0,
+                                            //           height: 56.0,
+                                            //           width: 56.0,
+                                            //           activeDayNumStyle: TextStyle(
+                                            //             fontSize: 18.0,
+                                            //             fontWeight: FontWeight.bold,
+                                            //           ),
+                                            //           inactiveDayNumStyle: TextStyle(
+                                            //             fontSize: 18.0,
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     ],
+                                            //   ),
+                                            // ),
+                                          ],
+                                        ),
+                                      ),),
                                     Spacer(),
                                     Container(
                                       height:168,
@@ -528,64 +477,66 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
                                             vertical: 10, horizontal: 10),
-                                      child:Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text(" Slot Schedule",style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: List.generate(slotData.length, (index) {
-                                              final bool isSelected = selectedIndices.contains(index);
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    if (isSelected) {
-                                                      selectedIndices.remove(index);
-                                                      selectedTimes.remove(slotData[index]["time"]);
-                                                    } else {
-                                                      selectedIndices.add(index);
-                                                      selectedTimes.add(slotData[index]["time"]!);
-                                                    }
-                                                  });
-                                                  print("Selected Times: ${selectedTimes.join(', ')}");
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.all(8.0),
-                                                  width: 84,
-                                                  padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected ? MyColor.primaryColorblue : Colors.white,
-                                                    border: Border.all(color: Colors.grey),
-                                                    borderRadius: BorderRadius.circular(8.0),
-                                                  ),
-                                                  child: Column(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Image.asset(
-                                                        imagePaths[index],
-                                                        height: 40,
-                                                        width: 40,
-                                                        color: isSelected ? Colors.white : null,
-                                                      ),
-                                                      SizedBox(height: 8.0),
-                                                      Text(
-                                                        slotData[index]['label']!,
-                                                        style: TextStyle(
-                                                          color: isSelected ? Colors.white : Colors.black,
+                                        child:Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(" Slot Schedule",style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: List.generate(slotData.length, (index) {
+                                                final bool isSelected = selectedIndices.contains(index);
+                                                return GestureDetector(
+                                                  onTap: () {
+
+                                                    setState(() {
+                                                      if (isSelected) {
+                                                        selectedIndices.remove(index);
+                                                        selectedTimes.remove(slotData[index]["time"]);
+                                                      } else {
+                                                        selectedIndices.add(index);
+                                                        selectedTimes.add(slotData[index]["time"]!);
+                                                      }
+                                                    });
+                                                    print("Selected Times: ${selectedTimes.join(', ')}");
+                                                    searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.all(8.0),
+                                                    width: 84,
+                                                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                                    decoration: BoxDecoration(
+                                                      color: isSelected ? MyColor.primaryColorblue : Colors.white,
+                                                      border: Border.all(color: Colors.grey),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Image.asset(
+                                                          imagePaths[index],
+                                                          height: 40,
+                                                          width: 40,
+                                                          color: isSelected ? Colors.white : null,
                                                         ),
-                                                      ),
-                                                    ],
+                                                        SizedBox(height: 8.0),
+                                                        Text(
+                                                          slotData[index]['label']!,
+                                                          style: TextStyle(
+                                                            color: isSelected ? Colors.white : Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                              );
-                                            }),
-                                          ),
-                                        ],
-                                      ),
-                                    ),),
+                                                );
+                                              }),
+                                            ),
+                                          ],
+                                        ),
+                                      ),),
                                   ],
                                 ),
                                 const SizedBox(
@@ -611,35 +562,35 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                   ),
                                   child: Column(
                                     children: [
+                                      // Row(
+                                      //   crossAxisAlignment: CrossAxisAlignment.center,
+                                      //   mainAxisAlignment: MainAxisAlignment.start,
+                                      //   children: [
+                                      //     Row(
+                                      //       mainAxisAlignment: MainAxisAlignment.start,
+                                      //       children: [
+                                      //
+                                      //         Center(
+                                      //           child: Text("  Station Name(s):  ",style: TextStyle(
+                                      //             fontWeight: FontWeight.bold,
+                                      //             fontSize: 18,
+                                      //
+                                      //           ),),
+                                      //         ),
+                                      //         Text("Station 1, Station 2,",style: TextStyle(
+                                      //           fontSize: 20,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),),
+                                      //       ],
+                                      //     ),
+                                      //
+                                      //
+                                      //   ],
+                                      // ),
+                                      // SizedBox(height: 20,),
                                       Row(
                                         crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-
-                                              Center(
-                                                child: Text("  Station Name(s):  ",style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 18,
-
-                                                ),),
-                                              ),
-                                              Text("Station 1, Station 2,",style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),),
-                                            ],
-                                          ),
-
-
-                                        ],
-                                      ),
-                                      SizedBox(height: 20,),
-                                      Row(
-                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                         children: [
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
@@ -652,7 +603,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                                   color: Colors.grey[700],
                                                 ),),
                                               ),
-                                              const Text("20",style: TextStyle(
+                                              Text("$totalPcs",style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),),
@@ -669,238 +620,133 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                                   color: Colors.grey[700],
                                                 ),),
                                               ),
-                                              const Text("20",style: TextStyle(
+                                              Text("${totalWeight.toStringAsFixed(2)}",style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),),
                                             ],
                                           ),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
 
-                                              Center(
-                                                child: Text("Slot Duration(Min)  ",style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 16,
-                                                  color: Colors.grey[700],
-                                                ),),
-                                              ),
-                                              const Text("60  ",style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                              ),),
-                                            ],
-                                          ),
 
                                         ],
                                       ),
                                     ],
                                   ),
                                 ),
-
-                                const SizedBox(height: 18,),
-                                Card(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  elevation: 3,
-                                  margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+                                const SizedBox(
+                                  height: 20,
+                                ),
+                                (!hasNoRecord)
+                                    ? SingleChildScrollView(
                                   child: Padding(
-                                    padding: const EdgeInsets.all(12),
+                                    padding: const EdgeInsets.only(
+                                        top: 8.0, left: 0.0, bottom: 100),
+                                    child: SizedBox(
+                                      width: MediaQuery.of(context)
+                                          .size
+                                          .width /
+                                          1.01,
+                                      child: ListView.builder(
+                                        physics:
+                                        const NeverScrollableScrollPhysics(),
+                                        itemBuilder:
+                                            (BuildContext, index) {
+                                          CustomExaminationNew
+                                          shipmentDetails =
+                                          appointBookingList
+                                              .elementAt(index);
+                                          return buildShipmentCardV3(
+                                                    shipmentDetails,
+                                                    isOnList[index],
+                                                    index,
+                                                    (value) => checkboxChanged(
+                                                        value, index),
+                                                    piecesControllers[index],
+                                                    remarksControllers[index]);
+                                              },
+                                              itemCount:
+                                        appointBookingList.length,
+                                        shrinkWrap: true,
+
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                    : Container(
+                                  height:
+                                  MediaQuery.of(context).size.height /
+                                      1.5,
+                                  child: Center(
+                                    child: Lottie.asset(
+                                        'assets/images/nodata.json'),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height:
+                                  MediaQuery.sizeOf(context).height * 0.010,
+                                ),
+                                (!hasNoRecord)
+                                    ? Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(12.0),
+                                    color: Colors.white,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color:
+                                        Colors.black.withOpacity(0.1),
+                                        spreadRadius: 2,
+                                        blurRadius: 8,
+                                        offset: const Offset(0,
+                                            3), // changes position of shadow
+                                      ),
+                                    ],
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14, horizontal: 10),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.start,
                                       children: [
-                                        Row(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            const Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  "125-76758498",
-                                                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                                ),
-                                                SizedBox(height: 10,),
-                                                Column(
-                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisAlignment: MainAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                      children: [
-                                                        Text(" HAWB No: ",style: TextStyle(fontSize: 16, ),),
-                                                        Text("H12",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16,),),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 8),
-                                                    Row(
-                                                      children: [
-                                                        Text(" Pieces: ",style: TextStyle(fontSize: 16, ),),
-                                                        Text("10",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16,),),
-                                                      ],
-                                                    ),
-                                                    SizedBox(height: 8),
-                                                    Row(
-                                                      children: [
-                                                        Text(" Agent: ",style: TextStyle(fontSize: 16, ),),
-                                                        Text("AGT10001",style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 16,),),
-                                                      ],
-                                                    ),
-                                                    // Row(
-                                                    //   children: [
-                                                    //     const Text("Unit: "),
-                                                    //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                                                    //   ],
-                                                    // ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(width: 8),
-                                            buildLabel("AWB", Colors.deepPurpleAccent,8,isBorder: true,borderColor: Colors.deepPurpleAccent),
-                                            // const SizedBox(width: 8),
-                                            // SizedBox(
-                                            //     width: MediaQuery.sizeOf(context).width*0.11,
-                                            //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
-                                            const SizedBox(width: 20),
-                                            buildLabel("GEN", Colors.lightBlue,20),
-                                            const SizedBox(width: 8),
-                                            const Row(
-                                              children: [
-                                                Text(
-                                                  "10:00-12:00",
-                                                  style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold),
-                                                ),
-                                                SizedBox(width: 8),
-                                                Icon(
-                                                  Icons.info_outline_rounded,
-                                                  color: MyColor.primaryColorblue,
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(width: 8,),
-                                            Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              mainAxisAlignment: MainAxisAlignment.start,
-                                              children: [
-                                                SizedBox(
-                                                  width:300,
-                                                  child: TextFormField(
-                                                    // controller: piecesController,
-                                                    decoration: InputDecoration(
-                                                      hintText: 'Enter RFE Pieces',
-                                                      contentPadding:
-                                                      const EdgeInsets.symmetric(vertical: 0, horizontal: 15),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12),
-                                                        borderSide: const BorderSide(
-                                                          color: MyColor.borderColor,
-                                                        ),
-                                                      ),
-                                                      enabledBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12),
-                                                        borderSide: const BorderSide(
-                                                          color: MyColor.borderColor,
-                                                        ),
-                                                      ),
-                                                      focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12),
-                                                        borderSide: const BorderSide(
-                                                          color: MyColor.primaryColorblue,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        // piecesControllers[index].text = value;
-                                                        // data.col7 = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8,),
-                                                SizedBox(
-                                                  width:300,
-                                                  child: TextFormField(
-                                                    maxLines: 2,
-                                                    // controller: piecesController,
-                                                    decoration: InputDecoration(
-                                                      hintText: 'Enter Remarks',
-                                                      contentPadding:
-                                                      const EdgeInsets.symmetric(vertical: 12, horizontal: 15),
-                                                      border: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12),
-                                                        borderSide: const BorderSide(
-                                                          color: MyColor.borderColor,
-                                                        ),
-                                                      ),
-                                                      enabledBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12),
-                                                        borderSide: const BorderSide(
-                                                          color: MyColor.borderColor,
-                                                        ),
-                                                      ),
-                                                      focusedBorder: OutlineInputBorder(
-                                                        borderRadius: BorderRadius.circular(12),
-                                                        borderSide: const BorderSide(
-                                                          color: MyColor.primaryColorblue,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        // piecesControllers[index].text = value;
-                                                        // data.col7 = value;
-                                                      });
-                                                    },
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Center(
-                                              child: Container(
-
-                                                padding: EdgeInsets.symmetric(vertical: 40,horizontal: 48),
-                                                child: Theme(
-                                                  data: ThemeData(useMaterial3: false),
-                                                  child: Transform.scale(
-                                                    scale: 2.5,
-                                                    child: Checkbox(
-                                                      isError: true,
-                                                      tristate: true,
-                                                      activeColor: isOn == null
-                                                          ? Colors.red
-                                                          : isOn!
-                                                          ? Colors.green
-                                                          : Colors.grey,
-                                                      value: isOn,
-                                                      onChanged: (bool? value) {
-                                                        setState(() {
-                                                          // onCheckboxChanged(value);
-                                                        });
-                                                      },
-                                                    ),
-                                                  ),
-
-                                                ),
+                                        SizedBox(
+                                          height: 45,
+                                          width: MediaQuery.sizeOf(context)
+                                              .width,
+                                          child: ElevatedButton(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                              MyColor.primaryColorblue,
+                                              textStyle: const TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white,
+                                              ),
+                                              shape:
+                                              const RoundedRectangleBorder(
+                                                borderRadius:
+                                                BorderRadius.all(
+                                                    Radius.circular(8)),
                                               ),
                                             ),
-
-
-                                          ],
+                                            onPressed: () {
+                                              saveBookings();
+                                            },
+                                            child: const Text(
+                                              "Save",
+                                              style: TextStyle(
+                                                  color: Colors.white),
+                                            ),
+                                          ),
                                         ),
-                                        const SizedBox(height: 4),
-
-
                                       ],
                                     ),
                                   ),
                                 )
-
-
-
+                                    : SizedBox(),
+                                SizedBox(
+                                  height:
+                                  MediaQuery.sizeOf(context).height * 0.02,
+                                ),
                               ],
                             ),
                           ],
@@ -929,6 +775,525 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       ),
     );
   }
+
+  Widget buildShipmentCardV2(
+    CustomExaminationNew shipment,
+    bool? isOn,
+    int index,
+    ValueChanged<bool?> onCheckboxChanged,
+    TextEditingController piecesController,
+    TextEditingController remarksController,
+  ) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      shipment.col2,
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Text(
+                              " HAWB No: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col3,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              " Pieces: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col5,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              " Agent: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col1,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   children: [
+                        //     const Text("Unit: "),
+                        //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        //   ],
+                        // ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                buildLabel("AWB", Colors.deepPurpleAccent, 8,
+                    isBorder: true, borderColor: Colors.deepPurpleAccent),
+                // const SizedBox(width: 8),
+                // SizedBox(
+                //     width: MediaQuery.sizeOf(context).width*0.11,
+                //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                const SizedBox(width: 20),
+                buildLabel(shipment.col4, Colors.lightBlue, 20),
+                const SizedBox(width: 8),
+                Row(
+                  children: [
+                    Text(
+                      shipment.slot!,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: MyColor.primaryColorblue,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: piecesController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter RFE Pieces',
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.primaryColorblue,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            piecesControllers[index].text = value;
+                            shipment.col7 = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        maxLines: 2,
+                        controller: remarksController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Remarks',
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.primaryColorblue,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            remarksControllers[index].text = value;
+                            shipment.col8 = value;
+                          });
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                    child: Theme(
+                      data: ThemeData(useMaterial3: false),
+                      child: Transform.scale(
+                        scale: 2.5,
+                        child: Checkbox(
+                          isError: true,
+                          tristate: true,
+                          activeColor: isOn == null
+                              ? Colors.red
+                              : isOn!
+                                  ? Colors.green
+                                  : MyColor.primaryColorblue,
+                          value: isOn,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              onCheckboxChanged(value);
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2),
+                            side: BorderSide(
+                              color: isOn == null
+                                  ? Colors.red
+                                  : isOn!
+                                      ? Colors.green
+                                      : MyColor.primaryColorblue,
+                              // border color based on state
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildShipmentCardV3(
+      CustomExaminationNew shipment,
+      bool? isOn,
+      int index,
+      ValueChanged<bool?> onCheckboxChanged,
+      TextEditingController piecesController,
+      TextEditingController remarksController,
+      ) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      shipment.col2,
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                              " HAWB No: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col3,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Text(
+                              " Pieces: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col5,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Text(
+                              " Agent: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col1,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   children: [
+                        //     const Text("Unit: "),
+                        //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        //   ],
+                        // ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                buildLabel("AWB", Colors.deepPurpleAccent, 8,
+                    isBorder: true, borderColor: Colors.deepPurpleAccent),
+                // const SizedBox(width: 8),
+                // SizedBox(
+                //     width: MediaQuery.sizeOf(context).width*0.11,
+                //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                const SizedBox(width: 20),
+                buildLabel(shipment.col4, Colors.lightBlue, 20),
+                const SizedBox(width: 8),
+                Row(
+                  children: [
+                    Text(
+                      shipment.slot!,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: MyColor.primaryColorblue,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        controller: piecesController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter RFE Pieces',
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.primaryColorblue,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            piecesControllers[index].text = value;
+                            shipment.col7 = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    SizedBox(
+                      width: 300,
+                      child: TextFormField(
+                        maxLines: 2,
+                        controller: remarksController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Remarks',
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.primaryColorblue,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            remarksControllers[index].text = value;
+                            shipment.col8 = value;
+                          });
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 40, left: 18),
+                    child: Theme(
+                      data: ThemeData(useMaterial3: false),
+                      child: Transform.scale(
+                        scale: 2.5,
+                        child: Checkbox(
+                          // isError: true,
+                          tristate: true,
+                          activeColor: isOn == null
+                              ? Colors.red
+                              : isOn!
+                              ? Colors.green
+                              : MyColor.primaryColorblue,
+                          value: isOn,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              onCheckboxChanged(value);
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2),
+                            side: BorderSide(
+                              color: isOn == null
+                                  ? Colors.red
+                                  : isOn!
+                                  ? Colors.green
+                                  : MyColor.primaryColorblue,
+
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+          ],
+        ),
+      ),
+    );
+  }
+
   void checkboxChanged(bool? value, int index) {
     setState(() {
       isOnList[index] = value;
@@ -943,6 +1308,33 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     });
   }
 
+  List<CustomExaminationNew> mergeLists(List<CustomExamination> listA, List<CustomExamination> listB) {
+    Map<int, CustomExamination> mapB = {
+      for (var item in listB) item.queueRowId: item,
+    };
+    List<CustomExaminationNew> result = listA.map((itemA) {
+      CustomExamination? matchingItemB = mapB[itemA.queueRowId];
+      return CustomExaminationNew(
+        rowId: itemA.rowId,
+        messageRowId: itemA.messageRowId,
+        queueRowId: itemA.queueRowId,
+        elementRowId: itemA.elementRowId,
+        elementGuid: itemA.elementGuid,
+        col1: itemA.col1,
+        col2: itemA.col2,
+        col3: itemA.col3,
+        col4: itemA.col4,
+        col5: itemA.col5,
+        col6: itemA.col6,
+        col7: itemA.col7,
+        col8: itemA.col8,
+        slot: "${matchingItemB?.col3}-${matchingItemB?.col4}",
+      );
+    }).toList();
+
+    return result;
+  }
+
   String buildInputXml({
     required List<Map<String, dynamic>> saveList,
     required String companyCode,
@@ -955,7 +1347,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     builder.element('Root', nest: () {
       builder.element('Appointment', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExamination;
+          final customExamination = item['item'] as CustomExaminationNew;
           builder.element('Appointment', nest: () {
             builder.element('MessageRowID', nest: customExamination.messageRowId);
             builder.element('QueueRowID', nest: customExamination.queueRowId);
@@ -970,7 +1362,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
 
       builder.element('ForwardExamination', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExamination;
+          final customExamination = item['item'] as CustomExaminationNew;
           builder.element('ForwardExamination', nest: () {
             builder.element('ExaminationRowId', nest: customExamination.rowId);
           });
@@ -1022,9 +1414,13 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
         selectedDate = pickedDate;
         pickedDateFromPicker=pickedDate;
         slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+        selectedDateNotifier.value = pickedDate;
         print("DATE is $slotFilterDate");
       });
-      getSlotTime(slotFilterDate);
+      // pickedDateFromPickerController.animateToDate(pickedDateFromPicker);
+
+      // searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+
     }
   }
 
@@ -1083,107 +1479,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
 
 }
 
-class DatePickerCustom extends StatefulWidget {
-  const DatePickerCustom({Key? key}) : super(key: key);
 
-  @override
-  State<DatePickerCustom> createState() => _DatePickerCustomState();
-}
-
-class _DatePickerCustomState extends State<DatePickerCustom> {
-  int selectedIndex = 0;
-  DateTime now = DateTime.now();
-  late DateTime lastDayOfMonth;
-  late DateTime firstDayOfMonth;
-
-  @override
-  void initState() {
-    super.initState();
-    // Get the first and last days of the current month
-    firstDayOfMonth = DateTime(now.year, now.month, 1);
-    lastDayOfMonth = DateTime(now.year, now.month + 1, 0); // Last day of current month
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          const SizedBox(height: 10),
-          Material(
-            color: Colors.transparent,
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: List.generate(
-                  lastDayOfMonth.day,
-                      (index) {
-                    final currentDate =
-                    firstDayOfMonth.add(Duration(days: index));
-                    final dayName = DateFormat('E').format(currentDate);
-                    return Padding(
-                      padding: EdgeInsets.only(
-                          left: index == 0 ? 16.0 : 0.0, right: 16.0),
-                      child: GestureDetector(
-                        onTap: () => setState(() {
-                          selectedIndex = index;
-                        }),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Container(
-                              height: 42.0,
-                              width: 42.0,
-                              alignment: Alignment.center,
-                              decoration: BoxDecoration(
-                                color: selectedIndex == index
-                                    ? Colors.orange
-                                    : Colors.transparent,
-                                borderRadius: BorderRadius.circular(44.0),
-                              ),
-                              child: Text(
-                                dayName.substring(0, 1),
-                                style: TextStyle(
-                                  fontSize: 24.0,
-                                  color: selectedIndex == index
-                                      ? Colors.white
-                                      : Colors.black54,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            Text(
-                              "${index + 1}",
-                              style: const TextStyle(
-                                fontSize: 16.0,
-                                color: Colors.black54,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(height: 8.0),
-                            Container(
-                              height: 2.0,
-                              width: 28.0,
-                              color: selectedIndex == index
-                                  ? Colors.orange
-                                  : Colors.transparent,
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 // class DatePickerCustom extends StatefulWidget {
 //   const DatePickerCustom({Key? key}) : super(key: key);
