@@ -15,6 +15,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'language/appLocalizations.dart';
 import 'module/export/services/palletstack/palletstacklogic/palletstackcubit.dart';
 import 'module/export/services/retriveuld/retriveuldlogic/retriveuldcubit.dart';
+import 'module/export/services/uldtould/uldtouldlogic/uldtouldcubit.dart';
 import 'module/import/services/binning/binninglogic/binningcubit.dart';
 import 'module/splash/service/splashrepository.dart';
 import 'module/import/services/uldacceptance/uldacceptancelogic/uldacceptancecubit.dart';
@@ -85,6 +86,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => AirSideReleaseCubit(),),
         BlocProvider(create: (context) => PalletStackCubit(),),
         BlocProvider(create: (context) => RetriveULDCubit(),),
+        BlocProvider(create: (context) => ULDToULDCubit(),),
       ],
       child: MaterialApp(
 

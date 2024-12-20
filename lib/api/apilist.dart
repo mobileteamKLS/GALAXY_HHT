@@ -103,5 +103,10 @@ class Apilist{
   static String cancelULDApi = "/RetrieveULD/CancelULD";
 
 
+  // ULD TO ULD
+  static String sourceULDApi = "/ULDToULD/GetSourceULD";
+  static String targetULDApi = "/ULDToULD/GetTargetULD";
+  static String moveULDApi = "/ULDToULD/MoveULD";
+
 
 }
