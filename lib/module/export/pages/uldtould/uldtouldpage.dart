@@ -23,20 +23,16 @@ import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/awbformatenumberutils.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
-import '../../../../widget/customdivider.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
-import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
-import '../../../../widget/roundbutton.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
-
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/uldtould/sourceuldmodel.dart';
@@ -572,7 +568,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Source Scan",
+                                                        labelText: "${lableModel.sourcescan}",
                                                         readOnly: false,
                                                         maxLength: 50,
                                                         onChanged: (value) {
@@ -624,7 +620,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                   Row(
                                                     children: [
                                                       CustomeText(
-                                                        text: "Status : ",
+                                                        text: "${lableModel.status} : ",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w400,
@@ -778,7 +774,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Target Scan",
+                                                        labelText: "${lableModel.targetscan}",
                                                         readOnly: false,
                                                         maxLength: 50,
                                                         onChanged: (value) {
@@ -828,7 +824,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                   Row(
                                                     children: [
                                                       CustomeText(
-                                                        text: "Status : ",
+                                                        text: "${lableModel.status} : ",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w400,
@@ -879,7 +875,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                         SizedBox(height: SizeConfig.blockSizeVertical),
                                         RoundedButtonBlue(
                                           focusNode: moveBtnFocusNode,
-                                          text: "Move",
+                                          text: "${lableModel.move}",
                                           press: () async {
 
                                             if(sourceULDModel != null && targetULDModel != null){
@@ -896,10 +892,10 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                     _splashDefaultData!.companyCode!,
                                                     widget.menuId);
                                               }else{
-                                                SnackbarUtil.showSnackbar(context, "Source ULD and Target ULD can't be the same.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                SnackbarUtil.showSnackbar(context, "${lableModel.sourceuldandtargetuldnotsame}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                               }
                                             }else{
-                                              SnackbarUtil.showSnackbar(context, "Both Source ULD and Target ULD must be serch.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              SnackbarUtil.showSnackbar(context, "${lableModel.bothsourceuldandtargetuldmsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             }
 
 
@@ -1103,8 +1099,6 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
 
                                               ),
                                             )),
-
-
                                       ],
                                     ),
                                   ),

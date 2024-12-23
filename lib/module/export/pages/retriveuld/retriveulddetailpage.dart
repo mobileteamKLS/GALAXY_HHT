@@ -577,7 +577,7 @@ class _RetriveULDDetailPagetate extends State<RetriveULDDetailPage>
                                                                        Row(
                                                                          children: [
                                                                            CustomeText(
-                                                                             text: "Status : ",
+                                                                             text: "${lableModel.status} : ",
                                                                              fontColor: MyColor.textColorGrey2,
                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                              fontWeight: FontWeight.w400,
@@ -653,7 +653,7 @@ class _RetriveULDDetailPagetate extends State<RetriveULDDetailPage>
                                                                      children: [
                                                                        Expanded(
                                                                          flex: 1,
-                                                                         child: RoundedButtonBlue(text: "Request ULD",
+                                                                         child: RoundedButtonBlue(text: "${lableModel.requestUld}",
                                                                            textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                            verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
                                                                            press: () {
@@ -668,7 +668,7 @@ class _RetriveULDDetailPagetate extends State<RetriveULDDetailPage>
                                                                        SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
                                                                        Expanded(
                                                                          flex: 1,
-                                                                         child: RoundedButtonBlue(text: "Add To List",
+                                                                         child: RoundedButtonBlue(text: "${lableModel.addToList}",
                                                                            textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                            verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
                                                                            press: () {

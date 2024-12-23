@@ -491,6 +491,27 @@ class LableModel {
   String? closepallet;
   String? doyouwantclosepallet;
 
+  String? retrieveuldlist;
+  String? requestUld;
+  String? addToList;
+  String? retrieveUld;
+  String? showrequestedbyalluser;
+  String? removefromlist;
+  String? cancelRequest;
+  String? requested;
+
+  String? pleaseselectatleaseoneuld;
+  String? doyouremovefromlistuld;
+  String? doyoucancelrequestuld;
+
+
+  String? sourcescan;
+  String? targetscan;
+  String? status;
+  String? sourceuldandtargetuldnotsame;
+  String? bothsourceuldandtargetuldmsg;
+
+
   String? s654;
   String? s655;
   String? s656;
@@ -973,6 +994,23 @@ class LableModel {
         this.alluldtrolleyarerelease,
         this.record,
 
+        this.retrieveuldlist,
+        this.requestUld,
+        this.addToList,
+        this.retrieveUld,
+        this.showrequestedbyalluser,
+        this.removefromlist,
+        this.cancelRequest,
+        this.requested,
+        this.pleaseselectatleaseoneuld,
+        this.doyouremovefromlistuld,
+        this.doyoucancelrequestuld,
+
+        this.sourcescan,
+        this.targetscan,
+        this.status,
+        this.sourceuldandtargetuldnotsame,
+        this.bothsourceuldandtargetuldmsg,
 
         this.save,
         this.s654,
@@ -1475,6 +1513,25 @@ class LableModel {
     commodity = json['commodity'];
     remark = json['remark'];
 
+    retrieveuldlist = json['retrieveuldlist'];
+    requestUld = json['requestUld'];
+    addToList = json['addToList'];
+    retrieveUld = json['retrieveUld'];
+    showrequestedbyalluser = json['showrequestedbyalluser'];
+    removefromlist = json['removefromlist'];
+    cancelRequest = json['cancelRequest'];
+    requested = json['requested'];
+
+    pleaseselectatleaseoneuld = json['pleaseselectatleaseoneuld'];
+    doyouremovefromlistuld = json['doyouremovefromlistuld'];
+    doyoucancelrequestuld = json['doyoucancelrequestuld'];
+
+    sourcescan = json['sourcescan'];
+    targetscan = json['targetscan'];
+    status = json['status'];
+    sourceuldandtargetuldnotsame = json['sourceuldandtargetuldnotsame'];
+    bothsourceuldandtargetuldmsg = json['bothsourceuldandtargetuldmsg'];
+
     s654 = json['654'];
     s655 = json['655'];
     s656 = json['656'];
@@ -1973,6 +2030,25 @@ class LableModel {
     data['nog'] = this.nog;
     data['commodity'] = this.commodity;
     data['remark'] = this.remark;
+
+    data['retrieveuldlist'] = this.retrieveuldlist;
+    data['requestUld'] = this.requestUld;
+    data['addToList'] = this.addToList;
+    data['retrieveUld'] = this.retrieveUld;
+    data['showrequestedbyalluser'] = this.showrequestedbyalluser;
+    data['removefromlist'] = this.removefromlist;
+    data['cancelRequest'] = this.cancelRequest;
+    data['requested'] = this.requested;
+
+    data['pleaseselectatleaseoneuld'] = this.pleaseselectatleaseoneuld;
+    data['doyouremovefromlistuld'] = this.doyouremovefromlistuld;
+    data['doyoucancelrequestuld'] = this.doyoucancelrequestuld;
+
+    data['sourcescan'] = this.sourcescan;
+    data['targetscan'] = this.targetscan;
+    data['status'] = this.status;
+    data['sourceuldandtargetuldnotsame'] = this.sourceuldandtargetuldnotsame;
+    data['bothsourceuldandtargetuldmsg'] = this.bothsourceuldandtargetuldmsg;
 
     data['654'] = this.s654;
     data['655'] = this.s655;

@@ -125,13 +125,18 @@ class _RetriveULDPageState extends State<RetriveULDPage>
 
   Future<void> leaveLocationFocus() async {
     if (locationController.text.isNotEmpty) {
-      //call location validation api
-      await context.read<RetriveULDCubit>().getValidateLocation(
-          locationController.text,
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          widget.menuId,
-          "a");
+      if(_isvalidateLocation == false){
+        //call location validation api
+        await context.read<RetriveULDCubit>().getValidateLocation(
+            locationController.text,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId,
+            "a");
+      }else{
+
+      }
+
     }else{
       //focus on location feild
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -485,25 +490,11 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                                             setState(() {
                                                               _pageIndex = index;
                                                             });
-                                                            /*if (flightCheckULDListModel != null) {
-                                                              callFlightCheckULDListApi(
-                                                                  context,
-                                                                  locationController.text,
-                                                                  igmNoEditingController.text,
-                                                                  flightNoEditingController.text,
-                                                                  dateEditingController.text,
-                                                                  _user!.userProfile!.userIdentity!,
-                                                                  _splashDefaultData!.companyCode!,
-                                                                  widget.menuId,
-                                                                  (_isOpenULDFlagEnable == true) ? 1 : 0);
-                                                            } else {
-                                                              setState(() {
-                                                                _pageIndex = index;
-                                                              });
-                                                            }*/
                                                           }
                                                           else if (index == 1) {
                                                             setState(() {
+                                                              locationController.clear();
+                                                              _isvalidateLocation = false;
                                                               uldNo = "";
                                                               sortedList.clear();
                                                               isCheckedList.clear();
@@ -614,7 +605,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
             child: InkWell(
               // focusNode: uldListFocusNode,
               onTap: () async {
-              var result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => RetriveULDDetailPage(uldType : uldTypeList.uLDType!, importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Retrieve ULD List", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
+              var result = await Navigator.push(context, CupertinoPageRoute(builder: (context) => RetriveULDDetailPage(uldType : uldTypeList.uLDType!, importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "${lableModel.retrieveuldlist}", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
               if (result != null) {
                 if (result.containsKey('status')) {
                   String? status = result['status'];
@@ -624,7 +615,10 @@ class _RetriveULDPageState extends State<RetriveULDPage>
 
                     sortedList.clear();
                     isCheckedList.clear();
+                    locationController.clear();
+                    _isvalidateLocation = false;
                     setState(() {
+
                       getULDList();
                       _pageIndex = 1;
 
@@ -726,7 +720,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                     hastextcolor: true,
                     animatedLabel: true,
                     needOutlineBorder: true,
-                    labelText: (requiredLocation == "Y") ? "Requested ${lableModel.location} * ": "Requested ${lableModel.location}",
+                    labelText: (requiredLocation == "Y") ? "${lableModel.requested} ${lableModel.location} * ": "${lableModel.requested} ${lableModel.location}",
                     readOnly: false,
                     maxLength: 15,
                     isShowSuffixIcon: _isvalidateLocation,
@@ -776,7 +770,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
           SizedBox(height: SizeConfig.blockSizeVertical),
           RoundedButtonBlue(
             focusNode: retriveBtnFocusNode,
-            text: "Retrieve ULD",
+            text: "${lableModel.retrieveUld}",
             press: () async {
               if(locationController.text.isNotEmpty){
                 if(_isvalidateLocation){
@@ -801,7 +795,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                     // Show a snackbar if no ULD is selected
                     SnackbarUtil.showSnackbar(
                       context,
-                      "Please select at least one ULD from the list.",
+                      "${lableModel.pleaseselectatleaseoneuld}",
                       MyColor.colorRed,
                       icon: FontAwesomeIcons.times,
                     );
@@ -845,7 +839,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                     width: SizeConfig.blockSizeHorizontal,
                   ),
                   CustomeText(
-                      text: "Show requested by all user",
+                      text: "${lableModel.showrequestedbyalluser}",
                       fontColor: MyColor.textColorGrey2,
                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                       fontWeight: FontWeight.w500,
@@ -970,7 +964,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                Row(
                                  children: [
                                    CustomeText(
-                                     text: "Status : ",
+                                     text: "${lableModel.status} : ",
                                      fontColor: MyColor.textColorGrey2,
                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                      fontWeight: FontWeight.w400,
@@ -1038,7 +1032,53 @@ class _RetriveULDPageState extends State<RetriveULDPage>
 
                              ],
                            ),
+                           (uldDetails.requestStatus == "R") ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(),
+                           (uldDetails.requestStatus == "R") ? Row(
+                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                             children: [
+                               Row(
+                                 children: [
+                                   CustomeText(
+                                     text: "Req. Location : ",
+                                     fontColor: MyColor.textColorGrey2,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                     fontWeight: FontWeight.w400,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                   const SizedBox(width: 5),
+                                   CustomeText(
+                                     text: "${uldDetails.requestLocation}",
+                                     fontColor: MyColor.colorBlack,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                     fontWeight: FontWeight.w600,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                 ],
+                               ),
+                               Row(
+                                 children: [
+                                   CustomeText(
+                                     text: "Req. User : ",
+                                     fontColor: MyColor.textColorGrey2,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                     fontWeight: FontWeight.w400,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                   const SizedBox(width: 5),
+                                   CustomeText(
+                                     text: "${uldDetails.requestUser}",
+                                     fontColor: MyColor.colorBlack,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                     fontWeight: FontWeight.w600,
+                                     textAlign: TextAlign.start,
+                                   ),
+                                 ],
+                               ),
 
+
+
+                             ],
+                           ) : SizedBox(),
 
                            SizedBox(height: SizeConfig.blockSizeVertical),
                            Row(
@@ -1047,13 +1087,13 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                Expanded(
                                  flex: 1,
                                  child: RoundedButtonGreen(
-                                   text: (uldDetails.requestStatus == "R") ? "Cancel Request" : "Remove from list",
+                                   text: (uldDetails.requestStatus == "R") ? "${lableModel.cancelRequest}" : "${lableModel.removefromlist}",
                                    color: MyColor.colorRed,
                                    isborderButton: true,
                                    textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                    verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
                                    press: () async {
-                                     bool? cancelULD = await DialogUtils.cancelULDDialog(context, uldDetails.uLDNo!, (uldDetails.requestStatus == "A") ? "Remove in list" : "Cancel Request", (uldDetails.requestStatus == "A") ? "Do you want to remove from list for this ${uldDetails.uLDNo}?" : "Do you want to cancel request for this ${uldDetails.uLDNo}?");
+                                     bool? cancelULD = await DialogUtils.cancelULDDialog(context, uldDetails.uLDNo!, (uldDetails.requestStatus == "A") ? "${lableModel.removefromlist}" : "${lableModel.cancelRequest}", (uldDetails.requestStatus == "A") ? CommonUtils.formatMessage("${widget.lableModel!.doyouremovefromlistuld}", ["${uldDetails.uLDNo}"]) : CommonUtils.formatMessage("${widget.lableModel!.doyoucancelrequestuld}", ["${uldDetails.uLDNo}"]), lableModel);
                                      if (cancelULD == true) {
                                        cancelULDFromList(uldDetails.uLDSeqNo!);
                                      }

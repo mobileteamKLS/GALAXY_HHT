@@ -12,6 +12,7 @@ class SubMenuCodeUtils{
   static int PalletStatck = 1282;
   static int RetriveULD = 1283;
   static int ULDTOULD = 1284;
+  static int UNLOADULD = 1290;
 
 
 }

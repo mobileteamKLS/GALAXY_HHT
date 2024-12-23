@@ -4171,7 +4171,7 @@ class DialogUtils {
   }
 
 
-  static Future<bool?> cancelULDDialog(BuildContext context, String uldNo, String title, String message) {
+  static Future<bool?> cancelULDDialog(BuildContext context, String uldNo, String title, String message, LableModel lableModel) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -4195,7 +4195,7 @@ class DialogUtils {
                 onTap: () {
                   Navigator.of(context).pop(false);
                 },
-                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
 
@@ -4203,7 +4203,7 @@ class DialogUtils {
                 onTap: () {
                   Navigator.of(context).pop(true);
                 },
-                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
 
           ],
         );

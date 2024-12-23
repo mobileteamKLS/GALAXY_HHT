@@ -108,5 +108,9 @@ class Apilist{
   static String targetULDApi = "/ULDToULD/GetTargetULD";
   static String moveULDApi = "/ULDToULD/MoveULD";
 
+  // Unload ULD
+  static String unloadULDPageLoadApi = "/Unload/GetPageLoad";
+  static String uldLiatApi = "/Unload/";
+
 
 }

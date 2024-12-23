@@ -527,6 +527,25 @@
     "closepallet" : "Close pallet",
     "doyouwantclosepallet" : "Do you want close pallet ?",
 
+    "retrieveuldlist" : "Retrieve ULD List",
+    "requestUld" : "Request ULD",
+    "addToList" : "Add To List",
+    "retrieveUld" : "Retrieve ULD",
+    "showrequestedbyalluser" : "Show requested by all user",
+    "removefromlist" : "Remove from list",
+    "cancelRequest" : "Cancel Request",
+    "requested" : "Requested",
+
+    "pleaseselectatleaseoneuld" : "Please select at least one ULD from the list.",
+    "doyouremovefromlistuld" : "Do you want to remove from list for this {0} ?",
+    "doyoucancelrequestuld" : "Do you want to cancel request for this {0} ?",
+
+    "sourcescan" : "Source Scan",
+    "targetscan" : "Target Scan",
+    "status" : "Status",
+    "sourceuldandtargetuldnotsame" : "Source ULD and Target ULD can't be the same.",
+    "bothsourceuldandtargetuldmsg" : "Both Source ULD and Target ULD must be search.",
+
     "2539" : "Bands Loose",
     "654" : "Broken",
     "655" : "Crushed",

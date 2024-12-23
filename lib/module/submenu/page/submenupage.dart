@@ -6,6 +6,7 @@ import 'package:galaxy/language/appLocalizations.dart';
 import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/language/model/subMenuModel.dart';
 import 'package:galaxy/module/export/pages/airsiderelease/airsiderelease.dart';
+import 'package:galaxy/module/export/pages/unloaduld/unloaduldpage.dart';
 import 'package:galaxy/module/profile/page/profilepagescreen.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenucubit.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenustate.dart';
@@ -359,6 +360,16 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                             }
                                             else if(menuId == SubMenuCodeUtils.ULDTOULD){
                                               NextScreen(Uldtouldpage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }
+                                            else if(menuId == SubMenuCodeUtils.UNLOADULD){
+                                              NextScreen(UnloadULDPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,
