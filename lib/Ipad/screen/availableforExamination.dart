@@ -16,6 +16,7 @@ import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/CustomsOperations.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import 'ImportShipmentListing.dart';
 
 class AvailableForExamination extends StatefulWidget {
@@ -80,40 +81,15 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
     }
   }
 
-  void showDataNotFoundDialog(BuildContext context, String message) {
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(Icons.cancel, color: MyColor.colorRed, size: 60),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              CustomeText(
-                text: message,
-                fontColor: MyColor.colorBlack,
-                fontSize: (MediaQuery.sizeOf(context).height / 100) * 1.6,
-                fontWeight: FontWeight.w400,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: (MediaQuery.sizeOf(context).height / 100) * 2),
-              RoundedButtonBlue(
-                text: "Ok",
-                color: MyColor.primaryColorblue,
-                press: () {
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
     );
   }
 
@@ -157,7 +133,6 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
           return;
         }
         setState(() {
-
           appointBookingList =
               resp.map((json) => AvailableExamination.fromJson(json)).toList();
           print("length==  = ${appointBookingList.length}");
@@ -598,7 +573,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
       "CustomExamination/CustomExaminationSave",
       queryParams,
     )
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       String status = jsonData['RetOutput'][0]['Status'];
@@ -609,12 +584,19 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
           showDataNotFoundDialog(context, statusMessage!);
         }
         if ((status == "S")) {
-          SnackbarUtil.showSnackbar(
-              context, statusMessage!, const Color(0xff43A047));
-          searchCustomOperationsData();
-
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            searchCustomOperationsData();
+          }
         }
-
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {

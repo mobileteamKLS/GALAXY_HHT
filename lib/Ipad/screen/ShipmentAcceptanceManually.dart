@@ -132,7 +132,6 @@ class _ShipmentAcceptanceManuallyState
   @override
   void dispose() {
     super.dispose();
-    DialogUtils.showLoadingDialog(context);
   }
 
   clearFieldsOnGet() {
@@ -239,7 +238,7 @@ class _ShipmentAcceptanceManuallyState
     awbSearch() async {
     FocusScope.of(context).unfocus();
     DialogUtils.showLoadingDialog(context);
-    houseController.clear();
+    // houseController.clear();
     clearFieldsOnGet();
     var queryParams = {
       "InputXML":
@@ -248,7 +247,7 @@ class _ShipmentAcceptanceManuallyState
 
     await authService
         .sendGetWithBody("ShipmentAcceptance/GetShipmentDetails", queryParams)
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
 
@@ -280,7 +279,18 @@ class _ShipmentAcceptanceManuallyState
           if(accConsignment.isNotEmpty && accConsignment.length>1){
             print("multiple house ");
             DialogUtils.hideLoadingDialog(context);
-            showDataNotFoundDialog(context, "Please enter HAWB No.");
+            bool isTrue=await showDialog(
+              context: context,
+              builder: (BuildContext context) => CustomAlertMessageDialogNew(
+                description: "Please enter HAWB No.",
+                buttonText: "Okay",
+                imagepath:'assets/images/warn.gif',
+                isMobile: false,
+              ),
+            );
+            if(isTrue){
+              houseFocusNode.requestFocus();
+            }
             return;
           }
           else if(accConsignment.isNotEmpty && accConsignment.length==1){
@@ -340,7 +350,7 @@ class _ShipmentAcceptanceManuallyState
 
     await authService
         .sendGetWithBody("ShipmentAcceptance/GetShipmentDetails", queryParams)
-        .then((response) {
+        .then((response) async {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
 
@@ -1574,9 +1584,9 @@ class _ShipmentAcceptanceManuallyState
 
   Future<void> scanQRAWB(bool isHawb) async {
     String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Color for the scanner overlay
-      'Cancel', // Text for the cancel button
-      true, // Enable flash option
+      '#ff6666',
+      'Cancel',
+      true,
       ScanMode.DEFAULT, // Scan mode
     );
 
@@ -1608,8 +1618,6 @@ class _ShipmentAcceptanceManuallyState
           prefixController.text = prefix;
           awbController.text = awb;
         }
-
-        //callFlightCheckULDListApi(context, locationController.text, truncatedResult, "", "1900-01-01", _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId, (_isOpenULDFlagEnable == true) ? 1 : 0);
       }
     }
   }

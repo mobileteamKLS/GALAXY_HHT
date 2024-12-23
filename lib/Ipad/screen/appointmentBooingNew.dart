@@ -504,8 +504,8 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                                     searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
                                                   },
                                                   child: Container(
-                                                    margin: EdgeInsets.all(8.0),
-                                                    width: 84,
+                                                    margin: EdgeInsets.all(4.0),
+                                                    width: 80,
                                                     padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
                                                     decoration: BoxDecoration(
                                                       color: isSelected ? MyColor.primaryColorblue : Colors.white,
@@ -524,6 +524,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                                         SizedBox(height: 8.0),
                                                         Text(
                                                           slotData[index]['label']!,
+                                                          textAlign: TextAlign.center,
                                                           style: TextStyle(
                                                             color: isSelected ? Colors.white : Colors.black,
                                                           ),
@@ -913,7 +914,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 300,
+                      width: 200,
                       child: TextFormField(
                         controller: piecesController,
                         decoration: InputDecoration(
@@ -951,7 +952,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                       height: 8,
                     ),
                     SizedBox(
-                      width: 300,
+                      width: 200,
                       child: TextFormField(
                         maxLines: 2,
                         controller: remarksController,
@@ -1172,7 +1173,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     SizedBox(
-                      width: 300,
+                      width: 200,
                       child: TextFormField(
                         controller: piecesController,
                         decoration: InputDecoration(
@@ -1210,7 +1211,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                       height: 8,
                     ),
                     SizedBox(
-                      width: 300,
+                      width: 200,
                       child: TextFormField(
                         maxLines: 2,
                         controller: remarksController,

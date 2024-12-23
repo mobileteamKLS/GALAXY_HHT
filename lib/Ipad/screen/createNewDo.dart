@@ -38,6 +38,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
   TextEditingController nopController = TextEditingController();
   TextEditingController customRefController = TextEditingController();
   late List<WdoSearchResult> wdoDetailsList=[];
+  bool isWDOGenerated=false;
   @override
   void initState() {
     super.initState();
@@ -615,6 +616,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
   searchWDODetails() async{
     DialogUtils.showLoadingDialog(context);
     nopController.clear();
+    customRefController.clear();
     var queryParams = {
       "AWBPrefix":prefixController.text.trim(),
       "AWBNo": awbController.text.trim(),
@@ -654,6 +656,16 @@ class _CreateNewDOState extends State<CreateNewDO> {
           wdoDetailsList=resp.map((json) => WdoSearchResult.fromJSON(json)).toList();
           nopController.text=wdoDetailsList.first.totWdonop.toString();
         });
+        if(wdoDetailsList.first.status=="Generated"){
+          setState(() {
+            isWDOGenerated=true;
+          });
+        }
+        else{
+          setState(() {
+            isWDOGenerated=false;
+          });
+        }
       }
       DialogUtils.hideLoadingDialog(context);
 
@@ -675,11 +687,16 @@ class _CreateNewDOState extends State<CreateNewDO> {
       showDataNotFoundDialog(context, "AWB No is required.");
       return;
     }
+    if(isWDOGenerated){
+      showDataNotFoundDialog(context, "WDO number is already generated.");
+      return;
+    }
 
     if (customRefController.text.isEmpty) {
       showDataNotFoundDialog(context, "Custom reference is required.");
       return;
     }
+
     var queryParams = {
       "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${wdoDetailsList.first.impShipRowId}</IMPSHIPROWID><ROTATION_NO>${customRefController.text}</ROTATION_NO><PKG_RECD>${nopController.text}</PKG_RECD><WT_RECD>${wdoDetailsList.first.wtRec}</WT_RECD></WDOObjects></ArrayOfWDOObjects>",
       "AirportCity": "JFK",

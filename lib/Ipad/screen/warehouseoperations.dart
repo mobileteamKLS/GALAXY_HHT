@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/screen/rejectBooking.dart';
+import 'package:galaxy/Ipad/screen/vehicleTrackingDashboard.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import 'package:galaxy/module/login/pages/loginscreen.dart';
 import '../../core/images.dart';
@@ -478,6 +479,14 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
+                                // RoundedIconButtonNew(
+                                //   icon: Icons.local_shipping_outlined,
+                                //   text: 'Vehicle\nTrack',
+                                //   targetPage: VehicleTrackingOperations(),
+                                //   containerColor: Color(0xffCCF1F6),
+                                //   iconColor: MyColor.textColorGrey3,
+                                //   textColor: MyColor.textColorGrey3,
+                                // ),
                                 // RoundedIconButton(
                                 //   icon: CupertinoIcons.checkmark_rectangle,
                                 //   text: 'Customs\nOperation',
@@ -491,12 +500,12 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                           )
                         : SizedBox(),
                     (!isCES)
-                        ? SizedBox(
+                        ? const SizedBox(
                             height: 20,
                           )
                         : SizedBox(),
                     (!isCES)
-                        ? Padding(
+                        ? const Padding(
                             padding: EdgeInsets.only(
                                 top: 5, left: 20, right: 20, bottom: 10),
                             child: Row(
@@ -530,9 +539,9 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                               ],
                             ),
                           )
-                        : SizedBox(),
+                        : const SizedBox(),
                     (!isCES)
-                        ? SizedBox(
+                        ? const SizedBox(
                             height: 20,
                           )
                         : SizedBox(),

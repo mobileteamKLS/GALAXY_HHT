@@ -31,38 +31,7 @@ class WdoListing extends StatefulWidget {
 }
 
 class _WdoListingState extends State<WdoListing> {
-  final List<WDOlistItem> shipmentDetailsListOld = [
-    WDOlistItem(
-        wdoNo: "2024080150007",
-        awbNumber: "125-76676867",
-        hawbNumber: "HAWB01",
-        date: "16 SEP 2024 12:23",
-        awb: "AWB",
-        shipmentType: "CONSOLE",
-        status: "CREATED",
-      customRefNo: 123654789,
-      deliveredNop: 10,
-      nop: 10,
-      flightDetails: "BA009/01 AUG 2024",
-      reWareHouse: "01 AUG 2024 21:00"
-    ),
-    WDOlistItem(
-      wdoNo: "2024080150007",
-        awbNumber: "125-76676867",
-        hawbNumber: "HAWB01",
-        date: "16 SEP 2024 12:23",
-        awb: "AWB",
-        shipmentType: "CONSOLE",
-        status: "GENERATED",
-      customRefNo: 123654789,
-      deliveredNop: 10,
-      nop: 10,
-      flightDetails: "BA009/01 AUG 2024",
-      reWareHouse: "01 AUG 2024 21:00"
-    ),
 
-
-  ];
   late List<WdoSearchResult> shipmentListDetails=[];
 
   final AuthService authService = AuthService();
@@ -158,233 +127,219 @@ class _WdoListingState extends State<WdoListing> {
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.75,
             width: MediaQuery.of(context).size.width*0.5,
-            child: Dialog(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              insetPadding: const EdgeInsets.all(0),
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: MyColor.cardBgColor),
-                  color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 2,
-                      blurRadius: 8,
-                      offset: const Offset(
-                          0, 3), // changes position of shadow
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("WDO Search",
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold)),
-                        const SizedBox(
-                          width: double.infinity,
-                          child: Divider(color: Colors.grey),
-                        ),
-                        // Gray horizontal line
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width:
-                          MediaQuery.sizeOf(context)
-                              .width *
-                              0.44,
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                height:
-                                MediaQuery.sizeOf(
-                                    context)
-                                    .height *
-                                    0.04,
-                                width:
-                                MediaQuery.sizeOf(
-                                    context)
-                                    .width *
-                                    0.1,
-                                child:
-                                CustomeEditTextWithBorder(
-                                  lablekey: 'MAWB',
-                                  hasIcon: false,
-                                  hastextcolor: true,
-                                  animatedLabel: true,
-                                  needOutlineBorder:
-                                  true,
-                                  labelText: "Prefix*",
-                                  readOnly: false,
-                                  maxLength: 3,
-                                  textInputType:
-                                  TextInputType
-                                      .number,
-                                  fontSize: 18,
-                                  controller: prefixController,
-                                  onChanged:
-                                      (String, bool) {},
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 15,
-                              ),
-                              SizedBox(
-                                height:
-                                MediaQuery.sizeOf(
-                                    context)
-                                    .height *
-                                    0.04,
-                                width:
-                                MediaQuery.sizeOf(
-                                    context)
-                                    .width *
-                                    0.32,
-                                child:
-                                CustomeEditTextWithBorder(
-                                  lablekey: 'MAWB',
-                                  hasIcon: false,
-                                  hastextcolor: true,
-                                  animatedLabel: true,
-                                  textInputType:
-                                  TextInputType
-                                      .number,
-                                  needOutlineBorder:
-                                  true,
-                                  labelText: "AWB No*",
-                                  readOnly: false,
-                                  controller: suffixController,
-                                  maxLength: 8,
-                                  fontSize: 18,
-                                  onChanged:
-                                      (String, bool) {},
-                                ),
-                              )
-                            ],
+            child: KeyboardAvoidingWrapper(
+              child: Dialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10)),
+                insetPadding: const EdgeInsets.all(0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: MyColor.cardBgColor),
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        spreadRadius: 2,
+                        blurRadius: 8,
+                        offset: const Offset(
+                            0, 3), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(16.0),
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("WDO Search",
+                              style: TextStyle(
+                                  fontSize: 24, fontWeight: FontWeight.bold)),
+                          const SizedBox(
+                            width: double.infinity,
+                            child: Divider(color: Colors.grey),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        CustomeEditTextWithBorderDatePicker(
-                          lablekey: 'MAWB',
-                          controller:
-                          fromDateController,
-                          labelText:
-                          "From Date",
-                          readOnly: false,
-                          maxLength: 15,
-                          fontSize: 18,
-                        ),
-
-                        // TextField(
-                        //   controller: fromDateController,
-                        //   decoration: InputDecoration(
-                        //     labelText: "From Date",
-                        //     suffixIcon: IconButton(
-                        //       icon: const Icon(Icons.calendar_today),
-                        //       onPressed: () => _selectDate(
-                        //           context, fromDateController,
-                        //           isFromDate: true),
-                        //     ),
-                        //     border: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(6),
-                        //     ),
-                        //   ),
-                        // ),
-                        const SizedBox(height: 16),
-                        CustomeEditTextWithBorderDatePicker(
-                          lablekey: 'MAWB',
-                          controller:
-                          toDateController,
-                          labelText:
-                          "To Date",
-                          readOnly: false,
-                          maxLength: 15,
-                          fontSize: 18,
-                        ),
-
-                        // TextField(
-                        //   controller: toDateController,
-                        //   decoration: InputDecoration(
-                        //     labelText: "To Date",
-                        //     suffixIcon: IconButton(
-                        //       icon: const Icon(Icons.calendar_today),
-                        //       onPressed: () => _selectDate(context, toDateController),
-                        //     ),
-                        //     border: OutlineInputBorder(
-                        //       borderRadius: BorderRadius.circular(6),
-                        //     ),
-                        //   ),
-                        // ),
-                        SizedBox(
-                            height: MediaQuery.sizeOf(context).height * 0.09),
-                        const SizedBox(
-                          width: double.infinity,
-                          child: Divider(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 16),
-
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              search();
-                            }
-
-                            // Navigator.pop(context); // Close dialog after search
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: MyColor.primaryColorblue,
-                            minimumSize: const Size.fromHeight(50),
-                          ),
-                          child: const Text("SEARCH",
-                              style: TextStyle(color: Colors.white)),
-                        ),
-                        const SizedBox(height: 16),
-                        // Space between buttons
-
-                        OutlinedButton(
-                          onPressed: () {
-                            bookingNoController.clear();
-                            shippingBillNoController.clear();
-                            fromDateController.text = _formatDate(DateTime.now());
-                            toDateController.text = _formatDate(DateTime.now());
-                          },
-                          style: OutlinedButton.styleFrom(
-                            side: const BorderSide(color:  MyColor.primaryColorblue),
-                            minimumSize: const Size.fromHeight(50),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                          // Gray horizontal line
+                          const SizedBox(height: 16),
+                          SizedBox(
+                            width:
+                            MediaQuery.sizeOf(context)
+                                .width *
+                                0.44,
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  height:
+                                  MediaQuery.sizeOf(
+                                      context)
+                                      .height *
+                                      0.04,
+                                  width:
+                                  MediaQuery.sizeOf(
+                                      context)
+                                      .width *
+                                      0.1,
+                                  child:
+                                  CustomeEditTextWithBorder(
+                                    lablekey: 'MAWB',
+                                    hasIcon: false,
+                                    hastextcolor: true,
+                                    animatedLabel: true,
+                                    needOutlineBorder:
+                                    true,
+                                    labelText: "Prefix*",
+                                    readOnly: false,
+                                    maxLength: 3,
+                                    textInputType:
+                                    TextInputType
+                                        .number,
+                                    fontSize: 18,
+                                    controller: prefixController,
+                                    onChanged:
+                                        (String, bool) {},
+                                  ),
+                                ),
+                                const SizedBox(
+                                  width: 15,
+                                ),
+                                SizedBox(
+                                  height:
+                                  MediaQuery.sizeOf(
+                                      context)
+                                      .height *
+                                      0.04,
+                                  width:
+                                  MediaQuery.sizeOf(
+                                      context)
+                                      .width *
+                                      0.32,
+                                  child:
+                                  CustomeEditTextWithBorder(
+                                    lablekey: 'MAWB',
+                                    hasIcon: false,
+                                    hastextcolor: true,
+                                    animatedLabel: true,
+                                    textInputType:
+                                    TextInputType
+                                        .number,
+                                    needOutlineBorder:
+                                    true,
+                                    labelText: "AWB No*",
+                                    readOnly: false,
+                                    controller: suffixController,
+                                    maxLength: 8,
+                                    fontSize: 18,
+                                    onChanged:
+                                        (String, bool) {},
+                                  ),
+                                )
+                              ],
                             ),
                           ),
-                          child: const Text(
-                            "RESET",
-                            style: TextStyle(
-                                color:  MyColor.primaryColorblue), // Blue text
+                          const SizedBox(height: 16),
+                          CustomeEditTextWithBorderDatePicker(
+                            lablekey: 'MAWB',
+                            controller:
+                            fromDateController,
+                            labelText:
+                            "From Date",
+                            readOnly: false,
+                            maxLength: 15,
+                            fontSize: 18,
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        // Space between buttons
-                        // Cancel button
-                        TextButton(
-                          onPressed: () {
-                            bookingNoController.clear();
-                            shippingBillNoController.clear();
-                            fromDateController.text =_formatDate(DateTime.now());
-                            toDateController.text = _formatDate(DateTime.now());
-                            Navigator.pop(context);
-                          },
-                          style: TextButton.styleFrom(
-                            minimumSize: const Size.fromHeight(50),
+                          const SizedBox(height: 16),
+                          CustomeEditTextWithBorderDatePicker(
+                            lablekey: 'MAWB',
+                            controller:
+                            toDateController,
+                            labelText:
+                            "To Date",
+                            readOnly: false,
+                            maxLength: 15,
+                            fontSize: 18,
                           ),
-                          child: const Text(
-                            "CANCEL",
-                            style: TextStyle(color:  MyColor.primaryColorblue),
+              
+                          // TextField(
+                          //   controller: toDateController,
+                          //   decoration: InputDecoration(
+                          //     labelText: "To Date",
+                          //     suffixIcon: IconButton(
+                          //       icon: const Icon(Icons.calendar_today),
+                          //       onPressed: () => _selectDate(context, toDateController),
+                          //     ),
+                          //     border: OutlineInputBorder(
+                          //       borderRadius: BorderRadius.circular(6),
+                          //     ),
+                          //   ),
+                          // ),
+                          SizedBox(
+                              height: MediaQuery.sizeOf(context).height * 0.09),
+                          const SizedBox(
+                            width: double.infinity,
+                            child: Divider(color: Colors.grey),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 16),
+              
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                search();
+                              }
+              
+                              // Navigator.pop(context); // Close dialog after search
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: MyColor.primaryColorblue,
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            child: const Text("SEARCH",
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                          const SizedBox(height: 16),
+                          // Space between buttons
+              
+                          OutlinedButton(
+                            onPressed: () {
+                              bookingNoController.clear();
+                              shippingBillNoController.clear();
+                              fromDateController.text = _formatDate(DateTime.now());
+                              toDateController.text = _formatDate(DateTime.now());
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color:  MyColor.primaryColorblue),
+                              minimumSize: const Size.fromHeight(50),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: const Text(
+                              "RESET",
+                              style: TextStyle(
+                                  color:  MyColor.primaryColorblue), // Blue text
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          // Space between buttons
+                          // Cancel button
+                          TextButton(
+                            onPressed: () {
+                              bookingNoController.clear();
+                              shippingBillNoController.clear();
+                              fromDateController.text =_formatDate(DateTime.now());
+                              toDateController.text = _formatDate(DateTime.now());
+                              Navigator.pop(context);
+                            },
+                            style: TextButton.styleFrom(
+                              minimumSize: const Size.fromHeight(50),
+                            ),
+                            child: const Text(
+                              "CANCEL",
+                              style: TextStyle(color:  MyColor.primaryColorblue),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -676,6 +631,7 @@ class _WdoListingState extends State<WdoListing> {
             child: const Icon(Icons.add),
           ),
         ),
+        resizeToAvoidBottomInset: false,
         // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         // extendBody: true,
         // bottomNavigationBar: BottomAppBar(
@@ -1579,8 +1535,6 @@ class _WdoListingState extends State<WdoListing> {
       },
     );
   }
-
-
   Widget buildLabel(
       String text, Color color, double radius,
       {bool isBorder = false, Color borderColor = Colors.black, double borderWidth = 1.0}) {
@@ -1599,33 +1553,16 @@ class _WdoListingState extends State<WdoListing> {
   }
 
 }
+class KeyboardAvoidingWrapper extends StatelessWidget {
+  final Widget child;
 
-class WDOlistItem {
-  final String wdoNo;
-  final String awbNumber;
-  final String hawbNumber;
-  final String date;
-  final int nop;
-  final int deliveredNop;
-  final String flightDetails;
-  final int customRefNo;
-  final String reWareHouse;
-  final String awb;
-  final String shipmentType;
-  final String status;
+  const KeyboardAvoidingWrapper({super.key, required this.child});
 
-  WDOlistItem({
-    required this.wdoNo,
-    required this.awbNumber,
-    required this.hawbNumber,
-    required this.date,
-    required this.nop,
-    required this.deliveredNop,
-    required this.flightDetails,
-    required this.customRefNo,
-    required this.reWareHouse,
-    required this.awb,
-    required this.shipmentType,
-    required this.status,
-  });
+  @override
+  Widget build(BuildContext context) {
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(viewInsets: EdgeInsets.zero),
+      child: child,
+    );
+  }
 }
