@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
+import 'package:intl/intl.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -11,6 +12,7 @@ import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
+import '../modal/VehicleTrack.dart';
 import '../modal/wdoModal.dart';
 import '../utils/global.dart';
 import '../widget/customDialog.dart';
@@ -27,14 +29,10 @@ class _DockOutState extends State<DockOut> {
   FocusNode mailTypeFocusNode = FocusNode();
   MailTypeList? selectedMailType;
   final AuthService authService = AuthService();
+  late List<VctDetails> vctDetailsList=[];
+  TextEditingController vctController = TextEditingController();
+  bool isDockOutDone=false;
 
-  TextEditingController prefixController = TextEditingController();
-  TextEditingController awbController = TextEditingController();
-  TextEditingController hawbController = TextEditingController();
-  TextEditingController nopController = TextEditingController();
-  TextEditingController customRefController = TextEditingController();
-  late List<WdoSearchResult> wdoDetailsList=[];
-  bool isWDOGenerated=false;
   @override
   void initState() {
     super.initState();
@@ -196,12 +194,12 @@ class _DockOutState extends State<DockOut> {
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
-                                                    controller: hawbController,
+                                                    controller: vctController,
                                                     needOutlineBorder: true,
                                                     labelText: "VCT No*",
                                                     readOnly: false,
                                                     onPress: () {},
-                                                    maxLength: 8,
+                                                    maxLength: 20,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -244,7 +242,7 @@ class _DockOutState extends State<DockOut> {
                                                     ),
                                                   ),
                                                   onTap: (){
-                                                    searchWDODetails();
+                                                    searchVCTDetails();
                                                   },
                                                 ),
                                                 Container(
@@ -397,9 +395,9 @@ class _DockOutState extends State<DockOut> {
                                               height: 50,
                                               color: Color(0xffFAFAFA),
                                               margin: EdgeInsets.all(1.5),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "1234",
+                                                    "${vctDetailsList.isNotEmpty ? vctDetailsList.first.vehicleNo ?? "" : ""}",
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
@@ -419,9 +417,9 @@ class _DockOutState extends State<DockOut> {
                                               height: 50,
                                               margin: EdgeInsets.all(1.5),
                                               color: Color(0xffFAFAFA),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "ABC",
+                                                    "${vctDetailsList.isNotEmpty ? vctDetailsList.first.driverName ?? "" : ""}",
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
@@ -506,11 +504,11 @@ class _DockOutState extends State<DockOut> {
                                               height: 50,
                                               color: Color(0xffFAFAFA),
                                               margin: EdgeInsets.all(1.5),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "10",
+                                                    "${vctDetailsList.isNotEmpty ? vctDetailsList.first.pieces ?? "" : ""}",
                                                     style:
-                                                    TextStyle(
+                                                    const TextStyle(
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 22)),
                                               ),
@@ -528,11 +526,11 @@ class _DockOutState extends State<DockOut> {
                                               height: 50,
                                               margin: EdgeInsets.all(1.5),
                                               color: Color(0xffFAFAFA),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "1000.00",
+                                                    vctDetailsList.isNotEmpty ? vctDetailsList.first.weight.toStringAsFixed(2) ?? "" : "",
                                                     style:
-                                                    TextStyle(
+                                                    const TextStyle(
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 22)),
                                               ),
@@ -608,11 +606,11 @@ class _DockOutState extends State<DockOut> {
                                           0.42,
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
+                                          backgroundColor:isDockOutDone?MyColor.textColorGrey2:
                                           MyColor.primaryColorblue,
-                                          textStyle: const TextStyle(
+                                          textStyle:  TextStyle(
                                             fontSize: 18,
-                                            color: Colors.white,
+                                            color:isDockOutDone? MyColor.textColorGrey3: Colors.white,
                                           ),
                                           shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
@@ -620,6 +618,9 @@ class _DockOutState extends State<DockOut> {
                                           ),
                                         ),
                                         onPressed: () {
+                                          if(!isDockOutDone){
+                                            saveShipmentDetails();
+                                          }
 
                                         },
                                         child: const Text(
@@ -712,38 +713,27 @@ class _DockOutState extends State<DockOut> {
     );
   }
 
-  searchWDODetails() async{
+  searchVCTDetails() async{
     DialogUtils.showLoadingDialog(context);
-    nopController.clear();
-    customRefController.clear();
+    vctDetailsList=[];
+    doorList=[];
     var queryParams = {
-      "AWBPrefix":prefixController.text.trim(),
-      "AWBNo": awbController.text.trim(),
-      "HAWBNO": ""
-      // "AWBPrefix": "",
-      // "AWBNo": "",
-      // "HAWBNO": "",
-      // "FromDate": "20-11-2024",
-      // "ToDate": "02-12-2024"
+      "InputXml":"<Root><VCTNo>${vctController.text.trim()}</VCTNo><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
     };
     await authService
         .sendGetWithBody(
-      "WDO/WDOSearch",
+      "VCTDetails/GetVCTDetails",
       queryParams,
     )
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
-      List<dynamic> resp = jsonData['WDOSearchList'];
+      List<dynamic> resp = jsonData['VCTSearchList'];
+      List<dynamic> door = jsonData['DoorList'];
       print(jsonData);
-      if (jsonData.isEmpty) {
 
-      }
-      else{
-
-      }
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
+      String status = jsonData["VCTDockInOut"][0]['Status'];
+      String statusMessage = jsonData["VCTDockInOut"][0]['StatusMessage']??"";
       if (status != 'S') {
         print("Error: $statusMessage");
         DialogUtils.hideLoadingDialog(context);
@@ -752,22 +742,21 @@ class _DockOutState extends State<DockOut> {
       }
       else{
         setState(() {
-          wdoDetailsList=resp.map((json) => WdoSearchResult.fromJSON(json)).toList();
-          nopController.text=wdoDetailsList.first.totWdonop.toString();
+          vctDetailsList=resp.map((json) => VctDetails.fromJson(json)).toList();
+          doorList=door
+              .where((json) {
+            return json["Value"] != "-1";
+          }).map((json) => Door.fromJson(json)).toList();
+          print("Door len ${doorList.length}");
+          if(vctDetailsList.first.dockout=="Y"){
+            isDockOutDone=true;
+          }
+          else{
+            isDockOutDone=false;
+          }
         });
-        if(wdoDetailsList.first.status=="Generated"){
-          setState(() {
-            isWDOGenerated=true;
-          });
-        }
-        else{
-          setState(() {
-            isWDOGenerated=false;
-          });
-        }
       }
       DialogUtils.hideLoadingDialog(context);
-
     }).catchError((onError) {
       setState(() {
 
@@ -777,35 +766,22 @@ class _DockOutState extends State<DockOut> {
   }
 
   saveShipmentDetails() async {
-    if (prefixController.text.isEmpty) {
-      showDataNotFoundDialog(context, "AWB Prefix is required.");
+    if (vctController.text.isEmpty) {
+      showDataNotFoundDialog(context, "VCT No. is required.");
       return;
     }
 
-    if (awbController.text.isEmpty) {
-      showDataNotFoundDialog(context, "AWB No is required.");
-      return;
-    }
-    if(isWDOGenerated){
-      showDataNotFoundDialog(context, "WDO number is already generated.");
-      return;
-    }
 
-    if (customRefController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Custom reference is required.");
-      return;
-    }
 
+    final now = DateTime.now();
+    final formatter = DateFormat('MM/dd/yyyy HH:mm');
     var queryParams = {
-      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${wdoDetailsList.first.impShipRowId}</IMPSHIPROWID><ROTATION_NO>${customRefController.text}</ROTATION_NO><PKG_RECD>${nopController.text}</PKG_RECD><WT_RECD>${wdoDetailsList.first.wtRec}</WT_RECD></WDOObjects></ArrayOfWDOObjects>",
-      "AirportCity": "JFK",
-      "CompanyCode": "3",
-      "UserId": "1"
+      "InputXml": "<Root><DockInOut>O</DockInOut><TokenNo>${vctController.text.trim()}</TokenNo><DockInDateTime>${formatter.format(now)}</DockInDateTime><IsTruckSealed>Y</IsTruckSealed><Door></Door><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
     };
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
-      "WDO/GenerateWDO",
+      "VCTDetails/DockInOut",
       queryParams,
     )
         .then((response) async {
@@ -829,8 +805,8 @@ class _DockOutState extends State<DockOut> {
             ),
           );
           if(isTrue){
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const WdoListing()));
+            // Navigator.pushReplacement(context,
+            //     MaterialPageRoute(builder: (context) => const WdoListing()));
           }
         }
 

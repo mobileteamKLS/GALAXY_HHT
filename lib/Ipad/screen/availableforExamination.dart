@@ -235,7 +235,6 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
                   Padding(
                     padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
                     child: Material(

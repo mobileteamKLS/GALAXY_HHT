@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/screen/pickup.dart';
 import 'package:galaxy/Ipad/screen/rejectBooking.dart';
+import 'package:galaxy/Ipad/screen/schedulePickups.dart';
 import 'package:galaxy/Ipad/screen/vehicleTrackingDashboard.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import 'package:galaxy/module/login/pages/loginscreen.dart';
@@ -27,6 +28,7 @@ import 'ShipmentAcceptance.dart';
 import 'ShipmentAcceptanceManually.dart';
 import 'WarehouseLocation.dart';
 import 'acceptBooking.dart';
+import 'activePickupRequest.dart';
 import 'appointmentBooingNew.dart';
 import 'appointmentBooking.dart';
 import 'availableforExamination.dart';
@@ -65,7 +67,7 @@ class _PickupServicesState extends State<PickupServices> {
                   ),
                 ),
                 const Text(
-                 " Pickup Services",
+                 "  Pickup Services",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
@@ -200,7 +202,7 @@ class _PickupServicesState extends State<PickupServices> {
                           RoundedIconButtonNew(
                             icon: CupertinoIcons.doc,
                             text: 'Active Pickup\nRequests',
-                            targetPage: ImportShipmentListing(),
+                            targetPage: ActivePickupRequest(),
                             containerColor: Color(0xfffcedcf),
                             iconColor: MyColor.textColorGrey3,
                             textColor: MyColor.textColorGrey3,
@@ -209,7 +211,7 @@ class _PickupServicesState extends State<PickupServices> {
                           RoundedIconButtonNew(
                             icon: CupertinoIcons.cube_box,
                             text: 'Scheduled\nPickups',
-                            targetPage: CreateShipment(),
+                            targetPage: ScheduledPickups(),
                             containerColor: Color(0xffD1E2FB),
                             iconColor: MyColor.textColorGrey3,
                             textColor: MyColor.textColorGrey3,

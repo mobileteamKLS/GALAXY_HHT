@@ -1,8 +1,12 @@
+
 import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
+import 'package:intl/intl.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -11,9 +15,11 @@ import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
+import '../modal/VehicleTrack.dart';
 import '../modal/wdoModal.dart';
 import '../utils/global.dart';
 import '../widget/customDialog.dart';
+import '../widget/customIpadTextfield.dart';
 import 'ImportShipmentListing.dart';
 
 class DockIn extends StatefulWidget {
@@ -28,13 +34,12 @@ class _DockInState extends State<DockIn> {
   MailTypeList? selectedMailType;
   final AuthService authService = AuthService();
 
-  TextEditingController prefixController = TextEditingController();
-  TextEditingController awbController = TextEditingController();
-  TextEditingController hawbController = TextEditingController();
-  TextEditingController nopController = TextEditingController();
-  TextEditingController customRefController = TextEditingController();
-  late List<WdoSearchResult> wdoDetailsList=[];
-  bool isWDOGenerated=false;
+  TextEditingController vctController = TextEditingController();
+  TextEditingController doorController = TextEditingController();
+
+  late List<VctDetails> vctDetailsList=[];
+  var selectedDoor="";
+  bool isDockInDone=false;
   @override
   void initState() {
     super.initState();
@@ -58,7 +63,7 @@ class _DockInState extends State<DockIn> {
                 ),
                 Text(
                   isCES?'  Warehouse Operations':"  Customs Operation",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
               ],
@@ -196,12 +201,12 @@ class _DockInState extends State<DockIn> {
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
-                                                    controller: hawbController,
+                                                    controller: vctController,
                                                     needOutlineBorder: true,
                                                     labelText: "VCT No*",
                                                     readOnly: false,
                                                     onPress: () {},
-                                                    maxLength: 8,
+                                                    maxLength: 20,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -244,7 +249,7 @@ class _DockInState extends State<DockIn> {
                                                     ),
                                                   ),
                                                   onTap: (){
-                                                    searchWDODetails();
+                                                    searchVCTDetails();
                                                   },
                                                 ),
                                                 Container(
@@ -350,22 +355,86 @@ class _DockInState extends State<DockIn> {
                                                   MediaQuery.sizeOf(context)
                                                       .width *
                                                       0.38,
-                                                  child:
-                                                  CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    controller: hawbController,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Door*",
-                                                    readOnly: false,
-                                                    onPress: () {},
-                                                    maxLength: 8,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
-                                                  ),
+                                                  child:TypeAheadField<Door>(
+                                                    controller: doorController,
+                                                    debounceDuration: const Duration(
+                                                        milliseconds: 300),
+                                                    suggestionsCallback: (search) =>
+                                                        DoorService.find(search),
+                                                    itemBuilder: (context, item) {
+                                                      return Container(
+                                                        decoration:
+                                                        const BoxDecoration(
+                                                          border: Border(
+                                                            top: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            left: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            right: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            bottom: BorderSide
+                                                                .none, // No border on the bottom
+                                                          ),
+                                                        ),
+                                                        padding:
+                                                        const EdgeInsets.all(8.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(item.door
+                                                                .toUpperCase()),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                    builder: (context, controller,
+                                                        focusNode) =>
+                                                        CustomeEditTextWithBorder(
+                                                          lablekey: 'MAWB',
+                                                          controller: controller,
+                                                          focusNode: focusNode,
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          onPress: () {},
+                                                          labelText:
+                                                          "Door*",
+                                                          readOnly: false,
+                                                          fontSize: 18,
+                                                          onChanged: (String, bool) {},
+                                                        ),
+                                                    decorationBuilder:
+                                                        (context, child) => Material(
+                                                      type: MaterialType.card,
+                                                      elevation: 4,
+                                                      borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                      child: child,
+                                                    ),
+                                                    // itemSeparatorBuilder: (context, index) =>
+                                                    //     Divider(),
+                                                    emptyBuilder: (context) =>
+                                                    const Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Text(
+                                                          'No Door Found',
+                                                          style: TextStyle(
+                                                              fontSize: 16)),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      doorController.text = value
+                                                          .door
+                                                          .toUpperCase();
+                                                      setState(() {
+                                                        selectedDoor=value.value;
+                                                      });
+
+                                                    },
+                                                  )
+                                                  ,
                                                 ),
                                                 const SizedBox(
                                                   width: 15,
@@ -496,11 +565,11 @@ class _DockInState extends State<DockIn> {
                                               height: 50,
                                               color: Color(0xffFAFAFA),
                                               margin: EdgeInsets.all(1.5),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "1234",
+                                                    "${vctDetailsList.isNotEmpty ? vctDetailsList.first.vehicleNo ?? "" : ""}",
                                                     style:
-                                                    TextStyle(
+                                                    const TextStyle(
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 20,
                                                         color: Color(0xff1F2933))),
@@ -519,9 +588,9 @@ class _DockInState extends State<DockIn> {
                                               height: 50,
                                               margin: EdgeInsets.all(1.5),
                                               color: Color(0xffFAFAFA),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "ABC",
+                                                    "${vctDetailsList.isNotEmpty ? vctDetailsList.first.driverName ?? "" : ""}",
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
@@ -607,11 +676,11 @@ class _DockInState extends State<DockIn> {
                                               height: 50,
                                               color: Color(0xffFAFAFA),
                                               margin: EdgeInsets.all(1.5),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "10",
+                                                    "${vctDetailsList.isNotEmpty ? vctDetailsList.first.pieces ?? "" : ""}",
                                                     style:
-                                                    TextStyle(
+                                                    const TextStyle(
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 20,
                                                         color: Color(0xff1F2933))),
@@ -630,11 +699,11 @@ class _DockInState extends State<DockIn> {
                                               height: 50,
                                               margin: EdgeInsets.all(1.5),
                                               color: Color(0xffFAFAFA),
-                                              child: const Center(
+                                              child:  Center(
                                                 child: Text(
-                                                    "1000.00",
+                                                    vctDetailsList.isNotEmpty ? vctDetailsList.first.weight.toStringAsFixed(2) ?? "" : "",
                                                     style:
-                                                    TextStyle(
+                                                    const TextStyle(
                                                         fontWeight: FontWeight.w600,
                                                         fontSize: 20,
                                                         color: Color(0xff1F2933))),
@@ -712,10 +781,11 @@ class _DockInState extends State<DockIn> {
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
+                                          isDockInDone?MyColor.textColorGrey2:
                                           MyColor.primaryColorblue,
-                                          textStyle: const TextStyle(
+                                          textStyle:  TextStyle(
                                             fontSize: 18,
-                                            color: Colors.white,
+                                            color:isDockInDone? MyColor.textColorGrey3: Colors.white,
                                           ),
                                           shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
@@ -723,6 +793,9 @@ class _DockInState extends State<DockIn> {
                                           ),
                                         ),
                                         onPressed: () {
+                                          if(!isDockInDone){
+                                            saveShipmentDetails();
+                                          }
 
                                         },
                                         child: const Text(
@@ -815,38 +888,28 @@ class _DockInState extends State<DockIn> {
     );
   }
 
-  searchWDODetails() async{
+  searchVCTDetails() async{
     DialogUtils.showLoadingDialog(context);
-    nopController.clear();
-    customRefController.clear();
+    vctDetailsList=[];
+    doorController.clear();
+    doorList=[];
     var queryParams = {
-      "AWBPrefix":prefixController.text.trim(),
-      "AWBNo": awbController.text.trim(),
-      "HAWBNO": ""
-      // "AWBPrefix": "",
-      // "AWBNo": "",
-      // "HAWBNO": "",
-      // "FromDate": "20-11-2024",
-      // "ToDate": "02-12-2024"
+      "InputXml":"<Root><VCTNo>${vctController.text.trim()}</VCTNo><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
     };
     await authService
         .sendGetWithBody(
-      "WDO/WDOSearch",
+      "VCTDetails/GetVCTDetails",
       queryParams,
     )
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
-      List<dynamic> resp = jsonData['WDOSearchList'];
+      List<dynamic> resp = jsonData['VCTSearchList'];
+      List<dynamic> door = jsonData['DoorList'];
       print(jsonData);
-      if (jsonData.isEmpty) {
 
-      }
-      else{
-
-      }
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
+      String status = jsonData["VCTDockInOut"][0]['Status'];
+      String statusMessage = jsonData["VCTDockInOut"][0]['StatusMessage']??"";
       if (status != 'S') {
         print("Error: $statusMessage");
         DialogUtils.hideLoadingDialog(context);
@@ -855,22 +918,23 @@ class _DockInState extends State<DockIn> {
       }
       else{
         setState(() {
-          wdoDetailsList=resp.map((json) => WdoSearchResult.fromJSON(json)).toList();
-          nopController.text=wdoDetailsList.first.totWdonop.toString();
+          vctDetailsList=resp.map((json) => VctDetails.fromJson(json)).toList();
+          doorList=door
+              .where((json) {
+            return json["Value"] != "-1";
+          }).map((json) => Door.fromJson(json)).toList();
+          print("Door len ${doorList.length}");
+          if(vctDetailsList.first.dockIn=="Y"){
+            isDockInDone=true;
+          }
+          else{
+            isDockInDone=false;
+          }
         });
-        if(wdoDetailsList.first.status=="Generated"){
-          setState(() {
-            isWDOGenerated=true;
-          });
-        }
-        else{
-          setState(() {
-            isWDOGenerated=false;
-          });
-        }
+
+
       }
       DialogUtils.hideLoadingDialog(context);
-
     }).catchError((onError) {
       setState(() {
 
@@ -878,37 +942,26 @@ class _DockInState extends State<DockIn> {
       print(onError);
     });
   }
-
   saveShipmentDetails() async {
-    if (prefixController.text.isEmpty) {
-      showDataNotFoundDialog(context, "AWB Prefix is required.");
+    if (vctController.text.isEmpty) {
+      showDataNotFoundDialog(context, "VCT No. is required.");
       return;
     }
 
-    if (awbController.text.isEmpty) {
-      showDataNotFoundDialog(context, "AWB No is required.");
-      return;
-    }
-    if(isWDOGenerated){
-      showDataNotFoundDialog(context, "WDO number is already generated.");
+    if (doorController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Door is required.");
       return;
     }
 
-    if (customRefController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Custom reference is required.");
-      return;
-    }
-
+    final now = DateTime.now();
+    final formatter = DateFormat('MM/dd/yyyy HH:mm');
     var queryParams = {
-      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${wdoDetailsList.first.impShipRowId}</IMPSHIPROWID><ROTATION_NO>${customRefController.text}</ROTATION_NO><PKG_RECD>${nopController.text}</PKG_RECD><WT_RECD>${wdoDetailsList.first.wtRec}</WT_RECD></WDOObjects></ArrayOfWDOObjects>",
-      "AirportCity": "JFK",
-      "CompanyCode": "3",
-      "UserId": "1"
+      "InputXml": "<Root><DockInOut>I</DockInOut><TokenNo>${vctController.text.trim()}</TokenNo><DockInDateTime>${formatter.format(now)}</DockInDateTime><IsTruckSealed>Y</IsTruckSealed><Door>${selectedDoor}</Door><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
     };
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
-      "WDO/GenerateWDO",
+      "VCTDetails/DockInOut",
       queryParams,
     )
         .then((response) async {
@@ -932,8 +985,8 @@ class _DockInState extends State<DockIn> {
             ),
           );
           if(isTrue){
-            Navigator.pushReplacement(context,
-                MaterialPageRoute(builder: (context) => const WdoListing()));
+            // Navigator.pushReplacement(context,
+            //     MaterialPageRoute(builder: (context) => const WdoListing()));
           }
         }
 

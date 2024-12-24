@@ -398,7 +398,6 @@ class _AcceptBookingState extends State<AcceptBooking> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 10),
                   Padding(
                     padding:
                         const EdgeInsets.only(top: 20, left: 20, right: 20),

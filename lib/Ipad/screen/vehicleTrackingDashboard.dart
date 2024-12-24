@@ -133,16 +133,16 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                       padding: EdgeInsets.only(
                           top: 5, left: 20, right: 20, bottom: 10),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          RoundedIconButtonNew(
-                            icon: Icons.login_outlined,
-                            text: 'Gate In',
-                            targetPage: GateIn(),
-                            containerColor: Color(0xffFDEECF),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
+                          // RoundedIconButtonNew(
+                          //   icon: Icons.login_outlined,
+                          //   text: 'Gate In',
+                          //   targetPage: GateIn(),
+                          //   containerColor: Color(0xffFDEECF),
+                          //   iconColor: MyColor.textColorGrey3,
+                          //   textColor: MyColor.textColorGrey3,
+                          // ),
                           // SizedBox(width: 40,),
                           RoundedIconButtonNew(
                             icon: Icons.local_shipping_outlined,
@@ -152,6 +152,7 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                             iconColor: MyColor.textColorGrey3,
                             textColor: MyColor.textColorGrey3,
                           ),
+                          SizedBox(width: 40,),
                           RoundedIconButtonNew(
                             icon: Icons.local_shipping_outlined,
                             text: 'Dock Out',
@@ -176,14 +177,14 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
-                          RoundedIconButtonNew(
-                            icon: Icons.logout_outlined,
-                            text: 'Gate Out',
-                            targetPage: GateOut(),
-                            containerColor: Color(0xffFFD7BC),
-                            iconColor: MyColor.textColorGrey3,
-                            textColor: MyColor.textColorGrey3,
-                          ),
+                          // RoundedIconButtonNew(
+                          //   icon: Icons.logout_outlined,
+                          //   text: 'Gate Out',
+                          //   targetPage: GateOut(),
+                          //   containerColor: Color(0xffFFD7BC),
+                          //   iconColor: MyColor.textColorGrey3,
+                          //   textColor: MyColor.textColorGrey3,
+                          // ),
                           // SizedBox(width: 40,),
 
                         ],

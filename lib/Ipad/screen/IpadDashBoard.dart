@@ -177,14 +177,14 @@ class _IpadDashboardState extends State<IpadDashboard> {
                           textColor: MyColor.textColorGrey3,
                         ),
                         SizedBox(width: 40,),
-                        // RoundedIconButtonNew(
-                        //   icon: Icons.fire_truck_outlined,
-                        //   text: 'Pickup\nServices',
-                        //   targetPage: PickupServices(),
-                        //   containerColor: Color(0xffDFD6EF),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
+                        RoundedIconButtonNew(
+                          icon: Icons.fire_truck_outlined,
+                          text: 'Pickup\nServices',
+                          targetPage: PickupServices(),
+                          containerColor: Color(0xffDFD6EF),
+                          iconColor: MyColor.textColorGrey3,
+                          textColor: MyColor.textColorGrey3,
+                        ),
 
                         // RoundedIconButton(
                         //   icon: CupertinoIcons.square_stack_3d_up,

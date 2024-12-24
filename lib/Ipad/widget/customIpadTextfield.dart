@@ -13,6 +13,7 @@ import '../../core/mycolor.dart';
 import '../../utils/flightnumbervalidationutils.dart';
 import '../../utils/sizeutils.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
+import '../modal/VehicleTrack.dart';
 
 class CustomeEditTextWithBorderDatePicker extends StatefulWidget {
   final String lablekey;
@@ -347,7 +348,6 @@ class OriginAndDestinationService {
     return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
   }
 }
-
 class FirmsCodeService {
   static List<FrmAndDcpCode> find(String search) {
     String normalizedSearch = normalizeStringSearch(search);
@@ -373,7 +373,6 @@ class FirmsCodeService {
     return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
   }
 }
-
 class DispositionCodeService {
   static List<FrmAndDcpCode> find(String search) {
     String normalizedSearch = normalizeStringSearch(search);
@@ -388,6 +387,31 @@ class DispositionCodeService {
     String normalizedInput = normalizeStringValid(input);
     return dispositionCodeMaster.any((agent) {
       String normalizedAgentName = normalizeStringValid(agent.referenceDataIdentifier);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
+class DoorService {
+  static List<Door> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return doorList.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.door);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return doorList.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.door);
       return normalizedAgentName == normalizedInput;
     });
   }

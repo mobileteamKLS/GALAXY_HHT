@@ -1179,10 +1179,7 @@ class _PickUpsState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     labelText: "Remark",
-                                                    readOnly: true,
                                                     onPress: () {},
-                                                    controller:
-                                                    rcvUnitController,
                                                     textInputType:
                                                     TextInputType.number,
                                                     maxLength: 4,
@@ -1205,11 +1202,17 @@ class _PickUpsState
                                                       0.30,
                                                   child:
                                                       const Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      Icon(
-                                                        Icons
-                                                            .info_outlined,
-                                                        color: Color(0xff3E4C5A),
+                                                      Column(
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        children: [
+                                                          Icon(
+                                                            Icons
+                                                                .info_outlined,
+                                                            color: Color(0xff3E4C5A),
+                                                          ),
+                                                        ],
                                                       ),
                                                       Text(
                                                         "  Entering remarks is mandatory,\n if the pick-up fails",
