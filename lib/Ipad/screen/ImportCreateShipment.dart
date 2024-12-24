@@ -7,6 +7,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../core/images.dart';
@@ -156,6 +157,8 @@ class _CreateShipmentState extends State<CreateShipment> {
   }
 
   saveShipmentDetails() async {
+    DateTime flightDate = DateFormat('dd/MM/yyyy').parse(flightDateController.text.trim());
+    String formattedFlightDate = DateFormat('yyyy-MM-dd').format(flightDate);
     var queryParams = {
       "VHRowId": 0,
       "AWBPrefix": prefixController.text,
@@ -165,11 +168,11 @@ class _CreateShipmentState extends State<CreateShipment> {
       "Weight": double.parse(grossWeightController.text),
       "Origin": originController.text,
       "Destination": destinationController.text,
-      "Commodity": 1,
+      "Commodity": selectedComId,
       "CommodityType": commTypeController.text,
       "Airline": flightNoController.text.substring(0, 2),
       "FltNo": flightNoController.text.substring(3),
-      "FltDate": "2024-10-25",
+      "FltDate": "$formattedFlightDate",
       "ULDType":uldController.text.isNotEmpty? uldController.text.substring(0, 3):"",
       "ULDNumber":uldController.text.isNotEmpty?uldController.text.substring(3, 8):"",
       "ULDOwner": uldController.text.isNotEmpty?uldController.text.substring(8, 10):"",

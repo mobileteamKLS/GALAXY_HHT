@@ -24,17 +24,17 @@ import '../widget/customIpadTextfield.dart';
 import 'CaptureDamageAndAccept.dart';
 import 'ImportShipmentListing.dart';
 
-class ShipmentAcceptanceManually extends StatefulWidget {
-  final ShipmentListDetails? shipmentListDetails;
-  const ShipmentAcceptanceManually({super.key, this.shipmentListDetails});
+class PickUps extends StatefulWidget {
+
+  const PickUps({super.key});
 
   @override
-  State<ShipmentAcceptanceManually> createState() =>
-      _ShipmentAcceptanceManuallyState();
+  State<PickUps> createState() =>
+      _PickUpsState();
 }
 
-class _ShipmentAcceptanceManuallyState
-    extends State<ShipmentAcceptanceManually> {
+class _PickUpsState
+    extends State<PickUps> {
   final AuthService authService = AuthService();
   bool isLoading = false;
   bool hasNoRecord = false;
@@ -47,7 +47,7 @@ class _ShipmentAcceptanceManuallyState
   TextEditingController totalNOPController = TextEditingController();
   TextEditingController totalWTController = TextEditingController();
   TextEditingController masterUnitController = TextEditingController();
-  TextEditingController groupIDController = TextEditingController();
+  TextEditingController customBrokerController = TextEditingController();
   TextEditingController rcvNOPController = TextEditingController();
   TextEditingController rcvWTController = TextEditingController();
   TextEditingController rcvUnitController = TextEditingController();
@@ -71,7 +71,7 @@ class _ShipmentAcceptanceManuallyState
     setDefaultRemainValues();
     print("-----${commodityListMaster.length}");
     awbFocusNode.addListener(
-      () {
+          () {
         if (!awbFocusNode.hasFocus) {
           print("LOST focus");
           leftAWBFocus();
@@ -80,7 +80,7 @@ class _ShipmentAcceptanceManuallyState
     );
 
     rcvNOPFocusNode.addListener(
-      () {
+          () {
         if (!rcvNOPFocusNode.hasFocus) {
           print("LOST focus NOP");
           if (remainPiecesList.isNotEmpty) {
@@ -98,7 +98,7 @@ class _ShipmentAcceptanceManuallyState
     );
 
     houseFocusNode.addListener(
-      () {
+          () {
         if (!houseFocusNode.hasFocus) {
 
           if(houseController.text.isEmpty){
@@ -109,17 +109,17 @@ class _ShipmentAcceptanceManuallyState
         }
       },
     );
-    prefixController.text=widget.shipmentListDetails?.documentNo.substring(0,3)??"";
-    awbController.text=widget.shipmentListDetails?.documentNo.substring(4)??"";
-    houseController.text=widget.shipmentListDetails?.houseNo??"";
-    if(widget.shipmentListDetails!=null){
-      if(houseController.text.isNotEmpty){
-        houseFocusNode.requestFocus();
-      }
-      else{
-        awbFocusNode.requestFocus();
-      }
-    }
+    // prefixController.text=widget.shipmentListDetails?.documentNo.substring(0,3)??"";
+    // awbController.text=widget.shipmentListDetails?.documentNo.substring(4)??"";
+    // houseController.text=widget.shipmentListDetails?.houseNo??"";
+    // if(widget.shipmentListDetails!=null){
+    //   if(houseController.text.isNotEmpty){
+    //     houseFocusNode.requestFocus();
+    //   }
+    //   else{
+    //     awbFocusNode.requestFocus();
+    //   }
+    // }
   }
 
 
@@ -131,7 +131,7 @@ class _ShipmentAcceptanceManuallyState
   clearFieldsOnGet() {
     totalNOPController.clear();
     totalWTController.clear();
-    groupIDController.clear();
+    customBrokerController.clear();
     commodityController.clear();
     agentController.clear();
     rcvNOPController.text="0";
@@ -148,7 +148,7 @@ class _ShipmentAcceptanceManuallyState
     prefixController.clear();
     awbController.clear();
     houseController.clear();
-    groupIDController.clear();
+    customBrokerController.clear();
     totalNOPController.clear();
     totalWTController.clear();
     commodityController.clear();
@@ -193,9 +193,9 @@ class _ShipmentAcceptanceManuallyState
       });
     }
     else{
-     setState(() {
-       pieceStatus = 3; //exceeds
-     });
+      setState(() {
+        pieceStatus = 3; //exceeds
+      });
     }
   }
 
@@ -229,14 +229,14 @@ class _ShipmentAcceptanceManuallyState
     }
   }
 
-    awbSearch() async {
+  awbSearch() async {
     FocusScope.of(context).unfocus();
     DialogUtils.showLoadingDialog(context);
     // houseController.clear();
     clearFieldsOnGet();
     var queryParams = {
       "InputXML":
-          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
+      "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
     };
 
     await authService
@@ -264,8 +264,8 @@ class _ShipmentAcceptanceManuallyState
         return;
       } else {
 
-      //   houseController.text=
-      // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
+        //   houseController.text=
+        // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
         List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
         List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
         List<dynamic> remainingPcsList = jsonData['ConsignmentPending'];
@@ -302,8 +302,8 @@ class _ShipmentAcceptanceManuallyState
           orElse: () => Customer(customerId: 0, customerName: ""),
         );
         Commodity? selectedComm=commodityListMaster.firstWhere(
-                (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
-            orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
+              (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
+          orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
         agentController.text=selectedCustomer.customerName;
         selectedAgentId=selectedCustomer.customerId;
         selectedComId=selectedComm.commodityId;
@@ -339,7 +339,7 @@ class _ShipmentAcceptanceManuallyState
     clearFieldsOnGet();
     var queryParams = {
       "InputXML":
-          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
+      "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
     };
 
     await authService
@@ -367,8 +367,8 @@ class _ShipmentAcceptanceManuallyState
         return;
       } else {
 
-      //   houseController.text=
-      // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
+        //   houseController.text=
+        // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
         List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
         List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
         List<dynamic> remainingPcsList = jsonData['ConsignmentPending'];
@@ -461,7 +461,7 @@ class _ShipmentAcceptanceManuallyState
 
     var queryParams = {
       "InputXML":
-          "<Root><Type>A</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${groupIDController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>1</UserId><MenuId>0</MenuId></Root>"
+      "<Root><Type>A</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${customBrokerController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>1</UserId><MenuId>0</MenuId></Root>"
     };
     // print(queryParams);
     // return;
@@ -517,8 +517,8 @@ class _ShipmentAcceptanceManuallyState
                     child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
-                 Text(
-                  isCES?'  Warehouse Operations':"  Customs Operation",
+                Text(
+                  '  Pickup Services',
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
@@ -582,7 +582,7 @@ class _ShipmentAcceptanceManuallyState
                                   },
                                 ),
                                 const Text(
-                                  '  Shipment Acceptance',
+                                  '  Pickup',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 22),
@@ -595,7 +595,7 @@ class _ShipmentAcceptanceManuallyState
                                   Text(
                                     ' Reset',
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
+                                      fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
                                   ),],
                               ),
                               onTap: (){
@@ -633,32 +633,32 @@ class _ShipmentAcceptanceManuallyState
                               children: [
                                 SizedBox(
                                   height:
-                                      MediaQuery.sizeOf(context).height * 0.02,
+                                  MediaQuery.sizeOf(context).height * 0.02,
                                 ),
                                 SizedBox(
                                   child: Column(
                                     children: [
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                         children: [
                                           Container(
                                             width: MediaQuery.sizeOf(context)
-                                                    .width *
+                                                .width *
                                                 0.44,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.1,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.1,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -668,11 +668,11 @@ class _ShipmentAcceptanceManuallyState
                                                     readOnly: false,
                                                     focusNode: prefixFocusNode,
                                                     controller:
-                                                        prefixController,
+                                                    prefixController,
                                                     maxLength: 3,
                                                     onPress: () {},
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -683,21 +683,21 @@ class _ShipmentAcceptanceManuallyState
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.25,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.25,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     needOutlineBorder: true,
                                                     labelText: "AWB No*",
                                                     onPress: () {},
@@ -719,12 +719,12 @@ class _ShipmentAcceptanceManuallyState
                                                   },
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            2.0),
+                                                    const EdgeInsets.all(
+                                                        2.0),
                                                     child: SvgPicture.asset(
                                                       search,
                                                       height: SizeConfig
-                                                              .blockSizeVertical *
+                                                          .blockSizeVertical *
                                                           SizeUtils.ICONSIZE2,
                                                     ),
                                                   ),
@@ -734,31 +734,31 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
-                                                    .width *
+                                                .width *
                                                 0.44,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.37,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.37,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
-                  
+
                                                     needOutlineBorder: true,
                                                     labelText: "HAWB No*",
                                                     onPress: () {},
                                                     readOnly: false,
-                                                        noUpperCase: true,
+                                                    noUpperCase: true,
                                                     focusNode: houseFocusNode,
                                                     controller: houseController,
                                                     maxLength: 8,
@@ -776,12 +776,12 @@ class _ShipmentAcceptanceManuallyState
                                                   },
                                                   child: Padding(
                                                     padding:
-                                                        const EdgeInsets.all(
-                                                            2.0),
+                                                    const EdgeInsets.all(
+                                                        2.0),
                                                     child: SvgPicture.asset(
                                                       search,
                                                       height: SizeConfig
-                                                              .blockSizeVertical *
+                                                          .blockSizeVertical *
                                                           SizeUtils.ICONSIZE2,
                                                     ),
                                                   ),
@@ -793,30 +793,30 @@ class _ShipmentAcceptanceManuallyState
                                       ),
                                       SizedBox(
                                         height:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.02,
+                                        MediaQuery.sizeOf(context).height *
+                                            0.02,
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                         children: [
                                           Container(
                                             width: MediaQuery.sizeOf(context)
-                                                    .width *
+                                                .width *
                                                 0.45,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.22,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.22,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -824,11 +824,11 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "NoP*",
                                                     controller:
-                                                        totalNOPController,
+                                                    totalNOPController,
                                                     readOnly: true,
                                                     onPress: () {},
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged:
@@ -840,15 +840,15 @@ class _ShipmentAcceptanceManuallyState
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.20,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.20,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -856,11 +856,11 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "Total Weight*",
                                                     controller:
-                                                        totalWTController,
+                                                    totalWTController,
                                                     onPress: () {},
                                                     readOnly: true,
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged:
@@ -872,21 +872,21 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
-                                                    .width *
+                                                .width *
                                                 0.45,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.22,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.22,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -894,11 +894,11 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "Unit*",
                                                     controller:
-                                                        masterUnitController,
+                                                    masterUnitController,
                                                     onPress: () {},
                                                     readOnly: true,
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged:
@@ -910,26 +910,26 @@ class _ShipmentAcceptanceManuallyState
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.20,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.20,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     controller:
-                                                        groupIDController,
+                                                    customBrokerController,
                                                     needOutlineBorder: true,
-                                                    labelText: "Group Id",
+                                                    labelText: "Custom Broker",
                                                     onPress: () {},
                                                     readOnly: false,
-                  
+
                                                     maxLength: 8,
                                                     fontSize: 18,
                                                     onChanged:
@@ -941,187 +941,11 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                         ],
                                       ),
+
                                       SizedBox(
                                         height:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.02,
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        children: [
-                                          SizedBox(
-                                            width: MediaQuery.sizeOf(context)
-                                                    .width *
-                                                0.44,
-                                            child: TypeAheadField<Commodity>(
-                                              controller: commodityController,
-                                              debounceDuration: const Duration(
-                                                  milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  CommodityService.find(search),
-                                              itemBuilder: (context, item) {
-                                                return Container(
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                          color: Colors.black,
-                                                          width: 0.2),
-                                                      left: BorderSide(
-                                                          color: Colors.black,
-                                                          width: 0.2),
-                                                      right: BorderSide(
-                                                          color: Colors.black,
-                                                          width: 0.2),
-                                                      bottom: BorderSide
-                                                          .none, // No border on the bottom
-                                                    ),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(item.commodityType
-                                                          .toUpperCase()),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                              builder: (context, controller,
-                                                      focusNode) =>
-                                                  CustomeEditTextWithBorder(
-                                                lablekey: 'MAWB',
-                                                controller: controller,
-                                                focusNode: focusNode,
-                                                hasIcon: false,
-                                                hastextcolor: true,
-                                                animatedLabel: true,
-                                                needOutlineBorder: true,
-                                                onPress: () {},
-                                                labelText:
-                                                    "Commodity*",
-                                                readOnly: false,
-                                                fontSize: 18,
-                                                onChanged: (String, bool) {},
-                                              ),
-                                              decorationBuilder:
-                                                  (context, child) => Material(
-                                                type: MaterialType.card,
-                                                elevation: 4,
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: child,
-                                              ),
-                                              // itemSeparatorBuilder: (context, index) =>
-                                              //     Divider(),
-                                              emptyBuilder: (context) =>
-                                                  const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text(
-                                                    'No Commodity Found',
-                                                    style: TextStyle(
-                                                        fontSize: 16)),
-                                              ),
-                                              onSelected: (value) {
-                                              setState(() {
-                                                commodityController.text = value
-                                                    .commodityType
-                                                    .toUpperCase();
-                                                selectedComId=value.commodityId;
-                                                print("COMM ID $selectedComId");
-                                              });
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: MediaQuery.sizeOf(context)
-                                                    .width *
-                                                0.44,
-                                            child: TypeAheadField<Customer>(
-                                              controller: agentController,
-                                              debounceDuration: const Duration(
-                                                  milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  AgentService.find(search),
-                                              itemBuilder: (context, item) {
-                                                return Container(
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                    border: Border(
-                                                      top: BorderSide(
-                                                          color: Colors.black,
-                                                          width: 0.2),
-                                                      left: BorderSide(
-                                                          color: Colors.black,
-                                                          width: 0.2),
-                                                      right: BorderSide(
-                                                          color: Colors.black,
-                                                          width: 0.2),
-                                                      bottom: BorderSide
-                                                          .none, // No border on the bottom
-                                                    ),
-                                                  ),
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Text(item.customerName
-                                                          .toUpperCase()),
-                                                    ],
-                                                  ),
-                                                );
-                                              },
-                                              builder: (context, controller,
-                                                      focusNode) =>
-                                                  CustomeEditTextWithBorder(
-                                                lablekey: 'MAWB',
-                                                controller: controller,
-                                                focusNode: focusNode,
-                                                hasIcon: false,
-                                                hastextcolor: true,
-                                                animatedLabel: true,
-                                                needOutlineBorder: true,
-                                                onPress: () {},
-                                                labelText: "Agent Code - Name*",
-                                                readOnly: false,
-                                                fontSize: 18,
-                                                onChanged: (String, bool) {},
-                                              ),
-                                              decorationBuilder:
-                                                  (context, child) => Material(
-                                                type: MaterialType.card,
-                                                elevation: 4,
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                                child: child,
-                                              ),
-                                              // itemSeparatorBuilder: (context, index) =>
-                                              //     Divider(),
-                                              emptyBuilder: (context) =>
-                                                  const Padding(
-                                                padding: EdgeInsets.all(8.0),
-                                                child: Text('No Customer Found',
-                                                    style: TextStyle(
-                                                        fontSize: 16)),
-                                              ),
-                                              onSelected: (value) {
-                                               setState(() {
-                                                 agentController.text = value
-                                                     .customerName
-                                                     .toUpperCase();
-                                                 selectedAgentId=value.customerId;
-                                                 print("Agent ID $selectedAgentId");
-                                               });
-                                              },
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.02,
+                                        MediaQuery.sizeOf(context).height *
+                                            0.02,
                                       ),
                                       const Row(
                                         children: [
@@ -1134,30 +958,30 @@ class _ShipmentAcceptanceManuallyState
                                       ),
                                       SizedBox(
                                         height:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.02,
+                                        MediaQuery.sizeOf(context).height *
+                                            0.02,
                                       ),
                                       Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
+                                        MainAxisAlignment.spaceAround,
                                         children: [
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
-                                                    .width *
+                                                .width *
                                                 0.45,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.22,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.22,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -1165,22 +989,22 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "Received NoP*",
                                                     controller:
-                                                        rcvNOPController,
+                                                    rcvNOPController,
                                                     focusNode: rcvNOPFocusNode,
                                                     readOnly: false,
-                                                        onPress: () {},
+                                                    onPress: () {},
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged: (String, bool) {
                                                       print("Change");
                                                       checkPieces();
                                                       if(rcvNOPController.text.isEmpty){
-                                                       setState(() {
-                                                         rcvNOPController.text="0";
-                                                         rcvWTController.text="0.00";
-                                                       });
+                                                        setState(() {
+                                                          rcvNOPController.text="0";
+                                                          rcvWTController.text="0.00";
+                                                        });
                                                       }
                                                     },
                                                   ),
@@ -1190,27 +1014,27 @@ class _ShipmentAcceptanceManuallyState
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.20,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.20,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
-                                                        onPress: () {},
+                                                    onPress: () {},
                                                     labelText:
-                                                        "Received Weight*",
+                                                    "Received Weight*",
                                                     readOnly: false,
                                                     controller: rcvWTController,
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     maxLength: 7,
                                                     fontSize: 18,
                                                     onChanged:
@@ -1222,21 +1046,21 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                           SizedBox(
                                             width: MediaQuery.sizeOf(context)
-                                                    .width *
+                                                .width *
                                                 0.45,
                                             child: Row(
                                               children: [
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.22,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.22,
                                                   child:
-                                                      CustomeEditTextWithBorder(
+                                                  CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
@@ -1244,11 +1068,11 @@ class _ShipmentAcceptanceManuallyState
                                                     needOutlineBorder: true,
                                                     labelText: "Unit*",
                                                     readOnly: true,
-                                                        onPress: () {},
+                                                    onPress: () {},
                                                     controller:
-                                                        rcvUnitController,
+                                                    rcvUnitController,
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged:
@@ -1260,61 +1084,61 @@ class _ShipmentAcceptanceManuallyState
                                                 ),
                                                 SizedBox(
                                                   height:
-                                                      MediaQuery.sizeOf(context)
-                                                              .height *
-                                                          0.04,
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
                                                   width:
-                                                      MediaQuery.sizeOf(context)
-                                                              .width *
-                                                          0.20,
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.20,
                                                   child: pieceStatus == 0
                                                       ? SizedBox()
                                                       : pieceStatus == 1
-                                                          ? const Row(
-                                                              children: [
-                                                                Icon(
-                                                                  Icons
-                                                                      .check_circle,
-                                                                  color: Color(0xff43A047),
-                                                                ),
-                                                                Text(
-                                                                  "  Pieces Matched",
-                                                                  style: TextStyle(
-                                                                      color: Color(0xff43A047),fontWeight: FontWeight.w700),
-                                                                )
-                                                              ],
-                                                            )
-                                                          : pieceStatus == 2
-                                                              ? const Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons.info_outlined
-                                                                          ,
-                                                                      color: Color(0xffFD8D00),
-                                                                    ),
-                                                                    Text(
-                                                                      "  Part Received",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          Color(0xffFD8D00),fontWeight: FontWeight.w700),
-                                                                    )
-                                                                  ],
-                                                                )
-                                                              : const Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .info_outlined,
-                                                                      color: Color(0xffB00020),
-                                                                    ),
-                                                                    Text(
-                                                                      "  Pieces Mismatched",
-                                                                      style: TextStyle(
-                                                                          color:
-                                                                          Color(0xffB00020),fontWeight: FontWeight.w700),
-                                                                    )
-                                                                  ],
-                                                                ),
+                                                      ? const Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .check_circle,
+                                                        color: Color(0xff43A047),
+                                                      ),
+                                                      Text(
+                                                        "  Pieces Matched",
+                                                        style: TextStyle(
+                                                            color: Color(0xff43A047),fontWeight: FontWeight.w700),
+                                                      )
+                                                    ],
+                                                  )
+                                                      : pieceStatus == 2
+                                                      ? const Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons.info_outlined
+                                                        ,
+                                                        color: Color(0xffFD8D00),
+                                                      ),
+                                                      Text(
+                                                        "  Part Received",
+                                                        style: TextStyle(
+                                                            color:
+                                                            Color(0xffFD8D00),fontWeight: FontWeight.w700),
+                                                      )
+                                                    ],
+                                                  )
+                                                      : const Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .info_outlined,
+                                                        color: Color(0xffB00020),
+                                                      ),
+                                                      Text(
+                                                        "  Pieces Mismatched",
+                                                        style: TextStyle(
+                                                            color:
+                                                            Color(0xffB00020),fontWeight: FontWeight.w700),
+                                                      )
+                                                    ],
+                                                  ),
                                                 )
                                               ],
                                             ),
@@ -1323,8 +1147,83 @@ class _ShipmentAcceptanceManuallyState
                                       ),
                                       SizedBox(
                                         height:
-                                            MediaQuery.sizeOf(context).height *
-                                                0.02,
+                                        MediaQuery.sizeOf(context).height *
+                                            0.02,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start
+                                        ,
+                                        children: [
+
+                                          SizedBox(
+                                            width: MediaQuery.sizeOf(context)
+                                                .width *
+                                                0.90,
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  height:
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
+                                                  width:
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.45,
+                                                  child:
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Remark",
+                                                    readOnly: true,
+                                                    onPress: () {},
+                                                    controller:
+                                                    rcvUnitController,
+                                                    textInputType:
+                                                    TextInputType.number,
+                                                    maxLength: 4,
+                                                    fontSize: 18,
+                                                    onChanged:
+                                                        (String, bool) {},
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 20,
+                                                ),
+                                                SizedBox(
+                                                  height:
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
+                                                  width:
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.30,
+                                                  child:
+                                                      const Row(
+                                                    children: [
+                                                      Icon(
+                                                        Icons
+                                                            .info_outlined,
+                                                        color: Color(0xff3E4C5A),
+                                                      ),
+                                                      Text(
+                                                        "  Entering remarks is mandatory,\n if the pick-up fails",
+                                                        style: TextStyle(
+                                                            color:
+                                                            Color(0xff3E4C5A),fontWeight: FontWeight.w700),
+                                                      )
+                                                    ],
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ],
                                   ),
@@ -1336,85 +1235,7 @@ class _ShipmentAcceptanceManuallyState
                         SizedBox(
                           height: MediaQuery.sizeOf(context).height * 0.015,
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.0),
-                            color: Colors.white,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
-                                spreadRadius: 2,
-                                blurRadius: 8,
-                                offset: const Offset(
-                                    0, 3), // changes position of shadow
-                              ),
-                            ],
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 14, horizontal: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  "  Part Shipment History",
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 16),
-                                ),
-                                const SizedBox(
-                                  height: 10,
-                                ),
-                                Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  color: Color(0xffE4E7EB),
-                                  padding: EdgeInsets.all(2.0),
-                                  child: SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: DataTable(
-                                      columns: const [
-                                        DataColumn(label: Text('Received NoP')),
-                                        DataColumn(
-                                            label: Text('Received Weight')),
-                                        DataColumn(label: Text('Unit')),
-                                        DataColumn(label: Text('Accepted By')),
-                                        DataColumn(label: Text('Accepted On')),
-                                        DataColumn(label: Text('Group ID')),
-                                      ],
-                                      rows: acceptedPiecesList.map((item) {
-                                        return DataRow(cells: [
-                                          DataCell(Text(item.nop)),
-                                          DataCell(Text(item.weight.toStringAsFixed(2))),
-                                          const DataCell(Text('KG')),
-                                          DataCell(Text(item.acceptanceBy)),
-                                          DataCell(Text(formatDate(item.acceptanceOn))),
-                                          DataCell(Text(item.groupId)),
-                                        ]);
-                                      }).toList(),
-                                      headingRowColor:
-                                          MaterialStateColor.resolveWith(
-                                              (states) => Color(0xfff1f1f1)),
-                                      dataRowColor:
-                                          MaterialStateColor.resolveWith(
-                                              (states) => Color(0xfffafafa)),
-                                      columnSpacing:
-                                          acceptedPiecesList.length != 0
-                                              ? MediaQuery.sizeOf(context)
-                                                      .width *
-                                                  0.072
-                                              : 70,
-                                      dataRowHeight: 48.0,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.sizeOf(context).height * 0.015,
-                        ),
+
                         Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12.0),
@@ -1437,7 +1258,7 @@ class _ShipmentAcceptanceManuallyState
                               children: [
                                 Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  MainAxisAlignment.spaceBetween,
                                   children: [
                                     SizedBox(
                                       height: 45,
@@ -1446,10 +1267,10 @@ class _ShipmentAcceptanceManuallyState
                                       child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(
                                           side: const BorderSide(
-                                              color: MyColor.primaryColorblue),
+                                              color: Color(0xffB00020)),
                                           textStyle: const TextStyle(
                                             fontSize: 18,
-                                            color: MyColor.primaryColorblue,
+                                            color: Color(0xffB00020),
                                           ),
                                           shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
@@ -1457,20 +1278,10 @@ class _ShipmentAcceptanceManuallyState
                                           ),
                                         ),
                                         onPressed: () {
-                                          if (acceptedPiecesList.isNotEmpty) {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (_) =>
-                                                        CaptureDamageandAccept(
-                                                          shipmentData:
-                                                          acceptedConsignment
-                                                                  .first,
-                                                        )));
-                                          } else {}
+
                                         },
                                         child: const Text(
-                                            "Capture Damage"),
+                                            "Fail Pick Up",style: TextStyle(color: Color(0xffB00020)),),
                                       ),
                                     ),
                                     const SizedBox(
@@ -1483,7 +1294,7 @@ class _ShipmentAcceptanceManuallyState
                                       child: ElevatedButton(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
-                                              MyColor.primaryColorblue,
+                                          MyColor.primaryColorblue,
                                           textStyle: const TextStyle(
                                             fontSize: 18,
                                             color: Colors.white,
@@ -1499,7 +1310,7 @@ class _ShipmentAcceptanceManuallyState
                                           }
                                         },
                                         child: const Text(
-                                          "Accept",
+                                          "Complete Pick Up",
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),
@@ -1588,7 +1399,7 @@ class _ShipmentAcceptanceManuallyState
     if (barcodeScanResult == "-1") {
     } else {
       bool specialCharAllow =
-          CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+      CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
 
       print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
 

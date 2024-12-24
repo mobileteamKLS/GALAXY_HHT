@@ -293,25 +293,20 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Row(
               children: [
                 InkWell(
-                  onTap: () {},
-                  child: Padding(
-                    padding: const EdgeInsets.all(2.0),
-                    child: SvgPicture.asset(
-                      drawer,
-                      height:
-                          SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
-                    ),
+                  onTap: () {
+                  },
+                  child: Padding(padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                   ),
                 ),
                 Text(
-                  isCES ? '  Warehouse Operations' : "  Customs Operation",
+                  isCES?'  Warehouse Operations':"  Customs Operation",
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
-                      color: Colors.white),
+                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
               ],
             ),
@@ -378,8 +373,30 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 10,
+                    Padding(
+                      padding:  EdgeInsets.only(top: 20, left: 20, right: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              GestureDetector(
+                                child: const Icon(Icons.arrow_back_ios,
+                                    color: MyColor.primaryColorblue),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                },
+                              ),
+                              const Text(
+                                '  Warehouse Operations',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 22),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                     const Padding(
                       padding: EdgeInsets.only(top: 10, left: 20, right: 20),
@@ -460,7 +477,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             padding: EdgeInsets.only(
                                 top: 5, left: 20, right: 20, bottom: 10),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 RoundedIconButtonNew(
                                   icon: Icons.trolley,
@@ -470,7 +487,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
-                                SizedBox(width: 40,),
+                                // SizedBox(width: 40,),
                                 RoundedIconButtonNew(
                                   icon: Icons.local_shipping_outlined,
                                   text: 'Warehouse\nDelivery Order',
@@ -479,22 +496,15 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
-                                // RoundedIconButtonNew(
-                                //   icon: Icons.local_shipping_outlined,
-                                //   text: 'Vehicle\nTrack',
-                                //   targetPage: VehicleTrackingOperations(),
-                                //   containerColor: Color(0xffCCF1F6),
-                                //   iconColor: MyColor.textColorGrey3,
-                                //   textColor: MyColor.textColorGrey3,
-                                // ),
-                                // RoundedIconButton(
-                                //   icon: CupertinoIcons.checkmark_rectangle,
-                                //   text: 'Customs\nOperation',
-                                //   targetPage: CustomsOperation(),
-                                //   containerColor: Color(0xffe1d8f0),
-                                //   iconColor: MyColor.textColorGrey3,
-                                //   textColor: MyColor.textColorGrey3,
-                                // ),
+                                RoundedIconButtonNew(
+                                  icon: Icons.local_shipping_outlined,
+                                  text: 'Vehicle\nTrack',
+                                  targetPage: VehicleTrackingOperations(),
+                                  containerColor: Color(0xffCCF1F6),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
+
                               ],
                             ),
                           )

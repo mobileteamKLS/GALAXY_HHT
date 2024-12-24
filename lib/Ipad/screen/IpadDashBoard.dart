@@ -4,14 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:galaxy/Ipad/screen/pickUpOperations.dart';
 import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
+import '../../module/login/pages/loginscreen.dart';
+import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
@@ -32,115 +37,6 @@ class _IpadDashboardState extends State<IpadDashboard> {
   @override
   void initState() {
     super.initState();
-    fetchMasterData();
-  }
-  void fetchMasterData() async {
-    await Future.delayed(Duration.zero); // Ensures no synchronous blocking
-    getCustomerName();
-    getCommodity();
-  }
-
-  getCommodity() async {
-   DialogUtils.showLoadingDialog(context);
-
-    var queryParams = {
-      "AirportCode":"BLR",
-      "CompanyCode":"3",
-      "CultureCode":"en-US",
-      "UserId":"1",
-      "MenuId":"1"
-    };
-    await authService
-        .getData(
-      "CommodityNames/Get",
-      queryParams,
-    )
-        .then((response) {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      }
-      else{
-        hasNoRecord=false;
-      }
-      print("is empty record$hasNoRecord");
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
-
-      if (status != 'S') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        return;
-      }
-      final List<dynamic> commodities = jsonData['CommodityList'];
-      setState(() {
-        commodityListMaster = commodities
-            .map((commodity) => Commodity.fromJson(commodity))
-            .toList();
-
-      });
-      DialogUtils.hideLoadingDialog(context);
-      print("No of commodities ${commodityListMaster.length}");
-    }).catchError((onError) {
-      DialogUtils.hideLoadingDialog(context);
-      print(onError);
-    });
-  }
-  getCustomerName() async {
-    DialogUtils.showLoadingDialog(context);
-
-    var queryParams = {
-      "AirportCode":"BLR",
-      "CompanyCode":"3",
-      "CultureCode":"en-US",
-      "UserId":"1",
-      "MenuId":"1"
-    };
-    await authService
-        .getData(
-      "CustomerNames/Get",
-      queryParams,
-    )
-        .then((response) {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      }
-      else{
-        hasNoRecord=false;
-      }
-      print("is empty record$hasNoRecord");
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
-
-      if (status != 'S') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        return;
-      }
-      final List<dynamic> customers = jsonData['CustomerList'];
-      setState(() {
-        customerListMaster =
-            customers.map((customer) => Customer.fromJson(customer)).toList();
-      });
-      DialogUtils.hideLoadingDialog(context);
-      print("No of customers ${customerListMaster.length}");
-    }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
-      print(onError);
-    });
   }
 
   @override
@@ -148,9 +44,28 @@ class _IpadDashboardState extends State<IpadDashboard> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              '',
-              style: TextStyle(color: Colors.white),
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {},
+                  child: Padding(
+                    padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(
+                      drawer,
+                      height:
+                      SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+                    ),
+                  ),
+                ),
+                Text(
+                  "  Dashboard",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 24,
+                      color: Colors.white),
+                ),
+              ],
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
             toolbarHeight: 80,
@@ -167,6 +82,37 @@ class _IpadDashboardState extends State<IpadDashboard> {
               ),
             ),
             actions: [
+              GestureDetector(
+                child: const Icon(Icons.logout_outlined,
+                    color: Colors.white, size: 36),
+                onTap: () async {
+                  //bool? logoutConfirmed = await showLogoutDialog(context);
+                  var userSelection =
+                  await showDialog(
+                    context: context,
+                    builder: (BuildContext
+                    context) =>
+                        CustomConfirmDialog(
+                            title:
+                            "Logout Confirm ?",
+                            description:
+                            "Are you sure you want to logout ?",
+                            buttonText:
+                            "Yes",
+                            imagepath:
+                            'assets/images/question.gif',
+                            isMobile:
+                            false),
+                  );
+                  if (userSelection == true) {
+
+                    Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => const LogInScreen(isMPinEnable: false, authFlag: "P"),), (route) => false,);
+                  }
+                },
+              ),
+              const SizedBox(
+                width: 20,
+              ),
               // SvgPicture.asset(
               //   usercog,
               //   height: 25,
@@ -222,7 +168,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        RoundedIconButton(
+                        RoundedIconButtonNew(
                           icon: Icons.warehouse_outlined,
                           text: 'Warehouse\nOperations',
                           targetPage: WarehouseOperations(),
@@ -230,6 +176,16 @@ class _IpadDashboardState extends State<IpadDashboard> {
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
                         ),
+                        SizedBox(width: 40,),
+                        // RoundedIconButtonNew(
+                        //   icon: Icons.fire_truck_outlined,
+                        //   text: 'Pickup\nServices',
+                        //   targetPage: PickupServices(),
+                        //   containerColor: Color(0xffDFD6EF),
+                        //   iconColor: MyColor.textColorGrey3,
+                        //   textColor: MyColor.textColorGrey3,
+                        // ),
+
                         // RoundedIconButton(
                         //   icon: CupertinoIcons.square_stack_3d_up,
                         //   text: 'Acceptance',

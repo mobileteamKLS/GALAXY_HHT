@@ -497,7 +497,8 @@ class _GateInState extends State<GateIn> {
                                                   style:
                                                   TextStyle(
                                                       fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
+                                                      fontSize: 20,
+                                                      color: Color(0xff3E4C5A)  )),
                                             ),
                                           ),
                                         ),
@@ -515,7 +516,8 @@ class _GateInState extends State<GateIn> {
                                                   style:
                                                   TextStyle(
                                                       fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
+                                                      fontSize: 20,
+                                                      color: Color(0xff3E4C5A))),
                                             ),
                                           ),
                                         ),

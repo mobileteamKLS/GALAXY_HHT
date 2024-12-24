@@ -311,6 +311,105 @@ class _DockInState extends State<DockIn> {
                             padding: const EdgeInsets.symmetric(
                                 vertical: 14, horizontal: 14),
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height:
+                                  MediaQuery.sizeOf(context).height * 0.007,
+                                ),
+                                const Text(
+                                  ' ENTER DOOR',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 18),
+                                ),
+                                SizedBox(
+                                  height:
+                                  MediaQuery.sizeOf(context).height * 0.015,
+                                ),
+                                SizedBox(
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.start,
+                                        children: [
+
+                                          SizedBox(
+                                            width: MediaQuery.sizeOf(context)
+                                                .width *
+                                                0.8,
+                                            child: Row(
+                                              children: [
+                                                SizedBox(
+                                                  height:
+                                                  MediaQuery.sizeOf(context)
+                                                      .height *
+                                                      0.04,
+                                                  width:
+                                                  MediaQuery.sizeOf(context)
+                                                      .width *
+                                                      0.38,
+                                                  child:
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    controller: hawbController,
+                                                    needOutlineBorder: true,
+                                                    labelText: "Door*",
+                                                    readOnly: false,
+                                                    onPress: () {},
+                                                    maxLength: 8,
+                                                    fontSize: 18,
+                                                    onChanged:
+                                                        (String, bool) {},
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height:
+                                        MediaQuery.sizeOf(context).height *
+                                            0.01,
+                                      ),
+
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.sizeOf(context).height * 0.015,
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                                offset: const Offset(
+                                    0, 3), // changes position of shadow
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 14, horizontal: 14),
+                            child: Column(
                               children: [
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -342,7 +441,7 @@ class _DockInState extends State<DockIn> {
                                           width:
                                           MediaQuery.of(context)
                                               .size
-                                              .width *0.29,
+                                              .width *0.45,
                                           child: Container(
                                             height: 50,
                                             color: Color(0xffE4E7EB),
@@ -352,7 +451,8 @@ class _DockInState extends State<DockIn> {
                                                   style:
                                                   TextStyle(
                                                       fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
+                                                      fontSize: 20,
+                                                      color: Color(0xff3E4C5A))),
                                             ),
                                           ),
                                         ),
@@ -360,7 +460,7 @@ class _DockInState extends State<DockIn> {
                                           width:
                                           MediaQuery.of(context)
                                               .size
-                                              .width *0.29,
+                                              .width *0.45,
                                           child: Container(
                                             height: 50,
                                             color: Color(0xffE4E7EB),
@@ -370,28 +470,12 @@ class _DockInState extends State<DockIn> {
                                                   style:
                                                   TextStyle(
                                                       fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
+                                                      fontSize: 20,
+                                                      color: Color(0xff3E4C5A))),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          width:
-                                          MediaQuery.of(context)
-                                              .size
-                                              .width *0.29,
-                                          child: Container(
-                                            height: 50,
-                                            color: Color(0xffE4E7EB),
-                                            child: const Center(
-                                              child: Text(
-                                                  'Door',
-                                                  style:
-                                                  TextStyle(
-                                                      fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
-                                            ),
-                                          ),
-                                        ),
+
                                       ],
                                     ),
                                     Row(
@@ -405,7 +489,7 @@ class _DockInState extends State<DockIn> {
                                           width:
                                           MediaQuery.of(context)
                                               .size
-                                              .width *0.29,
+                                              .width *0.45,
                                           child: Container(
                                             color: const Color(0xffE4E7EB),
                                             child: Container(
@@ -418,7 +502,8 @@ class _DockInState extends State<DockIn> {
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
-                                                        fontSize: 22)),
+                                                        fontSize: 20,
+                                                        color: Color(0xff1F2933))),
                                               ),
                                             ),
                                           ),
@@ -427,7 +512,7 @@ class _DockInState extends State<DockIn> {
                                           width:
                                           MediaQuery.of(context)
                                               .size
-                                              .width *0.29,
+                                              .width *0.45,
                                           child: Container(
                                             color: const Color(0xffE4E7EB),
                                             child: Container(
@@ -440,33 +525,13 @@ class _DockInState extends State<DockIn> {
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
-                                                        fontSize: 22)),
+                                                        fontSize: 20,
+                                                    color: Color(0xff1F2933))),
                                               ),
                                             ),
                                           ),
                                         ),
-                                        SizedBox(
-                                          width:
-                                          MediaQuery.of(context)
-                                              .size
-                                              .width *0.29,
-                                          child: Container(
-                                            color: const Color(0xffE4E7EB),
-                                            child: Container(
-                                              height: 50,
-                                              margin: EdgeInsets.all(1.5),
-                                              color:Color(0xffFAFAFA),
-                                              child: const Center(
-                                                child: Text(
-                                                    "123",
-                                                    style:
-                                                    TextStyle(
-                                                        fontWeight: FontWeight.w600,
-                                                        fontSize: 22)),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+
                                       ],
                                     ),
                                     SizedBox(height: 20),
@@ -497,7 +562,8 @@ class _DockInState extends State<DockIn> {
                                                   style:
                                                   TextStyle(
                                                       fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
+                                                      fontSize: 20,
+                                                      color: Color(0xff3E4C5A))),
                                             ),
                                           ),
                                         ),
@@ -515,7 +581,8 @@ class _DockInState extends State<DockIn> {
                                                   style:
                                                   TextStyle(
                                                       fontWeight: FontWeight.w600,
-                                                      fontSize: 22)),
+                                                      fontSize: 20,
+                                                      color: Color(0xff3E4C5A))),
                                             ),
                                           ),
                                         ),
@@ -546,7 +613,8 @@ class _DockInState extends State<DockIn> {
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
-                                                        fontSize: 22)),
+                                                        fontSize: 20,
+                                                        color: Color(0xff1F2933))),
                                               ),
                                             ),
                                           ),
@@ -568,7 +636,8 @@ class _DockInState extends State<DockIn> {
                                                     style:
                                                     TextStyle(
                                                         fontWeight: FontWeight.w600,
-                                                        fontSize: 22)),
+                                                        fontSize: 20,
+                                                        color: Color(0xff1F2933))),
                                               ),
                                             ),
                                           ),
@@ -576,7 +645,7 @@ class _DockInState extends State<DockIn> {
 
                                       ],
                                     ),
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                   ],
                                 )
                               ],
@@ -889,7 +958,7 @@ class _DockInState extends State<DockIn> {
         SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

@@ -256,7 +256,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   CupertinoPageRoute(
-                                    builder: (context) => WarehouseOperations(),
+                                    builder: (context) =>IpadDashboard(),// WarehouseOperations(),
                                   ),
                                       (route) => false,
                                 );

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
+import 'package:intl/intl.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -389,7 +390,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                               children: [
                                                 _buildDetailColumn(
                                                     'Prepared For Delivery',
-                                                    "${wdoDetailsList.isNotEmpty ? wdoDetailsList[0].pfdDateTime ?? "" : ""}"),
+                                                    "${wdoDetailsList.isNotEmpty ? formatDate(wdoDetailsList[0].pfdDateTime) ?? "" : ""}"),
                                                 SizedBox(height: 20),
                                                 _buildDetailColumn(
                                                     'Released', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].releasedDateTime ?? "" : ""),
@@ -620,7 +621,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
     var queryParams = {
       "AWBPrefix":prefixController.text.trim(),
       "AWBNo": awbController.text.trim(),
-      "HAWBNO": ""
+      "HAWBNO": hawbController.text.trim()
       // "AWBPrefix": "",
       // "AWBNo": "",
       // "HAWBNO": "",
@@ -675,6 +676,12 @@ class _CreateNewDOState extends State<CreateNewDO> {
       });
       print(onError);
     });
+  }
+  String formatDate(String inputDateString) {
+    DateFormat inputFormat = DateFormat("MM/dd/yyyy h:mm:ss a");
+    DateTime parsedDate = inputFormat.parse(inputDateString);
+    DateFormat outputFormat = DateFormat("dd MMM yy HH:mm");
+    return outputFormat.format(parsedDate);
   }
 
   saveShipmentDetails() async {
