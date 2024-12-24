@@ -4,6 +4,8 @@ import '../../../../api/apilist.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../model/unloaduld/unloadpageloadmodel.dart';
+import '../../model/unloaduld/unloaduldawblistmodel.dart';
+import '../../model/unloaduld/unloaduldclosemodel.dart';
 import '../../model/unloaduld/unloaduldlistmodel.dart';
 
 
@@ -56,7 +58,7 @@ class UnloadULDRepository{
     try {
 
       var payload = {
-        "ScanNo" : scanNo,
+        "Scan" : scanNo,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -65,16 +67,100 @@ class UnloadULDRepository{
       };
 
       // Print payload for debugging
-      print('uldToUldPageLoad: $payload --- $payload');
+      print('UnloadUldListModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.unloadULDPageLoadApi,
+      Response response = await api.sendRequest.get(Apilist.uldListApi,
           queryParameters: payload
       );
 
       if (response.statusCode == 200) {
         UnloadUldListModel unloadUldListModel = UnloadUldListModel.fromJson(response.data);
         return unloadUldListModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<UnloadUldAWBListModel> unloadUldAWBlistModel(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDSeqNo" : uldSeqNo,
+        "ULDType" : uldType,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('UnloadUldAWBListModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.uldawbListApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        UnloadUldAWBListModel unloadUldAWBListModel = UnloadUldAWBListModel.fromJson(response.data);
+        return unloadUldAWBListModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<UnloadUldCloseModel> unloadUldCloseModel(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDSeqNo" : uldSeqNo,
+        "ULDType" : uldType,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('UnloadUldCloseModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.unloadULDcloseApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        UnloadUldCloseModel unloadUldCloseModel = UnloadUldCloseModel.fromJson(response.data);
+        return unloadUldCloseModel;
       } else {
         // Handle non-200 response
         throw DioException(

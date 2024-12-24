@@ -1,15 +1,16 @@
 class UnloadUldListModel {
-  List<UldList>? uldList;
+  List<UnloadULDDetailList>? unloadULDDetailList;
   String? status;
   String? statusMessage;
 
-  UnloadUldListModel({this.uldList, this.status, this.statusMessage});
+  UnloadUldListModel(
+      {this.unloadULDDetailList, this.status, this.statusMessage});
 
   UnloadUldListModel.fromJson(Map<String, dynamic> json) {
-    if (json['uldList'] != null) {
-      uldList = <UldList>[];
-      json['uldList'].forEach((v) {
-        uldList!.add(new UldList.fromJson(v));
+    if (json['UnloadULDDetailList'] != null) {
+      unloadULDDetailList = <UnloadULDDetailList>[];
+      json['UnloadULDDetailList'].forEach((v) {
+        unloadULDDetailList!.add(new UnloadULDDetailList.fromJson(v));
       });
     }
     status = json['Status'];
@@ -18,8 +19,9 @@ class UnloadUldListModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.uldList != null) {
-      data['uldList'] = this.uldList!.map((v) => v.toJson()).toList();
+    if (this.unloadULDDetailList != null) {
+      data['UnloadULDDetailList'] =
+          this.unloadULDDetailList!.map((v) => v.toJson()).toList();
     }
     data['Status'] = this.status;
     data['StatusMessage'] = this.statusMessage;
@@ -27,31 +29,47 @@ class UnloadUldListModel {
   }
 }
 
-class UldList {
+class UnloadULDDetailList {
+  int? uLDSeqNo;
+  int? flightSeqNo;
   String? uLDNo;
-  String? status;
+  String? uLDStatus;
   String? flightNo;
   String? flightDate;
-  String? location;
+  String? uLDLocation;
+  String? uLDType;
 
-  UldList(
-      {this.uLDNo, this.status, this.flightNo, this.flightDate, this.location});
+  UnloadULDDetailList(
+      {this.uLDSeqNo,
+        this.flightSeqNo,
+        this.uLDNo,
+        this.uLDStatus,
+        this.flightNo,
+        this.flightDate,
+        this.uLDLocation,
+        this.uLDType});
 
-  UldList.fromJson(Map<String, dynamic> json) {
+  UnloadULDDetailList.fromJson(Map<String, dynamic> json) {
+    uLDSeqNo = json['ULDSeqNo'];
+    flightSeqNo = json['FlightSeqNo'];
     uLDNo = json['ULDNo'];
-    status = json['status'];
-    flightNo = json['flightNo'];
-    flightDate = json['flightDate'];
-    location = json['location'];
+    uLDStatus = json['ULDStatus'];
+    flightNo = json['FlightNo'];
+    flightDate = json['FlightDate'];
+    uLDLocation = json['ULDLocation'];
+    uLDType = json['ULDType'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['ULDSeqNo'] = this.uLDSeqNo;
+    data['FlightSeqNo'] = this.flightSeqNo;
     data['ULDNo'] = this.uLDNo;
-    data['status'] = this.status;
-    data['flightNo'] = this.flightNo;
-    data['flightDate'] = this.flightDate;
-    data['location'] = this.location;
+    data['ULDStatus'] = this.uLDStatus;
+    data['FlightNo'] = this.flightNo;
+    data['FlightDate'] = this.flightDate;
+    data['ULDLocation'] = this.uLDLocation;
+    data['ULDType'] = this.uLDType;
     return data;
   }
 }

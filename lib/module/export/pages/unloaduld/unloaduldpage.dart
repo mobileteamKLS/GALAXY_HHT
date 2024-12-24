@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/export/pages/unloaduld/unloaduldshipmentpage.dart';
 import 'package:galaxy/module/export/services/unloaduld/unloaduldlogic/unloaduldcubit.dart';
 import 'package:galaxy/module/export/services/unloaduld/unloaduldlogic/unloaduldstate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
@@ -32,8 +33,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/uldtould/sourceuldmodel.dart';
-import '../../model/unloaduld/unloadpageloadmodel.dart';
+import '../../model/unloaduld/unloaduldlistmodel.dart';
 
 class UnloadULDPage extends StatefulWidget {
   String mainMenuName;
@@ -60,7 +60,7 @@ class UnloadULDPage extends StatefulWidget {
 
 class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProviderStateMixin{
 
-  UnloadUldPageLoadModel? unloadUldPageLoadModel;
+  UnloadUldListModel? unloadUldListModel;
 
   String groupIdRequired = "";
   int groupIdCharSize = 1;
@@ -120,7 +120,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
     if (isInactivityDialogOpen) return;
 
     if (scanController.text.isNotEmpty) {
-      /*if(sourceULDModel == null){
+      if(unloadUldListModel == null){
         await context.read<UnloadULDCubit>().unloadULDlistLoad(
             scanController.text,
             _user!.userProfile!.userIdentity!,
@@ -128,7 +128,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
             widget.menuId);
       }else{
 
-      }*/
+      }
       // call source uld api details api
 
     }else{
@@ -169,9 +169,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
             _splashDefaultData!.companyCode!,
             widget.menuId);
 
-    /* WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(scanFocusNode);
-    });*/
+
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -320,7 +318,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                 // sourceULDModel = null;
+                                  unloadUldListModel = null;
                                   scanController.clear();
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(scanFocusNode);
@@ -381,13 +379,18 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                 else if (state is UnloadULDListSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.unloadUldListModel.status == "E"){
-
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.unloadUldListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-
+                                    unloadUldListModel =  state.unloadUldListModel;
+                                    setState(() {
+                                    });
                                   }
                                 }
                                 else if (state is UnloadULDListFailureState){
-
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
 
                               },
@@ -434,11 +437,14 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "${lableModel.sourcescan}",
+                                                        labelText: "${lableModel.scan}",
                                                         readOnly: false,
                                                         maxLength: 50,
                                                         onChanged: (value) {
+                                                          unloadUldListModel = null;
+                                                          setState(() {
 
+                                                          });
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
@@ -492,29 +498,66 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                   ),
                                                 ],
                                               ),
-                                              /*child: Padding(
+                                              child: Padding(
                                                 padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                child: (sourceULDModel != null)
-                                                    ? (sourceULDModel!.sourceULDAWBDetailList!.isNotEmpty) ? Column(
+                                                child: (unloadUldListModel != null)
+                                                    ? (unloadUldListModel!.unloadULDDetailList!.isNotEmpty) ? Column(
                                                   children: [
 
                                                     ListView.builder(
-                                                      itemCount: (sourceULDModel != null)
-                                                          ? sourceULDModel!.sourceULDAWBDetailList!.length
+                                                      itemCount: (unloadUldListModel != null)
+                                                          ? unloadUldListModel!.unloadULDDetailList!.length
                                                           : 0,
                                                       physics: NeverScrollableScrollPhysics(),
                                                       shrinkWrap: true,
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {
-                                                        SourceULDAWBDetailList sourceULDAWBDetailList =  sourceULDModel!.sourceULDAWBDetailList![index];
-                                                        List<String> shcCodes = sourceULDAWBDetailList.sHCCode!.split(',');
+                                                        UnloadULDDetailList unloadULDDetailList =  unloadUldListModel!.unloadULDDetailList![index];
+                                                       // List<String> shcCodes = unloadULDDetailList.sHCCode!.split(',');
 
                                                         return InkWell(
                                                             onTap: () {
 
                                                             },
                                                             onDoubleTap: () async {
+                                                              if(unloadULDDetailList.uLDStatus == "C"){
+                                                                bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, unloadULDDetailList.uLDNo!, (unloadULDDetailList.uLDType == "U") ? "Closed ULD" : "Closed Trolley", (unloadULDDetailList.uLDType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
 
+                                                                if(closeULD == true){
+                                                                  // call close to open api
+                                                                }else{
+                                                                  _resumeTimerOnInteraction();
+                                                                }
+                                                              }
+                                                              else{
+                                                                var value = await Navigator.push(
+                                                                    context,
+                                                                    CupertinoPageRoute(
+                                                                        builder: (context) => UnloadULDShipmentPage(
+                                                                          importSubMenuList: widget.importSubMenuList,
+                                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                                          title: "AWB List",
+                                                                          menuId: widget.menuId,
+                                                                          mainMenuName: widget.mainMenuName,
+                                                                          refrelCode: widget.refrelCode,
+                                                                          lableModel: lableModel,
+                                                                          uldSeqNo: unloadULDDetailList.uLDSeqNo!,
+                                                                          uldType: unloadULDDetailList.uLDType!,
+                                                                          groupIdChar: groupIdCharSize,
+                                                                          groupIdRequire: groupIdRequired,
+                                                                        )));
+                                                                if(value == "Done"){
+                                                                  await context.read<UnloadULDCubit>().unloadULDlistLoad(
+                                                                      scanController.text,
+                                                                      _user!.userProfile!.userIdentity!,
+                                                                      _splashDefaultData!.companyCode!,
+                                                                      widget.menuId);
+                                                                  _resumeTimerOnInteraction();
+                                                                }
+                                                                else{
+                                                                  _resumeTimerOnInteraction();
+                                                                }
+                                                              }
                                                             },
                                                             child: Container(
                                                                 margin: EdgeInsets.symmetric(vertical: 4),
@@ -527,118 +570,150 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                       color: MyColor.colorBlack.withOpacity(0.09),
                                                                       spreadRadius: 2,
                                                                       blurRadius: 15,
-                                                                      offset: Offset(0, 3), // changes position of shadow
+                                                                      offset: const Offset(0, 3), // changes position of shadow
                                                                     ),
                                                                   ],
 
                                                                 ),
-                                                                child: DottedBorder(
-                                                                  dashPattern: [7, 7, 7, 7],
-                                                                  strokeWidth: 1,
-                                                                  borderType: BorderType.RRect,
-                                                                  color: sourceULDAWBDetailList.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                                                                  radius: Radius.circular(8),
-                                                                  child: Container(
-                                                                    padding: EdgeInsets.all(8),
-                                                                    decoration: BoxDecoration(
-                                                                      color: MyColor.colorWhite,
-                                                                      borderRadius: BorderRadius.circular(8),
-                                                                    ),
-                                                                    child: Stack(
-                                                                      children: [
-                                                                        Column(
-                                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                CustomeText(text: AwbFormateNumberUtils.formatAWBNumber(sourceULDAWBDetailList.aWBNo!), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                                                              ],
-                                                                            ),
-                                                                            sourceULDAWBDetailList.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
-                                                                            Row(
-                                                                              children: [
-                                                                                sourceULDAWBDetailList.sHCCode!.isNotEmpty
-                                                                                    ? Row(
-                                                                                  children:shcCodes.asMap().entries.take(3).map((entry) {
-                                                                                    int index = entry.key; // Get the index for colorList assignment
-                                                                                    String code = entry.value.trim(); // Get the code value and trim it
+                                                                child: Container(
+                                                                  padding: EdgeInsets.all(8),
+                                                                  decoration: BoxDecoration(
+                                                                    color: MyColor.colorWhite,
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                  ),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              CustomeText(text: unloadULDDetailList.uLDNo!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                                              Row(
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                    text: "${lableModel.status} : ",
+                                                                                    fontColor: MyColor.textColorGrey2,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                  const SizedBox(width: 5),
+                                                                                  Container(
+                                                                                    padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
+                                                                                    decoration : BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(20),
+                                                                                        color: (unloadULDDetailList.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                                                    ),
+                                                                                    child: CustomeText(
+                                                                                      text:  (unloadULDDetailList.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
+                                                                                      fontColor: MyColor.textColorGrey3,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      textAlign: TextAlign.center,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        SizedBox(height: SizeConfig.blockSizeVertical * 0.8),
+                                                                        Row(
+                                                                            children: [
+                                                                              CustomeText(
+                                                                                text: "Flight No : ",
+                                                                                fontColor: MyColor.textColorGrey2,
+                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                fontWeight: FontWeight.w400,
+                                                                                textAlign: TextAlign.start,
+                                                                              ),
+                                                                              const SizedBox(width: 5),
+                                                                              CustomeText(
+                                                                                text: (unloadULDDetailList.flightNo == "") ? "-" : "${unloadULDDetailList.flightNo} / ${unloadULDDetailList.flightDate!.replaceAll(" ", "-")}",
+                                                                                fontColor: MyColor.colorBlack,
+                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                textAlign: TextAlign.start,
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        SizedBox(height: SizeConfig.blockSizeVertical * 0.8),
+                                                                          Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  SvgPicture.asset(map, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                                  CustomeText(
+                                                                                    text: (unloadULDDetailList.uLDLocation! == "") ? " -" : unloadULDDetailList.uLDLocation!,
+                                                                                    fontColor: MyColor.colorBlack,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              InkWell(
+                                                                                onTap: () async {
 
-                                                                                    return Padding(
-                                                                                      padding: EdgeInsets.only(right: 5.0),
-                                                                                      child: AnimatedBuilder(
-                                                                                        animation: _colorAnimation,
-                                                                                        builder: (context, child) {
-                                                                                          return Container(
-                                                                                            padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                                                                            decoration : BoxDecoration(
-                                                                                              borderRadius: BorderRadius.circular(5),
-                                                                                              color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                                                                            child: CustomeText(
-                                                                                              text: code.trim(),
-                                                                                              fontColor: MyColor.textColorGrey3,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                                              fontWeight: FontWeight.w500,
-                                                                                              textAlign: TextAlign.center,
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      ),
-                                                                                    );
-                                                                                  }).toList(),
-                                                                                )
-                                                                                    : SizedBox(),
-                                                                              ],
-                                                                            ),
-                                                                            sourceULDAWBDetailList.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                            Row(
-                                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                              children: [
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "NOP :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: "${sourceULDAWBDetailList.nOP}",
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
+                                                                                  if(unloadULDDetailList.uLDStatus == "C"){
+                                                                                    bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, unloadULDDetailList.uLDNo!, (unloadULDDetailList.uLDType == "U") ? "Closed ULD" : "Closed Trolley", (unloadULDDetailList.uLDType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
+
+                                                                                    if(closeULD == true){
+                                                                                      // call close to open api
+                                                                                    }else{
+                                                                                     _resumeTimerOnInteraction();
+                                                                                    }
+                                                                                  }
+                                                                                  else{
+                                                                                    var value = await Navigator.push(
+                                                                                        context,
+                                                                                        CupertinoPageRoute(
+                                                                                            builder: (context) => UnloadULDShipmentPage(
+                                                                                              importSubMenuList: widget.importSubMenuList,
+                                                                                              exportSubMenuList: widget.exportSubMenuList,
+                                                                                              title: "AWB List",
+                                                                                              menuId: widget.menuId,
+                                                                                              mainMenuName: widget.mainMenuName,
+                                                                                              refrelCode: widget.refrelCode,
+                                                                                              lableModel: lableModel,
+                                                                                              uldSeqNo: unloadULDDetailList.uLDSeqNo!,
+                                                                                              uldType: unloadULDDetailList.uLDType!,
+                                                                                              groupIdRequire: groupIdRequired,
+                                                                                              groupIdChar: groupIdCharSize,
+                                                                                            )));
+                                                                                    if(value == "Done"){
+                                                                                      await context.read<UnloadULDCubit>().unloadULDlistLoad(
+                                                                                          scanController.text,
+                                                                                          _user!.userProfile!.userIdentity!,
+                                                                                          _splashDefaultData!.companyCode!,
+                                                                                          widget.menuId);
+                                                                                      _resumeTimerOnInteraction();
+                                                                                    }
+                                                                                    else{
+                                                                                      _resumeTimerOnInteraction();
+                                                                                    }
+                                                                                  }
+
+                                                                                },
+                                                                                child: Container(
+                                                                                  padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                                                                  decoration: BoxDecoration(
+                                                                                      color: MyColor.dropdownColor,
+                                                                                      borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                                                                  ),
+                                                                                  child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
                                                                                 ),
-                                                                                Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "${lableModel.weight} :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w400,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: CommonUtils.formateToTwoDecimalPlacesValue(sourceULDAWBDetailList.weightKg!),
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ],
-                                                                            )
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),)
+                                                                              ),
+                                                                            ],
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                )
                                                             )
                                                         );
                                                       },
@@ -664,7 +739,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                         textAlign: TextAlign.center),),
                                                 ),
 
-                                              ),*/
+                                              ),
                                             )),
                                       ],
                                     ),
@@ -700,7 +775,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
 
       if(specialCharAllow == true){
-       // sourceULDModel = null;
+        unloadUldListModel = null;
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanController.clear();
@@ -708,7 +783,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
           FocusScope.of(context).requestFocus(scanFocusNode);
         });
       }else{
-       // sourceULDModel = null;
+        unloadUldListModel = null;
         String result = groupcodeScanResult.replaceAll(" ", "");
 
 
@@ -716,11 +791,11 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
         // Call searchLocation api to validate or not
         // call binning details api
 
-       /* await context.read<ULDToULDCubit>().sourceULD(
+        await context.read<UnloadULDCubit>().unloadULDlistLoad(
             scanController.text,
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
-            widget.menuId);*/
+            widget.menuId);
       }
     }
   }

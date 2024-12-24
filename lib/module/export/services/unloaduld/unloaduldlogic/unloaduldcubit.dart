@@ -28,6 +28,27 @@ class UnloadULDCubit extends Cubit<UnloadULDState>{
     }
   }
 
+  Future<void> unloadULDAWBlistLoad(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+    emit(UnloadULDLoadingState());
+    try {
+      final unloadULDModelData = await unloadULDRepository.unloadUldAWBlistModel(uldSeqNo, uldType ,userId, companyCode, menuId);
+      emit(UnloadULDAWBListSuccessState(unloadULDModelData));
+    } catch (e) {
+      emit(UnloadULDAWBListFailureState(e.toString()));
+    }
+  }
+
+
+  Future<void> unloadUldCloseLoad(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+    emit(UnloadULDLoadingState());
+    try {
+      final unloadUldCloseModelData = await unloadULDRepository.unloadUldCloseModel(uldSeqNo, uldType ,userId, companyCode, menuId);
+      emit(UnloadULDCloseSuccessState(unloadUldCloseModelData));
+    } catch (e) {
+      emit(UnloadULDCloseFailureState(e.toString()));
+    }
+  }
+
   void resetState() {
     emit(UnloadULDInitialState());
   }
