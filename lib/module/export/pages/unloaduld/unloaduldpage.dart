@@ -62,6 +62,10 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
 
   UnloadUldListModel? unloadUldListModel;
 
+  int uldSeqNo = 0;
+  String uldType = "";
+
+
   String groupIdRequired = "";
   int groupIdCharSize = 1;
 
@@ -392,6 +396,46 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is UnloadOpenULDSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.unloadUldCloseModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.unloadUldCloseModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    var value = await Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) => UnloadULDShipmentPage(
+                                              importSubMenuList: widget.importSubMenuList,
+                                              exportSubMenuList: widget.exportSubMenuList,
+                                              title: "AWB List",
+                                              menuId: widget.menuId,
+                                              mainMenuName: widget.mainMenuName,
+                                              refrelCode: widget.refrelCode,
+                                              lableModel: lableModel,
+                                              uldSeqNo: uldSeqNo,
+                                              uldType: uldType,
+                                              groupIdChar: groupIdCharSize,
+                                              groupIdRequire: groupIdRequired,
+                                            )));
+                                    if(value == "Done"){
+                                      await context.read<UnloadULDCubit>().unloadULDlistLoad(
+                                          scanController.text,
+                                          _user!.userProfile!.userIdentity!,
+                                          _splashDefaultData!.companyCode!,
+                                          widget.menuId);
+                                      _resumeTimerOnInteraction();
+                                    }
+                                    else{
+                                      _resumeTimerOnInteraction();
+                                    }
+                                  }
+                                }
+                                else if (state is UnloadOpenULDFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
                               },
                               child: Expanded(
@@ -521,10 +565,20 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                             },
                                                             onDoubleTap: () async {
                                                               if(unloadULDDetailList.uLDStatus == "C"){
+
+                                                                uldSeqNo = unloadULDDetailList.uLDSeqNo!;
+                                                                uldType = unloadULDDetailList.uLDType!;
+
                                                                 bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, unloadULDDetailList.uLDNo!, (unloadULDDetailList.uLDType == "U") ? "Closed ULD" : "Closed Trolley", (unloadULDDetailList.uLDType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
 
                                                                 if(closeULD == true){
                                                                   // call close to open api
+                                                                  await context.read<UnloadULDCubit>().unloadOpenULDLoad(
+                                                                      unloadULDDetailList.uLDSeqNo!,
+                                                                      unloadULDDetailList.uLDType!,
+                                                                      _user!.userProfile!.userIdentity!,
+                                                                      _splashDefaultData!.companyCode!,
+                                                                      widget.menuId);
                                                                 }else{
                                                                   _resumeTimerOnInteraction();
                                                                 }
@@ -659,10 +713,22 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                                 onTap: () async {
 
                                                                                   if(unloadULDDetailList.uLDStatus == "C"){
+
+                                                                                    uldSeqNo = unloadULDDetailList.uLDSeqNo!;
+                                                                                    uldType = unloadULDDetailList.uLDType!;
+
                                                                                     bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, unloadULDDetailList.uLDNo!, (unloadULDDetailList.uLDType == "U") ? "Closed ULD" : "Closed Trolley", (unloadULDDetailList.uLDType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
 
                                                                                     if(closeULD == true){
                                                                                       // call close to open api
+
+                                                                                      await context.read<UnloadULDCubit>().unloadOpenULDLoad(
+                                                                                          unloadULDDetailList.uLDSeqNo!,
+                                                                                          unloadULDDetailList.uLDType!,
+                                                                                          _user!.userProfile!.userIdentity!,
+                                                                                          _splashDefaultData!.companyCode!,
+                                                                                          widget.menuId);
+
                                                                                     }else{
                                                                                      _resumeTimerOnInteraction();
                                                                                     }

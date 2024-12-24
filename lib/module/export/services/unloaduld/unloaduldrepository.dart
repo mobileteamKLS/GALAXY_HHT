@@ -5,7 +5,7 @@ import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../model/unloaduld/unloadpageloadmodel.dart';
 import '../../model/unloaduld/unloaduldawblistmodel.dart';
-import '../../model/unloaduld/unloaduldclosemodel.dart';
+import '../../model/unloaduld/unloadopenuldmodel.dart';
 import '../../model/unloaduld/unloaduldlistmodel.dart';
 
 
@@ -136,7 +136,7 @@ class UnloadULDRepository{
     }
   }
 
-  Future<UnloadUldCloseModel> unloadUldCloseModel(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+  Future<UnloadOpenULDModel> unloadOpenULDModel(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
 
     try {
 
@@ -154,12 +154,12 @@ class UnloadULDRepository{
       print('UnloadUldCloseModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.post(Apilist.unloadULDcloseApi,
+      Response response = await api.sendRequest.post(Apilist.unloadOpenULDApi,
           data: payload
       );
 
       if (response.statusCode == 200) {
-        UnloadUldCloseModel unloadUldCloseModel = UnloadUldCloseModel.fromJson(response.data);
+        UnloadOpenULDModel unloadUldCloseModel = UnloadOpenULDModel.fromJson(response.data);
         return unloadUldCloseModel;
       } else {
         // Handle non-200 response

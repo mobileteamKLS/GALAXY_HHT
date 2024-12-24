@@ -414,7 +414,27 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                     color: MyColor.colorRed,
                                                                                     textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                     text: "Remove",
-                                                                                    press: () {
+                                                                                    press: () async {
+                                                                                      if(widget.groupIdRequire == "Y"){
+                                                                                        var result = await DialogUtils.showRemoveShipmentDialog(
+                                                                                          context,
+                                                                                          widget.uldSeqNo,
+                                                                                          unloadAWBDetail.expShipRowId!,
+                                                                                          unloadAWBDetail.nOP!,
+                                                                                          unloadAWBDetail.weightKg!,
+                                                                                          widget.groupIdChar,
+                                                                                          widget.groupIdRequire,
+                                                                                          lableModel!,
+                                                                                          textDirection,
+                                                                                          _user!.userProfile!.userIdentity!,
+                                                                                          _splashDefaultData!.companyCode!,
+                                                                                          widget.menuId,
+                                                                                          "Remove Shipment",
+                                                                                          "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
+                                                                                          "B");
+                                                                                      }else{
+                                                                                        bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context, "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}" , lableModel!);
+                                                                                      }
 
                                                                                     },
                                                                                   ),
@@ -510,7 +530,9 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         _user!.userProfile!.userIdentity!,
                                                                                         _splashDefaultData!.companyCode!,
                                                                                         widget.menuId,
-                                                                                        "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",);
+                                                                                        "Remove Shipment",
+                                                                                        "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
+                                                                                        "A");
                                                                                   },
                                                                                   child: Container(
                                                                                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),

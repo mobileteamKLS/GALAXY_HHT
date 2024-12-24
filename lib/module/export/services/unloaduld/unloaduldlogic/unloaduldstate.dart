@@ -1,10 +1,6 @@
 import 'package:galaxy/module/export/model/unloaduld/unloaduldawblistmodel.dart';
-
-import '../../../model/uldtould/moveuldmodel.dart';
-import '../../../model/uldtould/sourceuldmodel.dart';
-import '../../../model/uldtould/targetuldmodel.dart';
 import '../../../model/unloaduld/unloadpageloadmodel.dart';
-import '../../../model/unloaduld/unloaduldclosemodel.dart';
+import '../../../model/unloaduld/unloadopenuldmodel.dart';
 import '../../../model/unloaduld/unloaduldlistmodel.dart';
 
 class UnloadULDState {}
@@ -42,12 +38,12 @@ class UnloadULDAWBListFailureState extends UnloadULDState {
   UnloadULDAWBListFailureState(this.error);
 }
 
-class UnloadULDCloseSuccessState extends UnloadULDState {
-  final UnloadUldCloseModel unloadUldCloseModel;
-  UnloadULDCloseSuccessState(this.unloadUldCloseModel);
+class UnloadOpenULDSuccessState extends UnloadULDState {
+  final UnloadOpenULDModel unloadUldCloseModel;
+  UnloadOpenULDSuccessState(this.unloadUldCloseModel);
 }
 
-class UnloadULDCloseFailureState extends UnloadULDState {
+class UnloadOpenULDFailureState extends UnloadULDState {
   final String error;
-  UnloadULDCloseFailureState(this.error);
+  UnloadOpenULDFailureState(this.error);
 }

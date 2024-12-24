@@ -1,10 +1,10 @@
-class UnloadUldCloseModel {
+class UnloadOpenULDModel {
   String? status;
   String? statusMessage;
 
-  UnloadUldCloseModel({this.status, this.statusMessage});
+  UnloadOpenULDModel({this.status, this.statusMessage});
 
-  UnloadUldCloseModel.fromJson(Map<String, dynamic> json) {
+  UnloadOpenULDModel.fromJson(Map<String, dynamic> json) {
     status = json['Status'];
     statusMessage = json['StatusMessage'];
   }

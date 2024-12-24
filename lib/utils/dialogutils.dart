@@ -4272,20 +4272,36 @@ class DialogUtils {
       int companyCode,
       int menuId,
       String title,
-      String messageBody) {
+      String messageBody,
+      String flagBtn) {
 
     String errorText = "";
 
 
-    TextEditingController piecesController = TextEditingController();
+    TextEditingController nopController = TextEditingController();
     TextEditingController weightController = TextEditingController();
     TextEditingController groupIdController = TextEditingController();
 
-    FocusNode piecesFocusNode = FocusNode();
+    FocusNode nopFocusNode = FocusNode();
     FocusNode weightFocusNode = FocusNode();
     FocusNode groupIdFocusNode = FocusNode();
 
     double weightCount = 0.00;
+
+    int totalNop = 0;
+    double totalWt = 0.00;
+
+    int differenceNop = 0;
+    double differenceWeight = 0.00;
+
+    totalNop = int.parse("${nop}");
+    totalWt = double.parse("${weight}");
+
+
+
+
+    nopController.text = totalNop.toString();
+    weightController.text = totalWt.toStringAsFixed(2);
 
     return showModalBottomSheet<Map<String, String>>(
       backgroundColor: MyColor.colorWhite,
@@ -4368,93 +4384,132 @@ class DialogUtils {
                                   ),
                                 ],
                               ),
+                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
 
                               Row(
                                 children: [
                                   Expanded(
-                                    flex:1,
-                                    child: Directionality(
-                                      textDirection: textDirection,
-                                      child: CustomTextField(
+                                      flex:1,
+                                      child: Directionality(
                                         textDirection: textDirection,
-                                        controller: piecesController,
-                                        focusNode: piecesFocusNode,
-                                        nextFocus: groupIdFocusNode,
-                                        onPress: () {},
-                                        hasIcon: false,
-                                        hastextcolor: true,
-                                        animatedLabel: true,
-                                        needOutlineBorder: true,
-                                        labelText: "${lableModel.pieces} *",
-                                        readOnly: false,
-                                        maxLength: 4,
-                                        onChanged: (value) {
-                                          int piecesCount = int.tryParse(value) ?? 0;
-                                          // Calculate the weight count using the formula
+                                        child: CustomTextField(
+                                          textDirection: textDirection,
+                                          controller: nopController,
+                                          focusNode: nopFocusNode,
+                                          onPress: () {},
+                                          hasIcon: false,
+                                          maxLength: 4,
+                                          hastextcolor: true,
+                                          animatedLabel: true,
+                                          needOutlineBorder: true,
+                                          labelText: "${lableModel.pieces}",
+                                          readOnly: (flagBtn == "B") ? true : false,
+                                          onChanged: (value) {
+                                            if (value.isNotEmpty) {
+                                              int enteredNop = int.tryParse(value) ?? 0;
 
-                                          if(weight == 0.0){
-                                            setState(() {
-                                              weightCount = 0;
-                                              weightController.text = "";
-                                            });
-                                          }else{
-                                            setState(() {
-                                              weightCount = double.parse(((piecesCount * weight) / nop).toStringAsFixed(2));
-                                              // weightCount = double.parse(((piecesCount / widget.aWBItem.nPX!) * widget.aWBItem.weightExp!).toStringAsFixed(2));
-                                              weightController.text = "${CommonUtils.formateToTwoDecimalPlacesValue(weightCount)}";
-                                            });
-                                          }
+                                              if (enteredNop > totalNop) {
+                                                // Exceeds total NOP, show an error
 
-                                        },
-                                        fillColor:  Colors.grey.shade100,
-                                        textInputType: TextInputType.number,
-                                        inputAction: TextInputAction.next,
-                                        hintTextcolor: Colors.black45,
-                                        verticalPadding: 0,
-                                        digitsOnly: true,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                        validator: (value) {
-                                          if (value!.isEmpty) {
-                                            return "Please fill out this field";
-                                          } else {
-                                            return null;
-                                          }
-                                        },
-                                      ),
-                                    ),
+                                                Vibration.vibrate(duration: 500);
+                                                setState(() {
+                                                 errorText = "";
+                                                });
+                                              } else {
+                                                // Update the differences and weight
+                                                setState(() {
+                                                  differenceNop = totalNop - enteredNop;
+                                                  weightCount = (totalWt / totalNop) * enteredNop;
+                                                  weightController.text = weightCount.toStringAsFixed(2);
+                                                  differenceWeight = totalWt - weightCount;
+                                                });
+                                              }
+                                            } else {
+                                              // Reset to defaults when cleared
+                                              setState(() {
+                                                differenceNop = totalNop;
+                                                differenceWeight = totalWt;
+                                                weightCount = 0.0;
+                                                weightController.text = "";
+                                              });
+                                            }
+
+
+
+                                          },
+                                          fillColor:  Colors.grey.shade100,
+                                          textInputType: TextInputType.number,
+                                          inputAction: TextInputAction.next,
+                                          hintTextcolor: Colors.black45,
+                                          verticalPadding: 0,
+                                          digitsOnly: true,
+
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                          circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                          boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                          validator: (value) {
+                                            if (value!.isEmpty) {
+                                              return "Please fill out this field";
+                                            } else {
+                                              return null;
+                                            }
+                                          },
+                                        ),
+                                      )
                                   ),
                                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                                   Expanded(
-                                    flex:1,
+                                    flex: 1,
                                     child: Directionality(
                                       textDirection: textDirection,
                                       child: CustomTextField(
                                         textDirection: textDirection,
                                         controller: weightController,
                                         focusNode: weightFocusNode,
+                                        nextFocus: groupIdFocusNode,
                                         onPress: () {},
                                         hasIcon: false,
                                         hastextcolor: true,
                                         animatedLabel: true,
                                         needOutlineBorder: true,
                                         labelText: "${lableModel.weight}",
-                                        readOnly: false,
-                                        maxLength: 10,
-                                        digitsOnly: false,
-                                        doubleDigitOnly: true,
+                                        readOnly: (flagBtn == "B") ? true : false,
                                         onChanged: (value) {
-                                          setState(() {
-                                            weightCount = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
-                                          });
+                                          if (value.isNotEmpty) {
+                                            double enteredWeight = double.tryParse(value) ?? 0.00;
 
+                                            if (enteredWeight > totalWt) {
+                                              // Exceeds total weight, show an error
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(weightFocusNode);
+                                              });
+                                              SnackbarUtil.showSnackbar(
+                                                context,
+                                                CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$totalWt"]),
+                                                MyColor.colorRed,
+                                                icon: FontAwesomeIcons.times,
+                                              );
+                                            } else {
+                                              // Update the weight difference
+                                              setState(() {
+                                                differenceWeight = totalWt - enteredWeight;
+                                              });
+                                            }
+                                          } else {
+                                            // Reset to defaults when cleared
+                                            setState(() {
+                                              differenceWeight = totalWt;
+                                            });
+                                          }
                                         },
                                         fillColor:  Colors.grey.shade100,
                                         textInputType: TextInputType.number,
                                         inputAction: TextInputAction.next,
                                         hintTextcolor: Colors.black45,
                                         verticalPadding: 0,
+                                        maxLength: 10,
+                                        digitsOnly: false,
+                                        doubleDigitOnly: true,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                         circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                         boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
@@ -4470,6 +4525,31 @@ class DialogUtils {
                                   ),
                                 ],
                               ),
+                              (flagBtn == "A") ? Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: CustomeText(
+                                      text: "Remain. NOP : $differenceNop",
+                                      fontColor: MyColor.colorRed,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                      fontWeight: FontWeight.w500,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                                  Expanded(
+                                    flex: 1,
+                                    child: CustomeText(
+                                      text: "Remain. weight : ${differenceWeight.toStringAsFixed(2)}",
+                                      fontColor: MyColor.colorRed,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                      fontWeight: FontWeight.w500,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ],
+                              ) : SizedBox(),
                               SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                               // text manifest and recived in pices text counter
                               Directionality(
@@ -4569,5 +4649,47 @@ class DialogUtils {
   }
 
 
+  static Future<bool?> unlodeRemoveShipmentDialog(BuildContext context,
+      String title,
+      String message,
+      LableModel lableModel) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              CustomeText(text: message, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+            ],
+          ),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
 
 }

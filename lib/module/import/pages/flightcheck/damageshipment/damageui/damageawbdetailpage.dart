@@ -145,9 +145,11 @@ class _DamageAwbDetailPageState extends State<DamageAwbDetailPage> {
     if(nopController.text == "0"){
       nopController.clear();
     }
+
     if(weightController.text == "0.00"){
       weightController.clear();
     }
+
     if(documentweightController.text == "0.00"){
       documentweightController.clear();
     }

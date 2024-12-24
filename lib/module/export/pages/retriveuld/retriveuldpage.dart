@@ -777,20 +777,38 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                  // if(CommonUtils.SELECTEDULDFORRETRIVE.isNotEmpty){
 
                   List<int> selectedSeqNos = [];
+                  List<ULDDetailList> selectedULDs = [];
+
                   for (int i = 0; i < isCheckedList.length; i++) {
                     if (isCheckedList[i]) {
                       selectedSeqNos.add(sortedList[i].uLDSeqNo!);
+                      selectedULDs.add(sortedList[i]);
                     }
                   }
                   if (selectedSeqNos.isNotEmpty) {
                     // Join selected sequence numbers with `~`
-                    String uldSeqNoString = selectedSeqNos.map((e) => e.toString()).join('~');
 
-                    // Print the formatted string
-                    print("ULD Seq Numbers: $uldSeqNoString");
+                    bool isLocationMatch = selectedULDs.any((uld) => uld.uLDLocation == locationController.text);
 
-                    // Call the retrieve function
-                    retrieveULDBtn(uldSeqNoString, locationController.text);
+                    if(!isLocationMatch){
+                      String uldSeqNoString = selectedSeqNos.map((e) => e.toString()).join('~');
+
+                      // Print the formatted string
+                      print("ULD Seq Numbers: $uldSeqNoString");
+
+                      // Call the retrieve function
+                      retrieveULDBtn(uldSeqNoString, locationController.text);
+                    }else{
+                      SnackbarUtil.showSnackbar(
+                        context,
+                        "Please select another requested location.",
+                        MyColor.colorRed,
+                        icon: FontAwesomeIcons.times,
+                      );
+                      Vibration.vibrate(duration: 500);
+                    }
+
+
                   } else {
                     // Show a snackbar if no ULD is selected
                     SnackbarUtil.showSnackbar(
@@ -1041,7 +1059,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                    CustomeText(
                                      text: "Req. Location : ",
                                      fontColor: MyColor.textColorGrey2,
-                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                      fontWeight: FontWeight.w400,
                                      textAlign: TextAlign.start,
                                    ),
@@ -1060,7 +1078,7 @@ class _RetriveULDPageState extends State<RetriveULDPage>
                                    CustomeText(
                                      text: "Req. User : ",
                                      fontColor: MyColor.textColorGrey2,
-                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                      fontWeight: FontWeight.w400,
                                      textAlign: TextAlign.start,
                                    ),

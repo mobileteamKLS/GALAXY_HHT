@@ -39,13 +39,13 @@ class UnloadULDCubit extends Cubit<UnloadULDState>{
   }
 
 
-  Future<void> unloadUldCloseLoad(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+  Future<void> unloadOpenULDLoad(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
     emit(UnloadULDLoadingState());
     try {
-      final unloadUldCloseModelData = await unloadULDRepository.unloadUldCloseModel(uldSeqNo, uldType ,userId, companyCode, menuId);
-      emit(UnloadULDCloseSuccessState(unloadUldCloseModelData));
+      final unloadUldCloseModelData = await unloadULDRepository.unloadOpenULDModel(uldSeqNo, uldType ,userId, companyCode, menuId);
+      emit(UnloadOpenULDSuccessState(unloadUldCloseModelData));
     } catch (e) {
-      emit(UnloadULDCloseFailureState(e.toString()));
+      emit(UnloadOpenULDFailureState(e.toString()));
     }
   }
 
