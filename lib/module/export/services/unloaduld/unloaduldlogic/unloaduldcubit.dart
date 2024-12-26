@@ -49,6 +49,28 @@ class UnloadULDCubit extends Cubit<UnloadULDState>{
     }
   }
 
+
+  Future<void> unloadRemoveAWBLoad(int uldSeqNo, int shipRowId, int nop, double weight, String groupId, int userId, int companyCode, int menuId) async {
+    emit(UnloadULDLoadingState());
+    try {
+      final unloadRemoveAWBModelData = await unloadULDRepository.unloadRemoveAWBModel(uldSeqNo, shipRowId, nop, weight, groupId ,userId, companyCode, menuId);
+      emit(UnloadRemoveAWBSuccessState(unloadRemoveAWBModelData));
+    } catch (e) {
+      emit(UnloadRemoveAWBFailureState(e.toString()));
+    }
+  }
+
+  Future<void> unloadRemoveAWBLoadA(int uldSeqNo, int shipRowId, int nop, double weight, String groupId, int userId, int companyCode, int menuId) async {
+    emit(UnloadULDLoadingState());
+    try {
+      final unloadRemoveAWBModelData = await unloadULDRepository.unloadRemoveAWBModel(uldSeqNo, shipRowId, nop, weight, groupId ,userId, companyCode, menuId);
+      emit(UnloadRemoveAWBSuccessStateA(unloadRemoveAWBModelData));
+    } catch (e) {
+      emit(UnloadRemoveAWBFailureStateA(e.toString()));
+    }
+  }
+
+
   void resetState() {
     emit(UnloadULDInitialState());
   }

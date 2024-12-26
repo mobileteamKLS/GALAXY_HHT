@@ -1,13 +1,21 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/core/images.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/module/onboarding/sizeconfig.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/customdivider.dart';
+import 'package:release_notes_dialog/release_notes_dialog.dart';
 
 import '../../module/login/model/userlogindatamodel.dart';
+import '../../module/profile/page/profilepagescreen.dart';
+import '../../module/releasenote/model/releasenotemodel.dart';
+import '../../module/releasenote/page/releasenotedialogpage.dart';
 import '../../module/splash/model/splashdefaultmodel.dart';
 import '../../module/submenu/model/submenumodel.dart';
 import '../../module/submenu/page/submenupage.dart';
@@ -39,6 +47,183 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
   bool isImportExpanded = false;
   bool isExportExpanded = false;
 
+  final List<Release> releases = [
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+    Release(
+      title: "1.1.0",
+      changes: [
+        ChangeGroup(
+          title: "Features",
+          changes: [
+            "Added new feature 1",
+            "Added new feature 2",
+            "Added a very long feature to show how multiple lines work",
+          ],
+        ),
+        ChangeGroup(
+          title: "Fixes",
+          changes: [
+            if (Platform.isAndroid) "Fixed bug on Android",
+            if (Platform.isIOS) "Fixed bug on iOS",
+            "Fixed a very long bug to show multiple lines again",
+            "Fixed bug 1",
+            "Fixed bug 2",
+            "Fixed bug 3",
+          ],
+        ),
+      ],
+    ),
+  ];
+
+
+  Future<ReleaseNoteModel> loadReleaseNotes() async {
+    final String response = await rootBundle.loadString('assets/releasenote.json');
+    final data = json.decode(response);
+    return ReleaseNoteModel.fromJson(data);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +303,12 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                 ],
                               ),
                             ),
-                            SvgPicture.asset(logout, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_6 ,),
+                            InkWell(
+                              onTap: () {
+                                widget.onDrawerCloseIcon();
+                                Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
+                              },
+                                child: SvgPicture.asset(logout, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_6 ,)),
                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
                             SvgPicture.asset(more, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_6 ,)
                           ],
@@ -281,7 +471,7 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                         SvgPicture.asset(courrierSvg, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,),
                                         SizedBox(width: 10,),
                                         CustomeText(
-                                          text: "Courrier",
+                                          text: "Courier",
                                           textAlign: TextAlign.center,
                                           fontWeight: FontWeight.w500,
                                           fontColor:  MyColor.textColorGrey3,
@@ -357,17 +547,32 @@ class _BuildCustomeDrawerState extends State<BuildCustomeDrawer> {
                                   SizedBox(height: 5,),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
-                                    child: Row(
-                                      children: [
-                                        SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3, color: MyColor.textColorGrey3 ,),
-                                        SizedBox(width: 15,),
-                                        CustomeText(
-                                          text: "App release note",
-                                          textAlign: TextAlign.center,
-                                          fontWeight: FontWeight.w500,
-                                          fontColor:  MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
-                                      ],
+                                    child: InkWell(
+                                      onTap: () async {
+                                        widget.onDrawerCloseIcon();
+                                        final releaseNoteModel = await loadReleaseNotes();
+                                        showDialog(
+                                          context: context,
+                                          barrierDismissible: false,
+                                          builder: (BuildContext context) {
+                                            return ReleaseNoteDialog(releaseNoteModel: releaseNoteModel);
+                                          },
+                                        );
+
+                                      },
+
+                                      child: Row(
+                                        children: [
+                                          SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3, color: MyColor.textColorGrey3 ,),
+                                          SizedBox(width: 15,),
+                                          CustomeText(
+                                            text: "App release note",
+                                            textAlign: TextAlign.center,
+                                            fontWeight: FontWeight.w500,
+                                            fontColor:  MyColor.textColorGrey3,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],

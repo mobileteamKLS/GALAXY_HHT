@@ -1,0 +1,43 @@
+{
+  "releaseNoteList" : [
+    {
+      "date" : "01-11-2024",
+      "notes" : [
+        "Create Export Menu",
+        "AirSide Release",
+        "Pallet Stack",
+        "Retrieve ULD",
+        "ULD To ULD",
+        "Unload",
+        "Check validation with culture wise"
+      ]
+    },
+    {
+      "date" : "01-09-2024",
+      "notes" : [
+        "create Import Menu",
+        "ULD Acceptance",
+        "Flight Check-In",
+        "Binning",
+        "Shipment Damage",
+        "Check validation with culture wise"
+      ]
+    },
+    {
+      "date" : "01-08-2024",
+      "notes" : [
+        "Create Dashboard & SubMenu In List",
+        "Check validation with culture wise"
+      ]
+    },
+    {
+      "date" : "01-07-2024",
+      "notes" : [
+        "Start App",
+        "Create Login Module",
+        "Check validation with culture wise"
+      ]
+    }
+
+  ]
+}

@@ -68,6 +68,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${dashboardModel.logout}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${dashboardModel.logoutMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
@@ -100,6 +103,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${dashboardModel.exit}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${dashboardModel.exitMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
@@ -132,6 +138,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${lableModel.finalizeflight}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${lableModel.finalizeflightMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
@@ -162,23 +171,29 @@ class DialogUtils {
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) {
-          return Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const CircularProgressIndicator(color: MyColor.bggradientfirst),
-                if (message != null)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 20),
-                    child: CustomeText(
-                      text: message,
-                      fontColor: MyColor.colorWhite,
-                      fontSize: SizeConfig.textMultiplier * 2.2,
-                      fontWeight: FontWeight.w600,
-                      textAlign: TextAlign.center,
+          return WillPopScope(
+            onWillPop: () async {
+              // Returning false disables back button press
+              return false;
+            },
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const CircularProgressIndicator(color: MyColor.bggradientfirst),
+                  if (message != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 20),
+                      child: CustomeText(
+                        text: message,
+                        fontColor: MyColor.colorWhite,
+                        fontSize: SizeConfig.textMultiplier * 2.2,
+                        fontWeight: FontWeight.w600,
+                        textAlign: TextAlign.center,
+                      ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
           );
         },
@@ -210,6 +225,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${lableModel.breakdown}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
@@ -263,6 +281,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${lableModel.revokeDamage}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: CustomeText(text: "${lableModel.revokeDamageMsg}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
@@ -296,6 +317,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${lableModel.excessPieces}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
@@ -342,8 +366,8 @@ class DialogUtils {
             builder: (BuildContext context, StateSetter setState) {
               return AlertDialog(
                   backgroundColor: MyColor.colorWhite,
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16), // Set custom corner radius
                   ),
                   content: BlocConsumer<LoginCubit, LoginState>(
                     listener: (context, state) {
@@ -487,8 +511,8 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1718,7 +1742,8 @@ class DialogUtils {
                                             errorText = lableModel.enterGropIdMsg!;
                                           });
                                         }
-                                      }else{
+                                      }
+                                      else{
                                         context.read<UldAcceptanceCubit>().uldUCR(ucrNumberController.text, ULDNumber, uldOwnerController.text, location, groupIdController.text, userIdentity, companyCode, menuId);
                                       }
                                     }
@@ -1777,6 +1802,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${uldTitleMsg}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${lableModel.emptyULDMessage}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
@@ -1816,6 +1844,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "${lableModel.lastBTConfirm}",fontSize: SizeConfig.textMultiplier * 2.1, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${lableModel.lastBTMsg}",fontSize: SizeConfig.textMultiplier * 1.8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
@@ -1847,7 +1878,7 @@ class DialogUtils {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20)),
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -4102,6 +4133,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "Close Pallet",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
@@ -4141,6 +4175,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: "Remove Pallet",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
@@ -4182,6 +4219,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
@@ -4227,6 +4267,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(
@@ -4329,6 +4372,27 @@ class DialogUtils {
                     // showing loading dialog in this state
                     DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                   }
+                  else if (state is UnloadRemoveAWBSuccessStateA){
+                    DialogUtils.hideLoadingDialog(context);
+                    if(state.unloadRemoveAWBModel.status == "E"){
+                      Vibration.vibrate(duration: 500);
+                      setState(() {
+                        errorText = state.unloadRemoveAWBModel.statusMessage!;
+                      });
+                    }
+                    else{
+                      Navigator.pop(context, {
+                        "status": "D",
+                      });
+                    }
+                  }
+                  else if (state is UnloadRemoveAWBFailureStateA){
+                    DialogUtils.hideLoadingDialog(context);
+                    Vibration.vibrate(duration: 500);
+                    setState(() {
+                      errorText = state.error;
+                    });
+                  }
 
                 },
 
@@ -4419,7 +4483,8 @@ class DialogUtils {
                                                 // Update the differences and weight
                                                 setState(() {
                                                   differenceNop = totalNop - enteredNop;
-                                                  weightCount = (totalWt / totalNop) * enteredNop;
+                                                  //weightCount = (totalWt / totalNop) * enteredNop;
+                                                  weightCount = double.parse(((enteredNop * totalWt) / totalNop).toStringAsFixed(2));
                                                   weightController.text = weightCount.toStringAsFixed(2);
                                                   differenceWeight = totalWt - weightCount;
                                                 });
@@ -4566,7 +4631,13 @@ class DialogUtils {
                                   labelText: groupIdRequired == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
                                   readOnly: false,
                                   maxLength: (groupIdChar == 0) ? 1 : groupIdChar,
-                                  onChanged: (value) {},
+                                  onChanged: (value) {
+                                    if(groupIdController.text.isNotEmpty){
+                                      setState(() {
+                                        errorText = "";
+                                      });
+                                    }
+                                  },
                                   fillColor: Colors.grey.shade100,
                                   textInputType: TextInputType.text,
                                   inputAction: TextInputAction.next,
@@ -4627,7 +4698,80 @@ class DialogUtils {
                                       color: MyColor.colorRed,
                                       text: "Remove",
                                       press: () {
-                                       // context.read<PalletStackCubit>().reopenClosePalletStackA(uldSeqNo, "R", userIdentity, companyCode, menuId,);
+                                        if (nopController.text.isEmpty) {
+
+                                          setState(() {
+                                            errorText = "${lableModel.piecesMsg}";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(nopFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+
+                                          return;
+                                        }
+
+                                        if(int.parse(nopController.text) == 0){
+                                          setState(() {
+                                            errorText = "${lableModel.enterPiecesGrtMsg}";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(nopFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+
+                                          return;
+                                        }
+
+                                        if (weightController.text.isEmpty) {
+                                          setState(() {
+                                            errorText = "${lableModel.weightMsg}";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+
+                                          return;
+                                        }
+
+                                        if(double.parse(weightController.text) == 0){
+                                          setState(() {
+                                            errorText = "${lableModel.enterWeightGrtMsg}";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }
+
+                                        if(groupIdRequired == "Y"){
+                                          if (groupIdController.text.isEmpty) {
+                                            setState(() {
+                                              errorText = "${lableModel.enterGropIdMsg}";
+                                            });
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+                                            return;
+                                          }
+                                          // Check if the groupId length is between 14 (min and max 14 characters)
+                                          if (groupIdController.text.length != groupIdChar) {
+                                            setState(() {
+                                              errorText = formatMessage("${lableModel.groupIdCharSizeMsg}", ["${groupIdChar}"]);
+                                            });
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+                                            return;
+                                          }
+
+                                        }
+
+                                        context.read<UnloadULDCubit>().unloadRemoveAWBLoadA(uldSeqNo, awbSeqNo, int.parse(nopController.text), double.parse(weightController.text), groupIdController.text , userIdentity, companyCode, menuId,);
                                       },
                                     ),
                                   ),
@@ -4661,6 +4805,9 @@ class DialogUtils {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
           title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: Column(

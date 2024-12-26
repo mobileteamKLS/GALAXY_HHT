@@ -113,6 +113,7 @@ class Apilist{
   static String uldListApi = "/Unload/Search";
   static String uldawbListApi = "/Unload/GetAWBDetails";
   static String unloadOpenULDApi = "/Unload/OpenULD";
+  static String unloadRemoveAWBApi = "/Unload/RemoveAwb";
 
 
 }

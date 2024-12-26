@@ -402,6 +402,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.unloadUldCloseModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    inactivityTimerManager?.stopTimer();
                                     var value = await Navigator.push(
                                         context,
                                         CupertinoPageRoute(
@@ -538,7 +539,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                     color: MyColor.colorBlack.withOpacity(0.09),
                                                     spreadRadius: 2,
                                                     blurRadius: 15,
-                                                    offset: Offset(0, 3), // changes position of shadow
+                                                    offset: const Offset(0, 3), // changes position of shadow
                                                   ),
                                                 ],
                                               ),
@@ -584,6 +585,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                 }
                                                               }
                                                               else{
+                                                                inactivityTimerManager?.stopTimer();
                                                                 var value = await Navigator.push(
                                                                     context,
                                                                     CupertinoPageRoute(
@@ -734,6 +736,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                                     }
                                                                                   }
                                                                                   else{
+                                                                                    inactivityTimerManager?.stopTimer();
                                                                                     var value = await Navigator.push(
                                                                                         context,
                                                                                         CupertinoPageRoute(

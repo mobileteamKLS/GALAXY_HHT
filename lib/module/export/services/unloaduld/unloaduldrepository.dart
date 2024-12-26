@@ -4,6 +4,7 @@ import '../../../../api/apilist.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../model/unloaduld/unloadpageloadmodel.dart';
+import '../../model/unloaduld/unloadremoveawbmodel.dart';
 import '../../model/unloaduld/unloaduldawblistmodel.dart';
 import '../../model/unloaduld/unloadopenuldmodel.dart';
 import '../../model/unloaduld/unloaduldlistmodel.dart';
@@ -177,5 +178,53 @@ class UnloadULDRepository{
       }
     }
   }
+
+
+  Future<UnloadRemoveAWBModel> unloadRemoveAWBModel(int uldSeqNo, int shipRowId, int nop, double weight, String groupId, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDSeqNo" : uldSeqNo,
+        "ShipRowId" : shipRowId,
+        "nop" : nop,
+        "weight" : weight,
+        "groupId" : groupId,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('UnloadRemoveAWBModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.unloadRemoveAWBApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        UnloadRemoveAWBModel unloadRemoveAWBModel = UnloadRemoveAWBModel.fromJson(response.data);
+        return unloadRemoveAWBModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
 
 }

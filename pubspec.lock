@@ -621,6 +621,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.2"
+  release_notes_dialog:
+    dependency: "direct main"
+    description:
+      name: release_notes_dialog
+      sha256: f87c2a0e2fce665de2b2f322ee502800e7c70a60dedf558f96a146df034ede14
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   shared_preferences:
     dependency: "direct main"
     description:

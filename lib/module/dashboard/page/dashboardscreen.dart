@@ -278,7 +278,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                         return DashboardCustomeWidget(title: menuTitle,
                                           imageUrl: (menuName.imageIcon!.isNotEmpty) ? CommonUtils.getSVGImagePath(menuName.imageIcon!) : "",
                                           onClick: () async {
-                                            print("CHECK AUTORISed === ${state.menuModel.menuName![index].IsEnable}");
 
                                             // next to submenu page from dashboard page
                                             if(menuName.IsEnable == "Y"){

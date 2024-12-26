@@ -273,9 +273,10 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                           bgColor: MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
                                           onClick: () {
                                             String refrelCode = CommonUtils.removeExtraIcons("${subMenuName.refMenuCode}");
+
                                             int menuId = int.parse(subMenuName.menuId!);
                                             String isEnable = subMenuName.IsEnable!;
-                                            if(menuId == SubMenuCodeUtils.ULDAcceptance){
+                                            if(refrelCode == SubMenuCodeUtils.ULDAcceptance){
                                               // navigate to next page using submenu refrelcode
 
                                               NextScreen(
@@ -289,7 +290,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                 mainMenuName: widget.menuName,), isEnable);
                                               // NextScreen(DemoCodePage(title: subMenuTitle, refrelCode: refrelCode, lableModel: lableModel, menuId: menuId, mainMenuName: widget.menuName,), isEnable);
                                             }
-                                            else if(menuId == SubMenuCodeUtils.FlightCheck){
+                                            else if(refrelCode == SubMenuCodeUtils.FlightCheck){
                                               // navigate to next page using submenu refrelcode
 
                                               NextScreen(FlightCheck(
@@ -301,7 +302,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
-                                            else if(menuId == SubMenuCodeUtils.Binning){
+                                            else if(refrelCode == SubMenuCodeUtils.Binning){
                                               NextScreen(Binning(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -311,11 +312,11 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
-                                            else if(menuId == SubMenuCodeUtils.shipmentCreation){
+                                            else if(refrelCode == SubMenuCodeUtils.shipmentCreation){
 
                                               NextScreen(Container(), isEnable);
                                             }
-                                            else if(menuId == SubMenuCodeUtils.ShipmentDamage){
+                                            else if(refrelCode == SubMenuCodeUtils.ShipmentDamage){
                                               NextScreen(ShipmentDamagePages(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -326,7 +327,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
 
-                                            else if(menuId == SubMenuCodeUtils.AirSideRelease){
+                                            else if(refrelCode == SubMenuCodeUtils.AirSideRelease){
                                               NextScreen(AirSideRelease(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -337,7 +338,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
 
-                                            else if(menuId == SubMenuCodeUtils.PalletStatck){
+                                            else if(refrelCode == SubMenuCodeUtils.PalletStatck){
                                               NextScreen(PalletStatckPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -348,7 +349,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
 
-                                            else if(menuId == SubMenuCodeUtils.RetriveULD){
+                                            else if(refrelCode == SubMenuCodeUtils.RetriveULD){
                                               NextScreen(RetriveULDPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -358,7 +359,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
-                                            else if(menuId == SubMenuCodeUtils.ULDTOULD){
+                                            else if(refrelCode == SubMenuCodeUtils.ULDTOULD){
                                               NextScreen(Uldtouldpage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
@@ -368,7 +369,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), isEnable);
                                             }
-                                            else if(menuId == SubMenuCodeUtils.UNLOADULD){
+                                            else if(refrelCode == SubMenuCodeUtils.UNLOADULD){
                                               NextScreen(UnloadULDPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,

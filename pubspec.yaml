@@ -61,6 +61,7 @@ dependencies:
   flutter_barcode_scanner: ^2.0.0
   dotted_border: ^2.1.0
   signature: ^5.5.0
+  release_notes_dialog: ^2.0.0
   #fluttertoast: ^8.2.6
 
 dev_dependencies:
@@ -99,6 +100,7 @@ flutter:
     - assets/langfile/en/
     - assets/langfile/hi/
     - assets/langfile/ar/
+    - assets/releasenote.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

@@ -1,6 +1,7 @@
 import 'package:galaxy/module/export/model/unloaduld/unloaduldawblistmodel.dart';
 import '../../../model/unloaduld/unloadpageloadmodel.dart';
 import '../../../model/unloaduld/unloadopenuldmodel.dart';
+import '../../../model/unloaduld/unloadremoveawbmodel.dart';
 import '../../../model/unloaduld/unloaduldlistmodel.dart';
 
 class UnloadULDState {}
@@ -46,4 +47,24 @@ class UnloadOpenULDSuccessState extends UnloadULDState {
 class UnloadOpenULDFailureState extends UnloadULDState {
   final String error;
   UnloadOpenULDFailureState(this.error);
+}
+
+class UnloadRemoveAWBSuccessState extends UnloadULDState {
+  final UnloadRemoveAWBModel unloadRemoveAWBModel;
+  UnloadRemoveAWBSuccessState(this.unloadRemoveAWBModel);
+}
+
+class UnloadRemoveAWBFailureState extends UnloadULDState {
+  final String error;
+  UnloadRemoveAWBFailureState(this.error);
+}
+
+class UnloadRemoveAWBSuccessStateA extends UnloadULDState {
+  final UnloadRemoveAWBModel unloadRemoveAWBModel;
+  UnloadRemoveAWBSuccessStateA(this.unloadRemoveAWBModel);
+}
+
+class UnloadRemoveAWBFailureStateA extends UnloadULDState {
+  final String error;
+  UnloadRemoveAWBFailureStateA(this.error);
 }

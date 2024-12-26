@@ -1,18 +1,18 @@
 class SubMenuCodeUtils{
 
 
-  static int ULDAcceptance = 1278;
-  static int FlightCheck = 1279;
-  static int Binning = 1115;
-  static int shipmentCreation = 1280;
-  static int ShipmentDamage = 1289;
+  static String ULDAcceptance = "HHT004";
+  static String FlightCheck = "HHT005";
+  static String Binning = "HHT007";
+  static String shipmentCreation = "HHT006";
+  static String ShipmentDamage = "HHT008";
 
 
-  static int AirSideRelease = 1281;
-  static int PalletStatck = 1282;
-  static int RetriveULD = 1283;
-  static int ULDTOULD = 1284;
-  static int UNLOADULD = 1290;
+  static String AirSideRelease = "HHT010";
+  static String PalletStatck = "HHT009";
+  static String RetriveULD = "HHT013";
+  static String ULDTOULD = "HHT014";
+  static String UNLOADULD = "HHT015";
 
 
 }

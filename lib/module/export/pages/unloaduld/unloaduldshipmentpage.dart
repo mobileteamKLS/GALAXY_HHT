@@ -137,12 +137,7 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
       });
     }
 
-    await context.read<UnloadULDCubit>().unloadULDAWBlistLoad(
-            widget.uldSeqNo,
-            widget.uldType,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+    getAWBDetails();
 
 
 
@@ -318,7 +313,20 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-
+                                else if (state is UnloadRemoveAWBSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.unloadRemoveAWBModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.unloadRemoveAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  } else{
+                                    getAWBDetails();
+                                  }
+                                }
+                                else if (state is UnloadRemoveAWBFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
                               },
                               child: Expanded(
@@ -432,8 +440,35 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                           "Remove Shipment",
                                                                                           "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
                                                                                           "B");
+
+
+                                                                                        if (result != null) {
+                                                                                          if (result.containsKey('status')) {
+                                                                                            String? status = result['status'];
+                                                                                            if(status == "N"){
+                                                                                              _resumeTimerOnInteraction();
+                                                                                            }else if(status == "D"){
+                                                                                              _resumeTimerOnInteraction();
+                                                                                              getAWBDetails();
+                                                                                            }else{
+                                                                                              _resumeTimerOnInteraction();
+                                                                                            }
+                                                                                          }else{
+                                                                                            _resumeTimerOnInteraction();
+                                                                                          }
+                                                                                        }
+                                                                                        else{
+                                                                                          _resumeTimerOnInteraction();
+                                                                                        }
+
+
                                                                                       }else{
                                                                                         bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context, "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}" , lableModel!);
+                                                                                        if(removeShipment == true){
+                                                                                          context.read<UnloadULDCubit>().unloadRemoveAWBLoad( widget.uldSeqNo, unloadAWBDetail.expShipRowId!, unloadAWBDetail.nOP!, unloadAWBDetail.weightKg!, "" , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!,  widget.menuId);
+                                                                                        }else{
+                                                                                          _resumeTimerOnInteraction();
+                                                                                        }
                                                                                       }
 
                                                                                     },
@@ -533,6 +568,27 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         "Remove Shipment",
                                                                                         "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
                                                                                         "A");
+
+
+                                                                                    if (result != null) {
+                                                                                      if (result.containsKey('status')) {
+                                                                                        String? status = result['status'];
+                                                                                        if(status == "N"){
+                                                                                          _resumeTimerOnInteraction();
+                                                                                        }else if(status == "D"){
+                                                                                          _resumeTimerOnInteraction();
+                                                                                          getAWBDetails();
+                                                                                        }else{
+                                                                                          _resumeTimerOnInteraction();
+                                                                                        }
+                                                                                      }else{
+                                                                                        _resumeTimerOnInteraction();
+                                                                                      }
+                                                                                    }
+                                                                                    else{
+                                                                                      _resumeTimerOnInteraction();
+                                                                                    }
+
                                                                                   },
                                                                                   child: Container(
                                                                                     padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
@@ -596,6 +652,15 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
         ),
       ),
     );
+  }
+
+  Future<void> getAWBDetails() async {
+    await context.read<UnloadULDCubit>().unloadULDAWBlistLoad(
+        widget.uldSeqNo,
+        widget.uldType,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
   }
 
 }
