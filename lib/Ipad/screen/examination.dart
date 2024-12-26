@@ -447,7 +447,7 @@ class _ExaminationState
                                         ]),
                                       ],
                                       headingRowColor:
-                                      MaterialStateProperty.resolveWith((states) => Color(0xfff1f1f1)),
+                                      MaterialStateProperty.resolveWith((states) => Color(0xffE4E7EB)),
                                       dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
                                       columnSpacing: MediaQuery.sizeOf(context).width*0.12,
                                       dataRowHeight: 48.0,

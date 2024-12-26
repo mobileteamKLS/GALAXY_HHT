@@ -48,6 +48,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
   List<String>slotList =[];
+  bool isExpanded=false;
 
   DateTime pickedDateFromPicker=DateTime.now();
   DatePickerController pickedDateFromPickerController=DatePickerController();
@@ -87,7 +88,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
   String formatTime(int value) => value.toString().padLeft(2, '0');
   int activeIndex = 0;
 
-  searchCustomOperationsData(String date, String slot) async {
+  getPickupRequestData(String date, String slot) async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
@@ -102,7 +103,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     };
 
     await authService
-        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
+        .sendGetWithBody("Pickup/GetPickupList", queryParams)
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
@@ -118,7 +119,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
         showDataNotFoundDialog(context, statusMessage);
         return;
       } else {
-        List<dynamic> resp = jsonData['CustomExaminationPList'];
+        List<dynamic> resp = jsonData['PickupPendingList'];
         // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
         if (resp.isEmpty) {
           print("No data");
@@ -183,7 +184,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     setState(() {
       slotFilterDate = formattedDate;
     });
-    searchCustomOperationsData(formattedDate,"");
+    getPickupRequestData(formattedDate,"");
   }
 
   saveBookings() async {
@@ -230,7 +231,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
             ),
           );
           if(isTrue){
-            searchCustomOperationsData(slotFilterDate,selectedTimes.join(','));
+            getPickupRequestData(slotFilterDate,selectedTimes.join(','));
           }
 
         }
@@ -261,9 +262,9 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                   ),
                 ),
               ),
-              Text(
-                isCES?'  Warehouse Operations':"  Customs Operation",
-                style: const TextStyle(
+              const Text(
+                '  Pickup Services',
+                style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                     color: Colors.white),
@@ -415,7 +416,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                                         var formatter = DateFormat('dd-MM-yyyy');
                                                         String formattedDate = formatter.format(date);
                                                         slotFilterDate=formattedDate;
-                                                        searchCustomOperationsData(formattedDate,"${selectedTimes.join(',')}");
+                                                        getPickupRequestData(formattedDate,"${selectedTimes.join(',')}");
                                                       });
                                                     },
                                                   );
@@ -500,7 +501,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                                       }
                                                     });
                                                     print("Selected Times: ${selectedTimes.join(', ')}");
-                                                    searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+                                                    getPickupRequestData(slotFilterDate,"${selectedTimes.join(',')}");
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.all(4.0),
@@ -635,6 +636,322 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                 ),
                                 const SizedBox(
                                   height: 20,
+                                ),
+                                Container(
+                                  child: Card(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    elevation: 3,
+                                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.start,
+                                            children: [
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  const Row(
+                                                    children: [
+                                                      Text(
+                                                        "FIRMS CODE#1",
+                                                        style:
+                                                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                                      ),
+                                                      SizedBox(width: 16),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "08:00 - 09:00",
+                                                            style: TextStyle(
+                                                                color: Colors.black, fontWeight: FontWeight.bold,fontSize: 16),
+                                                          ),
+                                                          SizedBox(width: 8),
+                                                          Icon(
+                                                            Icons.info_outline_rounded,
+                                                            color: MyColor.primaryColorblue,
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 10,),
+                                                  Row(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                       SizedBox(
+                                                          width:MediaQuery.sizeOf(context).width*0.25,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  " Shipment Count: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "1",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  " Weight: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "5000.00",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                       SizedBox(
+                                                         width:MediaQuery.sizeOf(context).width*0.25,
+                                                         child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  " Pieces: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "50",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  " Unit: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "Kg",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                          ],
+                                                                                                               ),
+                                                       ),
+                                                      Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                        children: [
+                                                          SizedBox(
+                                                            width: 200,
+                                                            child: TextFormField(
+
+                                                              decoration: InputDecoration(
+                                                                hintText: 'Assign to',
+                                                                contentPadding: const EdgeInsets.symmetric(
+                                                                    vertical: 0, horizontal: 15),
+                                                                border: OutlineInputBorder(
+                                                                  borderRadius: BorderRadius.circular(12),
+                                                                  borderSide: const BorderSide(
+                                                                    color: MyColor.borderColor,
+                                                                  ),
+                                                                ),
+                                                                enabledBorder: OutlineInputBorder(
+                                                                  borderRadius: BorderRadius.circular(12),
+                                                                  borderSide: const BorderSide(
+                                                                    color: MyColor.borderColor,
+                                                                  ),
+                                                                ),
+                                                                focusedBorder: OutlineInputBorder(
+                                                                  borderRadius: BorderRadius.circular(12),
+                                                                  borderSide: const BorderSide(
+                                                                    color: MyColor.primaryColorblue,
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              onChanged: (value) {
+                                                                setState(() {
+
+                                                                });
+                                                              },
+                                                            ),
+                                                          ),
+
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              Center(
+                                                child: Container(
+                                                  padding: EdgeInsets.only(top: 40, left: 18),
+                                                  child: Theme(
+                                                    data: ThemeData(useMaterial3: false),
+                                                    child: Transform.scale(
+                                                      scale: 2.5,
+                                                      child: Checkbox(
+                                                        // isError: true,
+                                                        tristate: true,
+                                                        activeColor: isOn == null
+                                                            ? Colors.red
+                                                            : isOn!
+                                                            ? Colors.green
+                                                            : MyColor.primaryColorblue,
+                                                        value: isOn,
+                                                        onChanged: (bool? value) {
+                                                          setState(() {
+
+                                                          });
+                                                        },
+                                                        shape: RoundedRectangleBorder(
+                                                          borderRadius: BorderRadius.circular(2),
+                                                          side: BorderSide(
+                                                            color: isOn == null
+                                                                ? Colors.red
+                                                                : isOn!
+                                                                ? Colors.green
+                                                                : MyColor.primaryColorblue,
+
+                                                            width: 2,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          isExpanded? SizedBox(height: 8):SizedBox(),
+                                          isExpanded?Container(
+                                            width: MediaQuery.sizeOf(context).width,
+                                            color: const Color(0xffE4E7EB),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: Theme(
+                                                data: Theme.of(context).copyWith(
+                                                    dividerColor: Colors.green
+                                                ),
+                                                child: DataTable(
+                                                  columns:  [
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('MAWB No.'))))),
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('HAWB NO.'))))),
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Pieces'))))),
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Weight'))))),
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Commodity'))))),
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Agent'))))),
+                                                    DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('FIRMS Code'))))),
+                                                
+                                                  ],
+                                                  rows: [
+                                                    DataRow(cells: [
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('175-12365478'))))),
+                                                      DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('H1'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('50'))))),
+                                                      DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('500.00'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('PERISHABLE'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('ABC'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('XYZ'))))),
+                                                
+                                                    ]),
+                                                    DataRow(cells: [
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('175-12365478'))))),
+                                                      DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('H1'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('50'))))),
+                                                      DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('500.00'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('PERISHABLE'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('ABC'))))),
+                                                      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('XYZ'))))),
+                                                
+                                                    ]),
+                                                  ],
+                                                  headingRowColor:
+                                                  MaterialStateProperty.resolveWith((states) => Color(0xffE4E7EB)),
+                                                  dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
+                                                  columnSpacing: MediaQuery.sizeOf(context).width*0.01,
+                                                  dataRowHeight: 32.0,
+                                                  headingRowHeight: 32.0,
+                                                  dividerThickness: 2.0,
+                                                ),
+                                              ),
+
+                                            ),
+                                          ):SizedBox(),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isExpanded=!isExpanded;
+                                                  });
+                                                },
+                                                child: Text(
+                                                  isExpanded ? ' SHOW LESS' : ' SHOW MORE',
+                                                  style: const TextStyle(
+                                                    color: MyColor.primaryColorblue,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+
+                                            ],
+                                          ),
+
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 ),
                                 (!hasNoRecord)
                                     ? SingleChildScrollView(
@@ -773,6 +1090,21 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
           ),
         ],
       ),
+    );
+  }
+
+  DataRow buildSeparationRow() {
+    return DataRow(
+      cells: [
+        DataCell(Container(
+          height: 1,
+          color: Colors.grey[300],  // Light grey line
+        )),
+        DataCell(Container(
+          height: 1,
+          color: Colors.grey[300],  // Light grey line
+        )),
+      ],
     );
   }
 

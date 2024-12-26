@@ -134,10 +134,10 @@ class _IpadDashboardState extends State<IpadDashboard> {
             Container(
               constraints: const BoxConstraints.expand(),
               color: MyColor.screenBgColor,
-              child: const Column(
+              child:  Column(
                 children: [
                   SizedBox(height: 10,),
-                  const Padding(
+                   Padding(
                     padding:
                     EdgeInsets.only(top: 10, left: 20, right: 20),
                     child: Material(
@@ -168,9 +168,16 @@ class _IpadDashboardState extends State<IpadDashboard> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        RoundedIconButtonNew(
+                        isCES?RoundedIconButtonNew(
                           icon: Icons.warehouse_outlined,
                           text: 'Warehouse\nOperations',
+                          targetPage: WarehouseOperations(),
+                          containerColor: Color(0xffD1E2FB),
+                          iconColor: MyColor.textColorGrey3,
+                          textColor: MyColor.textColorGrey3,
+                        ):RoundedIconButtonNew(
+                          icon: Icons.list_alt_outlined,
+                          text: 'Customs\nOperations',
                           targetPage: WarehouseOperations(),
                           containerColor: Color(0xffD1E2FB),
                           iconColor: MyColor.textColorGrey3,

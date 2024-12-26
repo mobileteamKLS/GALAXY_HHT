@@ -53,6 +53,7 @@ class _CreateShipmentState extends State<CreateShipment> {
   bool isLoading = false;
   bool hasNoRecord = false;
   int selectedComId=-1;
+  String selectedComCode="";
 
   resetData(){
     prefixController.clear();
@@ -169,7 +170,7 @@ class _CreateShipmentState extends State<CreateShipment> {
       "Origin": originController.text,
       "Destination": destinationController.text,
       "Commodity": selectedComId,
-      "CommodityType": commTypeController.text,
+      "CommodityType": selectedComCode,
       "Airline": flightNoController.text.substring(0, 2),
       "FltNo": flightNoController.text.substring(3),
       "FltDate": "$formattedFlightDate",
@@ -1267,6 +1268,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     .commodityType
                                                     .toUpperCase();
                                                 selectedComId=value.commodityId;
+                                                selectedComCode=value.commodityCode;
                                               },
                                             ),
                                           ),

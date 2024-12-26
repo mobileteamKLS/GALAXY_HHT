@@ -1394,7 +1394,7 @@ class _ShipmentAcceptanceManuallyState
                                       }).toList(),
                                       headingRowColor:
                                           MaterialStateColor.resolveWith(
-                                              (states) => Color(0xfff1f1f1)),
+                                              (states) => Color(0xffE4E7EB)),
                                       dataRowColor:
                                           MaterialStateColor.resolveWith(
                                               (states) => Color(0xfffafafa)),

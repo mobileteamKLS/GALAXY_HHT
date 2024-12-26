@@ -384,7 +384,7 @@ class _DockInState extends State<DockIn> {
                                                         child: Row(
                                                           children: [
                                                             Text(item.door
-                                                                .toUpperCase()),
+                                                                ),
                                                           ],
                                                         ),
                                                       );
@@ -402,6 +402,7 @@ class _DockInState extends State<DockIn> {
                                                           onPress: () {},
                                                           labelText:
                                                           "Door*",
+                                                          noUpperCase: true ,
                                                           readOnly: false,
                                                           fontSize: 18,
                                                           onChanged: (String, bool) {},
@@ -426,8 +427,7 @@ class _DockInState extends State<DockIn> {
                                                     ),
                                                     onSelected: (value) {
                                                       doorController.text = value
-                                                          .door
-                                                          .toUpperCase();
+                                                          .door;
                                                       setState(() {
                                                         selectedDoor=value.value;
                                                       });
@@ -929,6 +929,9 @@ class _DockInState extends State<DockIn> {
           }
           else{
             isDockInDone=false;
+          }
+          if(vctDetailsList.first.door!=""){
+            doorController.text=vctDetailsList.first.door;
           }
         });
 

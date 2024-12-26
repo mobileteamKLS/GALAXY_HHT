@@ -690,6 +690,13 @@ class _WdoListingState extends State<WdoListing> {
     );
   }
 
+  String formatDate(String inputDateString) {
+    DateFormat inputFormat = DateFormat("MM/dd/yyyy h:mm:ss a");
+    DateTime parsedDate = inputFormat.parse(inputDateString);
+    DateFormat outputFormat = DateFormat("dd MMM yy HH:mm");
+    return outputFormat.format(parsedDate);
+  }
+
   releaseWDO(WdoSearchResult data) async {
 
     // return;
@@ -946,7 +953,7 @@ class _WdoListingState extends State<WdoListing> {
                             Row(
                               children: [
                                 const Text("Re Warehouse: "),
-                                Text(shipment.reWhDateTime,style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                                Text(shipment.reWhDateTime.isNotEmpty?formatDate(shipment.reWhDateTime):"",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
                               ],
                             ),
                           ],

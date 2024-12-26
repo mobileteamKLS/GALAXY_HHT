@@ -48,6 +48,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
   List<String>slotList =[];
+  bool isExpanded=false;
 
   DateTime pickedDateFromPicker=DateTime.now();
   DatePickerController pickedDateFromPickerController=DatePickerController();
@@ -261,9 +262,9 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                   ),
                 ),
               ),
-              Text(
-                isCES?'  Warehouse Operations':"  Customs Operation",
-                style: const TextStyle(
+              const Text(
+                '  Pickup Services',
+                style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
                     color: Colors.white),
@@ -683,9 +684,9 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                   Row(
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
-                                                      const SizedBox(
-
-                                                        child: Column(
+                                                      SizedBox(
+                                                        width:MediaQuery.sizeOf(context).width*0.25,
+                                                        child: const Column(
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           mainAxisAlignment: MainAxisAlignment.start,
                                                           children: [
@@ -730,142 +731,199 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                               ],
                                                             ),
                                                             SizedBox(height: 8),
-                                                                                                                   ],
+                                                          ],
                                                         ),
                                                       ),
-                                                      const Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        children: [
-                                                          Row(
-                                                            mainAxisAlignment: MainAxisAlignment.start,
-                                                            children: [
-                                                              Text(
-                                                                " Pieces: ",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: MyColor.textColorGrey2,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                "50",
-                                                                style: TextStyle(
-                                                                  color:MyColor.textColorGrey3,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 16,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(height: 8),
-                                                          Row(
-                                                            children: [
-                                                              Text(
-                                                                " Unit: ",
-                                                                style: TextStyle(
-                                                                  fontSize: 16,
-                                                                  color: MyColor.textColorGrey2,
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                "Kg",
-                                                                style: TextStyle(
-                                                                  color:MyColor.textColorGrey3,
-                                                                  fontWeight: FontWeight.bold,
-                                                                  fontSize: 16,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          SizedBox(height: 8),
-                                                                                                                 ],
-                                                      ),
-                                                      Column(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.start,
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 200,
-                                                            child: TextFormField(
-
-                                                              decoration: InputDecoration(
-                                                                hintText: 'Enter RFE Pieces',
-                                                                contentPadding: const EdgeInsets.symmetric(
-                                                                    vertical: 0, horizontal: 15),
-                                                                border: OutlineInputBorder(
-                                                                  borderRadius: BorderRadius.circular(12),
-                                                                  borderSide: const BorderSide(
-                                                                    color: MyColor.borderColor,
+                                                      SizedBox(
+                                                        width:MediaQuery.sizeOf(context).width*0.25,
+                                                        child: const Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  " Pieces: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
                                                                   ),
                                                                 ),
-                                                                enabledBorder: OutlineInputBorder(
-                                                                  borderRadius: BorderRadius.circular(12),
-                                                                  borderSide: const BorderSide(
-                                                                    color: MyColor.borderColor,
+                                                                Text(
+                                                                  "50",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
                                                                   ),
                                                                 ),
-                                                                focusedBorder: OutlineInputBorder(
-                                                                  borderRadius: BorderRadius.circular(12),
-                                                                  borderSide: const BorderSide(
-                                                                    color: MyColor.primaryColorblue,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              onChanged: (value) {
-                                                                setState(() {
-
-                                                                });
-                                                              },
+                                                              ],
                                                             ),
-                                                          ),
-
-                                                        ],
+                                                            SizedBox(height: 8),
+                                                            Row(
+                                                              children: [
+                                                                Text(
+                                                                  " Unit: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "Kg",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+                                                          ],
+                                                        ),
                                                       ),
+                                                      SizedBox(
+                                                        width:MediaQuery.sizeOf(context).width*0.25,
+                                                        child: Column(
+                                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                                          mainAxisAlignment: MainAxisAlignment.start,
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment: MainAxisAlignment.start,
+                                                              children: [
+                                                                Text(
+                                                                  " Assined To: ",
+                                                                  style: TextStyle(
+                                                                    fontSize: 16,
+                                                                    color: MyColor.textColorGrey2,
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  "John Doe",
+                                                                  style: TextStyle(
+                                                                    color:MyColor.textColorGrey3,
+                                                                    fontWeight: FontWeight.bold,
+                                                                    fontSize: 16,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            SizedBox(height: 8),
+
+                                                          ],
+                                                        ),
+                                                      ),
+
                                                     ],
                                                   ),
                                                 ],
                                               ),
-                                              Center(
-                                                child: Container(
-                                                  padding: EdgeInsets.only(top: 40, left: 18),
-                                                  child: Theme(
-                                                    data: ThemeData(useMaterial3: false),
-                                                    child: Transform.scale(
-                                                      scale: 2.5,
-                                                      child: Checkbox(
-                                                        // isError: true,
-                                                        tristate: true,
-                                                        activeColor: isOn == null
-                                                            ? Colors.red
-                                                            : isOn!
-                                                            ? Colors.green
-                                                            : MyColor.primaryColorblue,
-                                                        value: isOn,
-                                                        onChanged: (bool? value) {
-                                                          setState(() {
 
-                                                          });
-                                                        },
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(2),
-                                                          side: BorderSide(
-                                                            color: isOn == null
-                                                                ? Colors.red
-                                                                : isOn!
-                                                                ? Colors.green
-                                                                : MyColor.primaryColorblue,
+                                            ],
+                                          ),
+                                          isExpanded? SizedBox(height: 8):SizedBox(),
+                                          isExpanded?Container(
+                                            width: MediaQuery.sizeOf(context).width,
+                                            color: const Color(0xffE4E7EB),
+                                            padding: const EdgeInsets.all(2.0),
+                                            child: SingleChildScrollView(
+                                              scrollDirection: Axis.horizontal,
+                                              child: DataTable(
+                                                columns:  [
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('MAWB No.'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('HAWB NO.'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Pieces'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Weight'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Commodity'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Agent'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('FIRMS Code'))))),
+                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text(''))))),
 
-                                                            width: 2,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
+                                                ],
+                                                rows: [
+                                                  DataRow(cells: [
+                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('175-12365478'))))),
+                                                    DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('H1'))))),
+                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('50'))))),
+                                                    DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('500.00'))))),
+                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('PERISHABLE'))))),
+                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('ABC'))))),
+                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('XYZ'))))),
+                                                    DataCell(Center(
+                                                              child: SizedBox(
+                                                                  width: MediaQuery.sizeOf(
+                                                                              context)
+                                                                          .width *
+                                                                      0.16,
+                                                                  child: Center(
+                                                                    child: GestureDetector(
+                                                                      child: Container(
+                                                                        height: 26,
+                                                                        margin: const EdgeInsets.only(right: 12),
+                                                                        decoration: BoxDecoration(
+                                                                          borderRadius: BorderRadius.circular(8),
+                                                                          gradient: const LinearGradient(
+                                                                            colors: [
+                                                                              Color(0xFF0057D8),
+                                                                              Color(0xFF1c86ff),
+                                                                            ],
+                                                                            begin: Alignment.centerLeft,
+                                                                            end: Alignment.centerRight,
+                                                                          ),
+                                                                        ),
+                                                                        child: ElevatedButton(
+                                                                          style: ElevatedButton.styleFrom(
+                                                                              backgroundColor: Colors.transparent,
+                                                                              shadowColor: Colors.transparent),
+                                                                          onPressed: null,
+                                                                          child: const Text(
+                                                                            'Pick Up',
+                                                                            style: TextStyle(color: Colors.white),
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      onTap: (){
+
+                                                                      },
+                                                                    ),
+                                                                  )))),
+                                                        ])
+                                                ],
+                                                headingRowColor:
+                                                MaterialStateProperty.resolveWith((states) => Color(0xffE4E7EB)),
+                                                dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
+                                                columnSpacing: MediaQuery.sizeOf(context).width*0.01,
+                                                dataRowHeight: 32.0,
+                                                headingRowHeight: 32.0,
+                                              ),
+
+                                            ),
+                                          ):SizedBox(),
+                                          const SizedBox(height: 8),
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    isExpanded=!isExpanded;
+                                                  });
+                                                },
+                                                child: Text(
+                                                  isExpanded ? ' SHOW LESS' : ' SHOW MORE',
+                                                  style: const TextStyle(
+                                                    color: MyColor.primaryColorblue,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
                                                   ),
                                                 ),
                                               ),
+
                                             ],
                                           ),
-                                          const SizedBox(height: 4),
+
                                         ],
                                       ),
                                     ),

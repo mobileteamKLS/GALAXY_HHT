@@ -387,9 +387,9 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   Navigator.pop(context);
                                 },
                               ),
-                              const Text(
-                                '  Warehouse Operations',
-                                style: TextStyle(
+                               Text(
+                                isCES? '  Warehouse Operations':'  Customs Operation',
+                                style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 22),
                               ),
