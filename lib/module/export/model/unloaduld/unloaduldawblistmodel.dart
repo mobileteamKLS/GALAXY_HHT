@@ -35,9 +35,10 @@ class UnloadAWBDetail {
   double? weightKg;
   String? sHCCode;
   int? expShipRowId;
+  int? EMISeqNo;
 
   UnloadAWBDetail(
-      {this.aWBNo, this.nOP, this.weightKg, this.sHCCode, this.expShipRowId});
+      {this.aWBNo, this.nOP, this.weightKg, this.sHCCode, this.expShipRowId, this.EMISeqNo});
 
   UnloadAWBDetail.fromJson(Map<String, dynamic> json) {
     aWBNo = json['AWBNo'];
@@ -45,6 +46,7 @@ class UnloadAWBDetail {
     weightKg = json['WeightKg'];
     sHCCode = json['SHCCode'];
     expShipRowId = json['ExpShipRowId'];
+    EMISeqNo = json['EMISeqNo'];
   }
 
   Map<String, dynamic> toJson() {
@@ -54,6 +56,7 @@ class UnloadAWBDetail {
     data['WeightKg'] = this.weightKg;
     data['SHCCode'] = this.sHCCode;
     data['ExpShipRowId'] = this.expShipRowId;
+    data['EMISeqNo'] = this.EMISeqNo;
     return data;
   }
 }

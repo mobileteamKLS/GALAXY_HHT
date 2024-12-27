@@ -75,14 +75,12 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
   TextEditingController targetScanController = TextEditingController();
 
   FocusNode sourceScanFocusNode = FocusNode();
+  FocusNode sourceBtnScanFocusNode = FocusNode();
   FocusNode targetScanFocusNode = FocusNode();
+  FocusNode targetBtnScanFocusNode = FocusNode();
   FocusNode moveBtnFocusNode = FocusNode();
 
   bool isBackPressed = false; // Track if the back button was pressed
-  int? _selectedIndex;
-
-  int? _isExpandedDetails;
-
   List<String> uldTypeList = ["U", "T"];
   String selectedSourceType = "U";
   String selectedTargetType = "U";
@@ -110,7 +108,6 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
       end: Colors.transparent,
     ).animate(_blinkController);
 
-
     sourceScanFocusNode.addListener(() {
       if (!sourceScanFocusNode.hasFocus && !isBackPressed) {
         leaveSourceScanFocus();
@@ -127,17 +124,9 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
 
 
   Future<void> leaveSourceScanFocus() async {
-
-    // Skip the focus leave logic if inactivity dialog is open
-    if (isInactivityDialogOpen) return;
-
     if (sourceScanController.text.isNotEmpty) {
       if(sourceULDModel == null){
-        await context.read<ULDToULDCubit>().sourceULD(
-            sourceScanController.text,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+        getSourceApiCall();
       }else{
 
       }
@@ -149,25 +138,12 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
   }
 
   Future<void> leaveTargetScanFocus() async {
-
-    // Skip the focus leave logic if inactivity dialog is open
-    if (isInactivityDialogOpen) return;
-
     if (targetScanController.text.isNotEmpty) {
-      // call target uld api details api
-
       if(targetULDModel == null){
-        await context.read<ULDToULDCubit>().targetULD(
-            targetScanController.text,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+       getTargetApiCall();
       }else{
 
       }
-
-    }else{
-
     }
   }
 
@@ -393,18 +369,17 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                       FocusScope.of(context).requestFocus(sourceScanFocusNode);
                                     },
                                     );
-                                    setState(() {
 
-                                    });
                                   } else {
                                     sourceULDModel = state.sourceULDModel;
                                     selectedSourceType = sourceULDModel!.sourceULDDetail!.sourceULDType!;
+                                    setState(() {
+
+                                    });
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(targetScanFocusNode);
                                     },
                                     );
-                                    setState(() {});
-
                                   }
                                 }
                                 else if (state is SourceULDLoadFailureState) {
@@ -432,7 +407,6 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                       FocusScope.of(context).requestFocus(targetScanFocusNode);
                                     },
                                     );
-
                                     setState(() {
 
                                     });
@@ -442,6 +416,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                   else {
                                     targetULDModel = state.targetULDModel;
                                     selectedTargetType = targetULDModel!.targetULDDetail!.targetULDType!;
+
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(moveBtnFocusNode);
                                     });
@@ -462,17 +437,61 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.moveULDModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    bool? removeFlight = await DialogUtils.removeFlightFromULDDialog(context, "Remove Flight", "Are you sure want to remove source ULD/Trolley from flight ?" , lableModel);
+
+                                    if(removeFlight == true){
+                                      //call api remove flight
+                                      await context.read<ULDToULDCubit>().removeFlight(
+                                          sourceULDModel!.sourceULDDetail!.sourceULDSeqNo!,
+                                          sourceULDModel!.sourceULDDetail!.sourceULDType!,
+                                          _user!.userProfile!.userIdentity!,
+                                          _splashDefaultData!.companyCode!,
+                                          widget.menuId);
+
+
+                                    }
+                                    else{
+                                      SnackbarUtil.showSnackbar(context, state.moveULDModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                      sourceULDModel = null;
+                                      targetULDModel = null;
+                                      sourceScanController.clear();
+                                      targetScanController.clear();
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(sourceScanFocusNode);
+                                      });
+                                      setState(() {});
+
+                                    }
+
+                                  }
+                                }
+                                else if (state is MoveULDLoadFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if(state is RemoveFlightLoadSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.removeFlightModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.removeFlightModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }
+                                  else{
                                     sourceULDModel = null;
                                     targetULDModel = null;
                                     sourceScanController.clear();
                                     targetScanController.clear();
-                                    SnackbarUtil.showSnackbar(context, state.moveULDModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    SnackbarUtil.showSnackbar(context, state.removeFlightModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(sourceScanFocusNode);
+                                    });
                                     setState(() {
 
                                     });
                                   }
+
                                 }
-                                else if (state is MoveULDLoadFailureState){
+                                else if(state is RemoveFlightLoadFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -572,12 +591,13 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                         readOnly: false,
                                                         maxLength: 50,
                                                         onChanged: (value) {
+                                                          sourceULDModel = null;
+                                                          selectedSourceType = "U";
+                                                          targetULDModel = null;
+                                                          selectedTargetType = "U";
+                                                          targetScanController.clear();
                                                           setState(() {
-                                                            sourceULDModel = null;
-                                                            selectedSourceType = "U";
-                                                            targetULDModel = null;
-                                                            selectedTargetType = "U";
-                                                            targetScanController.clear();
+
                                                           });
                                                         },
                                                         fillColor: Colors.grey.shade100,
@@ -602,7 +622,11 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                     ),
                                                     // click search button to validate location
                                                     InkWell(
+                                                      focusNode: sourceBtnScanFocusNode,
                                                       onTap: () {
+                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                          FocusScope.of(context).requestFocus(sourceBtnScanFocusNode);
+                                                        });
                                                         scanSourceScanQR();
                                                       },
                                                       child: Padding(padding: const EdgeInsets.all(8.0),
@@ -646,7 +670,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                   Row(
                                                     children: [
                                                       CustomeText(
-                                                        text: "${lableModel.uldCondition} : ",
+                                                        text: "ULD Cond. : ",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w500,
@@ -806,8 +830,13 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                     ),
                                                     // click search button to validate location
                                                     InkWell(
+                                                      focusNode: targetBtnScanFocusNode,
                                                       onTap: () {
+                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                          FocusScope.of(context).requestFocus(targetBtnScanFocusNode);
+                                                        });
                                                         scanTargetScanQR();
+
                                                       },
                                                       child: Padding(padding: const EdgeInsets.all(8.0),
                                                         child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
@@ -850,7 +879,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                   Row(
                                                     children: [
                                                       CustomeText(
-                                                        text: "${lableModel.uldCondition} : ",
+                                                        text: "ULD Cond. : ",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w500,
@@ -931,22 +960,16 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {
                                                         SourceULDAWBDetailList sourceULDAWBDetailList =  sourceULDModel!.sourceULDAWBDetailList![index];
-                                                        bool isSelected = _selectedIndex == index;
-                                                        bool isExpand = _isExpandedDetails == index;
                                                         List<String> shcCodes = sourceULDAWBDetailList.sHCCode!.split(',');
 
                                                         return InkWell(
                                                             onTap: () {
                                                               FocusScope.of(context).unfocus();
-                                                              setState(() {
-                                                                _selectedIndex = index; // Update the selected index
-                                                              });
+
                                                             },
                                                             onDoubleTap: () async {
 
-                                                              setState(() {
-                                                                _selectedIndex = index; // Update the selected index
-                                                              });
+
 
                                                             },
                                                             child: Container(
@@ -1134,38 +1157,30 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
 
       if(specialCharAllow == true){
         sourceULDModel = null;
+        sourceScanController.clear();
         selectedSourceType = "U";
         targetULDModel = null;
         selectedTargetType = "U";
         targetScanController.clear();
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        sourceScanController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(sourceScanFocusNode);
         });
+        setState(() {
+
+        });
       }else{
         sourceULDModel = null;
-        selectedSourceType = "U";
         targetULDModel = null;
-        selectedTargetType = "U";
         targetScanController.clear();
         String result = groupcodeScanResult.replaceAll(" ", "");
 
-      /*  String truncatedResult = result.length > 15
-            ? result.substring(0, 15)
-            : result;*/
-
         sourceScanController.text = result;
-        // Call searchLocation api to validate or not
-        // call binning details api
 
-        await context.read<ULDToULDCubit>().sourceULD(
-            sourceScanController.text,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+        print("=======SOURCE SCAN API CALL========");
 
+        getSourceApiCall();
 
       }
 
@@ -1175,45 +1190,45 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
   }
 
   Future<void> scanTargetScanQR() async{
-    String groupcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
+    String targetScanResult =  await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scanner overlay
       'Cancel', // Text for the cancel button
       true, // Enable flash option
       ScanMode.DEFAULT, // Scan mode
     );
 
-    if(groupcodeScanResult == "-1"){
+    if(targetScanResult == "-1"){
 
     }else{
-      bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
+      bool specialCharAllow = CommonUtils.containsSpecialCharacters(targetScanResult);
 
       if(specialCharAllow == true){
+
         targetULDModel = null;
+        targetScanController.clear();
         selectedTargetType = "U";
+
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        targetScanController.clear();
+
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(sourceScanFocusNode);
+          FocusScope.of(context).requestFocus(targetScanFocusNode);
         });
+
+        setState(() {
+
+        });
+
       }else{
         targetULDModel = null;
         selectedTargetType = "U";
-        String result = groupcodeScanResult.replaceAll(" ", "");
-
-        /*  String truncatedResult = result.length > 15
-            ? result.substring(0, 15)
-            : result;*/
-
+        String result = targetScanResult.replaceAll(" ", "");
         targetScanController.text = result;
-        // Call searchLocation api to validate or not
-        // call binning details api
 
-        await context.read<ULDToULDCubit>().targetULD(
-            targetScanController.text,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+
+        print("----------------call from target scan---------------");
+
+         getTargetApiCall();
 
 
       }
@@ -1222,6 +1237,25 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
 
 
   }
+
+  Future<void> getSourceApiCall() async {
+    await context.read<ULDToULDCubit>().sourceULD(
+        sourceScanController.text,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+
+  Future<void> getTargetApiCall() async {
+    await context.read<ULDToULDCubit>().targetULD(
+        targetScanController.text,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+
 
 }
 

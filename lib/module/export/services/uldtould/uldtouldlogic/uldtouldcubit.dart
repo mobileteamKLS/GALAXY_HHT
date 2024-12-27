@@ -33,7 +33,7 @@ class ULDToULDCubit extends Cubit<ULDToULDState>{
     }
   }
 
-  // targetULD api call repo
+  // moveULD api call repo
   Future<void> moveULD(int sourceFlightSeqNo, int sourceULDSeqNo, String sourceULDType, int targetFlightSeqNo, int targetULDSeqNo, String targetULDType, int userId, int companyCode, int menuId) async {
     emit(ULDToULDStateLoadingState());
     try {
@@ -41,6 +41,17 @@ class ULDToULDCubit extends Cubit<ULDToULDState>{
       emit(MoveULDLoadSuccessState(moveULDModelData));
     } catch (e) {
       emit(MoveULDLoadFailureState(e.toString()));
+    }
+  }
+
+  // remove flight api call repo
+  Future<void> removeFlight(int sourceULDSeqNo, String sourceULDType, int userId, int companyCode, int menuId) async {
+    emit(ULDToULDStateLoadingState());
+    try {
+      final removeFlightModelData = await uldToULDRepository.removeFlight(sourceULDSeqNo, sourceULDType, userId, companyCode, menuId);
+      emit(RemoveFlightLoadSuccessState(removeFlightModelData));
+    } catch (e) {
+      emit(RemoveFlightLoadFailureState(e.toString()));
     }
   }
 

@@ -227,7 +227,6 @@ class _RemarkCustomTextFieldState extends State<RemarkCustomTextField> {
               obscureText: widget.isPassword ? obscureText : false,
               decoration: InputDecoration(
                 prefixIcon: widget.hasIcon ? Icon(widget.prefixicon, color: widget.prefixIconcolor,) : null,
-                constraints: BoxConstraints.loose(Size.fromHeight(widget.boxHeight)),
                 contentPadding: EdgeInsets.symmetric(vertical: widget.verticalPadding, horizontal: 10),
                 hintText: widget.hintText != null ? widget.hintText : '',
                 hintStyle: GoogleFonts.poppins(textStyle: TextStyle(fontSize: widget.fontSize, color: widget.hintTextcolor, fontWeight: FontWeight.w400)),

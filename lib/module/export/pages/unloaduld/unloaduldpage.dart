@@ -63,7 +63,9 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
   UnloadUldListModel? unloadUldListModel;
 
   int uldSeqNo = 0;
+  int flightSeqNo = 0;
   String uldType = "";
+  String uldNo = "";
 
 
   String groupIdRequired = "";
@@ -78,6 +80,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
 
   TextEditingController scanController = TextEditingController();
   FocusNode scanFocusNode = FocusNode();
+  FocusNode scanBtnFocusNode = FocusNode();
 
 
 
@@ -387,6 +390,10 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                     SnackbarUtil.showSnackbar(context, state.unloadUldListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     unloadUldListModel =  state.unloadUldListModel;
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                    },
+                                    );
                                     setState(() {
                                     });
                                   }
@@ -418,6 +425,8 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                               uldType: uldType,
                                               groupIdChar: groupIdCharSize,
                                               groupIdRequire: groupIdRequired,
+                                              uldNo: uldNo,
+                                              flightSeqNo: flightSeqNo,
                                             )));
                                     if(value == "Done"){
                                       await context.read<UnloadULDCubit>().unloadULDlistLoad(
@@ -513,6 +522,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                     ),
                                                     // click search button to validate location
                                                     InkWell(
+                                                      focusNode: scanBtnFocusNode,
                                                       onTap: () {
                                                         scanSourceScanQR();
                                                       },
@@ -567,8 +577,10 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                             onDoubleTap: () async {
                                                               if(unloadULDDetailList.uLDStatus == "C"){
 
+                                                                flightSeqNo = unloadULDDetailList.flightSeqNo!;
                                                                 uldSeqNo = unloadULDDetailList.uLDSeqNo!;
                                                                 uldType = unloadULDDetailList.uLDType!;
+                                                                uldNo = unloadULDDetailList.uLDNo!;
 
                                                                 bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, unloadULDDetailList.uLDNo!, (unloadULDDetailList.uLDType == "U") ? "Closed ULD" : "Closed Trolley", (unloadULDDetailList.uLDType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
 
@@ -601,6 +613,8 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                           uldType: unloadULDDetailList.uLDType!,
                                                                           groupIdChar: groupIdCharSize,
                                                                           groupIdRequire: groupIdRequired,
+                                                                          uldNo: unloadULDDetailList.uLDNo!,
+                                                                          flightSeqNo: unloadULDDetailList.flightSeqNo!,
                                                                         )));
                                                                 if(value == "Done"){
                                                                   await context.read<UnloadULDCubit>().unloadULDlistLoad(
@@ -716,8 +730,10 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
 
                                                                                   if(unloadULDDetailList.uLDStatus == "C"){
 
+                                                                                    flightSeqNo = unloadULDDetailList.flightSeqNo!;
                                                                                     uldSeqNo = unloadULDDetailList.uLDSeqNo!;
                                                                                     uldType = unloadULDDetailList.uLDType!;
+                                                                                    uldNo = unloadULDDetailList.uLDNo!;
 
                                                                                     bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, unloadULDDetailList.uLDNo!, (unloadULDDetailList.uLDType == "U") ? "Closed ULD" : "Closed Trolley", (unloadULDDetailList.uLDType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
 
@@ -752,6 +768,8 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                                               uldType: unloadULDDetailList.uLDType!,
                                                                                               groupIdRequire: groupIdRequired,
                                                                                               groupIdChar: groupIdCharSize,
+                                                                                              uldNo: unloadULDDetailList.uLDNo!,
+                                                                                              flightSeqNo: unloadULDDetailList.flightSeqNo!,
                                                                                             )));
                                                                                     if(value == "Done"){
                                                                                       await context.read<UnloadULDCubit>().unloadULDlistLoad(

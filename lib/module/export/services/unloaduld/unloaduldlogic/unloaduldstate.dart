@@ -49,6 +49,18 @@ class UnloadOpenULDFailureState extends UnloadULDState {
   UnloadOpenULDFailureState(this.error);
 }
 
+class UnloadOpenULDSuccessStateA extends UnloadULDState {
+  final UnloadOpenULDModel unloadUldCloseModel;
+  UnloadOpenULDSuccessStateA(this.unloadUldCloseModel);
+}
+
+class UnloadOpenULDFailureStateA extends UnloadULDState {
+  final String error;
+  UnloadOpenULDFailureStateA(this.error);
+}
+
+
+
 class UnloadRemoveAWBSuccessState extends UnloadULDState {
   final UnloadRemoveAWBModel unloadRemoveAWBModel;
   UnloadRemoveAWBSuccessState(this.unloadRemoveAWBModel);

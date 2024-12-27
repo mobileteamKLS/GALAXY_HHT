@@ -49,6 +49,8 @@ class UnloadULDShipmentPage extends StatefulWidget {
   String uldType;
   int groupIdChar;
   String groupIdRequire;
+  String uldNo;
+  int flightSeqNo;
 
   UnloadULDShipmentPage(
       {super.key,
@@ -62,13 +64,17 @@ class UnloadULDShipmentPage extends StatefulWidget {
       required this.uldSeqNo,
       required this.uldType,
       required this.groupIdChar,
-      required this.groupIdRequire});
+      required this.groupIdRequire,
+      required this.uldNo,
+      required this.flightSeqNo});
 
   @override
   State<UnloadULDShipmentPage> createState() => _UnloadULDShipmentPageState();
 }
 
 class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with SingleTickerProviderStateMixin{
+
+  String clickBtn = "";
 
   UnloadUldAWBListModel? unloadUldAWBListModel;
 
@@ -80,6 +86,11 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
 
   bool isBackPressed = false; // Track if the back button was pressed
 
+  String awbNo = "";
+  int awbShipRowId = 0;
+  int EMISeqNo = 0;
+  int nop = 0;
+  double weight = 0;
 
 
 
@@ -318,11 +329,161 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                   if(state.unloadRemoveAWBModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.unloadRemoveAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else if(state.unloadRemoveAWBModel.status == "C"){
+                                    bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, widget.uldNo, (widget.uldType == "U") ? "Closed ULD" : "Closed Trolley", (widget.uldType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel!);
+
+                                    if(closeULD == true){
+                                      // call close to open api
+                                      await context.read<UnloadULDCubit>().unloadOpenULDLoadA(
+                                          widget.uldSeqNo,
+                                          widget.uldType,
+                                          _user!.userProfile!.userIdentity!,
+                                          _splashDefaultData!.companyCode!,
+                                          widget.menuId);
+
+                                    }else{
+                                      _resumeTimerOnInteraction();
+                                    }
+
                                   } else{
                                     getAWBDetails();
                                   }
                                 }
                                 else if (state is UnloadRemoveAWBFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is UnloadOpenULDSuccessStateA){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.unloadUldCloseModel.status == "E"){
+
+                                  }
+                                  else{
+                                    if(clickBtn == "B"){
+                                      if(widget.groupIdRequire == "Y"){
+                                        var result = await DialogUtils.showRemoveShipmentDialog(
+                                            context,
+                                            widget.flightSeqNo,
+                                            widget.uldType,
+                                            widget.uldSeqNo,
+                                            EMISeqNo,
+                                            awbShipRowId,
+                                            nop,
+                                            weight,
+                                            widget.groupIdChar,
+                                            widget.groupIdRequire,
+                                            lableModel!,
+                                            textDirection,
+                                            _user!.userProfile!.userIdentity!,
+                                            _splashDefaultData!.companyCode!,
+                                            widget.menuId,
+                                            "Remove Shipment",
+                                            "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
+                                            "B");
+                                        if (result != null) {
+                                          if (result.containsKey('status')) {
+                                            String? status = result['status'];
+                                            if(status == "N"){
+                                              _resumeTimerOnInteraction();
+                                            }else if(status == "D"){
+                                              _resumeTimerOnInteraction();
+                                              getAWBDetails();
+                                            }else if (status == "C"){
+                                              bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, widget.uldNo, (widget.uldType == "U") ? "Closed ULD" : "Closed Trolley", (widget.uldType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
+                                              if(closeULD == true){
+                                                // call close to open api
+                                                await context.read<UnloadULDCubit>().unloadOpenULDLoadA(
+                                                    widget.uldSeqNo,
+                                                    widget.uldType,
+                                                    _user!.userProfile!.userIdentity!,
+                                                    _splashDefaultData!.companyCode!,
+                                                    widget.menuId);
+
+                                              }else{
+                                                _resumeTimerOnInteraction();
+                                              }
+                                            }else{
+                                              _resumeTimerOnInteraction();
+                                            }
+                                          }else{
+                                            _resumeTimerOnInteraction();
+                                          }
+                                        }
+                                        else{
+                                          _resumeTimerOnInteraction();
+                                        }
+                                      }
+                                      else{
+                                        bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context, "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}" , lableModel!);
+                                        if(removeShipment == true){
+                                          context.read<UnloadULDCubit>().unloadRemoveAWBLoad(
+                                              widget.flightSeqNo,
+                                              "${widget.uldType}_${widget.uldSeqNo}_${EMISeqNo}_${awbShipRowId}",
+                                              nop,
+                                              weight, "", "" , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!,  widget.menuId);
+                                        }else{
+                                          _resumeTimerOnInteraction();
+                                        }
+                                      }
+                                    }
+                                    else if(clickBtn == "A"){
+                                      var result = await DialogUtils.showRemoveShipmentDialog(
+                                          context,
+                                          widget.flightSeqNo,
+                                          widget.uldType,
+                                          widget.uldSeqNo,
+                                          EMISeqNo,
+                                          awbShipRowId,
+                                          nop,
+                                          weight,
+                                          widget.groupIdChar,
+                                          widget.groupIdRequire,
+                                          lableModel!,
+                                          textDirection,
+                                          _user!.userProfile!.userIdentity!,
+                                          _splashDefaultData!.companyCode!,
+                                          widget.menuId,
+                                          "Remove Shipment",
+                                          "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
+                                          "A");
+                                      if (result != null) {
+                                        if (result.containsKey('status')) {
+                                          String? status = result['status'];
+                                          if(status == "N"){
+                                            _resumeTimerOnInteraction();
+                                          }else if(status == "D"){
+                                            _resumeTimerOnInteraction();
+                                            getAWBDetails();
+                                          }else if(status == "C"){
+                                            bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, widget.uldNo, (widget.uldType == "U") ? "Closed ULD" : "Closed Trolley", (widget.uldType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
+                                            if(closeULD == true){
+                                              // call close to open api
+                                              await context.read<UnloadULDCubit>().unloadOpenULDLoadA(
+                                                  widget.uldSeqNo,
+                                                  widget.uldType,
+                                                  _user!.userProfile!.userIdentity!,
+                                                  _splashDefaultData!.companyCode!,
+                                                  widget.menuId);
+
+                                            }else{
+                                              _resumeTimerOnInteraction();
+                                            }
+                                          }else{
+                                            _resumeTimerOnInteraction();
+                                          }
+                                        }else{
+                                          _resumeTimerOnInteraction();
+                                        }
+                                      }
+                                      else{
+                                        _resumeTimerOnInteraction();
+                                      }
+                                    }
+                                  }
+
+                                }
+                                else if (state is UnloadOpenULDFailureStateA){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -423,11 +584,23 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                     textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                     text: "Remove",
                                                                                     press: () async {
+
+                                                                                      clickBtn = "B";
+                                                                                      awbNo = unloadAWBDetail.aWBNo!;
+                                                                                      awbShipRowId = unloadAWBDetail.expShipRowId!;
+                                                                                      EMISeqNo = unloadAWBDetail.EMISeqNo!;
+                                                                                      nop = unloadAWBDetail.nOP!;
+                                                                                      weight = unloadAWBDetail.weightKg!;
+
+
                                                                                       if(widget.groupIdRequire == "Y"){
                                                                                         var result = await DialogUtils.showRemoveShipmentDialog(
-                                                                                          context,
-                                                                                          widget.uldSeqNo,
-                                                                                          unloadAWBDetail.expShipRowId!,
+                                                                                            context,
+                                                                                            widget.flightSeqNo,
+                                                                                            widget.uldType,
+                                                                                            widget.uldSeqNo,
+                                                                                            unloadAWBDetail.EMISeqNo!,
+                                                                                            unloadAWBDetail.expShipRowId!,
                                                                                           unloadAWBDetail.nOP!,
                                                                                           unloadAWBDetail.weightKg!,
                                                                                           widget.groupIdChar,
@@ -440,8 +613,6 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                           "Remove Shipment",
                                                                                           "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
                                                                                           "B");
-
-
                                                                                         if (result != null) {
                                                                                           if (result.containsKey('status')) {
                                                                                             String? status = result['status'];
@@ -450,6 +621,20 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                             }else if(status == "D"){
                                                                                               _resumeTimerOnInteraction();
                                                                                               getAWBDetails();
+                                                                                            }else if (status == "C"){
+                                                                                              bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, widget.uldNo, (widget.uldType == "U") ? "Closed ULD" : "Closed Trolley", (widget.uldType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
+                                                                                              if(closeULD == true){
+                                                                                                // call close to open api
+                                                                                                await context.read<UnloadULDCubit>().unloadOpenULDLoadA(
+                                                                                                    widget.uldSeqNo,
+                                                                                                    widget.uldType,
+                                                                                                    _user!.userProfile!.userIdentity!,
+                                                                                                    _splashDefaultData!.companyCode!,
+                                                                                                    widget.menuId);
+
+                                                                                              }else{
+                                                                                                _resumeTimerOnInteraction();
+                                                                                              }
                                                                                             }else{
                                                                                               _resumeTimerOnInteraction();
                                                                                             }
@@ -460,12 +645,12 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         else{
                                                                                           _resumeTimerOnInteraction();
                                                                                         }
-
-
-                                                                                      }else{
+                                                                                      }
+                                                                                      else{
                                                                                         bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context, "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}" , lableModel!);
                                                                                         if(removeShipment == true){
-                                                                                          context.read<UnloadULDCubit>().unloadRemoveAWBLoad( widget.uldSeqNo, unloadAWBDetail.expShipRowId!, unloadAWBDetail.nOP!, unloadAWBDetail.weightKg!, "" , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!,  widget.menuId);
+                                                                                          context.read<UnloadULDCubit>().unloadRemoveAWBLoad(widget.flightSeqNo,
+                                                                                              "${widget.uldType}_${widget.uldSeqNo}_${EMISeqNo}_${awbShipRowId}", unloadAWBDetail.nOP!, unloadAWBDetail.weightKg!, "", "" , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!,  widget.menuId);
                                                                                         }else{
                                                                                           _resumeTimerOnInteraction();
                                                                                         }
@@ -552,9 +737,21 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                 ),
                                                                                 InkWell(
                                                                                   onTap: () async {
+
+                                                                                    clickBtn = "A";
+
+                                                                                    awbNo = unloadAWBDetail.aWBNo!;
+                                                                                    awbShipRowId = unloadAWBDetail.expShipRowId!;
+                                                                                    EMISeqNo = unloadAWBDetail.EMISeqNo!;
+                                                                                    nop = unloadAWBDetail.nOP!;
+                                                                                    weight = unloadAWBDetail.weightKg!;
+
                                                                                     var result = await DialogUtils.showRemoveShipmentDialog(
                                                                                         context,
+                                                                                        widget.flightSeqNo,
+                                                                                        widget.uldType,
                                                                                         widget.uldSeqNo,
+                                                                                        unloadAWBDetail.EMISeqNo!,
                                                                                         unloadAWBDetail.expShipRowId!,
                                                                                         unloadAWBDetail.nOP!,
                                                                                         unloadAWBDetail.weightKg!,
@@ -568,8 +765,6 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         "Remove Shipment",
                                                                                         "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
                                                                                         "A");
-
-
                                                                                     if (result != null) {
                                                                                       if (result.containsKey('status')) {
                                                                                         String? status = result['status'];
@@ -578,6 +773,20 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         }else if(status == "D"){
                                                                                           _resumeTimerOnInteraction();
                                                                                           getAWBDetails();
+                                                                                        }else if(status == "C"){
+                                                                                          bool? closeULD = await DialogUtils.closeUnloadULDDialog(context, widget.uldNo, (widget.uldType == "U") ? "Closed ULD" : "Closed Trolley", (widget.uldType == "U") ? "ULD is closed. Do you want to open ?" : "Trolley is closed. Do you want to open ?" , lableModel);
+                                                                                          if(closeULD == true){
+                                                                                            // call close to open api
+                                                                                            await context.read<UnloadULDCubit>().unloadOpenULDLoadA(
+                                                                                                widget.uldSeqNo,
+                                                                                                widget.uldType,
+                                                                                                _user!.userProfile!.userIdentity!,
+                                                                                                _splashDefaultData!.companyCode!,
+                                                                                                widget.menuId);
+
+                                                                                          }else{
+                                                                                            _resumeTimerOnInteraction();
+                                                                                          }
                                                                                         }else{
                                                                                           _resumeTimerOnInteraction();
                                                                                         }

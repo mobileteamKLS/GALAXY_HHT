@@ -1,3 +1,5 @@
+import 'package:galaxy/module/export/model/uldtould/removeflightmodel.dart';
+
 import '../../../model/uldtould/moveuldmodel.dart';
 import '../../../model/uldtould/sourceuldmodel.dart';
 import '../../../model/uldtould/targetuldmodel.dart';
@@ -35,4 +37,14 @@ class MoveULDLoadSuccessState extends ULDToULDState {
 class MoveULDLoadFailureState extends ULDToULDState {
   final String error;
   MoveULDLoadFailureState(this.error);
+}
+
+class RemoveFlightLoadSuccessState extends ULDToULDState {
+  final RemoveFlightModel removeFlightModel;
+  RemoveFlightLoadSuccessState(this.removeFlightModel);
+}
+
+class RemoveFlightLoadFailureState extends ULDToULDState {
+  final String error;
+  RemoveFlightLoadFailureState(this.error);
 }

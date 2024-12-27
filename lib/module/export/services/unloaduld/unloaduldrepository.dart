@@ -180,16 +180,18 @@ class UnloadULDRepository{
   }
 
 
-  Future<UnloadRemoveAWBModel> unloadRemoveAWBModel(int uldSeqNo, int shipRowId, int nop, double weight, String groupId, int userId, int companyCode, int menuId) async {
+  Future<UnloadRemoveAWBModel> unloadRemoveAWBModel(int flightSeqNo, String manifestNo, int nop, double weight,String remark, String groupId, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
-        "ULDSeqNo" : uldSeqNo,
-        "ShipRowId" : shipRowId,
-        "nop" : nop,
-        "weight" : weight,
-        "groupId" : groupId,
+        "FlightSeqNo" : flightSeqNo,
+        "ManifestNo" : manifestNo,
+        "NOP" : nop,
+        "Weight" : weight,
+        "Volume": 0,
+        "Remarks": remark,
+        "GroupId" : groupId,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

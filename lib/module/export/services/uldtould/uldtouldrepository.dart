@@ -4,6 +4,7 @@ import '../../../../api/apilist.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../model/uldtould/moveuldmodel.dart';
+import '../../model/uldtould/removeflightmodel.dart';
 import '../../model/uldtould/sourceuldmodel.dart';
 import '../../model/uldtould/targetuldmodel.dart';
 
@@ -123,6 +124,49 @@ class ULDToULDRepository{
       if (response.statusCode == 200) {
         MoveULDModel moveULDModel = MoveULDModel.fromJson(response.data);
         return moveULDModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+  Future<RemoveFlightModel> removeFlight(int sourceULDSeqNo, String sourceULDType, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDSeqNo" : sourceULDSeqNo,
+        "ULDType" : sourceULDType,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('RemoveFlightModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.removeFlightApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        RemoveFlightModel removeFlightModel = RemoveFlightModel.fromJson(response.data);
+        return removeFlightModel;
       } else {
         // Handle non-200 response
         throw DioException(

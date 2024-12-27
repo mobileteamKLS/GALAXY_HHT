@@ -13,6 +13,7 @@ class SubMenuCodeUtils{
   static String RetriveULD = "HHT013";
   static String ULDTOULD = "HHT014";
   static String UNLOADULD = "HHT015";
+  static String EMPTYULDTROLLEY = "HHT016";
 
 
 }

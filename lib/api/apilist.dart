@@ -107,13 +107,16 @@ class Apilist{
   static String sourceULDApi = "/ULDToULD/GetSourceULD";
   static String targetULDApi = "/ULDToULD/GetTargetULD";
   static String moveULDApi = "/ULDToULD/MoveULD";
+  static String removeFlightApi = "/ULDToULD/RemoveFlight";
 
   // Unload ULD
   static String unloadULDPageLoadApi = "/Unload/GetPageLoad";
   static String uldListApi = "/Unload/Search";
   static String uldawbListApi = "/Unload/GetAWBDetails";
   static String unloadOpenULDApi = "/Unload/OpenULD";
-  static String unloadRemoveAWBApi = "/Unload/RemoveAwb";
+  static String unloadRemoveAWBApi = "/Unload/RemoveShipment";
 
+  // Empty ULD/Trolley
+  static String emptyULDTrollPageLoadApi = "/EmptyULDTrolley/GetPageLoad";
 
 }

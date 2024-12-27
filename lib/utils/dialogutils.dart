@@ -36,6 +36,7 @@ import '../module/login/services/loginlogic/loginstate.dart';
 import '../module/splash/model/splashdefaultmodel.dart';
 import '../widget/customdivider.dart';
 import '../widget/customeedittext/customeedittextwithborder.dart';
+import '../widget/customeedittext/remarkedittextfeild.dart';
 import '../widget/custometext.dart';
 import '../widget/customtextfield.dart';
 import 'dart:ui' as ui;
@@ -4303,8 +4304,11 @@ class DialogUtils {
 
   static Future<Map<String, String>?> showRemoveShipmentDialog(
       BuildContext context,
+      int flightSeqNo,
+      String uldType,
       int uldSeqNo,
-      int awbSeqNo,
+      int emiseqNo,
+      int awbShipRowId,
       int nop,
       double weight,
       int groupIdChar,
@@ -4324,10 +4328,12 @@ class DialogUtils {
     TextEditingController nopController = TextEditingController();
     TextEditingController weightController = TextEditingController();
     TextEditingController groupIdController = TextEditingController();
+    TextEditingController remarkController = TextEditingController();
 
     FocusNode nopFocusNode = FocusNode();
     FocusNode weightFocusNode = FocusNode();
     FocusNode groupIdFocusNode = FocusNode();
+    FocusNode remarkFocus = FocusNode();
 
     double weightCount = 0.00;
 
@@ -4378,6 +4384,11 @@ class DialogUtils {
                       Vibration.vibrate(duration: 500);
                       setState(() {
                         errorText = state.unloadRemoveAWBModel.statusMessage!;
+                      });
+                    }
+                    else if(state.unloadRemoveAWBModel.status == "C"){
+                      Navigator.pop(context, {
+                        "status": "C",
                       });
                     }
                     else{
@@ -4477,7 +4488,11 @@ class DialogUtils {
 
                                                 Vibration.vibrate(duration: 500);
                                                 setState(() {
-                                                 errorText = "";
+                                                  differenceNop = totalNop - enteredNop;
+                                                  weightCount = double.parse(((enteredNop * totalWt) / totalNop).toStringAsFixed(2));
+                                                  weightController.text = weightCount.toStringAsFixed(2);
+                                                  differenceWeight = totalWt - weightCount;
+                                                 errorText = "Exceeds total NOP";
                                                 });
                                               } else {
                                                 // Update the differences and weight
@@ -4487,6 +4502,7 @@ class DialogUtils {
                                                   weightCount = double.parse(((enteredNop * totalWt) / totalNop).toStringAsFixed(2));
                                                   weightController.text = weightCount.toStringAsFixed(2);
                                                   differenceWeight = totalWt - weightCount;
+                                                  errorText = "";
                                                 });
                                               }
                                             } else {
@@ -4496,6 +4512,7 @@ class DialogUtils {
                                                 differenceWeight = totalWt;
                                                 weightCount = 0.0;
                                                 weightController.text = "";
+                                                errorText = "";
                                               });
                                             }
 
@@ -4538,32 +4555,35 @@ class DialogUtils {
                                         animatedLabel: true,
                                         needOutlineBorder: true,
                                         labelText: "${lableModel.weight}",
-                                        readOnly: (flagBtn == "B") ? true : false,
+                                        readOnly: (flagBtn == "B") ? true : (differenceNop == 0) ? true : false,
                                         onChanged: (value) {
                                           if (value.isNotEmpty) {
                                             double enteredWeight = double.tryParse(value) ?? 0.00;
 
                                             if (enteredWeight > totalWt) {
                                               // Exceeds total weight, show an error
-                                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                FocusScope.of(context).requestFocus(weightFocusNode);
+                                              Vibration.vibrate(duration: 500);
+                                              setState(() {
+                                                errorText = "Exceeds total Weight";
+                                                differenceWeight = totalWt - enteredWeight;
                                               });
-                                              SnackbarUtil.showSnackbar(
-                                                context,
-                                                CommonUtils.formatMessage("${lableModel.damageWeightGrtMsg}", ["$enteredWeight", "$totalWt"]),
-                                                MyColor.colorRed,
-                                                icon: FontAwesomeIcons.times,
-                                              );
                                             } else {
                                               // Update the weight difference
                                               setState(() {
                                                 differenceWeight = totalWt - enteredWeight;
+                                                if (differenceNop != 0 && differenceWeight == 0) {
+                                                  Vibration.vibrate(duration: 500);
+                                                  errorText = "Remaining pieces available, weight cannot be 0.";
+                                                } else {
+                                                  errorText = "";
+                                                }
                                               });
                                             }
                                           } else {
                                             // Reset to defaults when cleared
                                             setState(() {
                                               differenceWeight = totalWt;
+                                              errorText = "";
                                             });
                                           }
                                         },
@@ -4595,7 +4615,7 @@ class DialogUtils {
                                   Expanded(
                                     flex: 1,
                                     child: CustomeText(
-                                      text: "Remain. NOP : $differenceNop",
+                                      text: "Rem. NOP : $differenceNop",
                                       fontColor: MyColor.colorRed,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                       fontWeight: FontWeight.w500,
@@ -4606,7 +4626,7 @@ class DialogUtils {
                                   Expanded(
                                     flex: 1,
                                     child: CustomeText(
-                                      text: "Remain. weight : ${differenceWeight.toStringAsFixed(2)}",
+                                      text: "Rem. Weight : ${differenceWeight.toStringAsFixed(2)}",
                                       fontColor: MyColor.colorRed,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                       fontWeight: FontWeight.w500,
@@ -4654,6 +4674,39 @@ class DialogUtils {
                                     }
                                   },
                                 ),
+                              ),
+                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                              RemarkCustomTextField(
+                                textDirection: textDirection,
+                                controller: remarkController,
+                                focusNode: remarkFocus,
+                                hasIcon: false,
+                                hastextcolor: true,
+                                animatedLabel: true,
+                                needOutlineBorder: true,
+                                labelText: lableModel.remarks,
+                                onChanged: (value, validate) {},
+                                readOnly: false,
+                                fillColor: Colors.grey.shade100,
+                                textInputType: TextInputType.text,
+                                inputAction: TextInputAction.next,
+                                hintTextcolor: Colors.black45,
+                                maxLines: 1,
+                                maxLength: 500,
+                                digitsOnly: false,
+                                doubleDigitOnly: false,
+                                verticalPadding: 0,
+                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT8,
+
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "Please fill out this field";
+                                  } else {
+                                    return null;
+                                  }
+                                },
                               ),
 
                               SizedBox(height: SizeConfig.blockSizeVertical),
@@ -4746,6 +4799,69 @@ class DialogUtils {
                                           return;
                                         }
 
+
+                                        if (int.parse(nopController.text) > totalNop) {
+                                          // Exceeds total NOP, show an error
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(nopFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          setState(() {
+                                            errorText = "Exceeds total NOP";
+                                          });
+                                          return;
+                                        }
+
+                                        if (double.parse(weightController.text) > totalWt) {
+                                          // Exceeds total weight, show an error
+                                          Vibration.vibrate(duration: 500);
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          setState(() {
+                                            errorText = "Exceeds total Weight";
+                                          });
+                                          return;
+                                        }
+
+                                        if (differenceNop != 0 && differenceWeight == 0) {
+                                          Vibration.vibrate(duration: 500);
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          setState(() {
+                                            errorText = "Remaining pieces available, weight cannot be 0.";
+                                          });
+
+                                          return;
+                                        }
+
+                                        /*int remainingNop = totalNop - int.parse(nopController.text);
+                                        if (remainingNop == 0) {
+                                          setState(() {
+                                            errorText = "Remaining pcs not 0";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(nopFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }
+
+                                        double remainingWeight = totalWt - double.parse(weightController.text);
+                                        if (remainingWeight <= 0) {
+                                          setState(() {
+                                            errorText = "remaining weight not set 0";
+                                          });
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(weightFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+                                          return;
+                                        }*/
+
+
+
                                         if(groupIdRequired == "Y"){
                                           if (groupIdController.text.isEmpty) {
                                             setState(() {
@@ -4771,7 +4887,7 @@ class DialogUtils {
 
                                         }
 
-                                        context.read<UnloadULDCubit>().unloadRemoveAWBLoadA(uldSeqNo, awbSeqNo, int.parse(nopController.text), double.parse(weightController.text), groupIdController.text , userIdentity, companyCode, menuId,);
+                                        context.read<UnloadULDCubit>().unloadRemoveAWBLoadA(flightSeqNo,  "${uldType}_${uldSeqNo}_${emiseqNo}_${awbShipRowId}", int.parse(nopController.text), double.parse(weightController.text), remarkController.text, groupIdController.text , userIdentity, companyCode, menuId);
                                       },
                                     ),
                                   ),
@@ -4794,6 +4910,52 @@ class DialogUtils {
 
 
   static Future<bool?> unlodeRemoveShipmentDialog(BuildContext context,
+      String title,
+      String message,
+      LableModel lableModel) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
+          title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              CustomeText(text: message, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+            ],
+          ),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
+
+  static Future<bool?> removeFlightFromULDDialog(BuildContext context,
       String title,
       String message,
       LableModel lableModel) {
