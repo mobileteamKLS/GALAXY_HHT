@@ -1,5 +1,5 @@
 
-class CustomExamination {
+class CustomExaminationMasterData {
   int rowId;
   int messageRowId;
   int queueRowId;
@@ -14,7 +14,7 @@ class CustomExamination {
   String col7;
   String col8;
 
-  CustomExamination({
+  CustomExaminationMasterData({
     required this.rowId,
     required this.messageRowId,
     required this.queueRowId,
@@ -30,7 +30,7 @@ class CustomExamination {
     required this.col8,
   });
 
-  factory CustomExamination.fromJSON(Map<String, dynamic> json) => CustomExamination(
+  factory CustomExaminationMasterData.fromJSON(Map<String, dynamic> json) => CustomExaminationMasterData(
     rowId: json["ROWId"],
     messageRowId: json["MessageRowID"],
     queueRowId: json["QueueRowId"],
@@ -63,7 +63,7 @@ class CustomExamination {
   };
 }
 
-class CustomExaminationNew {
+class CustomExaminationData {
   int rowId;
   int messageRowId;
   int queueRowId;
@@ -79,7 +79,7 @@ class CustomExaminationNew {
   String col8;
   String? slot;
 
-  CustomExaminationNew({
+  CustomExaminationData({
     required this.rowId,
     required this.messageRowId,
     required this.queueRowId,
@@ -96,7 +96,7 @@ class CustomExaminationNew {
     this.slot,
   });
 
-  factory CustomExaminationNew.fromJSON(Map<String, dynamic> json) => CustomExaminationNew(
+  factory CustomExaminationData.fromJSON(Map<String, dynamic> json) => CustomExaminationData(
     rowId: json["ROWId"],
     messageRowId: json["MessageRowID"],
     queueRowId: json["QueueRowId"],

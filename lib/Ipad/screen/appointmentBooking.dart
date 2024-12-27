@@ -36,9 +36,9 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExamination> appointBookingList = [];
+  List<CustomExaminationMasterData> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
-  List<CustomExamination> masterData = [];
+  List<CustomExaminationMasterData> masterData = [];
   List<bool?> isOnList = [];
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
@@ -168,13 +168,13 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
               .where((json) {
                 return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
               })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
           masterData = resp
               .where((json) {
                 return json["ElementRowID"] == -1;
               })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
           // resp.map((json) => CustomExamination.fromJSON(json)).toList();
           print("length==  = ${appointBookingList.length}");
@@ -245,11 +245,11 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
           return;
         }
         setState(() {
-          List<CustomExamination> headerList = resp
+          List<CustomExaminationMasterData> headerList = resp
               .where((json) {
             return json["ElementRowID"] == -1;
           })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
            slotList = headerList
               .map((exam) => '${exam.col3}-${exam.col4}') .toSet()
@@ -288,7 +288,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     builder.element('Root', nest: () {
       builder.element('Appointment', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExamination;
+          final customExamination = item['item'] as CustomExaminationMasterData;
           builder.element('Appointment', nest: () {
             builder.element('MessageRowID', nest: customExamination.messageRowId);
             builder.element('QueueRowID', nest: customExamination.queueRowId);
@@ -303,7 +303,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
 
       builder.element('ForwardExamination', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExamination;
+          final customExamination = item['item'] as CustomExaminationMasterData;
           builder.element('ForwardExamination', nest: () {
             builder.element('ExaminationRowId', nest: customExamination.rowId);
           });
@@ -902,7 +902,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
   }
 
   DataRow _buildDataRow({
-    required CustomExamination data,
+    required CustomExaminationMasterData data,
     required bool? isOn,
     required int index,
     required ValueChanged<bool?> onCheckboxChanged,

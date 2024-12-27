@@ -647,7 +647,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
   }
 
   DataRow _buildDataRow({
-    required CustomExamination data,
+    required CustomExaminationMasterData data,
     required bool? isOn,
     required int index,
     required ValueChanged<bool?> onCheckboxChanged,

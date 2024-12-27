@@ -19,14 +19,15 @@ import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
+import '../modal/pickUpServices.dart';
 import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'CaptureDamageAndAccept.dart';
 import 'ImportShipmentListing.dart';
 
 class PickUps extends StatefulWidget {
-
-  const PickUps({super.key});
+ final SchedulePickUpData? schedulePickUpData;
+  const PickUps({super.key,  this.schedulePickUpData});
 
   @override
   State<PickUps> createState() =>
@@ -66,6 +67,10 @@ class _PickUpsState
   void initState() {
     super.initState();
     // awbSearch();
+    // prefixController = TextEditingController(
+    //     text: "${widget.schedulePickUpData?.col3.substring(0,3)}" ?? '');
+    // awbController = TextEditingController(
+    //     text: "${widget.schedulePickUpData?.col3.substring(3)}" ?? '');
     masterUnitController.text = "KG";
     rcvUnitController.text = "KG";
     setDefaultRemainValues();
@@ -1270,10 +1275,10 @@ class _PickUpsState
                                       child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(
                                           side: const BorderSide(
-                                              color: Color(0xffB00020)),
+                                              color: Color(0xffD50000)),
                                           textStyle: const TextStyle(
                                             fontSize: 18,
-                                            color: Color(0xffB00020),
+                                            color: Color(0xffD50000),
                                           ),
                                           shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
@@ -1284,7 +1289,7 @@ class _PickUpsState
 
                                         },
                                         child: const Text(
-                                            "Fail Pick Up",style: TextStyle(color: Color(0xffB00020)),),
+                                            "Fail Pick Up",style: TextStyle(color: Color(0xffD50000)),),
                                       ),
                                     ),
                                     const SizedBox(

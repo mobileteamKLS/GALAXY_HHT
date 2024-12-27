@@ -35,9 +35,9 @@ class _RejectBookingState extends State<RejectBooking> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExaminationNew> appointBookingList = [];
+  List<CustomExaminationData> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
-  List<CustomExamination> masterData = [];
+  List<CustomExaminationMasterData> masterData = [];
   DateTime pickedDateFromPicker=DateTime.now();
   DatePickerController pickedDateFromPickerController=DatePickerController();
   final ValueNotifier<DateTime> selectedDateNotifier = ValueNotifier<DateTime>(DateTime.now());
@@ -183,17 +183,17 @@ class _RejectBookingState extends State<RejectBooking> {
           hasNoRecord=false;
         });
         setState(() {
-          List<CustomExamination> tempList = resp
+          List<CustomExaminationMasterData> tempList = resp
               .where((json) {
             return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
           })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
           masterData = resp
               .where((json) {
             return json["ElementRowID"] == -1;
           })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
           print("length==  = ${masterData.length}");
           print(masterData.toList());
@@ -212,13 +212,13 @@ class _RejectBookingState extends State<RejectBooking> {
     });
   }
 
-  List<CustomExaminationNew> mergeLists(List<CustomExamination> listA, List<CustomExamination> listB) {
-    Map<int, CustomExamination> mapB = {
+  List<CustomExaminationData> mergeLists(List<CustomExaminationMasterData> listA, List<CustomExaminationMasterData> listB) {
+    Map<int, CustomExaminationMasterData> mapB = {
       for (var item in listB) item.queueRowId: item,
     };
-    List<CustomExaminationNew> result = listA.map((itemA) {
-      CustomExamination? matchingItemB = mapB[itemA.queueRowId];
-      return CustomExaminationNew(
+    List<CustomExaminationData> result = listA.map((itemA) {
+      CustomExaminationMasterData? matchingItemB = mapB[itemA.queueRowId];
+      return CustomExaminationData(
         rowId: itemA.rowId,
         messageRowId: itemA.messageRowId,
         queueRowId: itemA.queueRowId,
@@ -665,7 +665,7 @@ class _RejectBookingState extends State<RejectBooking> {
                                         const NeverScrollableScrollPhysics(),
                                         itemBuilder:
                                             (BuildContext, index) {
-                                          CustomExaminationNew
+                                          CustomExaminationData
                                           shipmentDetails =
                                           appointBookingList
                                               .elementAt(index);
@@ -718,7 +718,7 @@ class _RejectBookingState extends State<RejectBooking> {
     );
   }
 
-  Widget buildShipmentCardV2(CustomExaminationNew shipment) {
+  Widget buildShipmentCardV2(CustomExaminationData shipment) {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -968,7 +968,7 @@ class _RejectBookingState extends State<RejectBooking> {
   }
 
   DataRow _buildDataRow({
-    required CustomExamination data,
+    required CustomExaminationMasterData data,
     required bool? isOn,
     required int index,
     required ValueChanged<bool?> onCheckboxChanged,

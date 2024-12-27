@@ -41,9 +41,9 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExaminationNew> appointBookingList = [];
+  List<CustomExaminationData> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
-  List<CustomExamination> masterData = [];
+  List<CustomExaminationMasterData> masterData = [];
   List<bool?> isOnList = [];
   List<TextEditingController> piecesControllers = [];
   List<TextEditingController> remarksControllers = [];
@@ -132,17 +132,17 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
           hasNoRecord=false;
         });
         setState(() {
-          List<CustomExamination> tempList = resp
+          List<CustomExaminationMasterData> tempList = resp
               .where((json) {
             return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
           })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
           masterData = resp
               .where((json) {
             return json["ElementRowID"] == -1;
           })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
               .toList();
           print("length==  = ${masterData.length}");
           print(masterData.toList());
@@ -652,7 +652,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                         const NeverScrollableScrollPhysics(),
                                         itemBuilder:
                                             (BuildContext, index) {
-                                          CustomExaminationNew
+                                          CustomExaminationData
                                           shipmentDetails =
                                           appointBookingList
                                               .elementAt(index);
@@ -778,7 +778,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   }
 
   Widget buildShipmentCardV2(
-    CustomExaminationNew shipment,
+    CustomExaminationData shipment,
     bool? isOn,
     int index,
     ValueChanged<bool?> onCheckboxChanged,
@@ -1037,7 +1037,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   }
 
   Widget buildShipmentCardV3(
-      CustomExaminationNew shipment,
+      CustomExaminationData shipment,
       bool? isOn,
       int index,
       ValueChanged<bool?> onCheckboxChanged,
@@ -1309,13 +1309,13 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     });
   }
 
-  List<CustomExaminationNew> mergeLists(List<CustomExamination> listA, List<CustomExamination> listB) {
-    Map<int, CustomExamination> mapB = {
+  List<CustomExaminationData> mergeLists(List<CustomExaminationMasterData> listA, List<CustomExaminationMasterData> listB) {
+    Map<int, CustomExaminationMasterData> mapB = {
       for (var item in listB) item.queueRowId: item,
     };
-    List<CustomExaminationNew> result = listA.map((itemA) {
-      CustomExamination? matchingItemB = mapB[itemA.queueRowId];
-      return CustomExaminationNew(
+    List<CustomExaminationData> result = listA.map((itemA) {
+      CustomExaminationMasterData? matchingItemB = mapB[itemA.queueRowId];
+      return CustomExaminationData(
         rowId: itemA.rowId,
         messageRowId: itemA.messageRowId,
         queueRowId: itemA.queueRowId,
@@ -1348,7 +1348,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     builder.element('Root', nest: () {
       builder.element('Appointment', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExaminationNew;
+          final customExamination = item['item'] as CustomExaminationData;
           builder.element('Appointment', nest: () {
             builder.element('MessageRowID', nest: customExamination.messageRowId);
             builder.element('QueueRowID', nest: customExamination.queueRowId);
@@ -1363,7 +1363,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
 
       builder.element('ForwardExamination', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExaminationNew;
+          final customExamination = item['item'] as CustomExaminationData;
           builder.element('ForwardExamination', nest: () {
             builder.element('ExaminationRowId', nest: customExamination.rowId);
           });

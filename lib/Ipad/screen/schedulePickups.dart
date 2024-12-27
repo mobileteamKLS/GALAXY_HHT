@@ -1,11 +1,9 @@
 import 'dart:convert';
-
 import 'package:date_picker_timeline/date_picker_widget.dart';
-import 'package:easy_date_timeline/easy_date_timeline.dart';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/screen/pickup.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
@@ -13,14 +11,10 @@ import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
-import '../../utils/snackbarutil.dart';
-import '../../widget/customebuttons/roundbuttonblue.dart';
-import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/CustomsOperations.dart';
-import '../utils/global.dart';
+import '../modal/pickUpServices.dart';
 import '../widget/customDialog.dart';
-import '../widget/horizontalCalendar.dart';
 import 'ImportShipmentListing.dart';
 import 'package:xml/xml.dart';
 
@@ -41,15 +35,17 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
   DateTime? selectedDate;
-  List<CustomExaminationNew> appointBookingList = [];
+
   List<Map<String, dynamic>> saveList = [];
-  List<CustomExamination> masterData = [];
-  List<bool?> isOnList = [];
-  List<TextEditingController> piecesControllers = [];
+  List<SchedulePickUpMasterData> masterData = [];
+  List<bool> isOnList = [];
+  List<TextEditingController> assignToControllers = [];
   List<TextEditingController> remarksControllers = [];
   List<String>slotList =[];
-  bool isExpanded=false;
 
+  var filteredMap = <int, List<SchedulePickUpData>>{};
+  late var  queueRowIds;
+  List<bool>isExpandedList=[];
   DateTime pickedDateFromPicker=DateTime.now();
   DatePickerController pickedDateFromPickerController=DatePickerController();
   final ValueNotifier<DateTime> selectedDateNotifier = ValueNotifier<DateTime>(DateTime.now());
@@ -76,7 +72,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
   void initState() {
     super.initState();
     datePickerKey = GlobalKey();
-    // fetchMasterData();
+    fetchMasterData();
   }
 
   @override
@@ -88,10 +84,10 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
   String formatTime(int value) => value.toString().padLeft(2, '0');
   int activeIndex = 0;
 
-  searchCustomOperationsData(String date, String slot) async {
+  getPickupRequestData(String date, String slot) async {
     DialogUtils.showLoadingDialog(context);
-    appointBookingList = [];
     masterData = [];
+    filteredMap = <int, List<SchedulePickUpData>>{};
     totalPcs=0;
     totalWeight=0.00;
     setState(() {
@@ -103,15 +99,15 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
     };
 
     await authService
-        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
+        .sendGetWithBody("Pickup/GetPickupList", queryParams)
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
 
       print(jsonData);
       print("is empty record$hasNoRecord");
-      String status = jsonData['RetOutput'][0]['Status'];
-      String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
+      String status = jsonData['ReturnOutput'][0]['Status'];
+      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
 
       if (status == 'E') {
         print("Error: $statusMessage");
@@ -119,9 +115,8 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
         showDataNotFoundDialog(context, statusMessage);
         return;
       } else {
-        List<dynamic> resp = jsonData['CustomExaminationPList'];
-        // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
-        if (resp.isEmpty) {
+        List<dynamic> data = jsonData['PickupCompleteList'];
+        if (data.isEmpty) {
           print("No data");
           setState(() {
             hasNoRecord=true;
@@ -133,37 +128,36 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
           hasNoRecord=false;
         });
         setState(() {
-          List<CustomExamination> tempList = resp
-              .where((json) {
-            return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
-          })
-              .map((json) => CustomExamination.fromJSON(json))
-              .toList();
-          masterData = resp
+          final List<dynamic> data = json.decode(response.body)["PickupCompleteList"];
+          masterData = data
               .where((json) {
             return json["ElementRowID"] == -1;
           })
-              .map((json) => CustomExamination.fromJSON(json))
+              .map((json) => SchedulePickUpMasterData.fromJson(json))
               .toList();
-          print("length==  = ${masterData.length}");
-          print(masterData.toList());
+          List<SchedulePickUpMasterData> tempList = data.map((item) => SchedulePickUpMasterData.fromJson(item)).toList();
+          final List<SchedulePickUpData> pickupCompletedList =mergeLists(tempList,masterData);
 
-          appointBookingList=mergeLists(tempList,masterData);
-          totalPcs = masterData.fold(0, (sum, pc) => sum + int.parse(pc.col7));
-          totalWeight = masterData.fold(0, (sum, wt) => sum + double.parse(wt.col8));
+
+
+          for (var item in pickupCompletedList) {
+            if (item.elementRowId != 0) {
+              if (!filteredMap.containsKey(item.queueRowId)) {
+                filteredMap[item.queueRowId] = [];
+              }
+              filteredMap[item.queueRowId]!.add(item);
+            }
+          }
+          queueRowIds= filteredMap.keys.toList();
+          isExpandedList = List<bool>.filled(queueRowIds.length, false);
+          isOnList = List<bool>.filled(queueRowIds.length, false);
+          assignToControllers = List.generate(
+              queueRowIds.length,
+                  (index) =>
+                  TextEditingController());
         });
-
         setState(() {
-          isOnList = List.generate(appointBookingList.length, (index) => false);
-          piecesControllers = List.generate(
-              appointBookingList.length,
-                  (index) =>
-                  TextEditingController(text: appointBookingList[index].col7));
-          print("Piecs${appointBookingList.first.col5}");
-          remarksControllers = List.generate(
-              appointBookingList.length,
-                  (index) =>
-                  TextEditingController(text: appointBookingList[index].col8));
+
         });
 
       }
@@ -175,7 +169,6 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
   }
 
 
-
   void fetchMasterData() async {
     await Future.delayed(Duration.zero);
     DateTime today = DateTime.now();
@@ -184,7 +177,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
     setState(() {
       slotFilterDate = formattedDate;
     });
-    searchCustomOperationsData(formattedDate,"");
+    getPickupRequestData(formattedDate,"");
   }
 
   saveBookings() async {
@@ -231,7 +224,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
             ),
           );
           if(isTrue){
-            searchCustomOperationsData(slotFilterDate,selectedTimes.join(','));
+            getPickupRequestData(slotFilterDate,selectedTimes.join(','));
           }
 
         }
@@ -263,7 +256,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                 ),
               ),
               const Text(
-                '  Pickup Services',
+                '  Pickups Services',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 24,
@@ -416,7 +409,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                         var formatter = DateFormat('dd-MM-yyyy');
                                                         String formattedDate = formatter.format(date);
                                                         slotFilterDate=formattedDate;
-                                                        searchCustomOperationsData(formattedDate,"${selectedTimes.join(',')}");
+                                                        getPickupRequestData(formattedDate,"${selectedTimes.join(',')}");
                                                       });
                                                     },
                                                   );
@@ -501,7 +494,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                       }
                                                     });
                                                     print("Selected Times: ${selectedTimes.join(', ')}");
-                                                    searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+                                                    getPickupRequestData(slotFilterDate,"${selectedTimes.join(',')}");
                                                   },
                                                   child: Container(
                                                     margin: EdgeInsets.all(4.0),
@@ -604,7 +597,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                   color: Colors.grey[700],
                                                 ),),
                                               ),
-                                              Text("$totalPcs",style: const TextStyle(
+                                              Text("$totalPcs",style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),),
@@ -621,7 +614,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                   color: Colors.grey[700],
                                                 ),),
                                               ),
-                                              Text(totalWeight.toStringAsFixed(2),style: const TextStyle(
+                                              Text("${totalWeight.toStringAsFixed(2)}",style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.bold,
                                               ),),
@@ -636,298 +629,6 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                 ),
                                 const SizedBox(
                                   height: 20,
-                                ),
-                                Container(
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    elevation: 3,
-                                    margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(12),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  const Row(
-                                                    children: [
-                                                      Text(
-                                                        "FIRMS CODE#1",
-                                                        style:
-                                                        TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                                                      ),
-                                                      SizedBox(width: 16),
-                                                      Row(
-                                                        children: [
-                                                          Text(
-                                                            "08:00 - 09:00",
-                                                            style: TextStyle(
-                                                                color: Colors.black, fontWeight: FontWeight.bold,fontSize: 16),
-                                                          ),
-                                                          SizedBox(width: 8),
-                                                          Icon(
-                                                            Icons.info_outline_rounded,
-                                                            color: MyColor.primaryColorblue,
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 10,),
-                                                  Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      SizedBox(
-                                                        width:MediaQuery.sizeOf(context).width*0.25,
-                                                        child: const Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  " Shipment Count: ",
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    color: MyColor.textColorGrey2,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  "1",
-                                                                  style: TextStyle(
-                                                                    color:MyColor.textColorGrey3,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  " Weight: ",
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    color: MyColor.textColorGrey2,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  "5000.00",
-                                                                  style: TextStyle(
-                                                                    color:MyColor.textColorGrey3,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width:MediaQuery.sizeOf(context).width*0.25,
-                                                        child: const Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  " Pieces: ",
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    color: MyColor.textColorGrey2,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  "50",
-                                                                  style: TextStyle(
-                                                                    color:MyColor.textColorGrey3,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                            Row(
-                                                              children: [
-                                                                Text(
-                                                                  " Unit: ",
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    color: MyColor.textColorGrey2,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  "Kg",
-                                                                  style: TextStyle(
-                                                                    color:MyColor.textColorGrey3,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: 8),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        width:MediaQuery.sizeOf(context).width*0.25,
-                                                        child: Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          mainAxisAlignment: MainAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.start,
-                                                              children: [
-                                                                Text(
-                                                                  " Assined To: ",
-                                                                  style: TextStyle(
-                                                                    fontSize: 16,
-                                                                    color: MyColor.textColorGrey2,
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  "John Doe",
-                                                                  style: TextStyle(
-                                                                    color:MyColor.textColorGrey3,
-                                                                    fontWeight: FontWeight.bold,
-                                                                    fontSize: 16,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: 8),
-
-                                                          ],
-                                                        ),
-                                                      ),
-
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-
-                                            ],
-                                          ),
-                                          isExpanded? SizedBox(height: 8):SizedBox(),
-                                          isExpanded?Container(
-                                            width: MediaQuery.sizeOf(context).width,
-                                            color: const Color(0xffE4E7EB),
-                                            padding: const EdgeInsets.all(2.0),
-                                            child: SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: DataTable(
-                                                columns:  [
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('MAWB No.'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('HAWB NO.'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Pieces'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Weight'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Commodity'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Agent'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('FIRMS Code'))))),
-                                                  DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text(''))))),
-
-                                                ],
-                                                rows: [
-                                                  DataRow(cells: [
-                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('175-12365478'))))),
-                                                    DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('H1'))))),
-                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('50'))))),
-                                                    DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('500.00'))))),
-                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('PERISHABLE'))))),
-                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('ABC'))))),
-                                                    DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('XYZ'))))),
-                                                    DataCell(Center(
-                                                              child: SizedBox(
-                                                                  width: MediaQuery.sizeOf(
-                                                                              context)
-                                                                          .width *
-                                                                      0.16,
-                                                                  child: Center(
-                                                                    child: GestureDetector(
-                                                                      child: Container(
-                                                                        height: 26,
-                                                                        margin: const EdgeInsets.only(right: 12),
-                                                                        decoration: BoxDecoration(
-                                                                          borderRadius: BorderRadius.circular(8),
-                                                                          gradient: const LinearGradient(
-                                                                            colors: [
-                                                                              Color(0xFF0057D8),
-                                                                              Color(0xFF1c86ff),
-                                                                            ],
-                                                                            begin: Alignment.centerLeft,
-                                                                            end: Alignment.centerRight,
-                                                                          ),
-                                                                        ),
-                                                                        child: ElevatedButton(
-                                                                          style: ElevatedButton.styleFrom(
-                                                                              backgroundColor: Colors.transparent,
-                                                                              shadowColor: Colors.transparent),
-                                                                          onPressed: null,
-                                                                          child: const Text(
-                                                                            'Pick Up',
-                                                                            style: TextStyle(color: Colors.white),
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      onTap: (){
-
-                                                                      },
-                                                                    ),
-                                                                  )))),
-                                                        ])
-                                                ],
-                                                headingRowColor:
-                                                MaterialStateProperty.resolveWith((states) => Color(0xffE4E7EB)),
-                                                dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
-                                                columnSpacing: MediaQuery.sizeOf(context).width*0.01,
-                                                dataRowHeight: 32.0,
-                                                headingRowHeight: 32.0,
-                                              ),
-
-                                            ),
-                                          ):SizedBox(),
-                                          const SizedBox(height: 8),
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    isExpanded=!isExpanded;
-                                                  });
-                                                },
-                                                child: Text(
-                                                  isExpanded ? ' SHOW LESS' : ' SHOW MORE',
-                                                  style: const TextStyle(
-                                                    color: MyColor.primaryColorblue,
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ),
-
-                                            ],
-                                          ),
-
-                                        ],
-                                      ),
-                                    ),
-                                  ),
                                 ),
                                 (!hasNoRecord)
                                     ? SingleChildScrollView(
@@ -944,21 +645,18 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                         const NeverScrollableScrollPhysics(),
                                         itemBuilder:
                                             (BuildContext, index) {
-                                          CustomExaminationNew
-                                          shipmentDetails =
-                                          appointBookingList
-                                              .elementAt(index);
+                                          final queueRowId =
+                                          queueRowIds[index];
+                                          final items =
+                                          filteredMap[queueRowId]!;
                                           return buildShipmentCardV3(
-                                              shipmentDetails,
-                                              isOnList[index],
+                                              queueRowId,
+                                              items,
                                               index,
-                                                  (value) => checkboxChanged(
-                                                  value, index),
-                                              piecesControllers[index],
-                                              remarksControllers[index]);
+                                            );
                                         },
                                         itemCount:
-                                        appointBookingList.length,
+                                        queueRowIds.length,
                                         shrinkWrap: true,
 
                                       ),
@@ -1069,273 +767,28 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
     );
   }
 
-  Widget buildShipmentCardV2(
-      CustomExaminationNew shipment,
-      bool? isOn,
-      int index,
-      ValueChanged<bool?> onCheckboxChanged,
-      TextEditingController piecesController,
-      TextEditingController remarksController,
-      ) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      elevation: 3,
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      shipment.col2,
-                      style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              " HAWB No: ",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              shipment.col3,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              " Pieces: ",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              shipment.col5,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              " Agent: ",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                            Text(
-                              shipment.col1,
-                              style: TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
-                            ),
-                          ],
-                        ),
-                        // Row(
-                        //   children: [
-                        //     const Text("Unit: "),
-                        //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                        //   ],
-                        // ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(width: 8),
-                buildLabel("AWB", Colors.deepPurpleAccent, 8,
-                    isBorder: true, borderColor: Colors.deepPurpleAccent),
-                // const SizedBox(width: 8),
-                // SizedBox(
-                //     width: MediaQuery.sizeOf(context).width*0.11,
-                //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
-                const SizedBox(width: 20),
-                buildLabel(shipment.col4, Colors.lightBlue, 20),
-                const SizedBox(width: 8),
-                Row(
-                  children: [
-                    Text(
-                      shipment.slot!,
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: MyColor.primaryColorblue,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 200,
-                      child: TextFormField(
-                        controller: piecesController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter RFE Pieces',
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 0, horizontal: 15),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.primaryColorblue,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            piecesControllers[index].text = value;
-                            shipment.col7 = value;
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: TextFormField(
-                        maxLines: 2,
-                        controller: remarksController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter Remarks',
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 15),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.primaryColorblue,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            remarksControllers[index].text = value;
-                            shipment.col8 = value;
-                          });
-                        },
-                      ),
-                    )
-                  ],
-                ),
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
-                    child: Theme(
-                      data: ThemeData(useMaterial3: false),
-                      child: Transform.scale(
-                        scale: 2.5,
-                        child: Checkbox(
-                          isError: true,
-                          tristate: true,
-                          activeColor: isOn == null
-                              ? Colors.red
-                              : isOn!
-                              ? Colors.green
-                              : MyColor.primaryColorblue,
-                          value: isOn,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              onCheckboxChanged(value);
-                            });
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2),
-                            side: BorderSide(
-                              color: isOn == null
-                                  ? Colors.red
-                                  : isOn!
-                                  ? Colors.green
-                                  : MyColor.primaryColorblue,
-                              // border color based on state
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-          ],
-        ),
-      ),
+  DataRow buildSeparationRow() {
+    return DataRow(
+      cells: [
+        DataCell(Container(
+          height: 1,
+          color: Colors.grey[300],  // Light grey line
+        )),
+        DataCell(Container(
+          height: 1,
+          color: Colors.grey[300],  // Light grey line
+        )),
+      ],
     );
   }
+
 
   Widget buildShipmentCardV3(
-      CustomExaminationNew shipment,
-      bool? isOn,
+      int queueRowId,
+      List<SchedulePickUpData> items,
       int index,
-      ValueChanged<bool?> onCheckboxChanged,
-      TextEditingController piecesController,
-      TextEditingController remarksController,
       ) {
+    bool isExpanded=isExpandedList[index];
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -1354,260 +807,304 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      shipment.col2,
-                      style:
-                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
+                    Row(
                       children: [
+                        SizedBox(
+                          width: MediaQuery.sizeOf(context).width*0.15,
+                          child: Text(
+                            items.first.col1,
+                            style:
+                            TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Text(
-                              " HAWB No: ",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
                             Text(
-                              shipment.col3,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                              ),
+                              "${items.first.slot}",
+                              style: TextStyle(
+                                  color: Colors.black, fontWeight: FontWeight.bold,fontSize: 16),
+                            ),
+                            SizedBox(width: 8),
+                            const Icon(
+                              Icons.info_outline_rounded,
+                              color: MyColor.primaryColorblue,
                             ),
                           ],
                         ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            const Text(
-                              " Pieces: ",
-                              style: TextStyle(
-                                fontSize: 16,
+                      ],
+                    ),
+                    SizedBox(height: 10,),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width:MediaQuery.sizeOf(context).width*0.25,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    " Shipment Count: ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: MyColor.textColorGrey2,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${items.first.col6}",
+                                    style: TextStyle(
+                                      color:MyColor.textColorGrey3,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              shipment.col5,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Text(
+                                    " Weight: ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: MyColor.textColorGrey2,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${items.first.col8}",
+                                    style: TextStyle(
+                                      color:MyColor.textColorGrey3,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 8),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 8),
-                        Row(
-                          children: [
-                            const Text(
-                              " Agent: ",
-                              style: TextStyle(
-                                fontSize: 16,
+                        SizedBox(
+                          width:MediaQuery.sizeOf(context).width*0.25,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    " Pieces: ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: MyColor.textColorGrey2,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${items.first.col7}",
+                                    style: TextStyle(
+                                      color:MyColor.textColorGrey3,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            Text(
-                              shipment.col1,
-                              style: const TextStyle(
-                                color: Colors.black,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
+                              SizedBox(height: 8),
+                              const Row(
+                                children: [
+                                  Text(
+                                    " Unit: ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: MyColor.textColorGrey2,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Kg",
+                                    style: TextStyle(
+                                      color:MyColor.textColorGrey3,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                          ],
+                              SizedBox(height: 8),
+                            ],
+                          ),
                         ),
-                        // Row(
-                        //   children: [
-                        //     const Text("Unit: "),
-                        //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
-                        //   ],
-                        // ),
+                        SizedBox(
+                          width:MediaQuery.sizeOf(context).width*0.25,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    " Assined To: ",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: MyColor.textColorGrey2,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${items.first.col9}",
+                                    style: TextStyle(
+                                      color:MyColor.textColorGrey3,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8),
+
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ],
                 ),
-                const SizedBox(width: 8),
-                buildLabel("AWB", Colors.deepPurpleAccent, 8,
-                    isBorder: true, borderColor: Colors.deepPurpleAccent),
-                // const SizedBox(width: 8),
-                // SizedBox(
-                //     width: MediaQuery.sizeOf(context).width*0.11,
-                //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
-                const SizedBox(width: 20),
-                buildLabel(shipment.col4, Colors.lightBlue, 20),
-                const SizedBox(width: 8),
-                Row(
-                  children: [
-                    Text(
-                      shipment.slot!,
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
-                    ),
-                    SizedBox(width: 8),
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: MyColor.primaryColorblue,
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  width: 8,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: 200,
-                      child: TextFormField(
-                        controller: piecesController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter RFE Pieces',
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 0, horizontal: 15),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.primaryColorblue,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            piecesControllers[index].text = value;
-                            shipment.col7 = value;
-                          });
-                        },
-                      ),
-                    ),
-                    SizedBox(
-                      height: 8,
-                    ),
-                    SizedBox(
-                      width: 200,
-                      child: TextFormField(
-                        maxLines: 2,
-                        controller: remarksController,
-                        decoration: InputDecoration(
-                          hintText: 'Enter Remarks',
-                          contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12, horizontal: 15),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.borderColor,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: MyColor.primaryColorblue,
-                            ),
-                          ),
-                        ),
-                        onChanged: (value) {
-                          setState(() {
-                            remarksControllers[index].text = value;
-                            shipment.col8 = value;
-                          });
-                        },
-                      ),
-                    )
-                  ],
-                ),
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.only(top: 40, left: 18),
-                    child: Theme(
-                      data: ThemeData(useMaterial3: false),
-                      child: Transform.scale(
-                        scale: 2.5,
-                        child: Checkbox(
-                          // isError: true,
-                          tristate: true,
-                          activeColor: isOn == null
-                              ? Colors.red
-                              : isOn!
-                              ? Colors.green
-                              : MyColor.primaryColorblue,
-                          value: isOn,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              onCheckboxChanged(value);
-                            });
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(2),
-                            side: BorderSide(
-                              color: isOn == null
-                                  ? Colors.red
-                                  : isOn!
-                                  ? Colors.green
-                                  : MyColor.primaryColorblue,
 
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                      ),
+              ],
+            ),
+            isExpanded? SizedBox(height: 8):SizedBox(),
+            isExpanded?Container(
+              width: MediaQuery.sizeOf(context).width,
+              color: const Color(0xffE4E7EB),
+              padding: const EdgeInsets.all(2.0),
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Theme(
+                  data: Theme.of(context).copyWith(
+                      dividerColor: Colors.green
+                  ),
+                  child: DataTable(
+                    columns:  [
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('MAWB No.'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('HAWB NO.'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Pieces'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Weight'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Commodity'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('Agent'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('FIRMS Code'))))),
+                      DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text(''))))),
+
+                    ],
+                    rows:items
+                        .where((item) => item.elementRowId != -1)
+                        .map((item) => buildDataRow(item))
+                        .toList(),
+
+                    headingRowColor:
+                    MaterialStateProperty.resolveWith((states) => Color(0xffE4E7EB)),
+                    dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
+                    columnSpacing: MediaQuery.sizeOf(context).width*0.01,
+                    dataRowHeight: 32.0,
+                    headingRowHeight: 32.0,
+                    dividerThickness: 2.0,
+                  ),
+                ),
+
+              ),
+            ):SizedBox(),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isExpandedList[index]=!isExpandedList[index];
+                    });
+                  },
+                  child: Text(
+                    isExpanded ? ' SHOW LESS' : ' SHOW MORE',
+                    style: const TextStyle(
+                      color: MyColor.primaryColorblue,
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
+
               ],
             ),
-            const SizedBox(height: 4),
+
           ],
         ),
       ),
     );
   }
 
-  void checkboxChanged(bool? value, int index) {
-    setState(() {
-      isOnList[index] = value;
-      if (value !=false) {
-        // saveList.removeWhere(
-        //         (element) => element["item"] == appointBookingList[index]);
-        saveList.add({"item": appointBookingList[index], "value": value});
-      } else {
-        saveList.removeWhere(
-                (element) => element["item"] == appointBookingList[index]);
-      }
-    });
+  DataRow buildDataRow(SchedulePickUpData subData){
+    return DataRow(cells: [
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col3}'))))),
+      DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col4}'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col6}'))))),
+      DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col7}'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col5}'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col2}'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col1}'))))),
+      DataCell(Center(
+          child: SizedBox(
+              width: MediaQuery.sizeOf(
+                  context)
+                  .width *
+                  0.16,
+              child: Center(
+                child: GestureDetector(
+                  child: Container(
+                    height: 26,
+                    margin: const EdgeInsets.only(right: 12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF0057D8),
+                          Color(0xFF1c86ff),
+                        ],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                    ),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent),
+                      onPressed: null,
+                      child: const Text(
+                        'Pick Up',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  onTap: (){
+                    Navigator.pushReplacement(context,
+                        MaterialPageRoute(builder: (context) => const PickUps()));
+                  },
+                ),
+              )))),
+
+    ]);
   }
 
-  List<CustomExaminationNew> mergeLists(List<CustomExamination> listA, List<CustomExamination> listB) {
-    Map<int, CustomExamination> mapB = {
+
+  List<SchedulePickUpData> mergeLists(List<SchedulePickUpMasterData> listA, List<SchedulePickUpMasterData> listB) {
+    Map<int, SchedulePickUpMasterData> mapB = {
       for (var item in listB) item.queueRowId: item,
     };
-    List<CustomExaminationNew> result = listA.map((itemA) {
-      CustomExamination? matchingItemB = mapB[itemA.queueRowId];
-      return CustomExaminationNew(
+    List<SchedulePickUpData> result = listA.map((itemA) {
+      SchedulePickUpMasterData? matchingItemB = mapB[itemA.queueRowId];
+      return SchedulePickUpData(
         rowId: itemA.rowId,
         messageRowId: itemA.messageRowId,
         queueRowId: itemA.queueRowId,
@@ -1621,6 +1118,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
         col6: itemA.col6,
         col7: itemA.col7,
         col8: itemA.col8,
+        col9: itemA.col9,
         slot: "${matchingItemB?.col3}-${matchingItemB?.col4}",
       );
     }).toList();
@@ -1640,24 +1138,24 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
     builder.element('Root', nest: () {
       builder.element('Appointment', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExaminationNew;
+          final pickUpData = item['item'] as SchedulePickUpData;
           builder.element('Appointment', nest: () {
-            builder.element('MessageRowID', nest: customExamination.messageRowId);
-            builder.element('QueueRowID', nest: customExamination.queueRowId);
-            builder.element('ElementRowID', nest: customExamination.elementRowId);
-            builder.element('ElementGUID', nest: customExamination.elementGuid);
-            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"":"R")); // Placeholder for Status
-            builder.element('RFEPieces', nest: customExamination.col7); // Assuming col5 holds RFEPieces
-            builder.element('Remarks', nest: customExamination.col8); // Assuming col6 holds Remarks
+            builder.element('MessageRowID', nest: pickUpData.messageRowId);
+            builder.element('QueueRowID', nest: pickUpData.queueRowId);
+            builder.element('ElementRowID', nest: pickUpData.elementRowId);
+            builder.element('ElementGUID', nest: pickUpData.elementGuid);
+            builder.element('Status', nest: (item['value']!=null?item['value']?"A":"":"R"));
+            builder.element('RFEPieces', nest: pickUpData.col7);
+            builder.element('Remarks', nest: pickUpData.col8);
           });
         }
       });
 
       builder.element('ForwardExamination', nest: () {
         for (var item in saveList) {
-          final customExamination = item['item'] as CustomExaminationNew;
+          final pickUpData = item['item'] as SchedulePickUpData;
           builder.element('ForwardExamination', nest: () {
-            builder.element('ExaminationRowId', nest: customExamination.rowId);
+            builder.element('ExaminationRowId', nest: pickUpData.rowId);
           });
         }
       });
@@ -1747,148 +1245,6 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
       ),
     );
   }
-
-
-
-
-// DataColumn _buildDataColumn(String label) {
-//   return DataColumn(
-//     label: Stack(
-//       alignment: Alignment.centerRight,
-//       children: [
-//         Center(child: Text(label)),
-//         Positioned(
-//           right: 0,
-//           child: Container(
-//             height: double.infinity,
-//             width: 1,
-//             color: Colors.black,
-//           ),
-//         ),
-//       ],
-//     ),
-//   );
-// }
-
 }
 
-
-
-// class DatePickerCustom extends StatefulWidget {
-//   const DatePickerCustom({Key? key}) : super(key: key);
-//
-//   @override
-//   State<DatePickerCustom> createState() => _DatePickerCustomState();
-// }
-//
-// class _DatePickerCustomState extends State<DatePickerCustom> {
-//   int selectedIndex = 0;
-//   DateTime now = DateTime.now();
-//   late DateTime lastDayOfMonth;
-//   late DateTime firstDayOfMonth;
-//
-//   @override
-//   void initState() {
-//     super.initState();
-//     // Get the first and last days of the current month
-//     firstDayOfMonth = DateTime(now.year, now.month, 1);
-//     lastDayOfMonth = DateTime(now.year, now.month + 1, 0); // Last day of current month
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.white,
-//       appBar: AppBar(
-//         backgroundColor: Colors.white,
-//         toolbarHeight: 148.0,
-//         title: Column(
-//           children: [
-//             Row(
-//               children: const [
-//                 Icon(
-//                   Icons.arrow_back_ios,
-//                   color: Colors.orange,
-//                 ),
-//                 Expanded(
-//                     child: Text("Workout",
-//                         textAlign: TextAlign.center,
-//                         style: TextStyle(
-//                           color: Colors.black,
-//                         ))),
-//               ],
-//             ),
-//             const SizedBox(height: 16.0),
-//             // Wrap the Row with SingleChildScrollView for horizontal scrolling
-//             SingleChildScrollView(
-//               scrollDirection: Axis.horizontal,
-//               child: Row(
-//                 children: List.generate(
-//                   lastDayOfMonth.day,
-//                       (index) {
-//                     final currentDate =
-//                     firstDayOfMonth.add(Duration(days: index));
-//                     final dayName = DateFormat('E').format(currentDate);
-//                     return Padding(
-//                       padding: EdgeInsets.only(
-//                           left: index == 0 ? 16.0 : 0.0, right: 16.0),
-//                       child: GestureDetector(
-//                         onTap: () => setState(() {
-//                           selectedIndex = index;
-//                         }),
-//                         child: Column(
-//                           mainAxisAlignment: MainAxisAlignment.center,
-//                           children: [
-//                             Container(
-//                               height: 42.0,
-//                               width: 42.0,
-//                               alignment: Alignment.center,
-//                               decoration: BoxDecoration(
-//                                 color: selectedIndex == index
-//                                     ? Colors.orange
-//                                     : Colors.transparent,
-//                                 borderRadius: BorderRadius.circular(44.0),
-//                               ),
-//                               child: Text(
-//                                 dayName.substring(0, 1),
-//                                 style: TextStyle(
-//                                   fontSize: 24.0,
-//                                   color: selectedIndex == index
-//                                       ? Colors.white
-//                                       : Colors.black54,
-//                                   fontWeight: FontWeight.bold,
-//                                 ),
-//                               ),
-//                             ),
-//                             const SizedBox(height: 8.0),
-//                             Text(
-//                               "${index + 1}",
-//                               style: const TextStyle(
-//                                 fontSize: 16.0,
-//                                 color: Colors.black54,
-//                                 fontWeight: FontWeight.bold,
-//                               ),
-//                             ),
-//                             const SizedBox(height: 8.0),
-//                             Container(
-//                               height: 2.0,
-//                               width: 28.0,
-//                               color: selectedIndex == index
-//                                   ? Colors.orange
-//                                   : Colors.transparent,
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     );
-//                   },
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
 
