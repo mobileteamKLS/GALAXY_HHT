@@ -31,6 +31,25 @@ class EmptyULDTrolleyCubit extends Cubit<EmptyULDTrolleyState>{
     }
   }
 
+  Future<void> searchULDTrolley(String uldType, String scan, int userId, int companyCode, int menuId) async {
+    emit(EmptyULDTrolleyLoadingState());
+    try {
+      final searchULDTrolleyModelData = await emptyULDTrolleyRepository.searchULDTrolleyModel(uldType, scan, userId, companyCode, menuId);
+      emit(SearchULDTrolleySuccessState(searchULDTrolleyModelData));
+    } catch (e) {
+      emit(SearchULDTrolleyFailureState(e.toString()));
+    }
+  }
+
+  Future<void> createULDTrolley(String uldNo, String uldType, String uldOwner, String locationCode, String groupID, int userId, int companyCode, int menuId) async {
+    emit(EmptyULDTrolleyLoadingState());
+    try {
+      final createULDTrolleyModelData = await emptyULDTrolleyRepository.createULDTrolleyModel(uldNo, uldType, uldOwner, locationCode, groupID, userId, companyCode, menuId);
+      emit(CreateULDTrolleySuccessState(createULDTrolleyModelData));
+    } catch (e) {
+      emit(CreateULDTrolleyFailureState(e.toString()));
+    }
+  }
 
   void resetState() {
     emit(EmptyULDTrolleyInitialState());

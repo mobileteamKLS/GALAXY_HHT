@@ -4492,7 +4492,7 @@ class DialogUtils {
                                                   weightCount = double.parse(((enteredNop * totalWt) / totalNop).toStringAsFixed(2));
                                                   weightController.text = weightCount.toStringAsFixed(2);
                                                   differenceWeight = totalWt - weightCount;
-                                                 errorText = "Exceeds total NOP";
+                                                  errorText = "${lableModel.exceedstotalnop}";
                                                 });
                                               } else {
                                                 // Update the differences and weight
@@ -4564,7 +4564,7 @@ class DialogUtils {
                                               // Exceeds total weight, show an error
                                               Vibration.vibrate(duration: 500);
                                               setState(() {
-                                                errorText = "Exceeds total Weight";
+                                                errorText = "${lableModel.exceedstotalWeight}";
                                                 differenceWeight = totalWt - enteredWeight;
                                               });
                                             } else {
@@ -4573,7 +4573,7 @@ class DialogUtils {
                                                 differenceWeight = totalWt - enteredWeight;
                                                 if (differenceNop != 0 && differenceWeight == 0) {
                                                   Vibration.vibrate(duration: 500);
-                                                  errorText = "Remaining pieces available, weight cannot be 0.";
+                                                  errorText = "${lableModel.remainingpcsavailable}";
                                                 } else {
                                                   errorText = "";
                                                 }
@@ -4615,7 +4615,7 @@ class DialogUtils {
                                   Expanded(
                                     flex: 1,
                                     child: CustomeText(
-                                      text: "Rem. NOP : $differenceNop",
+                                      text: "${lableModel.remainingNop} : $differenceNop",
                                       fontColor: MyColor.colorRed,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                       fontWeight: FontWeight.w500,
@@ -4626,7 +4626,7 @@ class DialogUtils {
                                   Expanded(
                                     flex: 1,
                                     child: CustomeText(
-                                      text: "Rem. Weight : ${differenceWeight.toStringAsFixed(2)}",
+                                      text: "${lableModel.remainingWeight} : ${differenceWeight.toStringAsFixed(2)}",
                                       fontColor: MyColor.colorRed,
                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                       fontWeight: FontWeight.w500,
@@ -4749,7 +4749,7 @@ class DialogUtils {
                                     flex: 1,
                                     child: RoundedButtonGreen(
                                       color: MyColor.colorRed,
-                                      text: "Remove",
+                                      text: "${lableModel.remove}",
                                       press: () {
                                         if (nopController.text.isEmpty) {
 
@@ -4807,7 +4807,7 @@ class DialogUtils {
                                           });
                                           Vibration.vibrate(duration: 500);
                                           setState(() {
-                                            errorText = "Exceeds total NOP";
+                                            errorText = "${lableModel.exceedstotalnop}";
                                           });
                                           return;
                                         }
@@ -4819,7 +4819,7 @@ class DialogUtils {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
                                           setState(() {
-                                            errorText = "Exceeds total Weight";
+                                            errorText = "${lableModel.exceedstotalWeight}";
                                           });
                                           return;
                                         }
@@ -4830,7 +4830,7 @@ class DialogUtils {
                                             FocusScope.of(context).requestFocus(weightFocusNode);
                                           });
                                           setState(() {
-                                            errorText = "Remaining pieces available, weight cannot be 0.";
+                                            errorText = "${lableModel.remainingpcsavailable}";
                                           });
 
                                           return;

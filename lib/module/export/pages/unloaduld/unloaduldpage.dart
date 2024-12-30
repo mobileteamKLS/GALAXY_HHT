@@ -416,7 +416,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                             builder: (context) => UnloadULDShipmentPage(
                                               importSubMenuList: widget.importSubMenuList,
                                               exportSubMenuList: widget.exportSubMenuList,
-                                              title: "AWB List",
+                                              title: "${lableModel.awbListing}",
                                               menuId: widget.menuId,
                                               mainMenuName: widget.mainMenuName,
                                               refrelCode: widget.refrelCode,
@@ -604,7 +604,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                         builder: (context) => UnloadULDShipmentPage(
                                                                           importSubMenuList: widget.importSubMenuList,
                                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                                          title: "AWB List",
+                                                                          title: "${lableModel.awbListing}",
                                                                           menuId: widget.menuId,
                                                                           mainMenuName: widget.mainMenuName,
                                                                           refrelCode: widget.refrelCode,
@@ -692,7 +692,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                         Row(
                                                                             children: [
                                                                               CustomeText(
-                                                                                text: "Flight No : ",
+                                                                                text: "${lableModel.flightNo} : ",
                                                                                 fontColor: MyColor.textColorGrey2,
                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                                 fontWeight: FontWeight.w400,
@@ -759,7 +759,7 @@ class _UnloadULDPageState extends State<UnloadULDPage> with SingleTickerProvider
                                                                                             builder: (context) => UnloadULDShipmentPage(
                                                                                               importSubMenuList: widget.importSubMenuList,
                                                                                               exportSubMenuList: widget.exportSubMenuList,
-                                                                                              title: "AWB List",
+                                                                                              title: "${lableModel.awbListing}",
                                                                                               menuId: widget.menuId,
                                                                                               mainMenuName: widget.mainMenuName,
                                                                                               refrelCode: widget.refrelCode,

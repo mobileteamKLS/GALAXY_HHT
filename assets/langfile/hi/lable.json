@@ -545,6 +545,28 @@
     "doyouremovefromlistuld" : "क्या आप इस {0} को सूची से हटाना चाहते हैं?",
     "doyoucancelrequestuld" : "क्या आप इस {0} के लिए अनुरोध रद्द करना चाहते हैं?",
 
+    "removeShipment" : "शिपमेंट हटाएँ",
+    "removeforthisawbmsg" : "इस एडब्लूबी को हटाएँ",
+    "RemainingNop" : "शेष एनओपी",
+    "RemainingWeight" : "शेष वज़न",
+
+    "exceedstotalnop"  : "कुल एनओपी से अधिक",
+    "exceedstotalWeight"  : "कुल वज़न से अधिक",
+    "remainingpcsavailable" : "शेष टुकड़े उपलब्ध हैं, वजन 0 नहीं हो सकता।",
+
+    "removeFlight" : "उड़ान हटाएँ",
+    "removeFlightMsg" : "क्या आप वाकई उड़ान से स्रोत यूएलडी/ट्रॉली को हटाना चाहते हैं?",
+
+    "scanLocation" : "स्कैन स्थान",
+    "scanuld" : "यूएलडी स्कैन करें",
+    "scantrolley" : "स्कैन ट्रॉली",
+    "currentuldowner" : "वर्तमान यूएलडी मालिक",
+    "create" : "बनाएँ",
+    "scanuldmsg" : "कृपया स्कैन यूएलडी दर्ज करें.",
+    "scantrolleymsg" : "कृपया स्कैन ट्रॉली दर्ज करें.",
+    "currentuldownermsg" : "कृपया वर्तमान यूएलडी मालिक दर्ज करें.",
+
+
     "2539" : "बैंड ढीला",
     "654" : "टूटा हुआ",
     "655" : "कुचला हुआ",

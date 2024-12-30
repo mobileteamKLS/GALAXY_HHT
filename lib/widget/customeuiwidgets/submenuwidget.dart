@@ -66,13 +66,16 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
                 width: SizeConfig.blockSizeHorizontal * 10,
                 galaxylogo,
               ),
-              CustomeText(
-                maxLine: 2,
-                  text: widget.title,
-                  fontColor: MyColor.textColorGrey3,
-                  fontSize: screenHeight * 0.016,
-                  fontWeight: FontWeight.w500,
-                  textAlign: TextAlign.center)
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: CustomeText(
+                  maxLine: 2,
+                    text: widget.title,
+                    fontColor: MyColor.textColorGrey3,
+                    fontSize: screenHeight * 0.016,
+                    fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.center),
+              )
             ],
           ),
         ),

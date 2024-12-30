@@ -29,6 +29,7 @@ import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
 import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
+import '../../export/pages/closeuld/closeuldpage.dart';
 import '../../export/pages/emptyuldtrolley/emptyuldtrolleypage.dart';
 import '../../export/pages/palletstatck/palletstackpage.dart';
 import '../../export/pages/retriveuld/retriveuldpage.dart';
@@ -250,7 +251,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                  //  state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1281", menuName: "Shipment Damage", sNo: 3325, imageIcon: "damage", refMenuCode: "§§HHT007§§", IsEnable: "Y"));
+                                    state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1292", menuName: "Close ULD", sNo: 3325, imageIcon: "unload", refMenuCode: "§§HHT017§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
@@ -269,7 +270,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
 
                                         String subMenuTitle = (localizations.locale.languageCode == "en") ? subMenuName.menuName! : "${subMenuModelLang.getValueFromKey(CommonUtils.removeExtraIcons(subMenuName.refMenuCode!))}";
 
-                                        return SubMenuWidget(title: subMenuTitle,
+                                        return SubMenuWidget(title: (subMenuTitle != "null") ? subMenuTitle : subMenuName.menuName!,
                                           imageUrl: (subMenuName.imageIcon!.isNotEmpty) ? CommonUtils.getSVGImagePath(subMenuName.imageIcon!) : "",
                                           bgColor: MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
                                           onClick: () {
@@ -382,6 +383,16 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                             }
                                             else if(refrelCode == SubMenuCodeUtils.EMPTYULDTROLLEY){
                                               NextScreen(EmptyULDTrolleyPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }
+                                            else if(refrelCode == SubMenuCodeUtils.CLOSEULD){
+                                              NextScreen(CloseULDPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

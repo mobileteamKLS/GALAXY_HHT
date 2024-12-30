@@ -4,7 +4,9 @@ import '../../../../api/apilist.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../import/model/uldacceptance/locationvalidationmodel.dart';
+import '../../model/emptyuldtrolley/createuldtrolleymodel.dart';
 import '../../model/emptyuldtrolley/emptyuldtrolpageloadmodel.dart';
+import '../../model/emptyuldtrolley/searchuldtrolleymodel.dart';
 import '../../model/unloaduld/unloadpageloadmodel.dart';
 import '../../model/unloaduld/unloadremoveawbmodel.dart';
 import '../../model/unloaduld/unloaduldawblistmodel.dart';
@@ -82,6 +84,93 @@ class EmptyULDTrolleyRepository{
       if (response.statusCode == 200) {
         LocationValidationModel locationValidationModel = LocationValidationModel.fromJson(response.data);
         return locationValidationModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<SearchULDTrolleyModel> searchULDTrolleyModel(String uldType, String scan, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "Scan" : scan,
+        "ULDType" : uldType,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('searchULDTrolleyModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.searchULDTrollPageLoadApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        SearchULDTrolleyModel searchULDTrolleyModel = SearchULDTrolleyModel.fromJson(response.data);
+        return searchULDTrolleyModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<CreateULDTrolleyModel> createULDTrolleyModel(String uldNo, String uldType, String uldOwner, String locationCode, String groupID, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDNo" : uldNo,
+        "ULDType" : uldType,
+        "CurrentULDOwner" : uldOwner,
+        "LocationCode" : locationCode,
+        "GroupId" : groupID,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('searchULDTrolleyModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.createULDTrolleyApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        CreateULDTrolleyModel createULDTrolleyModel = CreateULDTrolleyModel.fromJson(response.data);
+        return createULDTrolleyModel;
       } else {
         // Handle non-200 response
         throw DioException(

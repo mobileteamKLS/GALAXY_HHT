@@ -551,6 +551,27 @@
     "sourceuldandtargetuldnotsame" : "لا يمكن أن يكون مصدر يو إل دي وهدف يو إل دي هو نفسه.",
     "bothsourceuldandtargetuldmsg" : "يجب البحث عن كل من يو إل دي المصدر يو إل دي المستهدف.",
 
+    "removeShipment" : "إزالة الشحنة",
+    "removeforthisawbmsg" : "إزالة هذا أدبليوب",
+    "RemainingNop" : "المتبقي NOP",
+    "RemainingWeight" : "الوزن المتبقي",
+
+    "exceedstotalnop"  : "يتجاوز إجمالي صافي الربح",
+    "exceedstotalWeight"  : "يتجاوز الوزن الإجمالي",
+    "remainingpcsavailable" : "القطع المتبقية المتاحة، الوزن لا يمكن أن يكون 0.",
+
+    "removeFlight" : "إزالة الطيران",
+    "removeFlightMsg" : "هل أنت متأكد من أنك تريد إزالة مصدر يو إل دي/ترولي من الرحلة؟",
+
+    "scanLocation" : "موقع المسح الضوئي",
+    "scanuld" : "مسح يو إل دي",
+    "scantrolley" : "عربة المسح الضوئي",
+    "currentuldowner" : "مالك يو إل دي الحالي",
+    "create" : "خلق",
+    "scanuldmsg" : "الرجاء إدخال مسح يو إل دي.",
+    "scantrolleymsg" : "الرجاء إدخال عربة المسح.",
+    "currentuldownermsg" : "الرجاء إدخال مالك يو إل دي الحالي.",
+
 
     "2539" : "العصابات فضفاضة",
     "654" : "مكسورة",

@@ -437,7 +437,7 @@ class _UldtouldpageState extends State<Uldtouldpage> with SingleTickerProviderSt
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.moveULDModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-                                    bool? removeFlight = await DialogUtils.removeFlightFromULDDialog(context, "Remove Flight", "Are you sure want to remove source ULD/Trolley from flight ?" , lableModel);
+                                    bool? removeFlight = await DialogUtils.removeFlightFromULDDialog(context, "${lableModel.removeFlight}", "${lableModel.removeFlightMsg}" , lableModel);
 
                                     if(removeFlight == true){
                                       //call api remove flight

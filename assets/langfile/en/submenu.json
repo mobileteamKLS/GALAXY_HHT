@@ -12,6 +12,8 @@
     "HHT009" : "Pallet Stack",
     "HHT013" : "Retrieve ULD",
     "HHT014" : "ULD To ULD",
+    "HHT015" : "Unload",
+    "HHT016" : "Empty ULD / Trolley",
 
 
     "HHT011" : "Flight Check-In",

@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/export/pages/closeuld/closeuldequipmentpage.dart';
 import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
 import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleystate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
@@ -37,7 +38,7 @@ import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 
-class EmptyULDTrolleyPage extends StatefulWidget {
+class CloseULDPage extends StatefulWidget {
   String mainMenuName;
   String title;
   String refrelCode;
@@ -46,7 +47,7 @@ class EmptyULDTrolleyPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
 
-  EmptyULDTrolleyPage(
+  CloseULDPage(
       {super.key,
       required this.importSubMenuList,
       required this.exportSubMenuList,
@@ -57,10 +58,10 @@ class EmptyULDTrolleyPage extends StatefulWidget {
       required this.mainMenuName});
 
   @override
-  State<EmptyULDTrolleyPage> createState() => _EmptyULDTrolleyPageState();
+  State<CloseULDPage> createState() => _CloseULDPageState();
 }
 
-class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTickerProviderStateMixin{
+class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderStateMixin{
 
 
   String selectedSourceType = "U";
@@ -649,35 +650,44 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
                                                 textDirection: textDirection,
                                                 child: Row(
                                                   children: [
-                                                    // add location in text
                                                     Expanded(
-                                                      flex: 1,
-                                                      child: CustomeEditTextWithBorder(
-                                                        lablekey: "LOCATION",
+                                                      flex:1,
+                                                      child: CustomTextField(
                                                         textDirection: textDirection,
-                                                        controller: locationController,
-                                                        focusNode: locationFocusNode,
+                                                        controller: scanULDController,
+                                                        focusNode: scanULDFocusNode,
+                                                        onPress: () {},
                                                         hasIcon: false,
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "${lableModel.scanLocation} *",
+                                                        labelText: "${lableModel.scanuld} *",
                                                         readOnly: false,
-                                                        maxLength: 15,
-                                                        isShowSuffixIcon: _isvalidateLocation,
-                                                        onChanged: (value, validate) {
-
-                                                          setState(() {
-                                                            _isvalidateLocation = false;
-                                                          });
-                                                          if (value.toString().isEmpty) {
-                                                            _isvalidateLocation = false;
+                                                        maxLength: 11,
+                                                        onChanged: (value) {
+                                                          if(selectedSourceType == "U"){
+                                                            String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+                                                            if(uldNumber == "Valid"){
+                                                              setState(() {
+                                                                String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
+                                                                List<String> parts = uldNumbes.split(' ');
+                                                                currentULDOwnerController.text = parts[2];
+                                                              });
+                                                            }else{
+                                                              setState(() {
+                                                                currentULDOwnerController.clear();
+                                                              });
+                                                            }
+                                                          }else{
+                                                            setState(() {
+                                                              currentULDOwnerController.clear();
+                                                            });
                                                           }
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
                                                         inputAction: TextInputAction.next,
-                                                        hintTextcolor: MyColor.colorBlack,
+                                                        hintTextcolor: Colors.black45,
                                                         verticalPadding: 0,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                         circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
@@ -696,221 +706,339 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
                                                     ),
                                                     // click search button to validate location
                                                     InkWell(
-                                                      focusNode: locationBtnFocusNode,
+                                                      focusNode: scanULDBtnFocusNode,
                                                       onTap: () {
-                                                        scanLocationQR();
-
+                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                          FocusScope.of(context).requestFocus(scanULDBtnFocusNode);
+                                                        });
+                                                        scanULDScanQR();
                                                       },
                                                       child: Padding(padding: const EdgeInsets.all(8.0),
                                                         child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
                                                       ),
+
                                                     )
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Column(
+                                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Row(children: List.generate(_tabs.length, (index) {
-                                                    return InkWell(
-                                                      onTap: () {
-                                                        if (index == 0) {
-                                                          setState(() {
-                                                            selectedSourceType = "U";
-                                                            _pageIndex = index;
-                                                            trollyTypeController.clear();
-                                                            trollyNumberController.clear();
-                                                            scanTrolleyController.clear();
-                                                            groupIdController.clear();
-                                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                              if(_isvalidateLocation == true){
-                                                                FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                              }else{
-                                                                FocusScope.of(context).requestFocus(locationFocusNode);
-                                                              }
-
-                                                            },
-                                                            );
-                                                          });
-                                                        }
-                                                        else if (index == 1) {
-                                                          setState(() {
-                                                            selectedSourceType = "T";
-                                                            _pageIndex = index;
-                                                            scanULDController.clear();
-                                                            currentULDOwnerController.clear();
-                                                            groupIdController.clear();
-                                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-
-                                                              if(_isvalidateLocation == true){
-                                                                FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-                                                              }else{
-                                                                FocusScope.of(context).requestFocus(locationFocusNode);
-                                                              }
-                                                              },
-                                                            );
-                                                          });
-                                                        }
-                                                      },
-                                                      child: Container(
-                                                        padding: const EdgeInsets.only(bottom: 8),
-                                                        margin: const EdgeInsets.only(right: 20),
-                                                        decoration: BoxDecoration(
-                                                          border: Border(
-
-                                                            bottom: BorderSide(
-                                                              color: _pageIndex == index
-                                                                  ? MyColor.bottomBorderColor
-                                                                  : Colors.transparent,
-                                                              width: 3.0,
-                                                            ),
-                                                          ),
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(text: "AKE 23232 BA", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                    ],
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "${lableModel.status} : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w400,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      Container(
+                                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
+                                                        decoration : BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(20),
+                                                            color: MyColor.flightFinalize
                                                         ),
-                                                        child: Text(
-                                                            _tabs[index],
-                                                            style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                              fontWeight: _pageIndex == index
-                                                                  ? FontWeight.w600
-                                                                  : FontWeight.w600,
-                                                              color: _pageIndex == index
-                                                                  ? MyColor.colorBlack
-                                                                  :  MyColor.textColorGrey,
-                                                            ),)
+                                                        child: CustomeText(
+                                                          text: "Open",
+                                                          fontColor: MyColor.textColorGrey3,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                          fontWeight: FontWeight.bold,
+                                                          textAlign: TextAlign.center,
                                                         ),
                                                       ),
-                                                    );
-                                                  }),),
-                                                  SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                  isViewEnable(lableModel, _pageIndex, textDirection, localizations),
+                                                    ],
+                                                  ),
+
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Tare Weight : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "120 Kg",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Scale Weight : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "532 Kg",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Net Weight : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "340 Kg",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Contour : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "Q6",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Equip. Count : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "10",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Equip. Weight : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "530 Kg",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Deviation : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "72 Kg (15.65 %)",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      CustomeText(
+                                                        text: "Remarks : ",
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      const SizedBox(width: 5),
+                                                      CustomeText(
+                                                        text: "Keep under 5 degree FH",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w600,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                    ],
+                                                  ),
+
                                                 ],
                                               ),
 
+                                            ],
+                                          ),
+                                        ),
 
-
-                                              Directionality(
-                                                textDirection: textDirection,
-                                                child: CustomTextField(
-                                                  textDirection: textDirection,
-                                                  controller: groupIdController,
-                                                  focusNode: groupIdFocusNode,
-                                                  nextFocus: createBtnFocusNode,
-                                                  onPress: () {},
-                                                  hasIcon: false,
-                                                  hastextcolor: true,
-                                                  animatedLabel: true,
-                                                  needOutlineBorder: true,
-                                                  labelText: groupIdRequired == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
-                                                  readOnly: false,
-                                                  maxLength: (groupIdCharSize == 0) ? 1 : groupIdCharSize,
-                                                  onChanged: (value) {},
-                                                  fillColor: Colors.grey.shade100,
-                                                  textInputType: TextInputType.text,
-                                                  inputAction: TextInputAction.next,
-                                                  hintTextcolor: Colors.black45,
-                                                  verticalPadding: 0,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                  validator: (value) {
-                                                    if (value!.isEmpty) {
-                                                      return "Please fill out this field";
-                                                    } else {
-                                                      return null;
-                                                    }
+                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 12, right:10, left: 10, bottom: 0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: RoundedButtonBlue(
+                                                  text: "Equipment",
+                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  press: () {
+                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Equipment", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
                                                   },
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.only(top: 12, right: 0, left: 0, bottom: 0),
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: RoundedButtonBlue(
-                                                        text: "${lableModel.cancel}",
-                                                        isborderButton: true,
-                                                        press: () {
-                                                          Navigator.pop(context, null);  // Return null when "Cancel" is pressed
-                                                        },
-                                                      ),
-                                                    ),
-                                                    const SizedBox(width: 10),
-                                                    Expanded(
-                                                      flex: 1,
-                                                      child: RoundedButtonBlue(
-                                                        focusNode: createBtnFocusNode,
-                                                        text: "${lableModel.create}",
-                                                        press: () {
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                flex: 1,
+                                                child: RoundedButtonBlue(
+                                                  focusNode: createBtnFocusNode,
+                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  text: "Contour",
+                                                  press: () {
 
-                                                          if(locationController.text.isNotEmpty){
-                                                            if(_isvalidateLocation == true){
-                                                              if(selectedSourceType == "U"){
-                                                                if(scanULDController.text.isNotEmpty){
-                                                                  if(currentULDOwnerController.text.isNotEmpty){
-                                                                    if(groupIdRequired == "Y"){
-                                                                      if (groupIdController.text.isNotEmpty) {
-                                                                        if (groupIdController.text.length == groupIdCharSize) {
-                                                                          createULDTrolley(scanULDController.text);
-                                                                        }else{
-                                                                          openValidationDialog(CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIdCharSize"]), groupIdFocusNode);
-                                                                        }
-                                                                      }else{
-                                                                        openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                                      }
-                                                                    }
-                                                                    else{
-                                                                      createULDTrolley(scanULDController.text);
-                                                                    }
-                                                                  }
-                                                                  else{
-                                                                    openValidationDialog("${lableModel.currentuldownermsg}", currentULDOwnerFocusNode);
-                                                                  }
-                                                                }else{
-                                                                  openValidationDialog("${lableModel.scanuldmsg}", scanULDFocusNode);
-                                                                }
-                                                              }
-                                                              else{
-                                                                if(scanTrolleyController.text.isNotEmpty){
-                                                                  if(trollyTypeController.text.isNotEmpty){
-                                                                    if(trollyNumberController.text.isNotEmpty){
-                                                                      if(groupIdRequired == "Y"){
-                                                                        if (groupIdController.text.isNotEmpty) {
-                                                                          if (groupIdController.text.length == groupIdCharSize) {
-                                                                            createULDTrolley("${trollyTypeController.text}~${trollyNumberController.text}");
-                                                                          }else{
-                                                                            openValidationDialog(CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIdCharSize"]), groupIdFocusNode);
-                                                                          }
-                                                                        }else{
-                                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
-                                                                        }
-                                                                      }
-                                                                      else{
-                                                                        createULDTrolley("${trollyTypeController.text}~${trollyNumberController.text}");
-                                                                      }
-                                                                    }else{
-                                                                      openValidationDialog("${lableModel.entertrollyNumberMsg}", trollyNumberFocusNode);
-                                                                    }
-                                                                  }
-                                                                  else{
-                                                                    openValidationDialog("${lableModel.entertrollyTypeMsg}", trollyTypeFocusNode);
-                                                                  }
-                                                                }else{
-                                                                  openValidationDialog("${lableModel.scantrolleymsg}", scanTrolleyFocusNode);
-                                                                }
-                                                              }
-                                                            }
-                                                            else{
-                                                              openValidationDialog(lableModel.validateLocation!, locationFocusNode);
-                                                            }
-                                                          }
-                                                          else{
-                                                            openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
-                                                          }
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 12, right:10, left: 10, bottom: 0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: RoundedButtonBlue(
+                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  text: "Scale",
+                                                  press: () {
+                                                    Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                flex: 1,
+                                                child: RoundedButtonBlue(
+                                                  focusNode: createBtnFocusNode,
+                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  text: "Remarks",
+                                                  press: () {
+
+                                                  },
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+
+                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 12, right:10, left: 10, bottom: 0),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                flex: 1,
+                                                child: RoundedButtonBlue(
+                                                  text: "${lableModel.cancel}",
+                                                  isborderButton: true,
+                                                  press: () {
+                                                    Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Expanded(
+                                                flex: 1,
+                                                child: RoundedButtonBlue(
+                                                  focusNode: createBtnFocusNode,
+                                                  text: "${lableModel.create}",
+                                                  press: () {
+
+                                                  },
                                                 ),
                                               ),
                                             ],
@@ -937,283 +1065,6 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
   }
 
 
-
-  Widget isViewEnable(LableModel lableModel, int pageIndex, ui.TextDirection textDirection, AppLocalizations? localizations) {
-    if (pageIndex == 0) {
-      return  Column(
-        children: [
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-          Directionality(
-            textDirection: textDirection,
-            child: Row(
-              children: [
-                Expanded(
-                  flex:1,
-                  child: CustomTextField(
-                    textDirection: textDirection,
-                    controller: scanULDController,
-                    focusNode: scanULDFocusNode,
-                    onPress: () {},
-                    hasIcon: false,
-                    hastextcolor: true,
-                    animatedLabel: true,
-                    needOutlineBorder: true,
-                    labelText: "${lableModel.scanuld} *",
-                    readOnly: false,
-                    maxLength: 11,
-                    onChanged: (value) {
-                      if(selectedSourceType == "U"){
-                        String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
-                        if(uldNumber == "Valid"){
-                          setState(() {
-                            String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
-                            List<String> parts = uldNumbes.split(' ');
-                            currentULDOwnerController.text = parts[2];
-                          });
-                        }else{
-                          setState(() {
-                            currentULDOwnerController.clear();
-                          });
-                        }
-                      }else{
-                        setState(() {
-                          currentULDOwnerController.clear();
-                        });
-                      }
-                    },
-                    fillColor: Colors.grey.shade100,
-                    textInputType: TextInputType.text,
-                    inputAction: TextInputAction.next,
-                    hintTextcolor: Colors.black45,
-                    verticalPadding: 0,
-                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please fill out this field";
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal,
-                ),
-                // click search button to validate location
-                InkWell(
-                  focusNode: scanULDBtnFocusNode,
-                  onTap: () {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      FocusScope.of(context).requestFocus(scanULDBtnFocusNode);
-                    });
-                    scanULDScanQR();
-                  },
-                  child: Padding(padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
-                  ),
-
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-          Directionality(
-            textDirection: textDirection,
-            child: CustomTextField(
-              textDirection: textDirection,
-              controller: currentULDOwnerController,
-              focusNode: currentULDOwnerFocusNode,
-              onPress: () {},
-              hasIcon: false,
-              hastextcolor: true,
-              animatedLabel: true,
-              needOutlineBorder: true,
-              labelText: "${lableModel.currentuldowner} *",
-              readOnly: false,
-              maxLength: 3,
-              onChanged: (value) {
-              },
-              fillColor: Colors.grey.shade100,
-              textInputType: TextInputType.text,
-              inputAction: TextInputAction.next,
-              hintTextcolor: Colors.black45,
-              verticalPadding: 0,
-              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-              circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-              boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return "Please fill out this field";
-                } else {
-                  return null;
-                }
-              },
-            ),
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-        ],
-      );
-
-    }
-
-    if (pageIndex == 1) {
-      // design of a summary
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-          Directionality(
-            textDirection: textDirection,
-            child: Row(
-              children: [
-                Expanded(
-                  flex:1,
-                  child: CustomTextField(
-                    textDirection: textDirection,
-                    controller: scanTrolleyController,
-                    focusNode: scanTrolleyFocusNode,
-                    onPress: () {},
-                    hasIcon: false,
-                    hastextcolor: true,
-                    animatedLabel: true,
-                    needOutlineBorder: true,
-                    labelText: "${lableModel.scantrolley} *",
-                    readOnly: false,
-                    maxLength: 11,
-                    onChanged: (value) {
-                      scanTrolleyController.text = value.toString().toUpperCase();
-                      trollyTypeController.clear();
-                      trollyNumberController.clear();
-                    },
-                    fillColor: Colors.grey.shade100,
-                    textInputType: TextInputType.text,
-                    inputAction: TextInputAction.next,
-                    hintTextcolor: Colors.black45,
-                    verticalPadding: 0,
-                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please fill out this field";
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-                SizedBox(
-                  width: SizeConfig.blockSizeHorizontal,
-                ),
-                // click search button to validate location
-                InkWell(
-                  focusNode: scanTrolleyBtnFocusNode,
-                  onTap: () {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
-                    });
-                    scanTrolleyScanQR();
-                  },
-                  child: Padding(padding: const EdgeInsets.all(8.0),
-                    child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
-                  ),
-
-                )
-              ],
-            ),
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-          Row(
-            children: [
-              Expanded(
-                flex: 1,
-                child: Directionality(
-                  textDirection: textDirection,
-                  child: GroupIdCustomTextField(
-                    textDirection: textDirection,
-                    controller: trollyTypeController,
-                    hasIcon: false,
-                    hastextcolor: true,
-                    maxLength: 5,
-                    isShowSuffixIcon: false,
-                    animatedLabel: true,
-                    needOutlineBorder: true,
-                    labelText: "${lableModel.trollyType}",
-                    focusNode: trollyTypeFocusNode,
-                    nextFocus: trollyNumberFocusNode,
-                    onChanged: (value) {
-
-                    },
-                    readOnly: false,
-                    fillColor: locationController.text.isNotEmpty
-                        ? Colors.grey.shade100
-                        : Colors.grey.shade300,
-                    textInputType: TextInputType.text,
-                    inputAction: TextInputAction.next,
-                    hintTextcolor: MyColor.colorGrey,
-                    verticalPadding: 0,
-                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please fill out this field";
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,
-              ),
-              Expanded(
-                flex: 1,
-                child: Directionality(
-                  textDirection: textDirection,
-                  child: GroupIdCustomTextField(
-                    textDirection: textDirection,
-                    controller: trollyNumberController,
-                    hasIcon: false,
-                    hastextcolor: true,
-                    isShowSuffixIcon: false,
-                    animatedLabel: true,
-                    maxLength: 15,
-                    needOutlineBorder: true,
-                    labelText: "${lableModel.trollyNumber}",
-                    focusNode: trollyNumberFocusNode,
-                    onChanged: (value) {},
-                    readOnly: false,
-                    textInputType: TextInputType.text,
-                    inputAction: TextInputAction.next,
-                    hintTextcolor: MyColor.colorGrey,
-                    verticalPadding: 0,
-                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return "Please fill out this field";
-                      } else {
-                        return null;
-                      }
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-        ],
-      );
-    }
-
-
-    return const SizedBox();
-  }
 
 
   Future<void> scanULDScanQR() async{

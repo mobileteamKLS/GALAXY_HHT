@@ -378,8 +378,8 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                             _user!.userProfile!.userIdentity!,
                                             _splashDefaultData!.companyCode!,
                                             widget.menuId,
-                                            "Remove Shipment",
-                                            "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
+                                            "${lableModel.removeShipment}",
+                                            "${lableModel.removeforthisawbmsg} ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
                                             "B");
                                         if (result != null) {
                                           if (result.containsKey('status')) {
@@ -415,7 +415,11 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                         }
                                       }
                                       else{
-                                        bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context, "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}" , lableModel!);
+                                        bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(
+                                            context,
+                                            "${widget.lableModel!.removeShipment}",
+                                            "${lableModel!.removeforthisawbmsg} ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}"
+                                            ,lableModel);
                                         if(removeShipment == true){
                                           context.read<UnloadULDCubit>().unloadRemoveAWBLoad(
                                               widget.flightSeqNo,
@@ -444,8 +448,8 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                           _user!.userProfile!.userIdentity!,
                                           _splashDefaultData!.companyCode!,
                                           widget.menuId,
-                                          "Remove Shipment",
-                                          "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
+                                          "${lableModel.removeShipment}",
+                                          "${lableModel.removeforthisawbmsg} ${AwbFormateNumberUtils.formatAWBNumber(awbNo)}",
                                           "A");
                                       if (result != null) {
                                         if (result.containsKey('status')) {
@@ -582,7 +586,7 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                     verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_1_2,
                                                                                     color: MyColor.colorRed,
                                                                                     textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                                    text: "Remove",
+                                                                                    text: "${lableModel!.remove}",
                                                                                     press: () async {
 
                                                                                       clickBtn = "B";
@@ -610,8 +614,8 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                           _user!.userProfile!.userIdentity!,
                                                                                           _splashDefaultData!.companyCode!,
                                                                                           widget.menuId,
-                                                                                          "Remove Shipment",
-                                                                                          "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
+                                                                                          "${lableModel.removeShipment}",
+                                                                                          "${lableModel.removeforthisawbmsg} ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
                                                                                           "B");
                                                                                         if (result != null) {
                                                                                           if (result.containsKey('status')) {
@@ -647,7 +651,10 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         }
                                                                                       }
                                                                                       else{
-                                                                                        bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context, "Remove Shipment", "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}" , lableModel!);
+                                                                                        bool? removeShipment = await DialogUtils.unlodeRemoveShipmentDialog(context,
+                                                                                            "${lableModel.removeShipment}",
+                                                                                            "${lableModel.removeforthisawbmsg} ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
+                                                                                            lableModel);
                                                                                         if(removeShipment == true){
                                                                                           context.read<UnloadULDCubit>().unloadRemoveAWBLoad(widget.flightSeqNo,
                                                                                               "${widget.uldType}_${widget.uldSeqNo}_${EMISeqNo}_${awbShipRowId}", unloadAWBDetail.nOP!, unloadAWBDetail.weightKg!, "", "" , _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!,  widget.menuId);
@@ -700,7 +707,7 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                 Row(
                                                                                   children: [
                                                                                     CustomeText(
-                                                                                      text: "NOP : ",
+                                                                                      text: "${lableModel.nop} : ",
                                                                                       fontColor: MyColor.textColorGrey2,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                                       fontWeight: FontWeight.w400,
@@ -719,7 +726,7 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                 Row(
                                                                                   children: [
                                                                                     CustomeText(
-                                                                                      text: "Weight : ",
+                                                                                      text: "${lableModel.weight} : ",
                                                                                       fontColor: MyColor.textColorGrey2,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                                       fontWeight: FontWeight.w400,
@@ -757,13 +764,13 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                                                                         unloadAWBDetail.weightKg!,
                                                                                         widget.groupIdChar,
                                                                                         widget.groupIdRequire,
-                                                                                        lableModel!,
+                                                                                        lableModel,
                                                                                         textDirection,
                                                                                         _user!.userProfile!.userIdentity!,
                                                                                         _splashDefaultData!.companyCode!,
                                                                                         widget.menuId,
-                                                                                        "Remove Shipment",
-                                                                                        "Remove for this AWB ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
+                                                                                        "${lableModel.removeShipment}",
+                                                                                        "${lableModel.removeforthisawbmsg} ${AwbFormateNumberUtils.formatAWBNumber(unloadAWBDetail.aWBNo!)}",
                                                                                         "A");
                                                                                     if (result != null) {
                                                                                       if (result.containsKey('status')) {

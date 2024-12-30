@@ -524,6 +524,26 @@ class LableModel {
   String? s2540;
   String? s2541;
 
+  String? removeShipment;
+  String? removeforthisawbmsg;
+  String? remainingNop;
+  String? remainingWeight;
+
+  String? exceedstotalnop;
+  String? exceedstotalWeight;
+  String? remainingpcsavailable;
+
+  String? removeFlight;
+  String? removeFlightMsg;
+
+  String? scanLocation;
+  String? scanuld;
+  String? scantrolley;
+  String? currentuldowner;
+  String? create;
+  String? scanuldmsg;
+  String? scantrolleymsg;
+  String? currentuldownermsg;
 
   LableModel(
       {this.loading,
@@ -1023,7 +1043,27 @@ class LableModel {
         this.s661,
         this.s2539,
         this.s2540,
-        this.s2541});
+        this.s2541,
+        this.removeShipment,
+        this.removeforthisawbmsg,
+        this.remainingNop,
+        this.remainingWeight,
+
+        this.exceedstotalnop,
+        this.exceedstotalWeight,
+        this.remainingpcsavailable,
+        this.removeFlight,
+        this.removeFlightMsg,
+
+        this.scanLocation,
+        this.scanuld,
+        this.scantrolley,
+        this.currentuldowner,
+        this.create,
+        this.scanuldmsg,
+        this.scantrolleymsg,
+        this.currentuldownermsg
+      });
 
   LableModel.fromJson(Map<String, dynamic> json) {
 
@@ -1544,6 +1584,24 @@ class LableModel {
     s2540 = json['2540'];
     s2541 = json['2541'];
 
+    removeShipment = json['removeShipment'];
+    removeforthisawbmsg = json['removeforthisawbmsg'];
+    remainingNop = json['RemainingNop'];
+    remainingWeight = json['RemainingWeight'];
+    exceedstotalnop = json['exceedstotalnop'];
+    exceedstotalWeight = json['exceedstotalWeight'];
+    remainingpcsavailable = json['remainingpcsavailable'];
+    removeFlight = json['removeFlight'];
+    removeFlightMsg = json['removeFlightMsg'];
+
+    scanLocation = json['scanLocation'];
+    scanuld = json['scanuld'];
+    scantrolley = json['scantrolley'];
+    currentuldowner = json['currentuldowner'];
+    create = json['create'];
+    scanuldmsg = json['scanuldmsg'];
+    scantrolleymsg = json['scantrolleymsg'];
+    currentuldownermsg = json['currentuldownermsg'];
   }
 
   Map<String, dynamic> toJson() {
@@ -2061,6 +2119,26 @@ class LableModel {
     data['2539'] = this.s2539;
     data['2540'] = this.s2540;
     data['2541'] = this.s2541;
+
+    data['removeShipment'] = this.removeShipment;
+    data['removeforthisawbmsg'] = this.removeforthisawbmsg;
+    data['RemainingNop'] = this.remainingNop;
+    data['RemainingWeight'] = this.remainingWeight;
+    data['exceedstotalnop'] = this.exceedstotalnop;
+    data['exceedstotalWeight'] = this.exceedstotalWeight;
+    data['remainingpcsavailable'] = this.remainingpcsavailable;
+    data['removeFlight'] = this.removeFlight;
+    data['removeFlightMsg'] = this.removeFlightMsg;
+
+    data['scanLocation'] = this.scanLocation;
+    data['scanuld'] = this.scanuld;
+    data['scantrolley'] = this.scantrolley;
+    data['currentuldowner'] = this.currentuldowner;
+    data['create'] = this.create;
+    data['scanuldmsg'] = this.scanuldmsg;
+    data['scantrolleymsg'] = this.scantrolleymsg;
+    data['currentuldownermsg'] = this.currentuldownermsg;
+
     return data;
   }
 

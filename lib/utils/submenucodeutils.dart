@@ -14,6 +14,7 @@ class SubMenuCodeUtils{
   static String ULDTOULD = "HHT014";
   static String UNLOADULD = "HHT015";
   static String EMPTYULDTROLLEY = "HHT016";
+  static String CLOSEULD = "HHT017";
 
 
 }

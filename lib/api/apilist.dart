@@ -118,5 +118,7 @@ class Apilist{
 
   // Empty ULD/Trolley
   static String emptyULDTrollPageLoadApi = "/EmptyULDTrolley/GetPageLoad";
+  static String searchULDTrollPageLoadApi = "/EmptyULDTrolley/Search";
+  static String createULDTrolleyApi = "/EmptyULDTrolley/Create";
 
 }

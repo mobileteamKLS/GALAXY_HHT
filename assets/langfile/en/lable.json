@@ -25,7 +25,7 @@
     "search" : "Search",
     "or" : "OR",
     "scanFlight" : "Scan Flight",
-    "flightNo" : "Flight No.",
+    "flightNo" : "Flight No",
     "flightDate" : "Flight Date",
     "get" : "Get",
     "uldNumber" : "ULD Number",
@@ -545,6 +545,28 @@
     "status" : "Status",
     "sourceuldandtargetuldnotsame" : "Source ULD and Target ULD can't be the same.",
     "bothsourceuldandtargetuldmsg" : "Both Source ULD and Target ULD must be search.",
+
+    "removeShipment" : "Remove Shipment",
+    "removeforthisawbmsg" : "Remove for this AWB",
+    "RemainingNop" : "Rem. NOP",
+    "RemainingWeight" : "Rem. Weight",
+
+    "exceedstotalnop"  : "Exceeds total NOP",
+    "exceedstotalWeight"  : "Exceeds total Weight",
+    "remainingpcsavailable" : "Remaining pieces available, weight cannot be 0.",
+
+    "removeFlight" : "Remove Flight",
+    "removeFlightMsg" : "Are you sure want to remove source ULD/Trolley from flight ?",
+
+    "scanLocation" : "Scan Location",
+    "scanuld" : "Scan ULD",
+    "scantrolley" : "Scan Trolley",
+    "currentuldowner" : "Current ULD Owner",
+    "create" : "Create",
+    "scanuldmsg" : "Please enter scan ULD.",
+    "scantrolleymsg" : "Please enter scan Trolley.",
+    "currentuldownermsg" : "Please enter current ULD Owner.",
+
 
     "2539" : "Bands Loose",
     "654" : "Broken",
