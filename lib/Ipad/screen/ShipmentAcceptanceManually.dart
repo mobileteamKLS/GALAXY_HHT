@@ -1607,7 +1607,7 @@ class _ShipmentAcceptanceManuallyState
         if (isHawb) {
           houseController.text = result;
         } else {
-          String prefix = result.substring(0, 2);
+          String prefix = result.substring(0, 3);
           String awb = result.substring(3);
           prefixController.text = prefix;
           awbController.text = awb;

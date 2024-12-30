@@ -43,8 +43,6 @@ class _PickUpsState
   TextEditingController prefixController = TextEditingController();
   TextEditingController awbController = TextEditingController();
   TextEditingController houseController = TextEditingController();
-  TextEditingController commodityController = TextEditingController();
-  TextEditingController agentController = TextEditingController();
   TextEditingController totalNOPController = TextEditingController();
   TextEditingController totalWTController = TextEditingController();
   TextEditingController masterUnitController = TextEditingController();
@@ -52,13 +50,14 @@ class _PickUpsState
   TextEditingController rcvNOPController = TextEditingController();
   TextEditingController rcvWTController = TextEditingController();
   TextEditingController rcvUnitController = TextEditingController();
+  TextEditingController remarksController = TextEditingController();
   FocusNode prefixFocusNode = FocusNode();
   FocusNode awbFocusNode = FocusNode();
   FocusNode houseFocusNode = FocusNode();
   FocusNode rcvNOPFocusNode = FocusNode();
-  List<ConsignmentAcceptedList> acceptedPiecesList = [];
-  List<ConsignmentAcceptedList> acceptedConsignment = [];
-  List<RemainingPcs> remainPiecesList = [];
+  // List<ConsignmentAcceptedList> acceptedPiecesList = [];
+  // List<ConsignmentAcceptedList> acceptedConsignment = [];
+  // List<RemainingPcs> remainPiecesList = [];
   int pieceStatus = 0;
   int selectedComId=-1;
   int selectedAgentId=-1;
@@ -67,10 +66,16 @@ class _PickUpsState
   void initState() {
     super.initState();
     // awbSearch();
-    // prefixController = TextEditingController(
-    //     text: "${widget.schedulePickUpData?.col3.substring(0,3)}" ?? '');
-    // awbController = TextEditingController(
-    //     text: "${widget.schedulePickUpData?.col3.substring(3)}" ?? '');
+    prefixController = TextEditingController(
+        text: widget.schedulePickUpData?.col3.substring(0,3) ?? '');
+    awbController = TextEditingController(
+        text: widget.schedulePickUpData?.col3.substring(4) ?? '');
+    houseController=TextEditingController(
+        text: widget.schedulePickUpData?.col4 ?? '');
+    totalNOPController=TextEditingController(
+        text: widget.schedulePickUpData?.col6 ?? '');
+    totalWTController=TextEditingController(
+        text: widget.schedulePickUpData?.col7 ?? '');
     masterUnitController.text = "KG";
     rcvUnitController.text = "KG";
     setDefaultRemainValues();
@@ -88,10 +93,10 @@ class _PickUpsState
           () {
         if (!rcvNOPFocusNode.hasFocus) {
           print("LOST focus NOP");
-          if (remainPiecesList.isNotEmpty) {
-            print("NOt empty");
-            checkPieces();
-          }
+          // if (remainPiecesList.isNotEmpty) {
+          //   print("NOt empty");
+          //   checkPieces();
+          // }
           if(rcvNOPController.text.isEmpty){
             setState(() {
               rcvNOPController.text="0";
@@ -137,13 +142,9 @@ class _PickUpsState
     totalNOPController.clear();
     totalWTController.clear();
     customBrokerController.clear();
-    commodityController.clear();
-    agentController.clear();
+    remarksController.clear();
     rcvNOPController.text="0";
     rcvWTController.text="0.00";
-    acceptedPiecesList = [];
-    acceptedConsignment = [];
-    remainPiecesList = [];
     setState(() {
       pieceStatus = 0;
     });
@@ -155,14 +156,11 @@ class _PickUpsState
     houseController.clear();
     customBrokerController.clear();
     totalNOPController.clear();
+    remarksController.clear();
     totalWTController.clear();
-    commodityController.clear();
-    agentController.clear();
     rcvNOPController.text="0";
     rcvWTController.text="0.00";
-    acceptedPiecesList = [];
-    acceptedConsignment = [];
-    remainPiecesList = [];
+
     setState(() {
       pieceStatus = 0;
     });
@@ -180,18 +178,16 @@ class _PickUpsState
         pieceStatus = 0;
       });
     }
-    if ((int.parse(rcvNOPController.text) +
-        (acceptedConsignment.first.totalNpo-remainPiecesList.first.remainingPkg)) ==
-        acceptedConsignment.first.totalNpo) {
+    if (int.parse(rcvNOPController.text)
+        ==
+        int.parse(totalNOPController.text)) {
       setState(() {
         pieceStatus = 1; //matches
         print("status $pieceStatus");
       });
-    } else if ((int.parse(rcvNOPController.text) +
-        (acceptedConsignment.first.totalNpo-remainPiecesList.first.remainingPkg)) <
-        acceptedConsignment.first.totalNpo) {
-      print("total pcs ${acceptedConsignment.first.totalNpo}-----${(int.parse(rcvNOPController.text) +
-          remainPiecesList.first.remainingPkg)}");
+    } else if (int.parse(rcvNOPController.text) <
+        int.parse(totalNOPController.text)) {
+
       setState(() {
         pieceStatus = 2; //partial
         print("status $pieceStatus");
@@ -225,210 +221,16 @@ class _PickUpsState
       return;
     }
     if (prefixController.text.length != 3) {
-      showDataNotFoundDialog(context, "Please enter a valid AWB No.");
+      showDataNotFoundDialog(context, "Please enter a valid AWB Prefix.");
       return;
     }
     if (awbController.text.isNotEmpty && prefixController.text.isNotEmpty) {
       print("iput is valid");
-      awbSearch();
+
     }
   }
 
-  awbSearch() async {
-    FocusScope.of(context).unfocus();
-    DialogUtils.showLoadingDialog(context);
-    // houseController.clear();
-    clearFieldsOnGet();
-    var queryParams = {
-      "InputXML":
-      "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
-    };
 
-    await authService
-        .sendGetWithBody("ShipmentAcceptance/GetShipmentDetails", queryParams)
-        .then((response) async {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      } else {
-        hasNoRecord = false;
-      }
-      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
-      print("is empty record$hasNoRecord");
-      String status = jsonData['ReturnOutput'][0]['Status'];
-
-      if (status == 'E') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        showDataNotFoundDialog(context, statusMessage);
-        return;
-      } else {
-
-        //   houseController.text=
-        // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
-        List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
-        List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
-        List<dynamic> remainingPcsList = jsonData['ConsignmentPending'];
-        if(houseController.text.isEmpty){
-          if(accConsignment.isNotEmpty && accConsignment.length>1){
-            print("multiple house ");
-            DialogUtils.hideLoadingDialog(context);
-            bool isTrue=await showDialog(
-              context: context,
-              builder: (BuildContext context) => CustomAlertMessageDialogNew(
-                description: "Please enter HAWB No.",
-                buttonText: "Okay",
-                imagepath:'assets/images/warn.gif',
-                isMobile: false,
-              ),
-            );
-            if(isTrue){
-              houseFocusNode.requestFocus();
-            }
-            return;
-          }
-          else if(accConsignment.isNotEmpty && accConsignment.length==1){
-            houseController.text =
-                jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
-            DialogUtils.hideLoadingDialog(context);
-            awbSearchForHouse();
-          }
-        }
-        totalNOPController.text =jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
-        totalWTController.text = jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
-
-        Customer? selectedCustomer = customerListMaster.firstWhere(
-              (customer) => customer.customerId ==jsonData['ConsignmentAcceptance'][0]['AgentId'],
-          orElse: () => Customer(customerId: 0, customerName: ""),
-        );
-        Commodity? selectedComm=commodityListMaster.firstWhere(
-              (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
-          orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
-        agentController.text=selectedCustomer.customerName;
-        selectedAgentId=selectedCustomer.customerId;
-        selectedComId=selectedComm.commodityId;
-        commodityController.text = selectedComm.commodityType;
-        rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
-        rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
-
-        setState(() {
-          acceptedPiecesList = accPcsList
-              .map((json) => ConsignmentAcceptedList.fromJSON(json))
-              .toList();
-          acceptedConsignment = accConsignment
-              .map((json) => ConsignmentAcceptedList.fromJSON(json))
-              .toList();
-          remainPiecesList = remainingPcsList
-              .map((json) => RemainingPcs.fromJSON(json))
-              .toList();
-        });
-        checkPieces();
-        print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
-        print("Acceptance Consignment ${acceptedConsignment.length}");
-        print("Acceptance Consignment ${remainPiecesList.length}");
-      }
-      DialogUtils.hideLoadingDialog(context);
-    }).catchError((onError) {
-      DialogUtils.hideLoadingDialog(context);
-      print(onError);
-    });
-  }
-  awbSearchForHouse() async {
-    FocusScope.of(context).unfocus();
-    DialogUtils.showLoadingDialog(context);
-    clearFieldsOnGet();
-    var queryParams = {
-      "InputXML":
-      "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
-    };
-
-    await authService
-        .sendGetWithBody("ShipmentAcceptance/GetShipmentDetails", queryParams)
-        .then((response) async {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-
-      print(jsonData);
-      if (jsonData.isEmpty) {
-        setState(() {
-          hasNoRecord = true;
-        });
-      } else {
-        hasNoRecord = false;
-      }
-      String statusMessage = jsonData['ReturnOutput'][0]['StrMessage'];
-      print("is empty record$hasNoRecord");
-      String status = jsonData['ReturnOutput'][0]['Status'];
-
-      if (status == 'E') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        showDataNotFoundDialog(context, statusMessage);
-        return;
-      } else {
-
-        //   houseController.text=
-        // jsonData['ConsignmentAcceptance'][0]['HouseNo'].toString();
-        List<dynamic> accPcsList = jsonData['ConsignmentAcceptanceList'];
-        List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
-        List<dynamic> remainingPcsList = jsonData['ConsignmentPending'];
-        if(houseController.text.isEmpty){
-          if(accConsignment.isNotEmpty && accConsignment.length>1){
-            print("multiple house ");
-            DialogUtils.hideLoadingDialog(context);
-            showDataNotFoundDialog(context, "Please enter HAWB No.");
-            return;
-          }
-          else if(accConsignment.isNotEmpty && accConsignment.length>1){
-
-          }
-        }
-        totalNOPController.text =
-            jsonData['ConsignmentAcceptance'][0]['TotalNPO'].toString();
-        totalWTController.text =
-            jsonData['ConsignmentAcceptance'][0]['TotalWt'].toString();
-        Customer? selectedCustomer = customerListMaster.firstWhere(
-              (customer) => customer.customerId ==jsonData['ConsignmentAcceptance'][0]['AgentId'],
-          orElse: () => Customer(customerId: 0, customerName: ""),
-        );
-        Commodity? selectedComm=commodityListMaster.firstWhere(
-              (customer) => customer.commodityType.toUpperCase() ==jsonData['ConsignmentAcceptance'][0]['Commodity'].toUpperCase(),
-          orElse: () => Commodity(commodityId: -1, commodityCode: "",commodityType: ""),);
-        agentController.text=selectedCustomer.customerName;
-        commodityController.text = selectedComm.commodityType;
-        agentController.text=selectedCustomer.customerName;
-        selectedAgentId=selectedCustomer.customerId;
-        selectedComId=selectedComm.commodityId;
-        rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
-        rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
-
-        setState(() {
-          acceptedPiecesList = accPcsList
-              .map((json) => ConsignmentAcceptedList.fromJSON(json))
-              .toList();
-          acceptedConsignment = accConsignment
-              .map((json) => ConsignmentAcceptedList.fromJSON(json))
-              .toList();
-          remainPiecesList = remainingPcsList
-              .map((json) => RemainingPcs.fromJSON(json))
-              .toList();
-        });
-        checkPieces();
-        print("ConsignmentAcceptanceList List ${acceptedPiecesList.length}");
-        print("Acceptance Consignment ${acceptedConsignment.length}");
-        print("Acceptance Consignment ${remainPiecesList.length}");
-      }
-      DialogUtils.hideLoadingDialog(context);
-    }).catchError((onError) {
-      DialogUtils.hideLoadingDialog(context);
-      print(onError);
-    });
-  }
 
   String formatDate(String inputDateString) {
     DateFormat inputFormat = DateFormat("MM/dd/yyyy h:mm:ss a");
@@ -437,7 +239,7 @@ class _PickUpsState
     return outputFormat.format(parsedDate);
   }
 
-  acceptShipment() async {
+  performPickUpAction(bool isCompleting) async {
     if (prefixController.text.isEmpty) {
       showDataNotFoundDialog(context, "AWB Prefix is required.");
       return;
@@ -447,33 +249,34 @@ class _PickUpsState
       showDataNotFoundDialog(context, "AWB No is required.");
       return;
     }
-
-    if (commodityController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Commodity is required.");
-      return;
+    if(!isCompleting){
+      if (remarksController.text.isEmpty) {
+        showDataNotFoundDialog(context, "Remarks is required.");
+        return;
+      }
     }
-
-    if (agentController.text.isEmpty) {
-      showDataNotFoundDialog(context, "Agent is required.");
-      return;
-    }
-    // if (groupIDController.text.isEmpty) {
-    //   showDataNotFoundDialog(context, "Group ID is required.");
-    //   return;
-    // }
-    print("COMM ID $selectedComId");
-    print("Agent ID $selectedAgentId");
 
     var queryParams = {
-      "InputXML":
-      "<Root><Type>A</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${customBrokerController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>1</UserId><MenuId>0</MenuId></Root>"
+      "QueueRowID": widget.schedulePickUpData?.queueRowId??0,
+      "ElementRowID": widget.schedulePickUpData?.elementRowId??0,
+      "intPcs": int.parse(rcvNOPController.text),
+      "Wt": double.parse(rcvWTController.text),
+      "Remark": remarksController.text,
+      "PickupAction": isCompleting?"S":"F",
+      "Custombrk": customBrokerController.text,
+      "unit": "KG",
+      "userid": 1,
+      "AirportCity": "JFK",
+      "CompanyCode": 3,
+      "CultureCode": "en-US",
+      "MenuId": 1
     };
     // print(queryParams);
     // return;
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
-      "ShipmentAcceptance/CBWShipmentAcceptanceSave",
+      "Pickup/PickupAction",
       queryParams,
     )
         .then((response) async {
@@ -498,7 +301,7 @@ class _PickUpsState
             ),
           );
           if(isTrue){
-            awbSearch();
+
           }
         }
       }
@@ -1178,15 +981,15 @@ class _PickUpsState
                                                       0.45,
                                                   child:
                                                   CustomeEditTextWithBorder(
+                                                    controller: remarksController,
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
+                                                    noUpperCase: true,
                                                     labelText: "Remark",
                                                     onPress: () {},
-                                                    textInputType:
-                                                    TextInputType.number,
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged:
@@ -1286,7 +1089,7 @@ class _PickUpsState
                                           ),
                                         ),
                                         onPressed: () {
-
+                                          performPickUpAction(false);
                                         },
                                         child: const Text(
                                             "Fail Pick Up",style: TextStyle(color: Color(0xffD50000)),),
@@ -1314,7 +1117,7 @@ class _PickUpsState
                                         ),
                                         onPressed: () {
                                           if(pieceStatus!=3) {
-                                            acceptShipment();
+                                            performPickUpAction(true);
                                           }
                                         },
                                         child: const Text(

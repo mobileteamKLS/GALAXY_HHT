@@ -1,15 +1,20 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import 'package:intl/intl.dart';
+import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
 import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/commonutils.dart';
 import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
+import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import '../modal/VehicleTrack.dart';
@@ -256,7 +261,7 @@ class _DockOutState extends State<DockOut> {
                                                 ),
                                                 InkWell(
                                                   onTap: () {
-                                                    // scanQRAWB(true);
+                                                    scanVCT();
                                                   },
                                                   child: Padding(
                                                     padding:
@@ -699,6 +704,41 @@ class _DockOutState extends State<DockOut> {
         // ),
       ),
     );
+  }
+
+  Future<void> scanVCT() async {
+    String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666',
+      'Cancel',
+      true,
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    print("barcode scann ==== ${barcodeScanResult}");
+    if (barcodeScanResult == "-1") {
+    } else {
+      bool specialCharAllow =
+      CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+      if (false) {
+        SnackbarUtil.showSnackbar(
+            context, "Only numeric values are accepted.", MyColor.colorRed,
+            icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        vctController.clear();
+
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   FocusScope.of(context).requestFocus(igmNoFocusNode);
+        // });
+      } else {
+        String result = barcodeScanResult.replaceAll(" ", "");
+        vctController.text=result.trim();
+        searchVCTDetails();
+
+      }
+    }
   }
 
   void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {

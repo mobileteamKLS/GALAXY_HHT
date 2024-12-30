@@ -477,7 +477,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             padding: EdgeInsets.only(
                                 top: 5, left: 20, right: 20, bottom: 10),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 RoundedIconButtonNew(
                                   icon: Icons.trolley,
@@ -487,7 +487,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
-                                // SizedBox(width: 40,),
+                                SizedBox(width: 40,),
                                 RoundedIconButtonNew(
                                   icon: Icons.local_shipping_outlined,
                                   text: 'Warehouse\nDelivery Order',
@@ -496,14 +496,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
-                                RoundedIconButtonNew(
-                                  icon: Icons.local_shipping_outlined,
-                                  text: 'Vehicle\nTrack',
-                                  targetPage: VehicleTrackingOperations(),
-                                  containerColor: Color(0xffCCF1F6),
-                                  iconColor: MyColor.textColorGrey3,
-                                  textColor: MyColor.textColorGrey3,
-                                ),
+
 
                               ],
                             ),

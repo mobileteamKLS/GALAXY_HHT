@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import 'package:galaxy/Ipad/screen/pickUpOperations.dart';
+import 'package:galaxy/Ipad/screen/vehicleTrackingDashboard.dart';
 import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import '../../core/images.dart';
@@ -162,20 +163,79 @@ class _IpadDashboardState extends State<IpadDashboard> {
                     ),
                   ),
                   SizedBox(height: 20,),
-                  Padding(
+                  isCES?Padding(
                     padding: const EdgeInsets.only(
                         top: 5, left: 20, right: 20, bottom: 10),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        isCES?RoundedIconButtonNew(
+                        const RoundedIconButtonNew(
                           icon: Icons.warehouse_outlined,
                           text: 'Warehouse\nOperations',
                           targetPage: WarehouseOperations(),
                           containerColor: Color(0xffD1E2FB),
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
-                        ):RoundedIconButtonNew(
+                        ),
+
+                        const RoundedIconButtonNew(
+                          icon: Icons.fire_truck_outlined,
+                          text: 'Pickup\nServices',
+                          targetPage: PickupServices(),
+                          containerColor: Color(0xffDFD6EF),
+                          iconColor: MyColor.textColorGrey3,
+                          textColor: MyColor.textColorGrey3,
+                        ),
+
+                        RoundedIconButtonNew(
+                          icon: Icons.local_shipping_outlined,
+                          text: 'Vehicle\nTrack',
+                          targetPage: VehicleTrackingOperations(),
+                          containerColor: Color(0xffCCF1F6),
+                          iconColor: MyColor.textColorGrey3,
+                          textColor: MyColor.textColorGrey3,
+                        ),
+                        // RoundedIconButton(
+                        //   icon: CupertinoIcons.square_stack_3d_up,
+                        //   text: 'Acceptance',
+                        //   targetPage: ShipmentAcceptance(),
+                        //   containerColor: Color(0xffE1D9F0),
+                        //   iconColor: MyColor.textColorGrey3,
+                        //   textColor: MyColor.textColorGrey3,
+                        // ),
+                        // RoundedIconButton(
+                        //   icon: Icons.fireplace_outlined,
+                        //   text: 'Place Holder',
+                        //   targetPage: ImportShipmentListing(),
+                        //   containerColor: Color(0xffffffff),
+                        //   iconColor: MyColor.textColorGrey3,
+                        //   textColor: MyColor.textColorGrey3,
+                        // ),
+                        // RoundedIconButton(
+                        //   icon: Icons.fireplace_outlined,
+                        //   text: 'Place Holder',
+                        //   targetPage: ImportShipmentListing(),
+                        //   containerColor: Color(0xffffffff),
+                        //   iconColor: MyColor.textColorGrey3,
+                        //   textColor: MyColor.textColorGrey3,
+                        // ),
+
+                      ],
+                    ),
+                  ):Padding(
+                    padding: const EdgeInsets.only(
+                        top: 5, left: 20, right: 20, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        isCES?const RoundedIconButtonNew(
+                          icon: Icons.warehouse_outlined,
+                          text: 'Warehouse\nOperations',
+                          targetPage: WarehouseOperations(),
+                          containerColor: Color(0xffD1E2FB),
+                          iconColor: MyColor.textColorGrey3,
+                          textColor: MyColor.textColorGrey3,
+                        ):const RoundedIconButtonNew(
                           icon: Icons.list_alt_outlined,
                           text: 'Customs\nOperations',
                           targetPage: WarehouseOperations(),
@@ -184,7 +244,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                           textColor: MyColor.textColorGrey3,
                         ),
                         SizedBox(width: 40,),
-                        RoundedIconButtonNew(
+                        const RoundedIconButtonNew(
                           icon: Icons.fire_truck_outlined,
                           text: 'Pickup\nServices',
                           targetPage: PickupServices(),

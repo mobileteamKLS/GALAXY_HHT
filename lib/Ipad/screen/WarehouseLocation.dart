@@ -4,7 +4,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -946,6 +948,40 @@ class _WarehouseLocationState
       ),
     );
   }
+  Future<void> scanNOP(TextEditingController nopController) async {
+    String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666',
+      'Cancel',
+      true,
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    print("barcode scann ==== ${barcodeScanResult}");
+    if (barcodeScanResult == "-1") {
+    } else {
+      bool specialCharAllow =
+      CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+      if (false) {
+        SnackbarUtil.showSnackbar(
+            context, "Only numeric values are accepted.", MyColor.colorRed,
+            icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        nopController.clear();
+
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   FocusScope.of(context).requestFocus(igmNoFocusNode);
+        // });
+      } else {
+        String result = barcodeScanResult.replaceAll(" ", "");
+        nopController.text=result.trim();
+
+
+      }
+    }
+  }
 
   DataRow buildDataRow({
     required WarehouseLocationList data,
@@ -963,7 +999,9 @@ class _WarehouseLocationState
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               InkWell(
-                onTap: () {},
+                onTap: () {
+                  scanNOP( nopControllers[index]);
+                },
                 child: Padding(
                   padding: const EdgeInsets.all(2.0),
                   child: SvgPicture.asset(

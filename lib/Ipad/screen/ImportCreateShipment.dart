@@ -81,8 +81,16 @@ class _CreateShipmentState extends State<CreateShipment> {
       showDataNotFoundDialog(context, "AWB Prefix is required.");
       return;
     }
+    if (prefixController.text.length != 3) {
+      showDataNotFoundDialog(context, "Please enter a valid AWB Prefix.");
+      return;
+    }
     if (awbNoController.text.isEmpty) {
       showDataNotFoundDialog(context, "AWB No is required.");
+      return;
+    }
+    if(awbNoController.text.length != 8) {
+      showDataNotFoundDialog(context, "Please enter a valid AWB No.");
       return;
     }
     if (nopController.text.isEmpty) {

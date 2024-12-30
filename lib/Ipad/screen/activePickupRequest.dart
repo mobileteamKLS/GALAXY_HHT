@@ -1184,7 +1184,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
 
   DataRow buildDataRow(PickUpRequestData subData){
     return DataRow(cells: [
-      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col3}'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.13,child: Center(child: Text('${subData.col3}'))))),
       DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text(subData.col4==""?"--":subData.col4))))),
       DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col6}'))))),
       DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col7}'))))),

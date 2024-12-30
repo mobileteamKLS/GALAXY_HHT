@@ -1047,7 +1047,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
 
   DataRow buildDataRow(SchedulePickUpData subData){
     return DataRow(cells: [
-      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col3}'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.13,child: Center(child: Text('${subData.col3}'))))),
       DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col4}'))))),
       DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col6}'))))),
       DataCell( Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.12,child: Center(child: Text('${subData.col7}'))))),
@@ -1089,7 +1089,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                   ),
                   onTap: (){
                     Navigator.pushReplacement(context,
-                        MaterialPageRoute(builder: (context) => const PickUps()));
+                        MaterialPageRoute(builder: (context) =>  PickUps(schedulePickUpData: subData,)));
                   },
                 ),
               )))),
