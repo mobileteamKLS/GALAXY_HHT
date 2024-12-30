@@ -8,6 +8,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/module/export/pages/closeuld/closeuldequipmentpage.dart';
+import 'package:galaxy/module/export/pages/closeuld/contouruldpage.dart';
 import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
 import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleystate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
@@ -976,7 +977,7 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Contour",
                                                   press: () {
-
+                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Contour", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
                                                   },
                                                 ),
                                               ),

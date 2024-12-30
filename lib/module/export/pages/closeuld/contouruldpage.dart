@@ -22,6 +22,7 @@ import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/uldvalidationutil.dart';
+import '../../../../widget/customdivider.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
@@ -38,7 +39,7 @@ import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/closeuld/equipmentmodel.dart';
 
-class CloseULDEquipmentPage extends StatefulWidget {
+class ContourULDPage extends StatefulWidget {
   String mainMenuName;
   String title;
   String refrelCode;
@@ -47,7 +48,7 @@ class CloseULDEquipmentPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
 
-  CloseULDEquipmentPage(
+  ContourULDPage(
       {super.key,
       required this.importSubMenuList,
       required this.exportSubMenuList,
@@ -58,16 +59,11 @@ class CloseULDEquipmentPage extends StatefulWidget {
       required this.mainMenuName});
 
   @override
-  State<CloseULDEquipmentPage> createState() => _CloseULDEquipmentPageState();
+  State<ContourULDPage> createState() => _ContourULDPageState();
 }
 
-class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
+class _ContourULDPageState extends State<ContourULDPage>{
 
-
-
-  TextEditingController scanULDController = TextEditingController();
-  FocusNode scanULDFocusNode = FocusNode();
-  FocusNode scanULDBtnFocusNode = FocusNode();
 
 
 
@@ -85,25 +81,26 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
-  final List<Equipmentmodel> equipmentList = [
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
+
+  int? selectedSwitchIndex;
+
+  final List<String> contourList = [
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
+    "Q6 Medium Pallet",
+    "Q7 High Pallet",
   ];
 
-  List<TextEditingController> volumeControllers = [];
-  List<TextEditingController> weightControllers = [];
-  List<FocusNode> volumeFocusNodes = [];
-  List<FocusNode> weightFocusNodes = [];
   bool _showFullList = false;
 
   @override
@@ -112,21 +109,6 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
     _loadUser(); //load user data
 
-    volumeControllers = List.generate(
-      equipmentList.length,
-          (index) => TextEditingController(
-        text: equipmentList[index].value?.toString() ?? "",
-      ),
-    );
-    weightControllers = List.generate(
-      equipmentList.length,
-          (index) => TextEditingController(
-        text: equipmentList[index].weight?.toString() ?? "",
-      ),
-    );
-
-    volumeFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
-    weightFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
 
   }
 
@@ -147,22 +129,6 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
   @override
   void dispose() {
     super.dispose();
-
-    for (var controller in volumeControllers) {
-      controller.dispose();
-    }
-    for (var focusNode in volumeFocusNodes) {
-      focusNode.dispose();
-    }
-
-    for (var controller in weightControllers) {
-      controller.dispose();
-    }
-    for (var focusNode in weightFocusNodes) {
-      focusNode.dispose();
-    }
-
-    scanULDFocusNode.dispose();
     inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
   }
 
@@ -187,7 +153,6 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
   }
 
   Future<void> _handleInactivityTimeout() async {
-    scanULDFocusNode.unfocus();
     isInactivityDialogOpen = true; // Set flag before showing dialog
 
     bool? activateORNot = await DialogUtils.showingActivateTimerDialog(
@@ -197,10 +162,6 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
     if (activateORNot == true) {
       inactivityTimerManager!.resetTimer();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(scanULDFocusNode);
-      },
-      );
     } else {
       _logoutUser();
     }
@@ -236,7 +197,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-
+  String tUnit = "C";
 
 
 
@@ -291,7 +252,6 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                     onUserProfileIconTap: () {
                       isBackPressed = true; // Set to true to avoid showing snackbar on back press
                       FocusScope.of(context).unfocus();
-                      scanULDFocusNode.unfocus();
                       _scaffoldKey.currentState?.closeDrawer();
                       // navigate to profile picture
                       inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
@@ -331,8 +291,6 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  //unloadUldListModel = null;
-                                  scanULDController.clear();
 
                                   setState(() {
 
@@ -378,7 +336,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                     SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                     SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                     CustomeText(
-                                                        text: "Equipment for this AKE 19191 BA",
+                                                        text: "Contour for this AKE 19191 BA",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w500,
@@ -387,131 +345,145 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                 ),
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical),
+                                              Row(
+                                                children: [
+                                                  CustomeText(
+                                                    text: "Height : ",
+                                                    fontColor: MyColor.textColorGrey2,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w500,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  CustomeText(
+                                                    text: "165",
+                                                    fontColor: MyColor.colorBlack,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w600,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  IntrinsicHeight(
+                                                    child: Row(
+                                                      children: [
+                                                        // Yes Option
+                                                        InkWell(
+                                                          onTap: () {
+
+                                                            setState(() {
+                                                              tUnit = "C";
+                                                            });
+
+                                                          },
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              color:  tUnit == "C" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                              borderRadius: BorderRadius.only(
+                                                                topLeft: Radius.circular(10),
+                                                                bottomLeft: Radius.circular(10),
+                                                              ),
+                                                              border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                                            ),
+                                                            padding: EdgeInsets.symmetric(vertical:4, horizontal: 10),
+                                                            child: Center(
+                                                                child: CustomeText(text: "Inch", fontColor:  tUnit == "C" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                            ),
+                                                          ),
+                                                        ),
+
+                                                        // No Option
+                                                        InkWell(
+                                                          onTap: () {
+
+                                                            setState(() {
+                                                              tUnit = "F";
+                                                            });
+
+                                                          },
+                                                          child: Container(
+                                                            decoration: BoxDecoration(
+                                                              color: tUnit == "F" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                              borderRadius: BorderRadius.only(
+                                                                topRight: Radius.circular(10),
+                                                                bottomRight: Radius.circular(10),
+                                                              ),
+                                                              border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                                            ),
+                                                            padding: EdgeInsets.symmetric(vertical:4, horizontal: 10),
+                                                            child: Center(
+                                                                child: CustomeText(text: "CM", fontColor: tUnit == "F" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                            ),
+                                                          ),
+                                                        )
+
+                                                      ],
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
                                               ListView.builder(
-                                                itemCount: _showFullList ? equipmentList.length : (equipmentList.length > 3 ? 3 : equipmentList.length),
+                                                itemCount: _showFullList ? contourList.length : (contourList.length > 4 ? 4 : contourList.length),
                                                 shrinkWrap: true,
                                                 physics: const NeverScrollableScrollPhysics(),
                                                 itemBuilder: (context, index) {
-                                                  Equipmentmodel content = equipmentList[index];
-                                                  TextEditingController volumeController = volumeControllers[index];
-                                                  TextEditingController weightController = weightControllers[index];
-                                                  FocusNode volumeFocusNode = volumeFocusNodes[index];
-                                                  FocusNode weightFocusNode = weightFocusNodes[index];
+                                                  Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
-                                                  return Container(
-                                                    padding: const EdgeInsets.only(right: 8, left: 8, bottom: 8),
-                                                    margin: const EdgeInsets.only(bottom: 8),
-                                                    decoration: BoxDecoration(
-                                                      color: MyColor.colorWhite,
-                                                      borderRadius: BorderRadius.circular(8),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                                          spreadRadius: 2,
-                                                          blurRadius: 15,
-                                                          offset: Offset(0, 3), // changes position of shadow
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        CustomeText(text: content.name!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5),
-                                                        Row(
+                                                  String content = contourList[index];
+                                                  return Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Padding(
+                                                        padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             Expanded(
-                                                              flex:1,
-                                                              child: Directionality(
-                                                                textDirection: textDirection,
-                                                                child: CustomTextField(
-                                                                  textDirection: textDirection,
-                                                                  controller: volumeController,
-                                                                  focusNode: volumeFocusNode,
-                                                                  onPress: () {
-
-                                                                  },
-                                                                  hasIcon: false,
-                                                                  maxLength: 5,
-                                                                  hastextcolor: true,
-                                                                  animatedLabel: true,
-                                                                  needOutlineBorder: true,
-                                                                  labelText: "Volume",
-                                                                  readOnly: false,
-                                                                  onChanged: (value) {
-                                                                    //updateSelectedContentList(index, value);
-                                                                  },
-                                                                  fillColor:  Colors.grey.shade100,
-                                                                  textInputType: TextInputType.number,
-                                                                  inputAction: TextInputAction.next,
-                                                                  hintTextcolor: Colors.black45,
-                                                                  verticalPadding: 0,
-                                                                  digitsOnly: true,
-
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                                  validator: (value) {
-                                                                    if (value!.isEmpty) {
-                                                                      return "Please fill out this field";
-                                                                    } else {
-                                                                      return null;
-                                                                    }
-                                                                  },
-                                                                ),
+                                                              child: Row(
+                                                                children: [
+                                                                  CircleAvatar(
+                                                                    radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                                                    backgroundColor: backgroundColor,
+                                                                    child: CustomeText(text: "${content}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width: 15,
+                                                                  ),
+                                                                  Flexible(child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
+                                                                ],
                                                               ),
                                                             ),
-                                                            SizedBox(width: 15,),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Directionality(
-                                                                textDirection: textDirection,
-                                                                child: CustomTextField(
-                                                                  textDirection: textDirection,
-                                                                  controller: weightController,
-                                                                  focusNode: weightFocusNode,
-                                                                  onPress: () {
-
-                                                                  },
-                                                                  hasIcon: false,
-                                                                  maxLength: 5,
-                                                                  hastextcolor: true,
-                                                                  animatedLabel: true,
-                                                                  needOutlineBorder: true,
-                                                                  labelText: "Weight",
-                                                                  readOnly: false,
-                                                                  onChanged: (value) {
-                                                                    //updateSelectedContentList(index, value);
-                                                                  },
-                                                                  fillColor:  Colors.grey.shade100,
-                                                                  textInputType: TextInputType.number,
-                                                                  inputAction: TextInputAction.next,
-                                                                  hintTextcolor: Colors.black45,
-                                                                  verticalPadding: 0,
-                                                                  digitsOnly: true,
-
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                                  validator: (value) {
-                                                                    if (value!.isEmpty) {
-                                                                      return "Please fill out this field";
-                                                                    } else {
-                                                                      return null;
-                                                                    }
-                                                                  },
-                                                                ),
-                                                              ),
+                                                            SizedBox(
+                                                              width:
+                                                              2,
                                                             ),
+                                                            Switch(
+                                                              value: selectedSwitchIndex == index,
+                                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                              activeColor: MyColor.primaryColorblue,
+                                                              inactiveThumbColor: MyColor.thumbColor,
+                                                              inactiveTrackColor: MyColor.textColorGrey2,
+                                                              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                              onChanged: (value) {
+                                                                setState(() {
+                                                                  selectedSwitchIndex = value ? index : null;
+                                                                });
+                                                              },
+                                                            )
                                                           ],
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ),
+                                                      CustomDivider(
+                                                        space: 0,
+                                                        color: Colors.black,
+                                                        hascolor: true,
+                                                      ),
+                                                    ],
                                                   );
                                                 },
                                               ),
 
-                                              if (equipmentList.length > 3) // Only show the button if the list has more than 4 items
+                                              if (contourList.length > 4) // Only show the button if the list has more than 4 items
                                                 InkWell(
                                                   onTap: () {
                                                     setState(() {
