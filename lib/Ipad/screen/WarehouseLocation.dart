@@ -554,7 +554,7 @@ class _WarehouseLocationState
                                                   width:
                                                   MediaQuery.sizeOf(context)
                                                       .width *
-                                                      0.32,
+                                                      0.25,
                                                   child:
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -573,7 +573,26 @@ class _WarehouseLocationState
                                                     onChanged:
                                                         (String, bool) {},
                                                   ),
-                                                )
+                                                ),
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQRAWB(false);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.all(
+                                                        2.0),
+                                                    child: SvgPicture.asset(
+                                                      search,
+                                                      height: SizeConfig
+                                                          .blockSizeVertical *
+                                                          SizeUtils.ICONSIZE2,
+                                                    ),
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
@@ -591,7 +610,7 @@ class _WarehouseLocationState
                                                   width:
                                                   MediaQuery.sizeOf(context)
                                                       .width *
-                                                      0.32,
+                                                      0.25,
                                                   child:
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -611,6 +630,25 @@ class _WarehouseLocationState
                                                 ),
                                                 const SizedBox(
                                                   width: 15,
+                                                ),
+                                                InkWell(
+                                                  onTap: () {
+                                                    scanQRAWB(true);
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                    const EdgeInsets.all(
+                                                        2.0),
+                                                    child: SvgPicture.asset(
+                                                      search,
+                                                      height: SizeConfig
+                                                          .blockSizeVertical *
+                                                          SizeUtils.ICONSIZE2,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 20,
                                                 ),
                                                 GestureDetector(
                                                   child: Container(
@@ -1223,5 +1261,45 @@ class _WarehouseLocationState
         ),
       ],
     );
+  }
+
+  Future<void> scanQRAWB(bool isHawb) async {
+    String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
+      '#ff6666',
+      'Cancel',
+      true,
+      ScanMode.DEFAULT, // Scan mode
+    );
+
+    print("barcode scann ==== ${barcodeScanResult}");
+    if (barcodeScanResult == "-1") {
+    } else {
+      bool specialCharAllow =
+      CommonUtils.containsSpecialCharactersAndAlpha(barcodeScanResult);
+
+      print("SPECIALCHAR_ALLOW ===== ${specialCharAllow}");
+
+      if (false) {
+        SnackbarUtil.showSnackbar(
+            context, "Only numeric values are accepted.", MyColor.colorRed,
+            icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        prefixController.clear();
+        awbController.clear();
+        // WidgetsBinding.instance.addPostFrameCallback((_) {
+        //   FocusScope.of(context).requestFocus(igmNoFocusNode);
+        // });
+      } else {
+        String result = barcodeScanResult.replaceAll(" ", "");
+        if (isHawb) {
+          hawbController.text = result;
+        } else {
+          String prefix = result.substring(0, 3);
+          String awb = result.substring(3);
+          prefixController.text = prefix;
+          awbController.text = awb;
+        }
+      }
+    }
   }
 }

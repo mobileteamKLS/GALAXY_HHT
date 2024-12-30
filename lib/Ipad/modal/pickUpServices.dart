@@ -267,3 +267,59 @@ class SchedulePickUpData {
     "Col9": col9,
   };
 }
+
+class PickUpData {
+  int rowId;
+  String awbNumber;
+  String houseNo;
+  int pieces;
+  double weight;
+  String agent;
+  int queueRowId;
+  int messageRowId;
+  int elementRowId;
+  String status;
+  String pickedUpStatus;
+
+  PickUpData({
+    required this.rowId,
+    required this.awbNumber,
+    required this.houseNo,
+    required this.pieces,
+    required this.weight,
+    required this.agent,
+    required this.queueRowId,
+    required this.messageRowId,
+    required this.elementRowId,
+    required this.status,
+    required this.pickedUpStatus,
+  });
+
+  factory PickUpData.fromJson(Map<String, dynamic> json) => PickUpData(
+    rowId: json["RowId"],
+    awbNumber: json["AWBNumber"],
+    houseNo: json["HouseNo"],
+    pieces: json["Pieces"],
+    weight: json["Weight"],
+    agent: json["Agent"],
+    queueRowId: json["QueueRowID"],
+    messageRowId: json["MessageRowID"],
+    elementRowId: json["ElementRowID"],
+    status: json["Status"],
+    pickedUpStatus: json["PickedUpStatus"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "RowId": rowId,
+    "AWBNumber": awbNumber,
+    "HouseNo": houseNo,
+    "Pieces": pieces,
+    "Weight": weight,
+    "Agent": agent,
+    "QueueRowID": queueRowId,
+    "MessageRowID": messageRowId,
+    "ElementRowID": elementRowId,
+    "Status": status,
+    "PickedUpStatus": pickedUpStatus,
+  };
+}

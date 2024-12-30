@@ -1170,7 +1170,7 @@ class _ShipmentAcceptanceManuallyState
                                                     readOnly: false,
                                                         onPress: () {},
                                                     textInputType:
-                                                        TextInputType.number,
+                                                    TextInputType.numberWithOptions(signed: false, decimal: true),
                                                     maxLength: 4,
                                                     fontSize: 18,
                                                     onChanged: (String, bool) {
@@ -1399,7 +1399,7 @@ class _ShipmentAcceptanceManuallyState
                                           MaterialStateColor.resolveWith(
                                               (states) => Color(0xfffafafa)),
                                       columnSpacing:
-                                          acceptedPiecesList.length != 0
+                                          acceptedPiecesList.isNotEmpty
                                               ? MediaQuery.sizeOf(context)
                                                       .width *
                                                   0.072

@@ -61,6 +61,7 @@ class _PickUpsState
   int pieceStatus = 0;
   int selectedComId=-1;
   int selectedAgentId=-1;
+  List<PickUpData> awbDataList=[];
 
   @override
   void initState() {
@@ -139,6 +140,7 @@ class _PickUpsState
   }
 
   clearFieldsOnGet() {
+    awbDataList=[];
     totalNOPController.clear();
     totalWTController.clear();
     customBrokerController.clear();
@@ -226,11 +228,69 @@ class _PickUpsState
     }
     if (awbController.text.isNotEmpty && prefixController.text.isNotEmpty) {
       print("iput is valid");
-
+      awbSearch();
     }
   }
 
+  awbSearch() async {
+    FocusScope.of(context).unfocus();
+    DialogUtils.showLoadingDialog(context);
+    // houseController.clear();
+    clearFieldsOnGet();
+    var queryParams = {
+      "AWBPrefix": prefixController.text,
+      "AWBNo": awbController.text,
+      "HouseNo": houseController.text,
+      "userid": 1,
+      "AirportCity": "JFK",
+      "CompanyCode": 3,
+      "CultureCode": "en-US",
+      "MenuId": 1
+    };
 
+    await authService
+        .sendGetWithBody("Pickup/GetMAWBPickupDetails", queryParams)
+        .then((response) async {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+
+      print(jsonData);
+      if (jsonData.isEmpty) {
+        setState(() {
+          hasNoRecord = true;
+        });
+      } else {
+        hasNoRecord = false;
+      }
+      String statusMessage = jsonData['StatusMessage'];
+      print("is empty record$hasNoRecord");
+      String status = jsonData['Status'];
+
+      if (status == 'E') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, statusMessage);
+        return;
+      } else {
+        List<dynamic> pickUpDataList = jsonData['GetAWBDetails'];
+        setState(() {
+          awbDataList = pickUpDataList
+              .map((json) => PickUpData.fromJson(json))
+              .toList();
+        });
+        print(awbDataList.length);
+        setState(() {
+          houseController.text=awbDataList.first.houseNo;
+          totalNOPController.text=awbDataList.first.pieces.toString();
+          totalWTController.text=awbDataList.first.weight.toStringAsFixed(2);
+        });
+      }
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
+      DialogUtils.hideLoadingDialog(context);
+      print(onError);
+    });
+  }
 
   String formatDate(String inputDateString) {
     DateFormat inputFormat = DateFormat("MM/dd/yyyy h:mm:ss a");
@@ -301,7 +361,7 @@ class _PickUpsState
             ),
           );
           if(isTrue){
-
+            awbSearch();
           }
         }
       }

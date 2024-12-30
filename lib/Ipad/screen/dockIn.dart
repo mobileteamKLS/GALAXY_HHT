@@ -771,7 +771,7 @@ class _DockInState extends State<DockIn> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          //Navigator.pop(context);
+                                          clearDetails();
                                         },
                                         child: const Text("Clear"),
                                       ),
@@ -879,6 +879,14 @@ class _DockInState extends State<DockIn> {
         // ),
       ),
     );
+  }
+
+  clearDetails(){
+    vctController.clear();
+    doorController.clear();
+    setState(() {
+      vctDetailsList=[];
+    });
   }
 
   void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {

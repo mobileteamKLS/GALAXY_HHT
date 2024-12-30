@@ -62,6 +62,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
   bool isSelected = false;
   List<String> selectImageBase64List = [];
   String images = "";
+  String imagesArray = "";
   String imageCount = "0";
   int diffNop=0;
   double diffWt=0.00;
@@ -1308,7 +1309,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
         "AirlineRepresent": "",
         "SecurityRepresent": "",
         "ProblemSeqId": problemSeqId,
-        "XmlBinaryImage": "",
+        "XmlBinaryImage": "${selectImageBase64List.join(',')}",
         "AirportCode": "JFK",
         "CompanyCode": 3,
         "CultureCode": "en-US",

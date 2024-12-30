@@ -597,7 +597,7 @@ class _DockOutState extends State<DockOut> {
                                           ),
                                         ),
                                         onPressed: () {
-                                          // Navigator.pop(context);
+                                          clearDetails();
                                         },
                                         child: const Text("Clear"),
                                       ),
@@ -739,6 +739,13 @@ class _DockOutState extends State<DockOut> {
 
       }
     }
+  }
+
+  clearDetails(){
+    vctController.clear();
+    setState(() {
+      vctDetailsList=[];
+    });
   }
 
   void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
