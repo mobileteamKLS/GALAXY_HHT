@@ -958,8 +958,11 @@ class _ShipmentAcceptanceManuallyState
                                               controller: commodityController,
                                               debounceDuration: const Duration(
                                                   milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  CommodityService.find(search),
+                                              suggestionsCallback: (search) {
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                 return CommodityService.find(search);},
                                               itemBuilder: (context, item) {
                                                 return Container(
                                                   decoration:
@@ -1042,8 +1045,11 @@ class _ShipmentAcceptanceManuallyState
                                               controller: agentController,
                                               debounceDuration: const Duration(
                                                   milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  AgentService.find(search),
+                                              suggestionsCallback: (search){
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                  return AgentService.find(search);},
                                               itemBuilder: (context, item) {
                                                 return Container(
                                                   decoration:

@@ -207,6 +207,26 @@ class ShipmentListDetails {
   };
 }
 
+class ShipmentStatus {
+  String keyValue;
+  String description;
+
+  ShipmentStatus({
+    required this.keyValue,
+    required this.description,
+  });
+
+  factory ShipmentStatus.fromJson(Map<String, dynamic> json) => ShipmentStatus(
+    keyValue: json["KeyValue"],
+    description: json["Description"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "KeyValue": keyValue,
+    "Description": description,
+  };
+}
+
 class ShipmentCreateDetails {
   int vhRowId;
   String awbPrefix;

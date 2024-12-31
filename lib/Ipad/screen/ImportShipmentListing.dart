@@ -23,33 +23,9 @@ class ImportShipmentListing extends StatefulWidget {
 }
 
 class _ImportShipmentListingState extends State<ImportShipmentListing> {
-  final List<ShipmentDetails> shipmentDetailsListOld = [
-    ShipmentDetails(
-        awbNumber: "125-76676867",
-        mawbNumber: "MAWB01",
-        date: "16 SEP 2024 12:23",
-        declaredPcs: 12,
-        declaredWeight: 60.0,
-        unit: "Kg",
-        acceptedPcs: 24,
-        acceptedWeight: 17,
-        awb: "AWB",
-        shipmentType: "CONSOLE",
-        status: "CREATED"),
-    ShipmentDetails(
-        awbNumber: "125-76676867",
-        mawbNumber: "MAWB02",
-        date: "17 SEP 2024 12:23",
-        declaredPcs: 12,
-        declaredWeight: 60.0,
-        unit: "Kg",
-        acceptedPcs: 24,
-        acceptedWeight: 17,
-        awb: "AWB",
-        shipmentType: "DIRECT",
-        status: "PENDING"),
-  ];
+  List<String> selectedFilters = [];
   late List<ShipmentListDetails> shipmentListDetails=[];
+  late List<ShipmentStatus> shipmentStatusList=[];
   late List<ShipmentListDetails> shipmentListDetailsToBind=[];
   final AuthService authService = AuthService();
   bool isLoading = false;
@@ -62,10 +38,11 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
     getShipmentListing();
   }
 
-  getShipmentListing() async {
+  getShipmentListing({String mawbNo="",String statusFilter="" }) async {
     if (isLoading) return;
     shipmentListDetails = [];
     shipmentListDetailsToBind = [];
+    shipmentStatusList=[];
     setState(() {
       isLoading = true;
     });
@@ -74,6 +51,8 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       "PageNo": 1,
       "FilterClause": "1=1",
       "OrderByClause": "1",
+      "MAWBNO": mawbNo,
+      "StatusCode": statusFilter,
       "AirportCode": "JFK",
       "CompanyCode": 3,
       "CultureCode": "en-US",
@@ -89,11 +68,13 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
       List<dynamic> resp = jsonData['ShipmentDetailList'];
+      List<dynamic> statusData = jsonData['StatusList'];
       print(jsonData);
       if (jsonData.isEmpty) {
         setState(() {
           hasNoRecord = true;
         });
+        return;
       }
       else{
         hasNoRecord=false;
@@ -104,8 +85,10 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       print("length==  = ${shipmentListDetailsToBind.length}");
       setState(() {
         shipmentListDetails = shipmentListDetailsToBind;
+        shipmentStatusList=statusData.map((json)=>ShipmentStatus.fromJson(json)).toList();
+        print("length==  = ${shipmentListDetailsToBind.length}");
         // filteredList = listShipmentDetails;
-        print("length--  = ${shipmentListDetails.length}");
+        print("status length--  = ${shipmentStatusList.length}");
         isLoading = false;
 
       });
@@ -222,41 +205,41 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                     ),
                   ),
                   const SizedBox(height: 10,),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //       top: 5, left: 20, right: 20, bottom: 10),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       const Text(
-                  //         'Showing (0/0)',
-                  //         style: TextStyle(
-                  //             fontWeight: FontWeight.bold, fontSize: 18),
-                  //       ),
-                  //       Row(
-                  //         children: [
-                  //           GestureDetector(
-                  //             child: const Row(
-                  //               children: [
-                  //                 Icon(
-                  //                   Icons.filter_alt_outlined,
-                  //                   color: MyColor.primaryColorblue,
-                  //                 ),
-                  //                 Text(
-                  //                   ' Filter',
-                  //                   style: TextStyle(fontSize: 18),
-                  //                 )
-                  //               ],
-                  //             ),
-                  //             onTap: () {
-                  //               showShipmentSearchBottomSheet(context);
-                  //             },
-                  //           ),
-                  //         ],
-                  //       )
-                  //     ],
-                  //   ),
-                  // ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        top: 5, left: 20, right: 20, bottom: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        const Text(
+                          '',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
+                        Row(
+                          children: [
+                            GestureDetector(
+                              child: const Row(
+                                children: [
+                                  Icon(
+                                    Icons.filter_alt_outlined,
+                                    color: MyColor.primaryColorblue,
+                                  ),
+                                  Text(
+                                    ' Filter',
+                                    style: TextStyle(fontSize: 18),
+                                  )
+                                ],
+                              ),
+                              onTap: () {
+                                showShipmentSearchBottomSheet(context);
+                              },
+                            ),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
                   isLoading
                       ? const Center(
                       child: SizedBox(
@@ -898,7 +881,8 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       ),
       isScrollControlled: true,
       builder: (BuildContext context) {
-        // List<String> selectedFilters = [];
+        TextEditingController prefixController = TextEditingController();
+        TextEditingController awbController = TextEditingController();
 
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
@@ -912,9 +896,32 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text("Filter",
-                            style: TextStyle(
-                                fontSize: 24, fontWeight: FontWeight.bold)),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text("Filter",
+                                style: TextStyle(
+                                    fontSize: 24, fontWeight: FontWeight.bold)),
+                            GestureDetector(
+                              child: const Row(
+                                children: [Icon(CupertinoIcons.restart, color: MyColor.primaryColorblue,),
+                                  Text(
+                                    ' Reset',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
+                                  ),],
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  selectedFilters.clear();
+                                  awbController.clear();
+                                  prefixController.clear();
+                                });
+
+                              },
+                            )
+                          ],
+                        ),
 
                         const SizedBox(
                           width: double.infinity,
@@ -951,7 +958,11 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                         CustomeEditTextWithBorder(
                                           lablekey: 'MAWB',
                                           hasIcon: false,
+                                          controller: prefixController,
                                           hastextcolor: true,
+                                          textInputType:
+                                          TextInputType
+                                              .number,
                                           animatedLabel: true,
                                           needOutlineBorder:
                                           true,
@@ -981,6 +992,10 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                         CustomeEditTextWithBorder(
                                           lablekey: 'MAWB',
                                           hasIcon: false,
+                                          textInputType:
+                                          TextInputType
+                                              .number,
+                                          controller: awbController,
                                           hastextcolor: true,
                                           animatedLabel: true,
                                           needOutlineBorder:
@@ -998,34 +1013,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                   const SizedBox(height: 16),
                                 ],
                               ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'FILTER BY DATE',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  GestureDetector(
-                                    child: const Row(
-                                      children: [
-                                        Icon(Icons.calendar_today,
-                                            color: MyColor.primaryColorblue),
-                                        SizedBox(width: 8),
-                                        Text(
-                                          "slotFilterDate",
-                                          style: TextStyle(
-                                              fontSize: 16, color: MyColor.primaryColorblue),
-                                        ),
-                                      ],
-                                    ),
-                                    onTap: () {
-                                      // pickDate(context, setState);
-                                    },
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-                              ),
+
                             ],
                           ),
                         ),
@@ -1038,114 +1026,36 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                           width: MediaQuery.of(context).size.width,
                           child: Wrap(
                             spacing: 8.0,
-                            children: [
-                              FilterChip(
-                                label: const Text(
-                                  'Draft',
+                            children: shipmentStatusList.map((status) {
+                              bool isSelected = selectedFilters.contains(status.keyValue);
+
+                              return FilterChip(
+                                label: Text(
+                                  status.description,
                                   style: TextStyle(color: MyColor.primaryColorblue),
                                 ),
-                                selected: true,
-                                // selectedFilters.contains('DRAFT'),
+                                selected: isSelected,
                                 showCheckmark: false,
                                 onSelected: (bool selected) {
                                   setState(() {
-                                    // selected
-                                    //     ? selectedFilters.add('DRAFT')
-                                    //     : selectedFilters.remove('DRAFT');
+                                    if (selected) {
+                                      selectedFilters.add(status.keyValue);
+                                    } else {
+                                      selectedFilters.remove(status.keyValue);
+                                    }
                                   });
                                 },
-                                selectedColor: MyColor.primaryColorblue.withOpacity(0.1),
-                                backgroundColor: Colors.transparent,
+                                selectedColor: MyColor.dropdownColor,
+                                backgroundColor: MyColor.dropdownColor,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20.0),
                                   side: BorderSide(
-                                    color:true // selectedFilters.contains('DRAFT')
-                                        ? MyColor.primaryColorblue
-                                        : Colors.transparent,
+                                    color: isSelected ? MyColor.primaryColorblue : Colors.transparent,
                                   ),
                                 ),
                                 checkmarkColor: MyColor.primaryColorblue,
-                              ),
-                              FilterChip(
-                                label: const Text(
-                                  'Gated-in',
-                                  style: TextStyle(color: MyColor.primaryColorblue),
-                                ),
-                                selected: false,//selectedFilters.contains('GATED-IN'),
-                                showCheckmark: false,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    // selected
-                                    //     ? selectedFilters.add('GATED-IN')
-                                    //     : selectedFilters.remove('GATED-IN');
-                                  });
-                                },
-                                selectedColor: MyColor.primaryColorblue.withOpacity(0.1),
-                                backgroundColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  side: BorderSide(
-                                    color:false //selectedFilters.contains('GATED-IN')
-                                        ?MyColor.primaryColorblue
-                                        : Colors.transparent,
-                                  ),
-                                ),
-                              ),
-                              FilterChip(
-                                label: const Text(
-                                  'Gate-in Pending',
-                                  style: TextStyle(color: MyColor.primaryColorblue),
-                                ),
-                                selected:true,
-                                //selectedFilters.contains('PENDING FOR GATE-IN'),
-                                showCheckmark: false,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    // selected
-                                    //     ? selectedFilters.add('PENDING FOR GATE-IN')
-                                    //     : selectedFilters.remove('PENDING FOR GATE-IN');
-                                  });
-                                },
-                                selectedColor: MyColor.primaryColorblue.withOpacity(0.1),
-                                backgroundColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  side: BorderSide(
-                                    color:false
-                                    //selectedFilters.contains('PENDING FOR GATE-IN')
-                                        ? MyColor.primaryColorblue
-                                        : Colors.transparent,
-                                  ),
-                                ),
-                              ),
-                              FilterChip(
-                                label: const Text(
-                                  'Gate-in Rejected',
-                                  style: TextStyle(color: MyColor.primaryColorblue),
-                                ),
-                                selected:false,
-                                //selectedFilters.contains('REJECT FOR GATE-IN'),
-                                showCheckmark: false,
-                                onSelected: (bool selected) {
-                                  setState(() {
-                                    // selected
-                                    //     ? selectedFilters.add('REJECT FOR GATE-IN')
-                                    //     : selectedFilters
-                                    //     .remove('REJECT FOR GATE-IN');
-                                  });
-                                },
-                                selectedColor: MyColor.primaryColorblue.withOpacity(0.1),
-                                backgroundColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0),
-                                  side: BorderSide(
-                                    color: false//selectedFilters.contains('REJECT FOR GATE-IN')
-                                        ?MyColor.primaryColorblue
-                                        : Colors.transparent,
-                                  ),
-                                ),
-                              ),
-                            ],
+                              );
+                            }).toList(),
                           ),
                         ),
                         const SizedBox(height: 8),
@@ -1176,7 +1086,12 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                         Radius.circular(8)),
                                   ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  selectedFilters.clear();
+                                  awbController.clear();
+                                  prefixController.clear();
+                                  Navigator.pop(context);
+                                },
                                 child: const Text("Cancel"),
                               ),
                             ),
@@ -1200,9 +1115,16 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                         Radius.circular(8)),
                                   ),
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  if(awbController.text.isNotEmpty){
+                                    if(prefixController.text.length!=3)return;
+                                    if(awbController.text.length!=8)return;
+                                  }
+                                  getShipmentListing(mawbNo:"${prefixController.text.trim()}${awbController.text.trim()}",statusFilter: selectedFilters.join(","));
+                                  Navigator.pop(context);
+                                },
                                 child: const Text(
-                                  "Save",
+                                  "Search",
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),

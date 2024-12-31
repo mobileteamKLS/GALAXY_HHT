@@ -390,7 +390,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                               children: [
                                                 _buildDetailColumn(
                                                     'Prepared For Delivery',
-                                                    "${wdoDetailsList.isNotEmpty ? formatDate(wdoDetailsList[0].pfdDateTime) ?? "" : ""}"),
+                                                    wdoDetailsList.isNotEmpty ?wdoDetailsList[0].pfdDateTime.isEmpty?"": formatDate(wdoDetailsList[0].pfdDateTime) ?? "" : ""),
                                                 SizedBox(height: 20),
                                                 _buildDetailColumn(
                                                     'Released', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].releasedDateTime ?? "" : ""),

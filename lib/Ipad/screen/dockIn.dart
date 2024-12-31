@@ -364,8 +364,11 @@ class _DockInState extends State<DockIn> {
                                                     controller: doorController,
                                                     debounceDuration: const Duration(
                                                         milliseconds: 300),
-                                                    suggestionsCallback: (search) =>
-                                                        DoorService.find(search),
+                                                    suggestionsCallback: (search) {
+                                                      if (search.isEmpty) {
+                                                        return null;
+                                                      }
+                                                        return DoorService.find(search);},
                                                     itemBuilder: (context, item) {
                                                       return Container(
                                                         decoration:

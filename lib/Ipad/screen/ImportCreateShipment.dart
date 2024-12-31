@@ -35,6 +35,11 @@ class CreateShipment extends StatefulWidget {
 class _CreateShipmentState extends State<CreateShipment> {
   int modeSelected = 0;
   TextEditingController prefixController = TextEditingController();
+  FocusNode prefixFocusNode = FocusNode();
+   FocusNode originFocusNode = FocusNode();
+  // FocusNode prefixFocusNode = FocusNode();
+  // FocusNode prefixFocusNode = FocusNode();
+  // FocusNode prefixFocusNode = FocusNode();
   TextEditingController awbNoController = TextEditingController();
   TextEditingController houseNoController = TextEditingController();
   TextEditingController nopController = TextEditingController();
@@ -69,6 +74,8 @@ class _CreateShipmentState extends State<CreateShipment> {
     commTypeController.clear();
     firmsCodeController.clear();
     dispositionCodeController.clear();
+    prefixFocusNode.requestFocus();
+    originFocusNode.unfocus();
     setState(() {
       modeSelected=0;
     });
@@ -544,6 +551,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                                   .number,
                                                           fontSize: 18,
                                                           controller: prefixController,
+                                                          focusNode: prefixFocusNode,
                                                           onChanged:
                                                               (String, bool) {},
                                                         ),
@@ -883,10 +891,14 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                 0.435,
                                             child: TypeAheadField<OriginDestination>(
                                               controller: originController,
+                                              focusNode: originFocusNode,
                                               debounceDuration: const Duration(
                                                   milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  OriginAndDestinationService.find(search),
+                                              suggestionsCallback: (search) {
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                  return OriginAndDestinationService.find(search);},
                                               itemBuilder: (context, item) {
                                                 return Container(
                                                   decoration:
@@ -967,8 +979,11 @@ class _CreateShipmentState extends State<CreateShipment> {
                                               controller: destinationController,
                                               debounceDuration: const Duration(
                                                   milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  OriginAndDestinationService.find(search),
+                                              suggestionsCallback: (search){
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                  return OriginAndDestinationService.find(search);},
                                               itemBuilder: (context, item) {
                                                 return Container(
                                                   decoration:
@@ -1206,8 +1221,11 @@ class _CreateShipmentState extends State<CreateShipment> {
                                               controller: commTypeController,
                                               debounceDuration: const Duration(
                                                   milliseconds: 300),
-                                              suggestionsCallback: (search) =>
-                                                  CommodityService.find(search),
+                                              suggestionsCallback: (search){
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                 return CommodityService.find(search);},
                                               itemBuilder: (context, item) {
                                                 return Container(
                                                   decoration:
@@ -1248,7 +1266,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     needOutlineBorder: true,
                                                     onPress: () {},
                                                     labelText:
-                                                    "Commodity*",
+                                                    "Commodity",
                                                     readOnly: false,
                                                     fontSize: 18,
                                                     onChanged: (String, bool) {},
@@ -1300,8 +1318,11 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     controller: firmsCodeController,
                                                     debounceDuration: const Duration(
                                                         milliseconds: 300),
-                                                    suggestionsCallback: (search) =>
-                                                        FirmsCodeService.find(search),
+                                                    suggestionsCallback: (search) {
+                                                      if (search.isEmpty) {
+                                                        return null;
+                                                      }
+                                                        return FirmsCodeService.find(search);},
                                                     itemBuilder: (context, item) {
                                                       return Container(
                                                         decoration:
@@ -1390,8 +1411,11 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                     controller: dispositionCodeController,
                                                     debounceDuration: const Duration(
                                                         milliseconds: 300),
-                                                    suggestionsCallback: (search) =>
-                                                        DispositionCodeService.find(search),
+                                                    suggestionsCallback: (search) {
+                                                      if (search.isEmpty) {
+                                                        return null;
+                                                      }
+                                                       return DispositionCodeService.find(search);},
                                                     itemBuilder: (context, item) {
                                                       return Container(
                                                         decoration:
