@@ -2,16 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleystate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -21,13 +17,10 @@ import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
-import '../../../../utils/uldvalidationutil.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
-import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
@@ -37,6 +30,8 @@ import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/closeuld/equipmentmodel.dart';
+import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
+import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
 class CloseULDEquipmentPage extends StatefulWidget {
   String mainMenuName;
@@ -46,6 +41,9 @@ class CloseULDEquipmentPage extends StatefulWidget {
   int menuId;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String uldNo;
+  int uldSeqNo;
+  String uldType;
 
   CloseULDEquipmentPage(
       {super.key,
@@ -55,7 +53,10 @@ class CloseULDEquipmentPage extends StatefulWidget {
       required this.refrelCode,
       this.lableModel,
       required this.menuId,
-      required this.mainMenuName});
+      required this.mainMenuName,
+      required this.uldNo,
+      required this.uldSeqNo,
+      required this.uldType});
 
   @override
   State<CloseULDEquipmentPage> createState() => _CloseULDEquipmentPageState();
@@ -85,26 +86,12 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
-  final List<Equipmentmodel> equipmentList = [
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-    Equipmentmodel(name: "Treated Wood", value: 0, weight: 13.42),
-    Equipmentmodel(name: "Re-Strapping CPLU", value: 0, weight: 5.0),
-    Equipmentmodel(name: "Plane Net MD (118/S)", value: 75, weight: 1.2),
-  ];
+  List<EequipmentList> equipmentList = [];
 
   List<TextEditingController> volumeControllers = [];
   List<TextEditingController> weightControllers = [];
   List<FocusNode> volumeFocusNodes = [];
   List<FocusNode> weightFocusNodes = [];
-  bool _showFullList = false;
 
   @override
   void initState() {
@@ -112,21 +99,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
     _loadUser(); //load user data
 
-    volumeControllers = List.generate(
-      equipmentList.length,
-          (index) => TextEditingController(
-        text: equipmentList[index].value?.toString() ?? "",
-      ),
-    );
-    weightControllers = List.generate(
-      equipmentList.length,
-          (index) => TextEditingController(
-        text: equipmentList[index].weight?.toString() ?? "",
-      ),
-    );
 
-    volumeFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
-    weightFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
 
   }
 
@@ -175,7 +148,12 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
         _splashDefaultData = splashDefaultData;
       });
     }
-
+await context.read<CloseULDCubit>().closeULDEquipmentList(
+            widget.uldSeqNo,
+            widget.uldType,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -341,236 +319,319 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                               ),
                             ),
 
-                            // start api responcer
-                            Expanded(
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10,
-                                        right: 10,
-                                        top: 0,
-                                        bottom: 0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
+                            BlocListener<CloseULDCubit, CloseULDState>(
+                              listener: (context, state) async {
+                                if (state is CloseULDInitialState) {}
+                                else if (state is CloseULDInitialState) {
+                                  // showing loading dialog in this state
+                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                }
+                                else if (state is CloseULDEquipmentSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.closeULDEquipmentModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.closeULDEquipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    equipmentList = state.closeULDEquipmentModel.eequipmentList!;
 
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: MyColor.colorWhite,
-                                            borderRadius: BorderRadius.circular(8),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: MyColor.colorBlack.withOpacity(0.09),
-                                                spreadRadius: 2,
-                                                blurRadius: 15,
-                                                offset: Offset(0, 3), // changes position of shadow
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Directionality(
-                                                textDirection: textDirection,
-                                                child: Row(
-                                                  children: [
-                                                    SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                    CustomeText(
-                                                        text: "Equipment for this AKE 19191 BA",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start)
-                                                  ],
+
+                                    volumeControllers = List.generate(
+                                      equipmentList.length,
+                                          (index) => TextEditingController(
+                                        text: equipmentList[index].quantity?.toString() ?? "",
+                                      ),
+                                    );
+                                    weightControllers = List.generate(
+                                      equipmentList.length,
+                                          (index) => TextEditingController(
+                                        text: equipmentList[index].weight?.toString() ?? "",
+                                      ),
+                                    );
+
+                                    volumeFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
+                                    weightFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
+
+                                    setState(() {
+
+                                    });
+
+                                  }
+                                }
+                                else if (state is CloseULDEquipmentFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+
+
+
+                              },
+                              child:  Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 0,
+                                          bottom: 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: MyColor.colorWhite,
+                                              borderRadius: BorderRadius.circular(8),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 15,
+                                                  offset: Offset(0, 3), // changes position of shadow
                                                 ),
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              ListView.builder(
-                                                itemCount: _showFullList ? equipmentList.length : (equipmentList.length > 3 ? 3 : equipmentList.length),
-                                                shrinkWrap: true,
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                itemBuilder: (context, index) {
-                                                  Equipmentmodel content = equipmentList[index];
-                                                  TextEditingController volumeController = volumeControllers[index];
-                                                  TextEditingController weightController = weightControllers[index];
-                                                  FocusNode volumeFocusNode = volumeFocusNodes[index];
-                                                  FocusNode weightFocusNode = weightFocusNodes[index];
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Directionality(
+                                                  textDirection: textDirection,
+                                                  child: Row(
+                                                    children: [
+                                                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                      CustomeText(
+                                                          text: widget.uldNo,
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                          fontWeight: FontWeight.w700,
+                                                          textAlign: TextAlign.start)
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(height: SizeConfig.blockSizeVertical),
+                                                ListView.builder(
+                                                  itemCount: equipmentList.length,
+                                                  shrinkWrap: true,
+                                                  physics: const NeverScrollableScrollPhysics(),
+                                                  itemBuilder: (context, index) {
+                                                    EequipmentList content = equipmentList[index];
+                                                    TextEditingController volumeController = volumeControllers[index];
+                                                    TextEditingController weightController = weightControllers[index];
+                                                    FocusNode volumeFocusNode = volumeFocusNodes[index];
+                                                    FocusNode weightFocusNode = weightFocusNodes[index];
 
-                                                  return Container(
-                                                    padding: const EdgeInsets.only(right: 8, left: 8, bottom: 8),
-                                                    margin: const EdgeInsets.only(bottom: 8),
-                                                    decoration: BoxDecoration(
-                                                      color: MyColor.colorWhite,
-                                                      borderRadius: BorderRadius.circular(8),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                                          spreadRadius: 2,
-                                                          blurRadius: 15,
-                                                          offset: Offset(0, 3), // changes position of shadow
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        CustomeText(text: content.name!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5),
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              flex:1,
-                                                              child: Directionality(
-                                                                textDirection: textDirection,
-                                                                child: CustomTextField(
+                                                    return Container(
+                                                      padding: const EdgeInsets.only(right: 8, left: 8, bottom: 8),
+                                                      margin: EdgeInsets.only(bottom: 8),
+                                                      decoration: BoxDecoration(
+                                                        color: MyColor.colorWhite,
+                                                        borderRadius: BorderRadius.circular(8),
+                                                        boxShadow: [
+                                                          BoxShadow(
+                                                            color: MyColor.colorBlack.withOpacity(0.09),
+                                                            spreadRadius: 2,
+                                                            blurRadius: 15,
+                                                            offset: Offset(0, 3), // changes position of shadow
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      child: Column(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        children: [
+                                                          CustomeText(text: content.referenceDescription!, fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                          SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5),
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Directionality(
                                                                   textDirection: textDirection,
-                                                                  controller: volumeController,
-                                                                  focusNode: volumeFocusNode,
-                                                                  onPress: () {
+                                                                  child: CustomTextField(
+                                                                    textDirection: textDirection,
+                                                                    controller: volumeController,
+                                                                    focusNode: volumeFocusNode,
+                                                                    onPress: () {
 
-                                                                  },
-                                                                  hasIcon: false,
-                                                                  maxLength: 5,
-                                                                  hastextcolor: true,
-                                                                  animatedLabel: true,
-                                                                  needOutlineBorder: true,
-                                                                  labelText: "Volume",
-                                                                  readOnly: false,
-                                                                  onChanged: (value) {
-                                                                    //updateSelectedContentList(index, value);
-                                                                  },
-                                                                  fillColor:  Colors.grey.shade100,
-                                                                  textInputType: TextInputType.number,
-                                                                  inputAction: TextInputAction.next,
-                                                                  hintTextcolor: Colors.black45,
-                                                                  verticalPadding: 0,
-                                                                  digitsOnly: true,
+                                                                    },
+                                                                    hasIcon: false,
+                                                                    maxLength: 5,
+                                                                    hastextcolor: true,
+                                                                    animatedLabel: true,
+                                                                    needOutlineBorder: true,
+                                                                    labelText: "Quantity",
+                                                                    readOnly: false,
+                                                                    onChanged: (value) {
+                                                                      //updateSelectedContentList(index, value);
+                                                                    },
+                                                                    fillColor:  Colors.grey.shade100,
+                                                                    textInputType: TextInputType.number,
+                                                                    inputAction: TextInputAction.next,
+                                                                    hintTextcolor: Colors.black45,
+                                                                    verticalPadding: 0,
+                                                                    digitsOnly: true,
 
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                                  validator: (value) {
-                                                                    if (value!.isEmpty) {
-                                                                      return "Please fill out this field";
-                                                                    } else {
-                                                                      return null;
-                                                                    }
-                                                                  },
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                                    validator: (value) {
+                                                                      if (value!.isEmpty) {
+                                                                        return "Please fill out this field";
+                                                                      } else {
+                                                                        return null;
+                                                                      }
+                                                                    },
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            SizedBox(width: 15,),
-                                                            Expanded(
-                                                              flex: 1,
-                                                              child: Directionality(
-                                                                textDirection: textDirection,
-                                                                child: CustomTextField(
+                                                              SizedBox(width: 15,),
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: Directionality(
                                                                   textDirection: textDirection,
-                                                                  controller: weightController,
-                                                                  focusNode: weightFocusNode,
-                                                                  onPress: () {
+                                                                  child: CustomTextField(
+                                                                    textDirection: textDirection,
+                                                                    controller: weightController,
+                                                                    focusNode: weightFocusNode,
+                                                                    onPress: () {},
+                                                                    hasIcon: false,
+                                                                    hastextcolor: true,
+                                                                    animatedLabel: true,
+                                                                    needOutlineBorder: true,
+                                                                    labelText: "${lableModel.weight}",
+                                                                    readOnly: false,
+                                                                    maxLength: 10,
+                                                                    digitsOnly: false,
+                                                                    doubleDigitOnly: true,
+                                                                    onChanged: (value) {
+                                                                      setState(() {
+                                                                        weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
+                                                                      });
 
-                                                                  },
-                                                                  hasIcon: false,
-                                                                  maxLength: 5,
-                                                                  hastextcolor: true,
-                                                                  animatedLabel: true,
-                                                                  needOutlineBorder: true,
-                                                                  labelText: "Weight",
-                                                                  readOnly: false,
-                                                                  onChanged: (value) {
-                                                                    //updateSelectedContentList(index, value);
-                                                                  },
-                                                                  fillColor:  Colors.grey.shade100,
-                                                                  textInputType: TextInputType.number,
-                                                                  inputAction: TextInputAction.next,
-                                                                  hintTextcolor: Colors.black45,
-                                                                  verticalPadding: 0,
-                                                                  digitsOnly: true,
-
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                                  validator: (value) {
-                                                                    if (value!.isEmpty) {
-                                                                      return "Please fill out this field";
-                                                                    } else {
-                                                                      return null;
-                                                                    }
-                                                                  },
+                                                                    },
+                                                                    fillColor:  Colors.grey.shade100,
+                                                                    textInputType: TextInputType.number,
+                                                                    inputAction: TextInputAction.next,
+                                                                    hintTextcolor: Colors.black45,
+                                                                    verticalPadding: 0,
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                    circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                                    boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                                    validator: (value) {
+                                                                      if (value!.isEmpty) {
+                                                                        return "Please fill out this field";
+                                                                      } else {
+                                                                        return null;
+                                                                      }
+                                                                    },
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ),
-
-                                              if (equipmentList.length > 3) // Only show the button if the list has more than 4 items
-                                                InkWell(
-                                                  onTap: () {
-                                                    setState(() {
-                                                      _showFullList = !_showFullList; // Toggle between showing full list and limited list
-                                                    });
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
                                                   },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                    child: Row(
-                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                      children: [
-                                                        CustomeText(
-                                                          text: _showFullList ? "${lableModel.showLess}" : "${lableModel.showMore}", // Change text based on state
-                                                          fontColor: MyColor.primaryColorblue,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                          fontWeight: FontWeight.w500, textAlign: TextAlign.center,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
                                                 ),
 
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: RoundedButtonBlue(
-                                                      text: "${lableModel.cancel}",
-                                                      isborderButton: true,
-                                                      press: () {
-                                                        Navigator.pop(context, null);  // Return null when "Cancel" is pressed
-                                                      },
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 10),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: RoundedButtonBlue(
-                                                      text: "Save",
-                                                      press: () {
 
-                                                      },
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
 
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
 
 
 
 
-                                      ],
+                                        ],
+                                      ),
                                     ),
+                                  )),
+                            ),
+
+
+                            // start api responcer
+
+                            SizedBox(height: SizeConfig.blockSizeVertical),
+
+                            Container(
+                                decoration: BoxDecoration(
+                                  color: MyColor.colorWhite,
+                                  borderRadius: BorderRadius.circular(8),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: MyColor.colorBlack.withOpacity(0.09),
+                                      spreadRadius: 2,
+                                      blurRadius: 15,
+                                      offset: Offset(0, 3), // changes position of shadow
+                                    ),
+                                  ],
+                                ),
+                              padding: const EdgeInsets.only(
+                                  left: 10, right: 15, top: 12, bottom: 12),
+                              child:  Column(
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomeText(
+                                        text: "Total Weight : ",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                        fontWeight: FontWeight.w700,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      Row(
+                                        children: [
+                                          CustomeText(
+                                            text: CommonUtils.formateToTwoDecimalPlacesValue(0),
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                            fontWeight: FontWeight.w700,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          CustomeText(
+                                            text: " Kg",
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                            fontWeight: FontWeight.w700,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      )
+
+                                    ],
                                   ),
-                                ))
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        flex: 1,
+                                        child: RoundedButtonBlue(
+                                          text: "${lableModel.cancel}",
+                                          isborderButton: true,
+                                          press: () {
+                                            Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                                      Expanded(
+                                        flex: 1,
+                                        child: RoundedButtonBlue(
+                                          text: "Save",
+                                          press: () {
+
+                                          },
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              )
+                            ),
 
                           ],
                         ),

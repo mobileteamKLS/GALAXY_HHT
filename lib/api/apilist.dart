@@ -121,4 +121,9 @@ class Apilist{
   static String searchULDTrollPageLoadApi = "/EmptyULDTrolley/Search";
   static String createULDTrolleyApi = "/EmptyULDTrolley/Create";
 
+
+  // ULD Close
+  static String closeULDSearchApi = "/CloseULD/Search";
+  static String closeULDEquipmentApi = "/CloseULD/GetEequipmentList";
+
 }

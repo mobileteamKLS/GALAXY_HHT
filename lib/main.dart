@@ -13,6 +13,7 @@ import 'package:galaxy/module/splash/page/splashscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'language/appLocalizations.dart';
+import 'module/export/services/closeuld/closeuldlogic/closeuldcubit.dart';
 import 'module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
 import 'module/export/services/palletstack/palletstacklogic/palletstackcubit.dart';
 import 'module/export/services/retriveuld/retriveuldlogic/retriveuldcubit.dart';
@@ -91,6 +92,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => ULDToULDCubit(),),
         BlocProvider(create: (context) => UnloadULDCubit(),),
         BlocProvider(create: (context) => EmptyULDTrolleyCubit(),),
+        BlocProvider(create: (context) => CloseULDCubit(),),
       ],
       child: MaterialApp(
 

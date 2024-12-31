@@ -189,7 +189,22 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
 
   Future<void> leaveULDFocusNode() async {
     if (scanULDController.text.isNotEmpty) {
-      callSearchApi(selectedSourceType, scanULDController.text);
+
+      String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+      if(uldNumber == "Valid"){
+
+        callSearchApi(selectedSourceType, uldNumber);
+      }
+      else{
+        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        currentULDOwnerController.clear();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(scanULDFocusNode);
+        });
+      }
+
+
     }
   }
 
@@ -531,9 +546,9 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
                                     }
 
 
-                                  }else{
+                                  }
+                                  else{
                                     if(selectedSourceType == "U"){
-
                                       String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
                                       List<String> parts = uldNumbes.split(' ');
                                       currentULDOwnerController.text = parts[2];
@@ -847,26 +862,53 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
                                                             if(_isvalidateLocation == true){
                                                               if(selectedSourceType == "U"){
                                                                 if(scanULDController.text.isNotEmpty){
-                                                                  if(currentULDOwnerController.text.isNotEmpty){
-                                                                    if(groupIdRequired == "Y"){
-                                                                      if (groupIdController.text.isNotEmpty) {
-                                                                        if (groupIdController.text.length == groupIdCharSize) {
-                                                                          createULDTrolley(scanULDController.text);
+                                                                  String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+                                                                  if(uldNumber == "Valid"){
+                                                                    if(currentULDOwnerController.text.isNotEmpty){
+                                                                      if(groupIdRequired == "Y"){
+                                                                        if (groupIdController.text.isNotEmpty) {
+                                                                          if (groupIdController.text.length == groupIdCharSize) {
+                                                                            createULDTrolley(scanULDController.text);
+                                                                          }else{
+                                                                            openValidationDialog(CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIdCharSize"]), groupIdFocusNode);
+                                                                          }
                                                                         }else{
-                                                                          openValidationDialog(CommonUtils.formatMessage("${lableModel.groupIdCharSizeMsg}", ["$groupIdCharSize"]), groupIdFocusNode);
+                                                                          openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
                                                                         }
-                                                                      }else{
-                                                                        openValidationDialog("${lableModel.enterGropIdMsg}", groupIdFocusNode);
+                                                                      }
+                                                                      else{
+                                                                        String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+                                                                        if(uldNumber == "Valid"){
+                                                                          createULDTrolley(uldNumber);
+                                                                        }
+                                                                        else{
+                                                                          scanULDController.clear();
+                                                                          SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          Vibration.vibrate(duration: 500);
+                                                                          currentULDOwnerController.clear();
+                                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                            FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                                          });
+                                                                        }
                                                                       }
                                                                     }
                                                                     else{
-                                                                      createULDTrolley(scanULDController.text);
+                                                                      openValidationDialog("${lableModel.currentuldownermsg}", currentULDOwnerFocusNode);
                                                                     }
                                                                   }
                                                                   else{
-                                                                    openValidationDialog("${lableModel.currentuldownermsg}", currentULDOwnerFocusNode);
+                                                                    SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                    Vibration.vibrate(duration: 500);
+                                                                    currentULDOwnerController.clear();
+                                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                      FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                                    });
                                                                   }
-                                                                }else{
+
+
+
+                                                                }
+                                                                else{
                                                                   openValidationDialog("${lableModel.scanuldmsg}", scanULDFocusNode);
                                                                 }
                                                               }

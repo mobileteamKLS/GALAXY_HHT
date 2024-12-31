@@ -9,11 +9,12 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/module/export/pages/closeuld/closeuldequipmentpage.dart';
 import 'package:galaxy/module/export/pages/closeuld/contouruldpage.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleystate.dart';
+import 'package:galaxy/module/export/pages/closeuld/remarkuldpage.dart';
+import 'package:galaxy/module/export/pages/closeuld/scaleuldpage.dart';
+import 'package:galaxy/module/export/services/closeuld/closeuldlogic/closeuldcubit.dart';
+import 'package:galaxy/module/export/services/closeuld/closeuldlogic/closeuldstate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -26,10 +27,8 @@ import '../../../../utils/dialogutils.dart';
 import '../../../../utils/uldvalidationutil.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
-import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
@@ -38,6 +37,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/closeuld/closeuldsearchmodel.dart';
 
 class CloseULDPage extends StatefulWidget {
   String mainMenuName;
@@ -62,42 +62,21 @@ class CloseULDPage extends StatefulWidget {
   State<CloseULDPage> createState() => _CloseULDPageState();
 }
 
-class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderStateMixin{
+class _CloseULDPageState extends State<CloseULDPage>{
 
 
-  String selectedSourceType = "U";
 
-  String groupIdRequired = "";
-  int groupIdCharSize = 1;
-
-  TextEditingController locationController = TextEditingController();
-  FocusNode locationFocusNode = FocusNode();
-  FocusNode locationBtnFocusNode = FocusNode();
-
+  ULDDetailList? uldDetail;
 
   TextEditingController scanULDController = TextEditingController();
   FocusNode scanULDFocusNode = FocusNode();
   FocusNode scanULDBtnFocusNode = FocusNode();
-
-  TextEditingController scanTrolleyController = TextEditingController();
-  FocusNode scanTrolleyFocusNode = FocusNode();
-  FocusNode scanTrolleyBtnFocusNode = FocusNode();
-
-  TextEditingController trollyTypeController = TextEditingController();
-  TextEditingController trollyNumberController = TextEditingController();
-  FocusNode trollyTypeFocusNode = FocusNode();
-  FocusNode trollyNumberFocusNode = FocusNode();
-
-  TextEditingController currentULDOwnerController = TextEditingController();
-  FocusNode currentULDOwnerFocusNode = FocusNode();
-
-  TextEditingController groupIdController = TextEditingController();
-  FocusNode groupIdFocusNode = FocusNode();
-  FocusNode createBtnFocusNode = FocusNode();
+  FocusNode equipmentBtnFocusNode = FocusNode();
+  FocusNode contorBtnFocusNode = FocusNode();
+  FocusNode scaleBtnFocusNode = FocusNode();
+  FocusNode remarkBtnFocusNode = FocusNode();
 
 
-  bool _isLocationSearchBtnEnable = false;
-  bool _isvalidateLocation = false;
 
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
@@ -105,8 +84,6 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
   SplashDefaultModel? _splashDefaultData;
   final ScrollController scrollController = ScrollController();
 
-  final List<String> _tabs = ['ULD', 'Trolley'];
-  int _pageIndex = 0;
 
 
 
@@ -115,40 +92,15 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
 
 
 
-  late AnimationController _blinkController;
-  late Animation<Color?> _colorAnimation;
-
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
-  late TabController _tabController;
+
 
   @override
   void initState() {
     super.initState();
 
     _loadUser(); //load user data
-
-    _blinkController = AnimationController(
-      duration: const Duration(seconds: 1),
-      vsync: TickerProviders(), // Manually providing Ticker
-    )..repeat(reverse: true); // Loop the animation
-
-    _colorAnimation = ColorTween(
-      begin: MyColor.shcColorList[0],
-      end: Colors.transparent,
-    ).animate(_blinkController);
-
-    _tabController = TabController(length: 2, vsync: this);
-    _tabController.animateTo(_pageIndex);
-
-    locationFocusNode.addListener(() {
-      if (!locationFocusNode.hasFocus && !isBackPressed) {
-        leaveLocationFocus();
-      }
-    });
-
-    locationController.addListener(_validateLocationSearchBtn);
-
 
 
     scanULDFocusNode.addListener(() {
@@ -157,58 +109,34 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
       }
     });
 
-    scanTrolleyFocusNode.addListener(() {
-      if (!scanTrolleyFocusNode.hasFocus && !isBackPressed) {
-        leaveTrolleyFocusNode();
-      }
-    });
 
 
   }
 
-  Future<void> leaveLocationFocus() async {
-    if (locationController.text.isNotEmpty) {
-      if(_isvalidateLocation == false){
-        //call location validation api
-        await context.read<EmptyULDTrolleyCubit>().getValidateLocation(
-            locationController.text,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId,
-            "a");
-      }else{
-
-      }
-
-    }else{
-      //focus on location feild
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(locationBtnFocusNode);
-      },
-      );
-    }
-  }
 
   Future<void> leaveULDFocusNode() async {
     if (scanULDController.text.isNotEmpty) {
-      callSearchApi(selectedSourceType, scanULDController.text);
+      String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+      if(uldNumber == "Valid"){
+        setState(() {
+          callSearchApi(scanULDController.text);
+        });
+      }
+      else{
+        scanULDController.clear();
+        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(scanULDFocusNode);
+        });
+      }
+    }else{
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(scanULDFocusNode);
+      });
     }
   }
 
-  Future<void> leaveTrolleyFocusNode() async {
-    if (scanTrolleyController.text.isNotEmpty) {
-      callSearchApi(selectedSourceType, scanTrolleyController.text);
-    }
-  }
-
-
-
-
-  void _validateLocationSearchBtn() {
-    setState(() {
-      _isLocationSearchBtnEnable = locationController.text.isNotEmpty;
-    });
-  }
 
 
 
@@ -240,10 +168,14 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
       });
     }
 
-    await context.read<EmptyULDTrolleyCubit>().emptyULDTrolleyPageLoad(
+  /*  WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(scanULDFocusNode);
+    });*/
+
+    /*await context.read<EmptyULDTrolleyCubit>().emptyULDTrolleyPageLoad(
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
-            widget.menuId);
+            widget.menuId);*/
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -291,20 +223,10 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
   }
 
   Future<bool> _onWillPop() async {
-
-
-    if(_pageIndex == 1){
-      setState(() {
-        _pageIndex = 0;
-        _tabController.animateTo(0);
-      });
-    }else{
-      isBackPressed = true; // Set to true to avoid showing snackbar on back press
-      FocusScope.of(context).unfocus();
-      Navigator.pop(context);
-      inactivityTimerManager?.stopTimer();
-    }
-
+    isBackPressed = true; // Set to true to avoid showing snackbar on back press
+    FocusScope.of(context).unfocus();
+    Navigator.pop(context);
+    inactivityTimerManager?.stopTimer();
 
     return false; // Prevents the default back button action
   }
@@ -404,18 +326,8 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                 onClear: () {
                                   //unloadUldListModel = null;
                                   scanULDController.clear();
-                                  selectedSourceType = "U";
-                                  locationController.clear();
-                                  _isvalidateLocation = false;
-                                  currentULDOwnerController.clear();
-
-                                  trollyTypeController.clear();
-                                  trollyNumberController.clear();
-                                  scanTrolleyController.clear();
-
-                                  groupIdController.clear();
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    FocusScope.of(context).requestFocus(locationFocusNode);
+                                    FocusScope.of(context).requestFocus(scanULDFocusNode);
                                   },
                                   );
                                   setState(() {
@@ -426,200 +338,33 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                             ),
 
                             // start api responcer
-                            BlocListener<EmptyULDTrolleyCubit, EmptyULDTrolleyState>(
+                            BlocListener<CloseULDCubit, CloseULDState>(
                               listener: (context, state) async {
-                                if (state is EmptyULDTrolleyInitialState) {
+                                if (state is CloseULDInitialState) {
                                 }
-                                else if (state is EmptyULDTrolleyLoadingState) {
+                                else if (state is CloseULDLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
-                                else if (state is EmptyULDTrolleyPageLoadSuccessState) {
+                                else if (state is CloseULDSearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
-                                  if (state.emptyULDtrolPageLoadModel.status == "E") {
+                                  if(state.closeULDSearchModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.emptyULDtrolPageLoadModel.statusMessage!,
-                                        MyColor.colorRed,
-                                        icon: FontAwesomeIcons.times);
-
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(locationFocusNode);
-                                    },
-                                    );
-
-                                  } else {
-
-                                    groupIdRequired = state.emptyULDtrolPageLoadModel.isGroupBasedAcceptChar!;
-                                    groupIdCharSize = state.emptyULDtrolPageLoadModel.isGroupBasedAcceptNumber!;
-
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(locationFocusNode);
-                                    },
-                                    );
-                                    setState(() {});
-
-                                  }
-                                }
-                                else if (state is ValidateLocationSuccessState) {
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if (state.validateLocationModel.status == "E") {
+                                    SnackbarUtil.showSnackbar(context, state.closeULDSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    uldDetail = state.closeULDSearchModel.uLDDetailList![0];
                                     setState(() {
-                                      _isvalidateLocation = false;
+
                                     });
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.validateLocationModel.statusMessage!,
-                                        MyColor.colorRed,
-                                        icon: FontAwesomeIcons.times);
-
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(locationFocusNode);
-                                    },
-                                    );
-                                  } else {
-                                    // DialogUtils.hideLoadingDialog(context);
-                                    _isvalidateLocation = true;
-                                    setState(() {});
-
-                                    if(selectedSourceType == "U"){
-
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                      },
-                                      );
-                                    }else{
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-                                      },
-                                      );
-                                    }
-
                                   }
                                 }
-                                else if (state is ValidateLocationFailureState) {
-                                  // validate location failure
-                                  DialogUtils.hideLoadingDialog(context);
-                                  _isvalidateLocation = false;
-                                  Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(
-                                      context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                }
-                                else if (state is SearchULDTrolleySuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if(state.searchULDTrolleyModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.searchULDTrolleyModel.statusMessage!,
-                                        MyColor.colorRed,
-                                        icon: FontAwesomeIcons.times);
-
-                                    if(selectedSourceType == "U"){
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                      },
-                                      );
-                                      scanULDController.clear();
-                                      currentULDOwnerController.clear();
-                                    }else{
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-                                      },
-                                      );
-                                      scanTrolleyController.clear();
-                                    }
-
-
-                                  }else{
-                                    if(selectedSourceType == "U"){
-
-                                      String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
-                                      List<String> parts = uldNumbes.split(' ');
-                                      currentULDOwnerController.text = parts[2];
-
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(currentULDOwnerFocusNode);
-                                      },
-                                      );
-
-
-                                    }else{
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(trollyTypeFocusNode);
-                                      },
-                                      );
-                                    }
-
-                                  }
-                                }
-                                else if (state is SearchULDTrolleyFailureState){
+                                else if (state is CloseULDSearchFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(
-                                      context,
-                                      state.error,
-                                      MyColor.colorRed,
-                                      icon: FontAwesomeIcons.times);
-
-                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                  },
-                                  );
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                                else if (state is CreateULDTrolleySuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if(state.createULDTrolleyModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.createULDTrolleyModel.statusMessage!,
-                                        MyColor.colorRed,
-                                        icon: FontAwesomeIcons.times);
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                    },
-                                    );
 
-                                  }else{
 
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.createULDTrolleyModel.statusMessage!,
-                                        MyColor.colorGreen,
-                                        icon: Icons.done);
-
-                                    if(selectedSourceType == "U"){
-                                      scanULDController.clear();
-                                      currentULDOwnerController.clear();
-                                      groupIdController.clear();
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                      },
-                                      );
-                                    }else{
-                                      scanTrolleyController.clear();
-                                      trollyTypeController.clear();
-                                      trollyNumberController.clear();
-                                      groupIdController.clear();
-                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                        FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-                                      },
-                                      );
-                                    }
-                                  }
-                                }
-                                else if (state is CreateULDTrolleyFailureState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(
-                                      context,
-                                      state.error,
-                                      MyColor.colorRed,
-                                      icon: FontAwesomeIcons.times);
-                                }
 
                               },
                               child: Expanded(
@@ -666,24 +411,7 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                                         readOnly: false,
                                                         maxLength: 11,
                                                         onChanged: (value) {
-                                                          if(selectedSourceType == "U"){
-                                                            String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
-                                                            if(uldNumber == "Valid"){
-                                                              setState(() {
-                                                                String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
-                                                                List<String> parts = uldNumbes.split(' ');
-                                                                currentULDOwnerController.text = parts[2];
-                                                              });
-                                                            }else{
-                                                              setState(() {
-                                                                currentULDOwnerController.clear();
-                                                              });
-                                                            }
-                                                          }else{
-                                                            setState(() {
-                                                              currentULDOwnerController.clear();
-                                                            });
-                                                          }
+
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
@@ -722,13 +450,13 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                                   ],
                                                 ),
                                               ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                              SizedBox(height: SizeConfig.blockSizeVertical),
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      CustomeText(text: "AKE 23232 BA", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                      CustomeText(text: (uldDetail != null) ? uldDetail!.uLDNo! : "-", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
                                                     ],
                                                   ),
                                                   Row(
@@ -741,20 +469,20 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                                         textAlign: TextAlign.start,
                                                       ),
                                                       const SizedBox(width: 5),
-                                                      Container(
+                                                      (uldDetail != null) ? Container(
                                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
                                                         decoration : BoxDecoration(
                                                             borderRadius: BorderRadius.circular(20),
-                                                            color: MyColor.flightFinalize
+                                                            color: (uldDetail!.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                         ),
                                                         child: CustomeText(
-                                                          text: "Open",
+                                                          text: (uldDetail!.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.bold,
                                                           textAlign: TextAlign.center,
                                                         ),
-                                                      ),
+                                                      ) : SizedBox(),
                                                     ],
                                                   ),
 
@@ -764,187 +492,327 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Tare Weight : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "120 Kg",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
-                                                  ),
+                                                  Expanded(
+                                                    flex : 1,
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          CustomeText(
+                                                            text: "Tare Wt. : ",
+                                                            fontColor: MyColor.textColorGrey2,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                            fontWeight: FontWeight.w500,
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                          const SizedBox(width: 5),
+                                                          Row(
+                                                            children: [
+                                                              CustomeText(
+                                                                text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                              CustomeText(
+                                                                text: " Kg",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                            ],
+                                                          )
 
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Scale Weight : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
+                                                        ],
                                                       ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "532 Kg",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                        children: [
+                                                          CustomeText(
+                                                            text: "Net Wt. : ",
+                                                            fontColor: MyColor.textColorGrey2,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                            fontWeight: FontWeight.w500,
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                          const SizedBox(width: 5),
+                                                          Row(
+                                                            children: [
+                                                              CustomeText(
+                                                                text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.netWeight!) : "-",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                              CustomeText(
+                                                                text: " Kg",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                            ],
+                                                          )
+
+                                                        ],
                                                       ),
-                                                    ],
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "Equip Wt. : ",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            Row(
+                                                              children: [
+                                                                CustomeText(
+                                                                  text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.equipmentWeight!) : "-",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                                CustomeText(
+                                                                  text: " Kg",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                              ],
+                                                            )
+
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "Scale Wt. : ",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            Row(
+                                                              children: [
+                                                                CustomeText(
+                                                                  text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.scaleWeight!) : "-",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                                CustomeText(
+                                                                  text: " Kg",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                              ],
+                                                            )
+
+                                                          ],
+                                                        )
+                                                    ],),
                                                   ),
+                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
+                                                  Expanded(
+                                                    flex : 1,
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Row(
+                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "Dev. : ",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            CustomeText(
+                                                              text: (uldDetail != null) ? "${uldDetail!.deviation!} Kg (${uldDetail!.deviationPer!} %)" : "-",
+                                                              fontColor: MyColor.colorBlack,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w700,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "Contour : ",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            CustomeText(
+                                                              text: (uldDetail != null) ? uldDetail!.contour! : "-",
+                                                              fontColor: MyColor.colorBlack,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w700,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "Equip. Count : ",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            CustomeText(
+                                                              text: (uldDetail != null) ? "${uldDetail!.equipmentCount!}" : "-",
+                                                              fontColor: MyColor.colorBlack,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w700,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            CustomeText(
+                                                              text: "",
+                                                              fontColor: MyColor.colorBlack,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w700,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],),
+                                                  ),
+                                                ],
+                                              ),
+
+
+
+
+
+
+                                            ],
+                                          ),
+                                        ),
+                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                        Container(
+                                          padding: const EdgeInsets.all(10),
+                                          decoration: BoxDecoration(
+                                            color: MyColor.colorWhite,
+                                            borderRadius: BorderRadius.circular(8),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: MyColor.colorBlack.withOpacity(0.09),
+                                                spreadRadius: 2,
+                                                blurRadius: 15,
+                                                offset: Offset(0, 3), // changes position of shadow
+                                              ),
+                                            ],
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+
+                                              Row(
+                                                children: [
+                                                  CustomeText(
+                                                    text: "Flight No. : ",
+                                                    fontColor: MyColor.textColorGrey2,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w500,
+                                                    textAlign: TextAlign.start,
+                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  CustomeText(
+                                                    text: (uldDetail != null) ? "${uldDetail!.flightNo} / ${uldDetail!.flightDate!.replaceAll(" ", "-")}" : "-",
+                                                    fontColor: MyColor.colorBlack,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w700,
+                                                    textAlign: TextAlign.start,
+                                                  )
+
                                                 ],
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical),
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Net Weight : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "340 Kg",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
+                                                  CustomeText(
+                                                    text: "Off Point : ",
+                                                    fontColor: MyColor.textColorGrey2,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w500,
+                                                    textAlign: TextAlign.start,
                                                   ),
-
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Contour : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "Q6",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Equip. Count : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "10",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
-                                                  ),
-
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Equip. Weight : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "530 Kg",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Deviation : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "72 Kg (15.65 %)",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
-                                                  ),
+                                                  const SizedBox(width: 5),
+                                                  CustomeText(
+                                                    text: (uldDetail != null) ? "${uldDetail!.uLDOffPoint}" : "-",
+                                                    fontColor: MyColor.colorBlack,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w700,
+                                                    textAlign: TextAlign.start,
+                                                  )
 
                                                 ],
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical),
                                               Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Remarks : ",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4,
-                                                        fontWeight: FontWeight.w500,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "Keep under 5 degree FH",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
+                                                  CustomeText(
+                                                    text: "Remarks : ",
+                                                    fontColor: MyColor.textColorGrey2,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w500,
+                                                    textAlign: TextAlign.start,
                                                   ),
-
+                                                  const SizedBox(width: 5),
+                                                  Flexible(
+                                                    child: CustomeText(
+                                                      text: (uldDetail != null) ? "${uldDetail!.remarks}" : "-",
+                                                      fontColor: MyColor.colorBlack,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                      fontWeight: FontWeight.w700,
+                                                      textAlign: TextAlign.start,
+                                                    ),
+                                                  ),
                                                 ],
                                               ),
 
@@ -954,29 +822,41 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
 
                                         SizedBox(height: SizeConfig.blockSizeVertical),
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 12, right:10, left: 10, bottom: 0),
+                                          padding: const EdgeInsets.only(top: 10, right:0, left: 0, bottom: 0),
                                           child: Row(
                                             children: [
                                               Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonBlue(
+                                                  focusNode: equipmentBtnFocusNode,
                                                   text: "Equipment",
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   press: () {
-                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Equipment", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
+                                                    FocusScope.of(context).unfocus();
+                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Equipment",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: uldDetail!.uLDNo!,
+                                                        uldType: "U",
+                                                    uldSeqNo: uldDetail!.uLDSeqNo!,),));
                                                   },
                                                 ),
                                               ),
-                                              const SizedBox(width: 10),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
                                               Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonBlue(
-                                                  focusNode: createBtnFocusNode,
+                                                  focusNode: contorBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Contour",
                                                   press: () {
+                                                    FocusScope.of(context).unfocus();
                                                     Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Contour", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
                                                   },
                                                 ),
@@ -985,65 +865,63 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
                                           ),
                                         ),
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 12, right:10, left: 10, bottom: 0),
+                                          padding: const EdgeInsets.only(top: 12, right:0, left:0, bottom: 0),
                                           child: Row(
                                             children: [
                                               Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonBlue(
+                                                  focusNode: scanULDFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Scale",
                                                   press: () {
-                                                    Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                                    FocusScope.of(context).unfocus();
+                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Scale", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
                                                   },
                                                 ),
                                               ),
-                                              const SizedBox(width: 10),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
                                               Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonBlue(
-                                                  focusNode: createBtnFocusNode,
+                                                  focusNode: remarkBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Remarks",
                                                   press: () {
-
+                                                    FocusScope.of(context).unfocus();
+                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => RemarkULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Remarks", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
                                                   },
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
-
                                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 12, right:10, left: 10, bottom: 0),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
-                                                flex: 1,
-                                                child: RoundedButtonBlue(
-                                                  text: "${lableModel.cancel}",
-                                                  isborderButton: true,
-                                                  press: () {
-                                                    Navigator.pop(context, null);  // Return null when "Cancel" is pressed
-                                                  },
-                                                ),
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              flex: 1,
+                                              child: RoundedButtonBlue(
+                                                text: "${lableModel.cancel}",
+                                                isborderButton: true,
+                                                press: () {
+                                                  Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                                },
                                               ),
-                                              const SizedBox(width: 10),
-                                              Expanded(
-                                                flex: 1,
-                                                child: RoundedButtonBlue(
-                                                  focusNode: createBtnFocusNode,
-                                                  text: "${lableModel.create}",
-                                                  press: () {
+                                            ),
+                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                                            Expanded(
+                                              flex: 1,
+                                              child: RoundedButtonBlue(
+                                                text: "Close",
+                                                press: () {
 
-                                                  },
-                                                ),
+                                                },
                                               ),
-                                            ],
-                                          ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
@@ -1086,7 +964,6 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanULDController.clear();
-        currentULDOwnerController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanULDFocusNode);
         });
@@ -1097,19 +974,13 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
           String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
           if(uldNumber == "Valid"){
             setState(() {
-              String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
-              List<String> parts = uldNumbes.split(' ');
-              currentULDOwnerController.text = parts[2];
-              // call search api
-              callSearchApi(selectedSourceType, scanULDController.text);
-
+              callSearchApi(scanULDController.text);
             });
           }
           else{
             scanULDController.clear();
             SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
             Vibration.vibrate(duration: 500);
-            currentULDOwnerController.clear();
             WidgetsBinding.instance.addPostFrameCallback((_) {
               FocusScope.of(context).requestFocus(scanULDFocusNode);
             });
@@ -1118,107 +989,14 @@ class _CloseULDPageState extends State<CloseULDPage> with SingleTickerProviderSt
       }
     }
   }
-  Future<void> scanLocationQR() async{
-    String locationcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Color for the scanner overlay
-      'Cancel', // Text for the cancel button
-      true, // Enable flash option
-      ScanMode.DEFAULT, // Scan mode
-    );
-
-    if(locationcodeScanResult == "-1"){
-
-    }
-    else{
-      bool specialCharAllow = CommonUtils.containsSpecialCharacters(locationcodeScanResult);
-
-      if(specialCharAllow == true){
-        SnackbarUtil.showSnackbar(context, widget.lableModel!.onlyAlphaNumericValueMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-        Vibration.vibrate(duration: 500);
-        locationController.clear();
-
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(locationFocusNode);
-        });
-      }else{
-
-        String result = locationcodeScanResult.replaceAll(" ", "");
-
-        String truncatedResult = result.length > 15
-            ? result.substring(0, 15)
-            : result;
-
-        locationController.text = truncatedResult;
-        // Call searchLocation api to validate or not
-        context.read<EmptyULDTrolleyCubit>().getValidateLocation(
-            truncatedResult,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId, "a");
-      }
-
-    }
 
 
-  }
-  Future<void> scanTrolleyScanQR() async{
-    String groupcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
-      '#ff6666', // Color for the scanner overlay
-      'Cancel', // Text for the cancel button
-      true, // Enable flash option
-      ScanMode.DEFAULT, // Scan mode
-    );
-
-    if(groupcodeScanResult == "-1"){
-
-    }else{
-      bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
-
-      if(specialCharAllow == true){
-        // unloadUldListModel = null;
-        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-        Vibration.vibrate(duration: 500);
-        scanTrolleyController.clear();
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-        });
-      }else{
-        // unloadUldListModel = null;
-        String result = groupcodeScanResult.replaceAll(" ", "");
-        scanTrolleyController.text = result.toUpperCase();
-        setState(() {
-          callSearchApi(selectedSourceType, scanTrolleyController.text);
-
-        });
-      }
-    }
-  }
-
-  Future<void> callSearchApi(String selectedType, String scanNo) async {
-    await context.read<EmptyULDTrolleyCubit>().searchULDTrolley(
-        selectedType,
+  Future<void> callSearchApi(String scanNo) async {
+    await context.read<CloseULDCubit>().closeULDSearchModel(
         scanNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
-
-  Future<void> createULDTrolley(String uldNo) async {
-    await context.read<EmptyULDTrolleyCubit>().createULDTrolley(
-        uldNo,
-        selectedSourceType,
-        currentULDOwnerController.text,
-        locationController.text,
-        groupIdController.text,
-        _user!.userProfile!.userIdentity!,
-        _splashDefaultData!.companyCode!,
-        widget.menuId);
-  }
-
-}
-
-class TickerProviders extends TickerProvider {
-  @override
-  Ticker createTicker(onTick) => Ticker(onTick);
 }
 
