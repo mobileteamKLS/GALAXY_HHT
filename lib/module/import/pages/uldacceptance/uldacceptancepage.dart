@@ -282,30 +282,6 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
 
   }
 
-  // Floating Action Button to scroll to top/bottom
- /* Widget _buildFAB() {
-    return _isScrollable
-        ? FloatingActionButton(
-      onPressed: () {
-        // Scroll to top or bottom based on current scroll position
-        if (_isAtTop) {
-          _scrollController.animateTo(
-            _scrollController.position.maxScrollExtent,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        } else {
-          _scrollController.animateTo(
-            0.0,
-            duration: Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-          );
-        }
-      },
-      child: Icon(_isAtTop ? Icons.arrow_downward : Icons.arrow_upward),
-    )
-        : SizedBox(); // Don't show FAB if not scrollable
-  }*/
 
 
   @override

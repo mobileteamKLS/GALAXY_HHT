@@ -39,10 +39,10 @@ class CloseULDCubit extends Cubit<CloseULDState>{
     }
   }
 
-  Future<void> saveEquipmentList(int uldSeqNo, String uldType, String saveData, double totalWeight, int userId, int companyCode, int menuId) async {
+  Future<void> saveEquipmentList(int flightSeqNo, int uldSeqNo, String uldType, String equipXML, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final saveEquipmentModelData = await closeULDRepository.saveEquipmentModel(uldSeqNo, uldType, saveData, totalWeight, userId, companyCode, menuId);
+      final saveEquipmentModelData = await closeULDRepository.saveEquipmentModel(flightSeqNo, uldSeqNo, uldType, equipXML, userId, companyCode, menuId);
       emit(SaveEquipmentSuccessState(saveEquipmentModelData));
     } catch (e) {
       emit(SaveEquipmentFailureState(e.toString()));

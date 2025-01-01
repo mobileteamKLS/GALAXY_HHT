@@ -144,15 +144,15 @@ class CloseULDRepository{
     }
   }
 
-  Future<SaveEquipmentModel> saveEquipmentModel(int uldSeqNo, String uldType, String saveData, double totalWeight,  int userId, int companyCode, int menuId) async {
+  Future<SaveEquipmentModel> saveEquipmentModel(int flightSeqNo, int uldSeqNo, String uldType, String equipXML,  int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
+        "FlightSeqNo" : flightSeqNo,
         "ULDSeqNo" : uldSeqNo,
         "ULDType" : uldType,
-        "data" : saveData,
-        "totalWeight" : totalWeight,
+        "EquipXML" : equipXML,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -164,8 +164,8 @@ class CloseULDRepository{
       print('saveEquipmentModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.saveEquipmentApi,
-          queryParameters: payload
+      Response response = await api.sendRequest.post(Apilist.saveEquipmentApi,
+          data: payload
       );
 
       if (response.statusCode == 200) {

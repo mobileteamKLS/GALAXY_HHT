@@ -42,6 +42,7 @@ class CloseULDEquipmentPage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
   int uldSeqNo;
+  int flightSeqNo;
   String uldType;
 
   CloseULDEquipmentPage(
@@ -55,19 +56,14 @@ class CloseULDEquipmentPage extends StatefulWidget {
       required this.mainMenuName,
       required this.uldNo,
       required this.uldSeqNo,
-      required this.uldType});
+      required this.uldType,
+      required this.flightSeqNo});
 
   @override
   State<CloseULDEquipmentPage> createState() => _CloseULDEquipmentPageState();
 }
 
 class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
-
-
-
-  TextEditingController scanULDController = TextEditingController();
-  FocusNode scanULDFocusNode = FocusNode();
-  FocusNode scanULDBtnFocusNode = FocusNode();
 
 
 
@@ -93,13 +89,22 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
   List<FocusNode> weightFocusNodes = [];
   double totalWeight = 0.00;
 
+
+  bool _isAtTop = true;
+  bool _isAtBottom  = false;
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
 
     _loadUser(); //load user data
 
-
+    _scrollController.addListener(() {
+      setState(() {
+        _isAtTop = _scrollController.position.pixels == 0;
+      });
+    });
 
   }
 
@@ -134,8 +139,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
     for (var focusNode in weightFocusNodes) {
       focusNode.dispose();
     }
-
-    scanULDFocusNode.dispose();
+    _scrollController.dispose();
     inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
   }
 
@@ -165,7 +169,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
   }
 
   Future<void> _handleInactivityTimeout() async {
-    scanULDFocusNode.unfocus();
+
     isInactivityDialogOpen = true; // Set flag before showing dialog
 
     bool? activateORNot = await DialogUtils.showingActivateTimerDialog(
@@ -175,10 +179,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
     if (activateORNot == true) {
       inactivityTimerManager!.resetTimer();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(scanULDFocusNode);
-      },
-      );
+
     } else {
       _logoutUser();
     }
@@ -269,7 +270,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                     onUserProfileIconTap: () {
                       isBackPressed = true; // Set to true to avoid showing snackbar on back press
                       FocusScope.of(context).unfocus();
-                      scanULDFocusNode.unfocus();
+
                       _scaffoldKey.currentState?.closeDrawer();
                       // navigate to profile picture
                       inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
@@ -309,12 +310,28 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  //unloadUldListModel = null;
-                                  scanULDController.clear();
-
                                   setState(() {
+                                    for (var controller in volumeControllers) {
+                                      controller.clear();
+                                    }
 
+                                    for (var controller in weightControllers) {
+                                      controller.clear();
+                                    }
+                                    // Also clear the selected content list if needed
+                                    if (volumeFocusNodes.isNotEmpty) {
+                                      FocusScope.of(context).requestFocus(volumeFocusNodes[0]);
+                                    }
+
+                                    totalWeight = 0.00;
+
+                                    _scrollController.animateTo(
+                                      0,
+                                      duration: Duration(milliseconds: 100),
+                                      curve: Curves.easeOut,
+                                    );
                                   });
+
                                 },
                               ),
                             ),
@@ -351,6 +368,11 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                     volumeFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
                                     weightFocusNodes = List.generate(equipmentList.length, (index) => FocusNode());
 
+
+                                    totalWeight = equipmentList.fold(0.0, (sum, item) {
+                                      return sum + (item.weight ?? 0.0);
+                                    });
+
                                     setState(() {
 
                                     });
@@ -368,7 +390,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveEquipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-
+                                    SnackbarUtil.showSnackbar(context, state.saveEquipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                   }
                                 }
                                 else if (state is SaveEquipmentFailureState){
@@ -381,6 +403,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                               },
                               child: Expanded(
                                   child: SingleChildScrollView(
+                                    controller: _scrollController,
                                     child: Padding(
                                       padding: const EdgeInsets.only(
                                           left: 10,
@@ -476,6 +499,9 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                                     labelText: "Quantity",
                                                                     readOnly: false,
                                                                     onChanged: (value) {
+                                                                      setState(() {
+                                                                        equipmentList[index].quantity = value.isEmpty ? "0.00" : value;
+                                                                      });
                                                                       //updateSelectedContentList(index, value);
                                                                     },
                                                                     fillColor:  Colors.grey.shade100,
@@ -519,15 +545,36 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                                     doubleDigitOnly: true,
                                                                     onChanged: (value) {
                                                                      // double weight = value.isNotEmpty ? double.parse(value) : 0.00;
-                                                                     // weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(weight))}";
+                                                                     // weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
 
 
-                                                                      setState(() {
-
+                                                                    /*  setState(() {
+                                                                        equipmentList[index].weight = double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value));
                                                                         totalWeight = weightControllers.fold(0.0, (sum, controller) {
                                                                           return sum + (double.tryParse(controller.text) ?? 0.0);
                                                                         });
+                                                                      });*/
+
+                                                                      setState(() {
+                                                                        double? weight = double.tryParse(value);
+                                                                        if (weight != null) {
+                                                                          equipmentList[index].weight = weight;
+
+                                                                          // Update weightController with formatted value (optional)
+                                                                         /* weightController.text = CommonUtils.formateToTwoDecimalPlacesValue(weight);*/
+
+                                                                          // Recalculate total weight
+                                                                          totalWeight = equipmentList.fold(0.0, (sum, item) {
+                                                                            return sum + (item.weight ?? 0.0);
+                                                                          });
+                                                                        }else{
+                                                                          equipmentList[index].weight = 0.00;
+                                                                          totalWeight = equipmentList.fold(0.0, (sum, item) {
+                                                                            return sum + (item.weight ?? 0.0);
+                                                                          });
+                                                                        }
                                                                       });
+
 
                                                                     },
                                                                     fillColor:  Colors.grey.shade100,
@@ -643,11 +690,15 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                         child: RoundedButtonBlue(
                                           text: "Save",
                                           press: () async {
+
+                                            String equipXML = generateEquipXML(equipmentList);
+                                            print("CHECK FOR XML ==== ${equipXML}");
+
                                             await context.read<CloseULDCubit>().saveEquipmentList(
+                                                widget.flightSeqNo,
                                                 widget.uldSeqNo,
                                                 widget.uldType,
-                                                "",
-                                                totalWeight,
+                                                equipXML,
                                                 _user!.userProfile!.userIdentity!,
                                                 _splashDefaultData!.companyCode!,
                                                 widget.menuId);
@@ -665,6 +716,66 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                       ),
                     ),
                   ),
+                  Positioned(
+                    bottom: SizeConfig.blockSizeVertical * (SizeUtils.HEIGHT4 * SizeUtils.HEIGHT3),
+                    right: 5,
+                    child: InkWell(
+                      onTap: () {
+                        if (_isAtTop) {
+                          // Scroll to the bottom of the list
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: Duration(milliseconds: 500), // Increased duration
+                            curve: Curves.easeOut,
+                          );
+                        } else if (_isAtBottom) {
+                          // Scroll to the top of the list
+                          _scrollController.animateTo(
+                            _scrollController.position.minScrollExtent,
+                            duration: Duration(milliseconds: 500), // Increased duration
+                            curve: Curves.easeOut,
+                          );
+                        } else {
+                          // Scroll in the respective direction
+                          if (_scrollController.offset < (_scrollController.position.maxScrollExtent / 2)) {
+                            _scrollController.animateTo(
+                              _scrollController.position.maxScrollExtent,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeOut,
+                            );
+                          } else {
+                            _scrollController.animateTo(
+                              _scrollController.position.minScrollExtent,
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.easeOut,
+                            );
+                          }
+                        }
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle, // Ensures the container is circular like CircleAvatar
+                          gradient: LinearGradient(
+                            colors: [
+                              MyColor.bggradientfirst,  // Starting color
+                              MyColor.bggradientsecond,    // Ending color (you can replace this with your desired color)
+                            ],
+                            begin: Alignment.topLeft,    // Direction of the gradient
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: CircleAvatar(
+                          radius: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
+                          backgroundColor: Colors.transparent,  // Set to transparent so the gradient shows
+                          child: (_isAtTop) ?  SvgPicture.asset(arrowDown, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3 ,) : SvgPicture.asset(arrowUp, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3),
+                          /*child: Icon(
+                        (_isAtTop) ? FontAwesomeIcons.longArrowDown : FontAwesomeIcons.longArrowUp,
+                        color: MyColor.colorWhite,
+                      ),*/
+                        ),
+                      ),
+                    ),
+                  )
                 ],
               ),
             ),
@@ -672,6 +783,35 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
         ),
       ),
     );
+  }
+
+  String generateEquipXML(List<EequipmentList> equipmentList) {
+    // Initialize an XML string builder
+    StringBuffer xmlBuilder = StringBuffer('<UldEquips>');
+
+    // Loop through the equipment list and filter valid entries
+    for (var item in equipmentList) {
+     /* int quantity = int.tryParse(item.quantity ?? '0') ?? 0;
+      double weight = item.weight ?? 0.0;*/
+
+      xmlBuilder.write('<UldEquip>');
+      xmlBuilder.write('<Keyvalue>${item.referenceDataIdentifier}</Keyvalue>');
+      xmlBuilder.write('<Quantity>${item.quantity}</Quantity>');
+      xmlBuilder.write('<Weight>${item.weight!.toStringAsFixed(2)}</Weight>');
+      xmlBuilder.write('</UldEquip>');
+
+
+      /*// Only include items with non-zero quantity and weight
+      if (quantity > 0 && weight > 0) {
+
+      }*/
+    }
+
+    // Close the main tag
+    xmlBuilder.write('</UldEquips>');
+
+    // Return the final XML string
+    return xmlBuilder.toString();
   }
 
 

@@ -68,13 +68,15 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
   ULDDetailList? uldDetail;
 
-  TextEditingController scanULDController = TextEditingController();
-  FocusNode scanULDFocusNode = FocusNode();
-  FocusNode scanULDBtnFocusNode = FocusNode();
+
   FocusNode equipmentBtnFocusNode = FocusNode();
   FocusNode contorBtnFocusNode = FocusNode();
   FocusNode scaleBtnFocusNode = FocusNode();
   FocusNode remarkBtnFocusNode = FocusNode();
+
+  TextEditingController scanULDController = TextEditingController();
+  FocusNode scanULDFocusNode = FocusNode();
+  FocusNode scanULDBtnFocusNode = FocusNode();
 
 
 
@@ -102,7 +104,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
     _loadUser(); //load user data
 
-
     scanULDFocusNode.addListener(() {
       if (!scanULDFocusNode.hasFocus && !isBackPressed) {
         leaveULDFocusNode();
@@ -116,28 +117,23 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
   Future<void> leaveULDFocusNode() async {
     if (scanULDController.text.isNotEmpty) {
+
       String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
       if(uldNumber == "Valid"){
-        setState(() {
-          callSearchApi(scanULDController.text);
-        });
+
+        callSearchApi(scanULDController.text);
       }
       else{
-        scanULDController.clear();
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanULDFocusNode);
         });
       }
-    }else{
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(scanULDFocusNode);
-      });
+
+
     }
   }
-
-
 
 
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
@@ -154,7 +150,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
   @override
   void dispose() {
     super.dispose();
-    scanULDFocusNode.dispose();
     inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
   }
 
@@ -168,9 +163,9 @@ class _CloseULDPageState extends State<CloseULDPage>{
       });
     }
 
-  /*  WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       FocusScope.of(context).requestFocus(scanULDFocusNode);
-    });*/
+    });
 
     /*await context.read<EmptyULDTrolleyCubit>().emptyULDTrolleyPageLoad(
             _user!.userProfile!.userIdentity!,
@@ -187,7 +182,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
   }
 
   Future<void> _handleInactivityTimeout() async {
-    scanULDFocusNode.unfocus();
     isInactivityDialogOpen = true; // Set flag before showing dialog
 
     bool? activateORNot = await DialogUtils.showingActivateTimerDialog(
@@ -197,10 +191,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
     if (activateORNot == true) {
       inactivityTimerManager!.resetTimer();
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(scanULDFocusNode);
-      },
-      );
+
     } else {
       _logoutUser();
     }
@@ -284,7 +275,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                     onUserProfileIconTap: () {
                       isBackPressed = true; // Set to true to avoid showing snackbar on back press
                       FocusScope.of(context).unfocus();
-                      scanULDFocusNode.unfocus();
                       _scaffoldKey.currentState?.closeDrawer();
                       // navigate to profile picture
                       inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
@@ -324,12 +314,11 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  //unloadUldListModel = null;
                                   scanULDController.clear();
+                                  uldDetail = null;
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                  },
-                                  );
+                                  });
                                   setState(() {
 
                                   });
@@ -351,8 +340,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                   if(state.closeULDSearchModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.closeULDSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                    });
                                   }else{
                                     uldDetail = state.closeULDSearchModel.uLDDetailList![0];
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(scanULDBtnFocusNode);
+                                    });
                                     setState(() {
 
                                     });
@@ -833,6 +828,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   press: () {
+                                                    scanULDFocusNode.unfocus();
+                                                    scanULDBtnFocusNode.unfocus();
                                                    if(uldDetail != null){
                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
                                                        importSubMenuList: widget.importSubMenuList,
@@ -843,9 +840,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                        mainMenuName: widget.mainMenuName,
                                                        uldNo: uldDetail!.uLDNo!,
                                                        uldType: "U",
-                                                       uldSeqNo: uldDetail!.uLDSeqNo!,),));
+                                                       uldSeqNo: uldDetail!.uLDSeqNo!,
+                                                       flightSeqNo : uldDetail!.flightSeqNo!
+                                                     ),));
                                                    }else{
                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                     WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                       FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                     });
                                                    }
 
                                                   },
@@ -860,6 +862,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Contour",
                                                   press: () {
+                                                    scanULDFocusNode.unfocus();
+                                                    scanULDBtnFocusNode.unfocus();
                                                     if(uldDetail != null){
                                                       Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
@@ -874,6 +878,9 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       ),));
                                                     }else{
                                                       SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                      });
                                                     }
                                                   },
                                                 ),
@@ -888,12 +895,13 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                               Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonBlue(
-                                                  focusNode: scanULDFocusNode,
+                                                  focusNode: scaleBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Scale",
                                                   press: () {
-
+                                                    scanULDFocusNode.unfocus();
+                                                    scanULDBtnFocusNode.unfocus();
                                                     if(uldDetail != null){
                                                       Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
@@ -907,6 +915,9 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       ),));
                                                     }else{
                                                       SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                      });
                                                     }
 
 
@@ -922,6 +933,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Remarks",
                                                   press: () {
+                                                    scanULDFocusNode.unfocus();
+                                                    scanULDBtnFocusNode.unfocus();
                                                     if(uldDetail != null){
                                                       Navigator.push(context, CupertinoPageRoute(builder: (context) => RemarkULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
@@ -935,6 +948,9 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       ),));
                                                     }else{
                                                       SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                      });
                                                     }
 
                                                   },
@@ -990,7 +1006,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
 
 
-
   Future<void> scanULDScanQR() async{
     String groupcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
       '#ff6666', // Color for the scanner overlay
@@ -1005,7 +1020,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
       bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
 
       if(specialCharAllow == true){
-       // unloadUldListModel = null;
+        // unloadUldListModel = null;
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         scanULDController.clear();
@@ -1013,23 +1028,27 @@ class _CloseULDPageState extends State<CloseULDPage>{
           FocusScope.of(context).requestFocus(scanULDFocusNode);
         });
       }else{
-       // unloadUldListModel = null;
+        // unloadUldListModel = null;
         String result = groupcodeScanResult.replaceAll(" ", "");
         scanULDController.text = result;
-          String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
-          if(uldNumber == "Valid"){
-            setState(() {
-              callSearchApi(scanULDController.text);
-            });
-          }
-          else{
-            scanULDController.clear();
-            SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-            Vibration.vibrate(duration: 500);
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              FocusScope.of(context).requestFocus(scanULDFocusNode);
-            });
-          }
+        String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+        if(uldNumber == "Valid"){
+          setState(() {
+            String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
+            List<String> parts = uldNumbes.split(' ');
+            // call search api
+            callSearchApi(scanULDController.text);
+
+          });
+        }
+        else{
+          scanULDController.clear();
+          SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+          Vibration.vibrate(duration: 500);
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            FocusScope.of(context).requestFocus(scanULDFocusNode);
+          });
+        }
 
       }
     }
