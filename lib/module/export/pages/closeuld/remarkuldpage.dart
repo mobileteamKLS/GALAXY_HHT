@@ -39,6 +39,8 @@ import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/closeuld/equipmentmodel.dart';
+import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
+import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
 class RemarkULDPage extends StatefulWidget {
   String mainMenuName;
@@ -48,6 +50,10 @@ class RemarkULDPage extends StatefulWidget {
   int menuId;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String uldNo;
+  int uldSeqNo;
+  String uldType;
+
 
   RemarkULDPage(
       {super.key,
@@ -57,7 +63,10 @@ class RemarkULDPage extends StatefulWidget {
       required this.refrelCode,
       this.lableModel,
       required this.menuId,
-      required this.mainMenuName});
+      required this.mainMenuName,
+        required this.uldNo,
+        required this.uldSeqNo,
+        required this.uldType});
 
   @override
   State<RemarkULDPage> createState() => _RemarkULDPageState();
@@ -377,56 +386,98 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                               ),
                             ),
                             SizedBox(height: SizeConfig.blockSizeVertical),
-                            Expanded(
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10,
-                                        right: 10,
-                                        top: 0,
-                                        bottom: 0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
 
-                                        ListView.builder(
-                                          itemCount: remarkList.length,
-                                          shrinkWrap: true,
-                                          physics: const NeverScrollableScrollPhysics(),
-                                          itemBuilder: (context, index) {
+                            BlocListener<CloseULDCubit, CloseULDState>(
+                              listener: (context, state) async {
+                                if (state is CloseULDInitialState) {}
+                                else if (state is CloseULDLoadingState) {
+                                  // showing loading dialog in this state
+                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                }
+                                else if (state is GetRemarkListSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.getRemarkListModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.getRemarkListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    // responce
 
-                                            String content = remarkList[index];
-                                            return InkWell(
-                                              onTap: () {
-                                                _handleTap(content, index);
-                                              },
-                                              child: Container(
-                                                  padding: const EdgeInsets.all(10),
-                                                  margin: EdgeInsets.only(bottom: 8),
-                                                  decoration: BoxDecoration(
-                                                    color:MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: MyColor.colorBlack.withOpacity(0.09),
-                                                        spreadRadius: 2,
-                                                        blurRadius: 15,
-                                                        offset: Offset(0, 3), // changes position of shadow
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  child: Flexible(child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start))),
-                                            );
-                                          },
-                                        ),
+                                  }
+                                }
+                                else if (state is GetRemarkListFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is SaveRemarkSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.saveRemarkModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.saveRemarkModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    // Responce
+                                  }
+                                }
+                                else if (state is SaveRemarkFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
 
+                              },
+                              child: Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 0,
+                                          bottom: 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          ListView.builder(
+                                            itemCount: remarkList.length,
+                                            shrinkWrap: true,
+                                            physics: const NeverScrollableScrollPhysics(),
+                                            itemBuilder: (context, index) {
+
+                                              String content = remarkList[index];
+                                              return InkWell(
+                                                onTap: () {
+                                                  _handleTap(content, index);
+                                                },
+                                                child: Container(
+                                                    padding: const EdgeInsets.all(10),
+                                                    margin: EdgeInsets.only(bottom: 8),
+                                                    decoration: BoxDecoration(
+                                                      color:MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
+                                                      borderRadius: BorderRadius.circular(8),
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: MyColor.colorBlack.withOpacity(0.09),
+                                                          spreadRadius: 2,
+                                                          blurRadius: 15,
+                                                          offset: Offset(0, 3), // changes position of shadow
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                              );
+                                            },
+                                          ),
 
 
-                                      ],
+
+
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                )),
+                                  )),
+                            ),
+
                             SizedBox(height: SizeConfig.blockSizeVertical),
                             Container(
                               padding: const EdgeInsets.all(10),
@@ -594,6 +645,23 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
   }
 
 
+  Future<void> getRemarkList() async {
+    await context.read<CloseULDCubit>().getRemarkList(
+        widget.uldSeqNo,
+        widget.uldType,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  Future<void> saveRemark() async {
+    /*await context.read<CloseULDCubit>().saveContour(
+        widget.uldSeqNo,
+        widget.uldType,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);*/
+  }
 
 
 }

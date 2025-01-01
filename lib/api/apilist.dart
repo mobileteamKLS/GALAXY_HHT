@@ -125,5 +125,10 @@ class Apilist{
   // ULD Close
   static String closeULDSearchApi = "/CloseULD/Search";
   static String closeULDEquipmentApi = "/CloseULD/GetEequipmentList";
+  static String saveEquipmentApi = "/CloseULD/SaveEequipment";
+  static String closeULDContourApi = "/CloseULD/GetContourList";
+  static String saveContourApi = "/CloseULD/SaveContour";
+  static String closeULDScaleApi = "/CloseULD/GetScaleList";
+  static String saveScaleApi = "/CloseULD/SaveScale";
 
 }

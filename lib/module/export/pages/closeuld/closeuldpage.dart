@@ -833,17 +833,21 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   press: () {
-                                                    FocusScope.of(context).unfocus();
-                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
-                                                        importSubMenuList: widget.importSubMenuList,
-                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Equipment",
-                                                        refrelCode: widget.refrelCode,
-                                                        menuId: widget.menuId,
-                                                        mainMenuName: widget.mainMenuName,
-                                                        uldNo: uldDetail!.uLDNo!,
-                                                        uldType: "U",
-                                                    uldSeqNo: uldDetail!.uLDSeqNo!,),));
+                                                   if(uldDetail != null){
+                                                     Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
+                                                       importSubMenuList: widget.importSubMenuList,
+                                                       exportSubMenuList: widget.exportSubMenuList,
+                                                       title: "Equipment",
+                                                       refrelCode: widget.refrelCode,
+                                                       menuId: widget.menuId,
+                                                       mainMenuName: widget.mainMenuName,
+                                                       uldNo: uldDetail!.uLDNo!,
+                                                       uldType: "U",
+                                                       uldSeqNo: uldDetail!.uLDSeqNo!,),));
+                                                   }else{
+                                                     SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                   }
+
                                                   },
                                                 ),
                                               ),
@@ -856,8 +860,21 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Contour",
                                                   press: () {
-                                                    FocusScope.of(context).unfocus();
-                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Contour", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
+                                                    if(uldDetail != null){
+                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Contour",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: uldDetail!.uLDNo!,
+                                                          uldType: "U",
+                                                          uldSeqNo: uldDetail!.uLDSeqNo!,
+                                                      ),));
+                                                    }else{
+                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    }
                                                   },
                                                 ),
                                               ),
@@ -876,8 +893,23 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Scale",
                                                   press: () {
-                                                    FocusScope.of(context).unfocus();
-                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Scale", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
+
+                                                    if(uldDetail != null){
+                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Scale", refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: uldDetail!.uLDNo!,
+                                                          uldType: "U",
+                                                          uldSeqNo: uldDetail!.uLDSeqNo!,
+                                                      ),));
+                                                    }else{
+                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    }
+
+
                                                   },
                                                 ),
                                               ),
@@ -890,8 +922,21 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Remarks",
                                                   press: () {
-                                                    FocusScope.of(context).unfocus();
-                                                    Navigator.push(context, CupertinoPageRoute(builder: (context) => RemarkULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Remarks", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
+                                                    if(uldDetail != null){
+                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => RemarkULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Remarks", refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: uldDetail!.uLDNo!,
+                                                          uldType: "U",
+                                                          uldSeqNo: uldDetail!.uLDSeqNo!,
+                                                      ),));
+                                                    }else{
+                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                    }
+
                                                   },
                                                 ),
                                               ),

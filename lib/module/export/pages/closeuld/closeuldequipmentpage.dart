@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
@@ -92,6 +91,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
   List<TextEditingController> weightControllers = [];
   List<FocusNode> volumeFocusNodes = [];
   List<FocusNode> weightFocusNodes = [];
+  double totalWeight = 0.00;
 
   @override
   void initState() {
@@ -148,12 +148,12 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
         _splashDefaultData = splashDefaultData;
       });
     }
-await context.read<CloseULDCubit>().closeULDEquipmentList(
-            widget.uldSeqNo,
-            widget.uldType,
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
+      await context.read<CloseULDCubit>().closeULDEquipmentList(
+                  widget.uldSeqNo,
+                  widget.uldType,
+                  _user!.userProfile!.userIdentity!,
+                  _splashDefaultData!.companyCode!,
+                  widget.menuId);
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -318,11 +318,11 @@ await context.read<CloseULDCubit>().closeULDEquipmentList(
                                 },
                               ),
                             ),
-
+                            // start api responcer
                             BlocListener<CloseULDCubit, CloseULDState>(
                               listener: (context, state) async {
                                 if (state is CloseULDInitialState) {}
-                                else if (state is CloseULDInitialState) {
+                                else if (state is CloseULDLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
@@ -362,11 +362,24 @@ await context.read<CloseULDCubit>().closeULDEquipmentList(
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is SaveEquipmentSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.saveEquipmentModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.saveEquipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
 
+                                  }
+                                }
+                                else if (state is SaveEquipmentFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
 
                               },
-                              child:  Expanded(
+                              child: Expanded(
                                   child: SingleChildScrollView(
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -505,8 +518,15 @@ await context.read<CloseULDCubit>().closeULDEquipmentList(
                                                                     digitsOnly: false,
                                                                     doubleDigitOnly: true,
                                                                     onChanged: (value) {
+                                                                     // double weight = value.isNotEmpty ? double.parse(value) : 0.00;
+                                                                     // weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(weight))}";
+
+
                                                                       setState(() {
-                                                                        weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
+
+                                                                        totalWeight = weightControllers.fold(0.0, (sum, controller) {
+                                                                          return sum + (double.tryParse(controller.text) ?? 0.0);
+                                                                        });
                                                                       });
 
                                                                     },
@@ -552,7 +572,7 @@ await context.read<CloseULDCubit>().closeULDEquipmentList(
                             ),
 
 
-                            // start api responcer
+
 
                             SizedBox(height: SizeConfig.blockSizeVertical),
 
@@ -586,7 +606,7 @@ await context.read<CloseULDCubit>().closeULDEquipmentList(
                                       Row(
                                         children: [
                                           CustomeText(
-                                            text: CommonUtils.formateToTwoDecimalPlacesValue(0),
+                                            text: CommonUtils.formateToTwoDecimalPlacesValue(totalWeight),
                                             fontColor: MyColor.colorBlack,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                             fontWeight: FontWeight.w700,
@@ -622,8 +642,15 @@ await context.read<CloseULDCubit>().closeULDEquipmentList(
                                         flex: 1,
                                         child: RoundedButtonBlue(
                                           text: "Save",
-                                          press: () {
-
+                                          press: () async {
+                                            await context.read<CloseULDCubit>().saveEquipmentList(
+                                                widget.uldSeqNo,
+                                                widget.uldType,
+                                                "",
+                                                totalWeight,
+                                                _user!.userProfile!.userIdentity!,
+                                                _splashDefaultData!.companyCode!,
+                                                widget.menuId);
                                           },
                                         ),
                                       ),

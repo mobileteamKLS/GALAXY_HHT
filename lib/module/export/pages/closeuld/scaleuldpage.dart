@@ -1,17 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleystate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
-import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -21,14 +15,12 @@ import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
-import '../../../../utils/uldvalidationutil.dart';
+import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
-import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
@@ -37,7 +29,8 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/closeuld/equipmentmodel.dart';
+import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
+import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
 class ScaleULDPage extends StatefulWidget {
   String mainMenuName;
@@ -47,6 +40,9 @@ class ScaleULDPage extends StatefulWidget {
   int menuId;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String uldNo;
+  int uldSeqNo;
+  String uldType;
 
   ScaleULDPage(
       {super.key,
@@ -56,7 +52,11 @@ class ScaleULDPage extends StatefulWidget {
       required this.refrelCode,
       this.lableModel,
       required this.menuId,
-      required this.mainMenuName});
+      required this.mainMenuName,
+        required this.uldNo,
+        required this.uldSeqNo,
+        required this.uldType
+      });
 
   @override
   State<ScaleULDPage> createState() => _ScaleULDPageState();
@@ -293,235 +293,278 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                             ),
 
                             // start api responcer
-                            Expanded(
-                                child: SingleChildScrollView(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 10,
-                                        right: 10,
-                                        top: 0,
-                                        bottom: 0),
-                                    child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
 
-                                        Container(
-                                          padding: const EdgeInsets.all(10),
-                                          decoration: BoxDecoration(
-                                            color: MyColor.colorWhite,
-                                            borderRadius: BorderRadius.circular(8),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: MyColor.colorBlack.withOpacity(0.09),
-                                                spreadRadius: 2,
-                                                blurRadius: 15,
-                                                offset: Offset(0, 3), // changes position of shadow
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              Directionality(
-                                                textDirection: textDirection,
-                                                child: Row(
+                            BlocListener<CloseULDCubit, CloseULDState>(
+                              listener: (context, state) async {
+                                if (state is CloseULDInitialState) {}
+                                else if (state is CloseULDLoadingState) {
+                                  // showing loading dialog in this state
+                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                }
+                                else if (state is GetScaleListSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.getScaleListModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.getScaleListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    // responce
+
+                                  }
+                                }
+                                else if (state is GetScaleListFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is SaveScaleSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.saveScaleModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.saveScaleModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    // Responce
+                                  }
+                                }
+                                else if (state is SaveScaleFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+
+
+                              },
+                              child:Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 0,
+                                          bottom: 0),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: MyColor.colorWhite,
+                                              borderRadius: BorderRadius.circular(8),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: MyColor.colorBlack.withOpacity(0.09),
+                                                  spreadRadius: 2,
+                                                  blurRadius: 15,
+                                                  offset: Offset(0, 3), // changes position of shadow
+                                                ),
+                                              ],
+                                            ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Directionality(
+                                                  textDirection: textDirection,
+                                                  child: Row(
+                                                    children: [
+                                                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                      CustomeText(
+                                                          text: "AKE 19191 BA",
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                          fontWeight: FontWeight.w700,
+                                                          textAlign: TextAlign.start)
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5),
+                                                Row(
                                                   children: [
-                                                    SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                    CustomeText(
-                                                        text: "AKE 19191 BA",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                        fontWeight: FontWeight.w700,
-                                                        textAlign: TextAlign.start)
+                                                    Expanded(
+                                                      flex:1,
+                                                      child: Directionality(
+                                                        textDirection: textDirection,
+                                                        child: CustomTextField(
+                                                          textDirection: textDirection,
+                                                          controller: weightController,
+                                                          focusNode: weightFocusNode,
+                                                          onPress: () {},
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          labelText: "${lableModel.weight}",
+                                                          readOnly: false,
+                                                          maxLength: 10,
+                                                          digitsOnly: false,
+                                                          doubleDigitOnly: true,
+                                                          onChanged: (value) {
+                                                            setState(() {
+                                                              weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
+                                                            });
+
+                                                          },
+                                                          fillColor:  Colors.grey.shade100,
+                                                          textInputType: TextInputType.number,
+                                                          inputAction: TextInputAction.next,
+                                                          hintTextcolor: Colors.black45,
+                                                          verticalPadding: 0,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                          circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                          boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                          validator: (value) {
+                                                            if (value!.isEmpty) {
+                                                              return "Please fill out this field";
+                                                            } else {
+                                                              return null;
+                                                            }
+                                                          },
+                                                        ),
+                                                      ),
+                                                    ),
+
+                                                    const SizedBox(width: 10),
+                                                    IntrinsicHeight(
+                                                      child: Row(
+                                                        children: [
+                                                          // Yes Option
+                                                          InkWell(
+                                                            onTap: () {
+
+                                                              setState(() {
+                                                                tUnit = "C";
+                                                              });
+
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                color:  tUnit == "C" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                                borderRadius: BorderRadius.only(
+                                                                  topLeft: Radius.circular(10),
+                                                                  bottomLeft: Radius.circular(10),
+                                                                ),
+                                                                border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(vertical:10, horizontal: 20),
+                                                              child: Center(
+                                                                  child: CustomeText(text: "KG", fontColor:  tUnit == "C" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                              ),
+                                                            ),
+                                                          ),
+
+                                                          // No Option
+                                                          InkWell(
+                                                            onTap: () {
+
+                                                              setState(() {
+                                                                tUnit = "F";
+                                                              });
+
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                color: tUnit == "F" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                                borderRadius: BorderRadius.only(
+                                                                  topRight: Radius.circular(10),
+                                                                  bottomRight: Radius.circular(10),
+                                                                ),
+                                                                border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(vertical:10, horizontal: 20),
+                                                              child: Center(
+                                                                  child: CustomeText(text: "LB", fontColor: tUnit == "F" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                              ),
+                                                            ),
+                                                          )
+
+                                                        ],
+                                                      ),
+                                                    )
                                                   ],
                                                 ),
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    flex:1,
-                                                    child: Directionality(
-                                                      textDirection: textDirection,
-                                                      child: CustomTextField(
-                                                        textDirection: textDirection,
-                                                        controller: weightController,
-                                                        focusNode: weightFocusNode,
-                                                        onPress: () {},
-                                                        hasIcon: false,
-                                                        hastextcolor: true,
-                                                        animatedLabel: true,
-                                                        needOutlineBorder: true,
-                                                        labelText: "${lableModel.weight}",
-                                                        readOnly: false,
-                                                        maxLength: 10,
-                                                        digitsOnly: false,
-                                                        doubleDigitOnly: true,
-                                                        onChanged: (value) {
-                                                          setState(() {
-                                                            weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
-                                                          });
+                                                SizedBox(height: SizeConfig.blockSizeVertical),
+                                                ListView.builder(
+                                                  itemCount: contourList.length,
+                                                  shrinkWrap: true,
+                                                  physics: const NeverScrollableScrollPhysics(),
+                                                  itemBuilder: (context, index) {
+                                                    Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
-                                                        },
-                                                        fillColor:  Colors.grey.shade100,
-                                                        textInputType: TextInputType.number,
-                                                        inputAction: TextInputAction.next,
-                                                        hintTextcolor: Colors.black45,
-                                                        verticalPadding: 0,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                        validator: (value) {
-                                                          if (value!.isEmpty) {
-                                                            return "Please fill out this field";
-                                                          } else {
-                                                            return null;
-                                                          }
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  const SizedBox(width: 10),
-                                                  IntrinsicHeight(
-                                                    child: Row(
+                                                    String content = contourList[index];
+                                                    return Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        // Yes Option
-                                                        InkWell(
-                                                          onTap: () {
-
-                                                            setState(() {
-                                                              tUnit = "C";
-                                                            });
-
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                              color:  tUnit == "C" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                                              borderRadius: BorderRadius.only(
-                                                                topLeft: Radius.circular(10),
-                                                                bottomLeft: Radius.circular(10),
+                                                        Padding(
+                                                          padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                                          child: Row(
+                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                            children: [
+                                                              Expanded(
+                                                                child: Row(
+                                                                  children: [
+                                                                    CircleAvatar(
+                                                                      radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                                                      backgroundColor: backgroundColor,
+                                                                      child: CustomeText(text: "${content}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 15,
+                                                                    ),
+                                                                    Flexible(child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
+                                                                  ],
+                                                                ),
                                                               ),
-                                                              border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                                            ),
-                                                            padding: EdgeInsets.symmetric(vertical:10, horizontal: 20),
-                                                            child: Center(
-                                                                child: CustomeText(text: "KG", fontColor:  tUnit == "C" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                                            ),
+                                                              SizedBox(width: 2,),
+                                                              Switch(
+                                                                value: selectedSwitchIndex == index,
+                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                activeColor: MyColor.primaryColorblue,
+                                                                inactiveThumbColor: MyColor.thumbColor,
+                                                                inactiveTrackColor: MyColor.textColorGrey2,
+                                                                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                                onChanged: (value) {
+                                                                  setState(() {
+                                                                    selectedSwitchIndex = value ? index : null;
+                                                                  });
+                                                                },
+                                                              )
+                                                            ],
                                                           ),
                                                         ),
-
-                                                        // No Option
-                                                        InkWell(
-                                                          onTap: () {
-
-                                                            setState(() {
-                                                              tUnit = "F";
-                                                            });
-
-                                                          },
-                                                          child: Container(
-                                                            decoration: BoxDecoration(
-                                                              color: tUnit == "F" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
-                                                              borderRadius: BorderRadius.only(
-                                                                topRight: Radius.circular(10),
-                                                                bottomRight: Radius.circular(10),
-                                                              ),
-                                                              border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
-                                                            ),
-                                                            padding: EdgeInsets.symmetric(vertical:10, horizontal: 20),
-                                                            child: Center(
-                                                                child: CustomeText(text: "LB", fontColor: tUnit == "F" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
-                                                            ),
-                                                          ),
-                                                        )
-
+                                                        CustomDivider(
+                                                          space: 0,
+                                                          color: Colors.black,
+                                                          hascolor: true,
+                                                        ),
                                                       ],
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              ListView.builder(
-                                                itemCount: contourList.length,
-                                                shrinkWrap: true,
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                itemBuilder: (context, index) {
-                                                  Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
+                                                    );
+                                                  },
+                                                ),
+                                                SizedBox(height: SizeConfig.blockSizeVertical),
+                                                RoundedButtonBlue(
+                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
+                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  text: "Get Weight",
+                                                  press: () {
 
-                                                  String content = contourList[index];
-                                                  return Column(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    children: [
-                                                      Padding(
-                                                        padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            Expanded(
-                                                              child: Row(
-                                                                children: [
-                                                                  CircleAvatar(
-                                                                    radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
-                                                                    backgroundColor: backgroundColor,
-                                                                    child: CustomeText(text: "${content}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    width: 15,
-                                                                  ),
-                                                                  Flexible(child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                            SizedBox(width: 2,),
-                                                            Switch(
-                                                              value: selectedSwitchIndex == index,
-                                                              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                              activeColor: MyColor.primaryColorblue,
-                                                              inactiveThumbColor: MyColor.thumbColor,
-                                                              inactiveTrackColor: MyColor.textColorGrey2,
-                                                              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                              onChanged: (value) {
-                                                                setState(() {
-                                                                  selectedSwitchIndex = value ? index : null;
-                                                                });
-                                                              },
-                                                            )
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      CustomDivider(
-                                                        space: 0,
-                                                        color: Colors.black,
-                                                        hascolor: true,
-                                                      ),
-                                                    ],
-                                                  );
-                                                },
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              RoundedButtonBlue(
-                                                verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
-                                                textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                text: "Get Weight",
-                                                press: () {
-                                                  Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Contour", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName),));
-                                                },
-                                              )
+                                                  },
+                                                )
 
 
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
 
 
 
 
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                )),
+                                  )),
+                            ),
+
+
                             SizedBox(height: SizeConfig.blockSizeVertical),
                             Container(
                               padding: const EdgeInsets.all(10),
@@ -577,6 +620,24 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
     );
   }
 
+
+  Future<void> getScaleList() async {
+    await context.read<CloseULDCubit>().getScaleList(
+        widget.uldSeqNo,
+        widget.uldType,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  Future<void> saveScale() async {
+    /*await context.read<CloseULDCubit>().saveContour(
+        widget.uldSeqNo,
+        widget.uldType,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);*/
+  }
 
 
 
