@@ -382,7 +382,7 @@ class CloseULDRepository{
       print('GetRemarkListModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.closeULDScaleApi,
+      Response response = await api.sendRequest.get(Apilist.closeULDRemarkApi,
           queryParameters: payload
       );
 
@@ -426,7 +426,7 @@ class CloseULDRepository{
       print('SaveRemarkModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.saveScaleApi,
+      Response response = await api.sendRequest.get(Apilist.saveemarkApi,
           queryParameters: payload
       );
 

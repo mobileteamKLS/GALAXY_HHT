@@ -7,9 +7,9 @@ class CloseULDEquipmentModel {
       {this.eequipmentList, this.status, this.statusMessage});
 
   CloseULDEquipmentModel.fromJson(Map<String, dynamic> json) {
-    if (json['EequipmentList'] != null) {
+    if (json['ULDEquipmentList'] != null) {
       eequipmentList = <EequipmentList>[];
-      json['EequipmentList'].forEach((v) {
+      json['ULDEquipmentList'].forEach((v) {
         eequipmentList!.add(new EequipmentList.fromJson(v));
       });
     }
@@ -20,7 +20,7 @@ class CloseULDEquipmentModel {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.eequipmentList != null) {
-      data['EequipmentList'] =
+      data['ULDEquipmentList'] =
           this.eequipmentList!.map((v) => v.toJson()).toList();
     }
     data['Status'] = this.status;
