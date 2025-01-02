@@ -137,8 +137,8 @@ class _IpadDashboardState extends State<IpadDashboard> {
               color: MyColor.screenBgColor,
               child:  Column(
                 children: [
-                  SizedBox(height: 10,),
-                   Padding(
+                  const SizedBox(height: 10,),
+                   const Padding(
                     padding:
                     EdgeInsets.only(top: 10, left: 20, right: 20),
                     child: Material(
@@ -222,20 +222,13 @@ class _IpadDashboardState extends State<IpadDashboard> {
 
                       ],
                     ),
-                  ):Padding(
-                    padding: const EdgeInsets.only(
+                  ):const Padding(
+                    padding: EdgeInsets.only(
                         top: 5, left: 20, right: 20, bottom: 10),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        isCES?const RoundedIconButtonNew(
-                          icon: Icons.warehouse_outlined,
-                          text: 'Warehouse\nOperations',
-                          targetPage: WarehouseOperations(),
-                          containerColor: Color(0xffD1E2FB),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ):const RoundedIconButtonNew(
+                       RoundedIconButtonNew(
                           icon: Icons.list_alt_outlined,
                           text: 'Customs\nOperations',
                           targetPage: WarehouseOperations(),
@@ -243,112 +236,12 @@ class _IpadDashboardState extends State<IpadDashboard> {
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
                         ),
-                        SizedBox(width: 40,),
-                        const RoundedIconButtonNew(
-                          icon: Icons.fire_truck_outlined,
-                          text: 'Pickup\nServices',
-                          targetPage: PickupServices(),
-                          containerColor: Color(0xffDFD6EF),
-                          iconColor: MyColor.textColorGrey3,
-                          textColor: MyColor.textColorGrey3,
-                        ),
 
-                        // RoundedIconButton(
-                        //   icon: CupertinoIcons.square_stack_3d_up,
-                        //   text: 'Acceptance',
-                        //   targetPage: ShipmentAcceptance(),
-                        //   containerColor: Color(0xffE1D9F0),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
-                        // RoundedIconButton(
-                        //   icon: Icons.fireplace_outlined,
-                        //   text: 'Place Holder',
-                        //   targetPage: ImportShipmentListing(),
-                        //   containerColor: Color(0xffffffff),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
-                        // RoundedIconButton(
-                        //   icon: Icons.fireplace_outlined,
-                        //   text: 'Place Holder',
-                        //   targetPage: ImportShipmentListing(),
-                        //   containerColor: Color(0xffffffff),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
 
                       ],
                     ),
                   ),
-                  // SizedBox(height: 40,),
-                  // const Padding(
-                  //   padding:
-                  //   EdgeInsets.only(top: 10, left: 20, right: 20),
-                  //   child: Material(
-                  //     color: Colors.transparent,
-                  //     // Ensures background transparency
-                  //     child: Row(
-                  //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //       children: [
-                  //         Row(
-                  //           children: [
-                  //             Icon(CupertinoIcons.cube),
-                  //             Text(
-                  //               '  Imports Quick Actions',
-                  //               style: TextStyle(
-                  //                   fontWeight: FontWeight.bold, fontSize: 22),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: 20,),
-                  // Padding(
-                  //   padding: const EdgeInsets.only(
-                  //       top: 5, left: 20, right: 20, bottom: 10),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       RoundedIconButton(
-                  //         icon: Icons.list,
-                  //         text: 'Shipments\nList',
-                  //         targetPage: ImportShipmentListing(),
-                  //         containerColor: Color(0xffD1E2FB),
-                  //         iconColor: MyColor.textColorGrey3,
-                  //         textColor: MyColor.textColorGrey3,
-                  //       ),
-                  //       RoundedIconButton(
-                  //         icon: CupertinoIcons.square_stack_3d_up,
-                  //         text: 'Acceptance',
-                  //         targetPage: ShipmentAcceptance(),
-                  //         containerColor: Color(0xffE1D9F0),
-                  //         iconColor: MyColor.textColorGrey3,
-                  //         textColor: MyColor.textColorGrey3,
-                  //       ),
-                  //       RoundedIconButton(
-                  //         icon: Icons.fireplace_outlined,
-                  //         text: 'Place Holder',
-                  //         targetPage: ImportShipmentListing(),
-                  //         containerColor: Color(0xffffffff),
-                  //         iconColor: MyColor.textColorGrey3,
-                  //         textColor: MyColor.textColorGrey3,
-                  //       ),
-                  //       RoundedIconButton(
-                  //         icon: Icons.fireplace_outlined,
-                  //         text: 'Place Holder',
-                  //         targetPage: ImportShipmentListing(),
-                  //         containerColor: Color(0xffffffff),
-                  //         iconColor: MyColor.textColorGrey3,
-                  //         textColor: MyColor.textColorGrey3,
-                  //       ),
-                  //
-                  //     ],
-                  //   ),
-                  // ),
+
                 ],
               ),
             ),

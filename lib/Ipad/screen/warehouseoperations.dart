@@ -564,14 +564,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                  SizedBox(width: 40,),
-                                RoundedIconButtonNew(
-                                  icon: CupertinoIcons.cube_box,
-                                  text: 'On Hand\n Shipment',
-                                  targetPage: AppointmentBookingNew(),
-                                  containerColor:Color(0xffFFD7BC),
-                                  iconColor: MyColor.textColorGrey3,
-                                  textColor: MyColor.textColorGrey3,
-                                ),
+
                               ],
                             ),
                           )

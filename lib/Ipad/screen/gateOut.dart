@@ -330,7 +330,7 @@ class _GateOutState extends State<GateOut> {
                                 ),
                                 Column(
                                   children: [
-                                    SizedBox(height: 20),
+                                    const SizedBox(height: 20),
                                     Row(
                                       mainAxisAlignment:
                                       MainAxisAlignment
@@ -345,7 +345,7 @@ class _GateOutState extends State<GateOut> {
                                               .width *0.45,
                                           child: Container(
                                             height: 50,
-                                            color: Color(0xffE4E7EB),
+                                            color: const Color(0xffE4E7EB),
                                             child: const Center(
                                               child: Text(
                                                   'Vehicle No.',

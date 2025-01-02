@@ -709,7 +709,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 Row(
                   children: [
                     SizedBox(
-                      width: MediaQuery.sizeOf(context).width*0.17,
+                      width: MediaQuery.sizeOf(context).width*0.20,
 
                       child: Text(
                         shipment.documentNo,
@@ -800,7 +800,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                           ),
 
                           SizedBox(
-                            width: MediaQuery.sizeOf(context).width*0.18,
+                            width: MediaQuery.sizeOf(context).width*0.22,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [

@@ -4,22 +4,26 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/auth/auth.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
 import '../../module/onboarding/sizeconfig.dart';
 import '../../utils/commonutils.dart';
+import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../modal/ShipmentListingDetails.dart';
+import '../modal/forwardForExam.dart';
+import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'ImportShipmentListing.dart';
 
 class ForwardForExamination extends StatefulWidget {
-  final ShipmentListDetails? shipmentListDetails;
-  const ForwardForExamination({super.key, this.shipmentListDetails});
+  final ShipmentListDetails shipmentListDetails;
+  const ForwardForExamination({super.key, required this.shipmentListDetails});
 
   @override
   State<ForwardForExamination> createState() =>
@@ -28,18 +32,106 @@ class ForwardForExamination extends StatefulWidget {
 
 class _ForwardForExaminationState
     extends State<ForwardForExamination> {
-  TextEditingController prefixController = TextEditingController();
-  FocusNode mailTypeFocusNode = FocusNode();
+
   bool value=false;
   TextEditingController customRefNoController = TextEditingController();
   TextEditingController customRefDateController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
   TextEditingController locController = TextEditingController();
+  List<ForwardForExamData> forwardExamData=[];
+  AuthService authService=AuthService();
+  List<TextEditingController> examPiecesControllers = [];
+  List<bool?> isOnList = [];
   // TextEditingController prefixController = TextEditingController();
   // TextEditingController prefixController = TextEditingController();
   @override
   void initState() {
     super.initState();
+    fetchMasterData();
+  }
+
+  void fetchMasterData() async {
+    await Future.delayed(Duration.zero);
+    searchForwardForExamData(widget.shipmentListDetails);
+  }
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
+    );
+  }
+  searchForwardForExamData(ShipmentListDetails data) async{
+    DialogUtils.showLoadingDialog(context);
+    forwardExamData=[];
+    var queryParams = {
+      "AWBPrefix": "125",
+      "AWBNo": "31120084",
+      "HAWBNumber": "",
+      "ISID": "803",
+      "CompanyCode": "3",
+      "UserID": 1,
+      "AirportCode": "JFK",
+      "CultureCode": "en-US",
+      "MenuId": 1
+    };
+    await authService
+        .sendGetWithBody(
+      "OnHandShipment/GetDetailsofFFE",
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      List<dynamic> resp = jsonData['OnHandShiForwardForExamList'];
+
+      print(jsonData);
+
+      String status = jsonData['Status'];
+      String statusMessage = jsonData['StatusMessage']??"";
+      if (status != 'S') {
+        print("Error: $statusMessage");
+        DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, statusMessage);
+        return;
+      }
+      else{
+        setState(() {
+          forwardExamData=resp.map((json) => ForwardForExamData.fromJson(json)).toList();
+
+        });
+        setState(() {
+          isOnList = List.generate(forwardExamData.length, (index) => false);
+          examPiecesControllers = List.generate(
+              forwardExamData.length,
+                  (index) =>
+                  TextEditingController());
+
+          // nopControllers = List.generate(
+          //     wareHouseLocationList.length,
+          //         (index) =>
+          //         TextEditingController(text: wareHouseLocationList[index].nop.toString()));
+          // weightControllers = List.generate(
+          //     wareHouseLocationList.length,
+          //         (index) =>
+          //         TextEditingController(text: wareHouseLocationList[index].weight.toString()));
+          // editStates = List.generate(wareHouseLocationList.length, (_) => false);
+        });
+        print("wareHouseShipmentList Length  ${forwardExamData.length}");
+
+      }
+      DialogUtils.hideLoadingDialog(context);
+
+    }).catchError((onError) {
+      setState(() {
+
+      });
+      print(onError);
+    });
   }
 
   @override
@@ -155,7 +247,10 @@ class _ForwardForExaminationState
                                                 width: MediaQuery.sizeOf(context)
                                                     .width *
                                                     0.44,
-                                                child: const Text("  Request For Examination",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 20),),
+                                                child: Padding(
+                                                  padding: const EdgeInsets.only(left:8.0),
+                                                  child: const Text("Request For Examination",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 20),),
+                                                ),
 
                                               ),
 
@@ -169,10 +264,23 @@ class _ForwardForExaminationState
                                           Row(
                                             mainAxisAlignment: MainAxisAlignment.start,
                                             children: [
+                                              Padding(
+                                                padding: const EdgeInsets.only(left:8.0),
+                                                child: Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    _buildDetailColumn('AWB No.', widget.shipmentListDetails.documentNo),
+                                                    const SizedBox(height: 20),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 80,
+                                              ),
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  _buildDetailColumn('   AWB No.', '   12598745632'),
+                                                  _buildDetailColumn('HAWB No', widget.shipmentListDetails.houseNo),
                                                   const SizedBox(height: 20),
                                                 ],
                                               ),
@@ -182,17 +290,7 @@ class _ForwardForExaminationState
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  _buildDetailColumn('HAWB No', 'H123'),
-                                                  const SizedBox(height: 20),
-                                                ],
-                                              ),
-                                              SizedBox(
-                                                width: 80,
-                                              ),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  _buildDetailColumn('Remarks', 'Remarks test'),
+                                                  _buildDetailColumn('Remarks', '${forwardExamData.first.status}'),
                                                   SizedBox(height: 20),
 
 
@@ -224,10 +322,10 @@ class _ForwardForExaminationState
                                                 color: Color(0xffE4E7EB),
                                               ),
                                               padding: EdgeInsets.all(8),
-                                              child:  const Center(child: Column(
+                                              child:   Center(child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  Text("1000",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 32),),
+                                                  Text("${forwardExamData.first.remainExaminationNop}",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 32),),
                                                   Text("Exam Pieces",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 18),),
                                                 ],
                                               )),
@@ -369,7 +467,7 @@ class _ForwardForExaminationState
                                 SizedBox(
                                   height: MediaQuery.sizeOf(context).height * 0.015,
                                 ),
-                                Container(
+                                (forwardExamData.isNotEmpty)?Container(
                                   width: MediaQuery.sizeOf(context).width,
                                   color: const Color(0xffE4E7EB),
                                   padding: const EdgeInsets.all(2.0),
@@ -377,84 +475,35 @@ class _ForwardForExaminationState
                                     scrollDirection: Axis.horizontal,
                                     child: DataTable(
                                       columns:  [
-
-                                        const DataColumn(label: Text('Group Id')),
-                                        const DataColumn(label: Text('Location')),
-                                        DataColumn(label: Text('NOP')),
-                                        DataColumn(label: Text('Exam Pieces')),
-                                        DataColumn(label: Center(
-                                          child: Checkbox(
-                                            value: value,
-                                            onChanged: (bool? newValue) {
-                                              setState(() {
-                                                value = newValue!;
-                                              });
-                                            },
-                                          ),
-                                        ),),
-
+                                        DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Group Id'))))),
+                                        DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Location'))))),
+                                        DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('NOP'))))),
+                                        DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Exam Pieces'))))),
+                                        DataColumn(label: Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text(''))))),
                                       ],
-                                      rows:  [
-                                        DataRow(cells: [
-                                          const DataCell(Text('Group Id 1')),
-                                          const DataCell(Text('Location1')),
-                                          const DataCell(Text('7')),
-                                          DataCell(SizedBox(
-                                            height: 45,
-                                            width: 150,
-                                            child: TextFormField(
-                                              decoration: InputDecoration(
-                                                hintText: '7',
-                                                contentPadding:
-                                                const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-                                                border: OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(8),
-                                                  borderSide: const BorderSide(
-                                                    color: MyColor.borderColor,
-                                                  ),
-                                                ),
-                                                enabledBorder:
-                                                OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(8),
-                                                  borderSide: const BorderSide(
-                                                    color: MyColor.borderColor,
-                                                  ),
-                                                ),
-                                                focusedBorder:
-                                                OutlineInputBorder(
-                                                  borderRadius:
-                                                  BorderRadius.circular(8),
-                                                  borderSide: const BorderSide(
-                                                    color: MyColor
-                                                        .primaryColorblue,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          )), // Assuming "-" for empty cells
-                                           DataCell(Checkbox(
-                                            tristate: true, // Example with tristate
-                                            value: value,
-                                            onChanged: (bool? newValue) {
-                                              setState(() {
-                                                value = newValue!;
-                                              });
-                                            },
-                                          ),)
-
-                                        ]),
-                                      ],
+                                      rows:  List.generate(
+                                          forwardExamData.length,
+                                              (index) {
+                                            return buildDataRow(
+                                                  data: forwardExamData[index],
+                                                  index: index,
+                                                  isOn: isOnList[index],
+                                                  onCheckboxChanged: (value) =>
+                                                      checkboxChanged(
+                                                          value, index),
+                                                  examPcsController:
+                                                      examPiecesControllers[
+                                                          index]);
+                                            }),
                                       headingRowColor:
-                                      MaterialStateProperty.resolveWith((states) => Color(0xffE4E7EB)),
+                                      MaterialStateProperty.resolveWith((states) =>Color(0xffE4E7EB)),
                                       dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
-                                      columnSpacing: MediaQuery.sizeOf(context).width*0.12,
-                                      dataRowHeight: 48.0,
-
+                                      columnSpacing: MediaQuery.sizeOf(context).width*0.04,
+                                      dataRowHeight: 56.0,
                                     ),
+
                                   ),
-                                ),
+                                ):SizedBox(),
                               ],
                             ),
                           ),
@@ -580,6 +629,112 @@ class _ForwardForExaminationState
       ),
     );
   }
+
+  void checkboxChanged(bool? value, int index) {
+    setState(() {
+      isOnList[index] = value;
+      if (value !=false) {
+        // saveList.removeWhere(
+        //         (element) => element["item"] == appointBookingList[index]);
+        //saveList.add({"item": appointBookingList[index], "value": value});
+      } else {
+        // saveList.removeWhere(
+        //         (element) => element["item"] == appointBookingList[index]);
+      }
+    });
+  }
+
+  DataRow buildDataRow( {
+    required ForwardForExamData data,
+    required bool? isOn,
+    required int index,
+    required ValueChanged<bool?> onCheckboxChanged,
+    required TextEditingController examPcsController,
+
+  }) {
+    return DataRow(cells: [
+      DataCell(SizedBox(
+          width: MediaQuery.sizeOf(context).width * 0.15,
+          child: Center(child: Text("${data.groupId}")))),
+      DataCell(SizedBox(
+        width: MediaQuery.sizeOf(context).width * 0.15,
+        child: Center(child: Text("${data.loc}")),
+      )),
+      DataCell(SizedBox(
+          width: MediaQuery.sizeOf(context).width * 0.15,
+          child: Center(child: Text("${data.nop}")))),
+      DataCell(SizedBox(
+        width: MediaQuery.sizeOf(context).width * 0.15,
+        child: TextFormField(
+          controller: examPcsController,
+          onChanged: (value) {
+            setState(() {
+              examPiecesControllers[index].text = value;
+
+            });
+          },
+          decoration: InputDecoration(
+            hintText: 'Exam Pieces',
+            contentPadding:
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: MyColor.borderColor,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: MyColor.borderColor,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(
+                color: MyColor.primaryColorblue,
+              ),
+            ),
+          ),
+        ),
+      )),
+      DataCell(Center(
+          child: SizedBox(
+              width: MediaQuery.sizeOf(context).width * 0.12,
+              child: Center(
+                child: Container(
+                  child: Theme(
+                    data: ThemeData(useMaterial3: false),
+                      child: Checkbox(
+                        activeColor: isOn == null
+                            ? Colors.red
+                            : isOn!
+                            ? Colors.green
+                            : MyColor.primaryColorblue,
+                        value: isOn,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            onCheckboxChanged(value!);
+                          });
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(2),
+                          side: BorderSide(
+                            color: isOn == null
+                                ? Colors.red
+                                : isOn!
+                                ? Colors.green
+                                : MyColor.primaryColorblue,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+
+                  ),
+                ),
+              ),))),
+    ]);
+  }
   Widget _buildDetailColumn(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -591,10 +746,10 @@ class _ForwardForExaminationState
             color: Colors.grey[700],
           ),
         ),
-        SizedBox(height: 4),
+        const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
