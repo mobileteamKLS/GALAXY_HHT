@@ -13,30 +13,28 @@ import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
+import '../modal/ShipmentListingDetails.dart';
+import '../widget/customIpadTextfield.dart';
 import 'ImportShipmentListing.dart';
 
-class Examination extends StatefulWidget {
-  const Examination({super.key});
+class ForwardForExamination extends StatefulWidget {
+  final ShipmentListDetails? shipmentListDetails;
+  const ForwardForExamination({super.key, this.shipmentListDetails});
 
   @override
-  State<Examination> createState() =>
-      _ExaminationState();
+  State<ForwardForExamination> createState() =>
+      _ForwardForExaminationState();
 }
 
-class _ExaminationState
-    extends State<Examination> {
+class _ForwardForExaminationState
+    extends State<ForwardForExamination> {
   TextEditingController prefixController = TextEditingController();
   FocusNode mailTypeFocusNode = FocusNode();
-  MailTypeList? selectedMailType;
   bool value=false;
-  List<MailTypeList>? mailTypeList = [
-    MailTypeList(referenceDataIdentifier: "A", referenceDescription: "A"),
-    MailTypeList(referenceDataIdentifier: "B", referenceDescription: "B"),
-  ];
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
-  // TextEditingController prefixController = TextEditingController();
+  TextEditingController customRefNoController = TextEditingController();
+  TextEditingController customRefDateController = TextEditingController();
+  TextEditingController remarkController = TextEditingController();
+  TextEditingController locController = TextEditingController();
   // TextEditingController prefixController = TextEditingController();
   // TextEditingController prefixController = TextEditingController();
   @override
@@ -222,15 +220,15 @@ class _ExaminationState
                                                   .height *
                                                   0.08,
                                               decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(4.0),
-                                                color: MyColor.borderColor,
+                                                borderRadius: BorderRadius.circular(8.0),
+                                                color: Color(0xffE4E7EB),
                                               ),
                                               padding: EdgeInsets.all(8),
-                                              child:  Center(child: Column(
+                                              child:  const Center(child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  const Text("10",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 32),),
-                                                  const Text("Exam Pieces",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 18),),
+                                                  Text("1000",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 32),),
+                                                  Text("Exam Pieces",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 18),),
                                                 ],
                                               )),
 
@@ -288,6 +286,7 @@ class _ExaminationState
                                       child: CustomeEditTextWithBorder(
                                         lablekey: 'MAWB',
                                         hasIcon: false,
+                                        controller: customRefNoController,
                                         hastextcolor: true,
                                         animatedLabel: true,
                                         needOutlineBorder: true,
@@ -297,24 +296,21 @@ class _ExaminationState
                                         maxLength: 15,
                                         fontSize: 18,
                                         onChanged: (String, bool) {},
+                                        onPress: () {},
                                       ),
                                     ),
                                     SizedBox(
                                       width: MediaQuery.sizeOf(context)
                                           .width *
                                           0.44,
-                                      child: CustomeEditTextWithBorder(
+                                      child:  CustomeEditTextWithBorderDatePicker(
                                         lablekey: 'MAWB',
-                                        hasIcon: false,
-                                        hastextcolor: true,
-                                        animatedLabel: true,
-                                        needOutlineBorder: true,
-                                        labelText: "Custom Ref. No.",
-                                        // controller: destinationController,
+                                        controller: customRefDateController,
+                                        labelText:
+                                        "Custom Ref. Date",
                                         readOnly: false,
                                         maxLength: 15,
                                         fontSize: 18,
-                                        onChanged: (String, bool) {},
                                       ),
                                     ),
                                   ],
@@ -335,15 +331,17 @@ class _ExaminationState
                                       child: CustomeEditTextWithBorder(
                                         lablekey: 'MAWB',
                                         hasIcon: false,
+                                        controller: remarkController,
                                         hastextcolor: true,
                                         animatedLabel: true,
                                         needOutlineBorder: true,
-                                        labelText: "Remark",
+                                        labelText: "Remark*",
                                         // controller: originController,
                                         readOnly: false,
                                         maxLength: 15,
                                         fontSize: 18,
                                         onChanged: (String, bool) {},
+                                        onPress: () {},
                                       ),
                                     ),
                                     SizedBox(
@@ -353,15 +351,17 @@ class _ExaminationState
                                       child: CustomeEditTextWithBorder(
                                         lablekey: 'MAWB',
                                         hasIcon: false,
+                                        controller: locController,
                                         hastextcolor: true,
                                         animatedLabel: true,
                                         needOutlineBorder: true,
-                                        labelText: "Exam Location",
+                                        labelText: "Exam Location*",
                                         // controller: destinationController,
                                         readOnly: false,
                                         maxLength: 15,
                                         fontSize: 18,
                                         onChanged: (String, bool) {},
+                                        onPress: () {},
                                       ),
                                     ),
                                   ],
@@ -378,8 +378,8 @@ class _ExaminationState
                                     child: DataTable(
                                       columns:  [
 
-                                        DataColumn(label: Text('Group Id')),
-                                        DataColumn(label: Text('Location')),
+                                        const DataColumn(label: Text('Group Id')),
+                                        const DataColumn(label: Text('Location')),
                                         DataColumn(label: Text('NOP')),
                                         DataColumn(label: Text('Exam Pieces')),
                                         DataColumn(label: Center(

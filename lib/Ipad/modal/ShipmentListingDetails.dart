@@ -49,6 +49,7 @@ class ShipmentListDetails {
   String handleCode7;
   String handleCode8;
   String handleCode9;
+  int impShipRowId;
 
   ShipmentListDetails({
     required this.rowNo,
@@ -100,6 +101,7 @@ class ShipmentListDetails {
     required this.handleCode7,
     required this.handleCode8,
     required this.handleCode9,
+    required this.impShipRowId,
   });
 
   factory ShipmentListDetails.fromJSON(Map<String, dynamic> json) => ShipmentListDetails(
@@ -152,6 +154,7 @@ class ShipmentListDetails {
     handleCode7: json["HandleCode7"],
     handleCode8: json["HandleCode8"],
     handleCode9: json["HandleCode9"],
+    impShipRowId: json['ImpShipRowId']
   );
 
   Map<String, dynamic> toMap() => {

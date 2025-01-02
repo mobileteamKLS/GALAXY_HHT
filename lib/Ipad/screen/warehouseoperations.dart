@@ -564,14 +564,14 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                  SizedBox(width: 40,),
-                                // RoundedIconButtonNew(
-                                //   icon: Icons.search,
-                                //   text: 'Test \nUI',
-                                //   targetPage: AppointmentBookingNew(),
-                                //   containerColor:Color(0xffe1d8f0),
-                                //   iconColor: MyColor.textColorGrey3,
-                                //   textColor: MyColor.textColorGrey3,
-                                // ),
+                                RoundedIconButtonNew(
+                                  icon: CupertinoIcons.cube_box,
+                                  text: 'On Hand\n Shipment',
+                                  targetPage: AppointmentBookingNew(),
+                                  containerColor:Color(0xffFFD7BC),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
                               ],
                             ),
                           )
