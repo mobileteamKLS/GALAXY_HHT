@@ -49,20 +49,20 @@ class CloseULDCubit extends Cubit<CloseULDState>{
     }
   }
 
-  Future<void> getContourList(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+  Future<void> getContourList(int uldSeqNo, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final getContourModelData = await closeULDRepository.getContourList(uldSeqNo, uldType, userId, companyCode, menuId);
+      final getContourModelData = await closeULDRepository.getContourList(uldSeqNo, userId, companyCode, menuId);
       emit(GetContourListSuccessState(getContourModelData));
     } catch (e) {
       emit(GetContourListFailureState(e.toString()));
     }
   }
 
-  Future<void> saveContour(int uldSeqNo, String uldType, String saveData, double totalWeight, int userId, int companyCode, int menuId) async {
+  Future<void> saveContour(int flightSeqNo, int uldSeqNo, String contourCode, double height, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final saveContourModelData = await closeULDRepository.saveContourModel(uldSeqNo, uldType, saveData, totalWeight, userId, companyCode, menuId);
+      final saveContourModelData = await closeULDRepository.saveContourModel(flightSeqNo, uldSeqNo, contourCode, height, userId, companyCode, menuId);
       emit(SaveContourSuccessState(saveContourModelData));
     } catch (e) {
       emit(SaveContourFailureState(e.toString()));
@@ -71,20 +71,20 @@ class CloseULDCubit extends Cubit<CloseULDState>{
 
 
 
-  Future<void> getScaleList(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+  Future<void> getScaleList(int uldSeqNo, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final getScaleModelData = await closeULDRepository.getScaleList(uldSeqNo, uldType, userId, companyCode, menuId);
+      final getScaleModelData = await closeULDRepository.getScaleList(uldSeqNo, userId, companyCode, menuId);
       emit(GetScaleListSuccessState(getScaleModelData));
     } catch (e) {
       emit(GetScaleListFailureState(e.toString()));
     }
   }
 
-  Future<void> saveScale(int uldSeqNo, String uldType, String saveData, double totalWeight, int userId, int companyCode, int menuId) async {
+  Future<void> saveScale(int flightSeqNo, int uldSeqNo, double scaleWeight, String machineNo, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final saveScaleModelData = await closeULDRepository.saveScaleModel(uldSeqNo, uldType, saveData, totalWeight, userId, companyCode, menuId);
+      final saveScaleModelData = await closeULDRepository.saveScaleModel(flightSeqNo, uldSeqNo, scaleWeight, machineNo, userId, companyCode, menuId);
       emit(SaveScaleSuccessState(saveScaleModelData));
     } catch (e) {
       emit(SaveScaleFailureState(e.toString()));
@@ -93,23 +93,55 @@ class CloseULDCubit extends Cubit<CloseULDState>{
 
 
 
-  Future<void> getRemarkList(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
+  Future<void> getRemarkList(int uldSeqNo, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final getRemarkModelData = await closeULDRepository.getRemarkList(uldSeqNo, uldType, userId, companyCode, menuId);
+      final getRemarkModelData = await closeULDRepository.getRemarkList(uldSeqNo, userId, companyCode, menuId);
       emit(GetRemarkListSuccessState(getRemarkModelData));
     } catch (e) {
       emit(GetRemarkListFailureState(e.toString()));
     }
   }
 
-  Future<void> saveRemark(int uldSeqNo, String uldType, String saveData, double totalWeight, int userId, int companyCode, int menuId) async {
+  Future<void> saveRemark(int flightSeqNo, int uldSeqNo, String remarks, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final saveRemarkModelData = await closeULDRepository.saveRemarkModel(uldSeqNo, uldType, saveData, totalWeight, userId, companyCode, menuId);
+      final saveRemarkModelData = await closeULDRepository.saveRemarkModel(flightSeqNo, uldSeqNo, remarks, userId, companyCode, menuId);
       emit(SaveRemarkSuccessState(saveRemarkModelData));
     } catch (e) {
       emit(SaveRemarkFailureState(e.toString()));
+    }
+  }
+
+  Future<void> saveTareWeight(int uldSeqNo, double tareWeight, int userId, int companyCode, int menuId) async {
+    emit(CloseULDLoadingState());
+    try {
+      final saveTareWeightModelData = await closeULDRepository.saveTareWeightModel(uldSeqNo, tareWeight, userId, companyCode, menuId);
+      emit(SaveTareWeightSuccessState(saveTareWeightModelData));
+    } catch (e) {
+      emit(SaveTareWeightFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getDocumentList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(CloseULDLoadingState());
+    try {
+      final getDocumentModelData = await closeULDRepository.getDocumentList(uldSeqNo, userId, companyCode, menuId);
+      emit(GetDocumentListSuccessState(getDocumentModelData));
+    } catch (e) {
+      emit(GetDocumentListFailureState(e.toString()));
+    }
+  }
+
+
+
+  Future<void> closeReopenULDModel(int uldSeqNo, String uldStatus, int userId, int companyCode, int menuId) async {
+    emit(CloseULDLoadingState());
+    try {
+      final closeReopenULDModelData = await closeULDRepository.closeReopenULDModel(uldSeqNo, uldStatus, userId, companyCode, menuId);
+      emit(CloseReopenSuccessState(closeReopenULDModelData));
+    } catch (e) {
+      emit(CloseReopenFailureState(e.toString()));
     }
   }
 

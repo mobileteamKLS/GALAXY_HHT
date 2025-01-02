@@ -126,11 +126,20 @@ class Apilist{
   static String closeULDSearchApi = "/CloseULD/Search";
   static String closeULDEquipmentApi = "/CloseULD/GetEquipmentList";
   static String saveEquipmentApi = "/CloseULD/EquipmentSave";
+
   static String closeULDContourApi = "/CloseULD/GetContourList";
-  static String saveContourApi = "/CloseULD/SaveContour";
-  static String closeULDScaleApi = "/CloseULD/GetScaleList";
-  static String saveScaleApi = "/CloseULD/SaveScale";
-  static String closeULDRemarkApi = "/CloseULD/GetemarkList";
-  static String saveemarkApi = "/CloseULD/Savemark";
+  static String saveContourApi = "/CloseULD/ContourSave";
+
+  static String closeULDScaleApi = "/CloseULD/GetScaleWeightList";
+  static String saveScaleApi = "/CloseULD/ScaleWeightSave";
+
+  static String closeULDRemarkApi = "/CloseULD/GetRemarksList";
+  static String saveemarkApi = "/CloseULD/RemarksSave";
+
+  static String saveTareWeightApi = "/CloseULD/TareWeightSave";
+
+  static String closeULDStatusUpdate = "/CloseULD/StatusUpdate";
+
+  static String closeULDGetDocumentList = "/CloseULD/GetDocumentList";
 
 }

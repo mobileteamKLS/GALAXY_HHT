@@ -38,6 +38,7 @@ import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/closeuld/equipmentmodel.dart';
+import '../../model/closeuld/getcontourlistmodel.dart';
 import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
 import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
@@ -50,6 +51,7 @@ class ContourULDPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
+  int flightSeqNo;
   int uldSeqNo;
   String uldType;
 
@@ -63,6 +65,7 @@ class ContourULDPage extends StatefulWidget {
       required this.menuId,
       required this.mainMenuName,
         required this.uldNo,
+        required this.flightSeqNo,
         required this.uldSeqNo,
         required this.uldType});
 
@@ -92,24 +95,23 @@ class _ContourULDPageState extends State<ContourULDPage>{
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
 
-  int? selectedSwitchIndex;
+  String selectedSwitchIndex = "";
 
-  final List<String> contourList = [
+  GetContourListModel? getContourListModel;
+
+ /* final List<String> contourList = [
     "Q6 Medium Pallet",
     "Q7 High Pallet",
     "Q6 Medium Pallet",
     "Q7 High Pallet",
-  ];
+  ];*/
 
-  bool _showFullList = false;
 
   @override
   void initState() {
     super.initState();
 
     _loadUser(); //load user data
-
-    heightController.text = "165";
   }
 
 
@@ -141,6 +143,8 @@ class _ContourULDPageState extends State<ContourULDPage>{
         _splashDefaultData = splashDefaultData;
       });
     }
+
+    getContourList();
 
 
     inactivityTimerManager = InactivityTimerManager(
@@ -291,7 +295,8 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-
+                                  heightController.clear();
+                                  selectedSwitchIndex = "";
                                   setState(() {
 
                                   });
@@ -314,6 +319,14 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getContourListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+
+                                    getContourListModel =  state.getContourListModel;
+
+                                    heightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getContourListModel!.uLDContourDetail!.height!);
+                                    selectedSwitchIndex = getContourListModel!.uLDContourDetail!.contourCode!;
+                                    setState(() {
+
+                                    });
                                    // responce
 
                                   }
@@ -329,7 +342,8 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-                                    // Responce
+                                    SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    getContourList();
                                   }
                                 }
                                 else if (state is SaveContourFailureState){
@@ -400,7 +414,9 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                         needOutlineBorder: true,
                                                         labelText: "Height *",
                                                         readOnly: false,
-                                                        maxLength: 11,
+                                                        maxLength: 10,
+                                                        digitsOnly: false,
+                                                        doubleDigitOnly: true,
                                                         onChanged: (value) {
 
                                                         },
@@ -460,14 +476,14 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                   ],
                                                 ),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
-                                                ListView.builder(
-                                                  itemCount: contourList.length,
+                                                (getContourListModel != null) ? ListView.builder(
+                                                  itemCount: getContourListModel!.uLDContourList!.length,
                                                   shrinkWrap: true,
                                                   physics: const NeverScrollableScrollPhysics(),
                                                   itemBuilder: (context, index) {
                                                     Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
-                                                    String content = contourList[index];
+                                                    ULDContourList content = getContourListModel!.uLDContourList![index];
                                                     return Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
@@ -482,12 +498,12 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                                     CircleAvatar(
                                                                       radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                                                       backgroundColor: backgroundColor,
-                                                                      child: CustomeText(text: "${content}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                                      child: CustomeText(text: "${content.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                                                     ),
                                                                     SizedBox(
                                                                       width: 15,
                                                                     ),
-                                                                    Flexible(child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
+                                                                    Flexible(child: CustomeText(text: content.referenceDescription!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
                                                                   ],
                                                                 ),
                                                               ),
@@ -496,7 +512,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                                 2,
                                                               ),
                                                               Switch(
-                                                                value: selectedSwitchIndex == index,
+                                                                value: selectedSwitchIndex == content.referenceDataIdentifier,
                                                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                                                 activeColor: MyColor.primaryColorblue,
                                                                 inactiveThumbColor: MyColor.thumbColor,
@@ -504,7 +520,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                                 trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                                                 onChanged: (value) {
                                                                   setState(() {
-                                                                    selectedSwitchIndex = value ? index : null;
+                                                                    selectedSwitchIndex = value ? content.referenceDataIdentifier! : "";
                                                                   });
                                                                 },
                                                               )
@@ -519,7 +535,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                       ],
                                                     );
                                                   },
-                                                ),
+                                                ) : SizedBox(),
 
 
 
@@ -570,6 +586,17 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                     child: RoundedButtonBlue(
                                       text: "Save",
                                       press: () {
+                                        if(heightController.text.isNotEmpty){
+                                          if(selectedSwitchIndex.isNotEmpty){
+                                            saveContour();
+                                          }else{
+                                            Vibration.vibrate(duration: 500);
+                                            SnackbarUtil.showSnackbar(context, "Please select 1 contour", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          }
+                                        }else{
+                                          Vibration.vibrate(duration: 500);
+                                          SnackbarUtil.showSnackbar(context, "Please enter height", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        }
 
                                       },
                                     ),
@@ -596,19 +623,20 @@ class _ContourULDPageState extends State<ContourULDPage>{
   Future<void> getContourList() async {
     await context.read<CloseULDCubit>().getContourList(
         widget.uldSeqNo,
-        widget.uldType,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
 
   Future<void> saveContour() async {
-    /*await context.read<CloseULDCubit>().saveContour(
+    await context.read<CloseULDCubit>().saveContour(
+      widget.flightSeqNo,
         widget.uldSeqNo,
-        widget.uldType,
+       selectedSwitchIndex,
+        double.parse(CommonUtils.formateToTwoDecimalPlacesValue(double.parse(heightController.text))),
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);*/
+        widget.menuId);
   }
 
 }

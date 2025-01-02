@@ -2,10 +2,13 @@ import 'package:galaxy/module/export/model/closeuld/getscaleistmodel.dart';
 import 'package:galaxy/module/export/model/closeuld/savecontourmodel.dart';
 import 'package:galaxy/module/export/model/closeuld/saveequipmentmodel.dart';
 import 'package:galaxy/module/export/model/closeuld/savescalemodel.dart';
+import 'package:galaxy/module/export/model/closeuld/savetareweightmodel.dart';
 
+import '../../../model/closeuld/closereopenmodel.dart';
 import '../../../model/closeuld/closeuldsearchmodel.dart';
 import '../../../model/closeuld/equipmentmodel.dart';
 import '../../../model/closeuld/getcontourlistmodel.dart';
+import '../../../model/closeuld/getdocumentlistmodel.dart';
 import '../../../model/closeuld/getremarklistmodel.dart';
 import '../../../model/closeuld/saveremarkmodel.dart';
 
@@ -119,4 +122,38 @@ class SaveRemarkSuccessState extends CloseULDState {
 class SaveRemarkFailureState extends CloseULDState {
   final String error;
   SaveRemarkFailureState(this.error);
+}
+
+
+class SaveTareWeightSuccessState extends CloseULDState {
+  final SaveTareWeightModel saveTareWeightModel;
+  SaveTareWeightSuccessState(this.saveTareWeightModel);
+}
+
+class SaveTareWeightFailureState extends CloseULDState {
+  final String error;
+  SaveTareWeightFailureState(this.error);
+}
+
+
+class GetDocumentListSuccessState extends CloseULDState {
+  final GetDocumentListModel getDocumentListModel;
+  GetDocumentListSuccessState(this.getDocumentListModel);
+}
+
+class GetDocumentListFailureState extends CloseULDState {
+  final String error;
+  GetDocumentListFailureState(this.error);
+}
+
+
+
+class CloseReopenSuccessState extends CloseULDState {
+  final CloseReopenModel closeReopenModel;
+  CloseReopenSuccessState(this.closeReopenModel);
+}
+
+class CloseReopenFailureState extends CloseULDState {
+  final String error;
+  CloseReopenFailureState(this.error);
 }

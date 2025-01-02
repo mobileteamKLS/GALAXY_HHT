@@ -193,7 +193,7 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
       String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
       if(uldNumber == "Valid"){
 
-        callSearchApi(selectedSourceType, uldNumber);
+        callSearchApi(selectedSourceType, scanULDController.text);
       }
       else{
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -879,7 +879,7 @@ class _EmptyULDTrolleyPageState extends State<EmptyULDTrolleyPage> with SingleTi
                                                                       else{
                                                                         String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
                                                                         if(uldNumber == "Valid"){
-                                                                          createULDTrolley(uldNumber);
+                                                                          createULDTrolley(scanULDController.text);
                                                                         }
                                                                         else{
                                                                           scanULDController.clear();

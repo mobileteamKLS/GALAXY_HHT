@@ -11,7 +11,6 @@ import 'package:galaxy/module/export/pages/closeuld/closeuldequipmentpage.dart';
 import 'package:galaxy/module/export/pages/closeuld/contouruldpage.dart';
 import 'package:galaxy/module/export/pages/closeuld/remarkuldpage.dart';
 import 'package:galaxy/module/export/pages/closeuld/scaleuldpage.dart';
-import 'package:galaxy/module/export/pages/closeuld/ulddetailpage.dart';
 import 'package:galaxy/module/export/services/closeuld/closeuldlogic/closeuldcubit.dart';
 import 'package:galaxy/module/export/services/closeuld/closeuldlogic/closeuldstate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
@@ -40,7 +39,7 @@ import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/closeuld/closeuldsearchmodel.dart';
 
-class CloseULDPage extends StatefulWidget {
+class CloseTrolleyPage extends StatefulWidget {
   String mainMenuName;
   String title;
   String refrelCode;
@@ -49,7 +48,7 @@ class CloseULDPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
 
-  CloseULDPage(
+  CloseTrolleyPage(
       {super.key,
       required this.importSubMenuList,
       required this.exportSubMenuList,
@@ -60,10 +59,10 @@ class CloseULDPage extends StatefulWidget {
       required this.mainMenuName});
 
   @override
-  State<CloseULDPage> createState() => _CloseULDPageState();
+  State<CloseTrolleyPage> createState() => _CloseTrolleyPageState();
 }
 
-class _CloseULDPageState extends State<CloseULDPage>{
+class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
 
 
@@ -75,9 +74,9 @@ class _CloseULDPageState extends State<CloseULDPage>{
   FocusNode scaleBtnFocusNode = FocusNode();
   FocusNode remarkBtnFocusNode = FocusNode();
 
-  TextEditingController scanULDController = TextEditingController();
-  FocusNode scanULDFocusNode = FocusNode();
-  FocusNode scanULDBtnFocusNode = FocusNode();
+  TextEditingController scanTrolleyController = TextEditingController();
+  FocusNode scanTrolleyFocusNode = FocusNode();
+  FocusNode scanTrolleyBtnFocusNode = FocusNode();
 
 
 
@@ -105,8 +104,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
     _loadUser(); //load user data
 
-    scanULDFocusNode.addListener(() {
-      if (!scanULDFocusNode.hasFocus && !isBackPressed) {
+    scanTrolleyFocusNode.addListener(() {
+      if (!scanTrolleyFocusNode.hasFocus && !isBackPressed) {
         leaveULDFocusNode();
       }
     });
@@ -117,22 +116,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
 
   Future<void> leaveULDFocusNode() async {
-    if (scanULDController.text.isNotEmpty) {
-
-      String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
-      if(uldNumber == "Valid"){
-
-        callSearchApi(scanULDController.text);
-      }
-      else{
-        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-        Vibration.vibrate(duration: 500);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(scanULDFocusNode);
-        });
-      }
-
-
+    if (scanTrolleyController.text.isNotEmpty) {
+      callSearchApi(scanTrolleyController.text);
     }
   }
 
@@ -165,7 +150,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
     }
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(scanULDFocusNode);
+      FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
     });
 
     /*await context.read<EmptyULDTrolleyCubit>().emptyULDTrolleyPageLoad(
@@ -315,10 +300,10 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  scanULDController.clear();
+                                  scanTrolleyController.clear();
                                   uldDetail = null;
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                    FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                   });
                                   setState(() {
 
@@ -342,12 +327,12 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.closeULDSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                      FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                     });
                                   }else{
                                     uldDetail = state.closeULDSearchModel.uLDDetailList![0];
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(scanULDBtnFocusNode);
+                                      FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
                                     });
                                     setState(() {
 
@@ -359,36 +344,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                                else if (state is SaveTareWeightSuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if(state.saveTareWeightModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.saveTareWeightModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                  }else{
-                                    callSearchApi(scanULDController.text);
-                                  }
-                                }
-                                else if (state is SaveTareWeightFailureState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                }
-                                else if (state is CloseReopenSuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if(state.closeReopenModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.closeReopenModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-
-                                  }else{
-                                    callSearchApi(scanULDController.text);
-                                  }
-                                }
-                                else if (state is CloseReopenFailureState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                }
 
 
                               },
@@ -425,24 +381,18 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       flex:1,
                                                       child: CustomTextField(
                                                         textDirection: textDirection,
-                                                        controller: scanULDController,
-                                                        focusNode: scanULDFocusNode,
+                                                        controller: scanTrolleyController,
+                                                        focusNode: scanTrolleyFocusNode,
                                                         onPress: () {},
                                                         hasIcon: false,
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "${lableModel.scanuld} *",
+                                                        labelText: "${lableModel.scantrolley} *",
                                                         readOnly: false,
-                                                        maxLength: 11,
+                                                        maxLength: 15,
                                                         onChanged: (value) {
-                                                          uldDetail = null;
-                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                            FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                          });
-                                                          setState(() {
 
-                                                          });
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
@@ -466,10 +416,10 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                     ),
                                                     // click search button to validate location
                                                     InkWell(
-                                                      focusNode: scanULDBtnFocusNode,
+                                                      focusNode: scanTrolleyBtnFocusNode,
                                                       onTap: () {
                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                          FocusScope.of(context).requestFocus(scanULDBtnFocusNode);
+                                                          FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
                                                         });
                                                         scanULDScanQR();
                                                       },
@@ -487,7 +437,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                 children: [
                                                   Row(
                                                     children: [
-                                                      CustomeText(text: (uldDetail != null) ? uldDetail!.uLDNo! : "-", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                   //   CustomeText(text: (uldDetail != null) ? uldDetail!.uLDNo! : "-", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                      CustomeText(text: "TTL214541", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
                                                     ],
                                                   ),
                                                   Row(
@@ -500,20 +451,20 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         textAlign: TextAlign.start,
                                                       ),
                                                       const SizedBox(width: 5),
-                                                      (uldDetail != null) ? Container(
+                                                      Container(
                                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
                                                         decoration : BoxDecoration(
                                                             borderRadius: BorderRadius.circular(20),
-                                                            color: (uldDetail!.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                            color: MyColor.flightFinalize
                                                         ),
                                                         child: CustomeText(
-                                                          text: (uldDetail!.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
+                                                          text: "${lableModel.open}",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.bold,
                                                           textAlign: TextAlign.center,
                                                         ),
-                                                      ) : SizedBox(),
+                                                      ) ,
                                                     ],
                                                   ),
 
@@ -532,91 +483,33 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Tare Wt. :",
+                                                            text: "Tare Wt. : ",
                                                             fontColor: MyColor.textColorGrey2,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
                                                             textAlign: TextAlign.start,
                                                           ),
-
-
-                                                          (uldDetail != null) ? (uldDetail!.uLDStatus == "O")
-                                                              ? Container(
-                                                            padding: const EdgeInsets.only(left: 2,),
-                                                            decoration: BoxDecoration(
-                                                                color: MyColor.dropdownColor,
-                                                                borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                            ),
-                                                            child: InkWell(
-                                                              child: Row(
-                                                                children: [
-                                                                  CustomeText(
-                                                                    text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
-                                                                    fontColor: MyColor.colorBlack,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                    fontWeight: FontWeight.w700,
-                                                                    textAlign: TextAlign.start,
-                                                                  ),
-                                                                  CustomeText(
-                                                                    text: " Kg",
-                                                                    fontColor: MyColor.colorBlack,
-                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                    fontWeight: FontWeight.w700,
-                                                                    textAlign: TextAlign.start,
-                                                                  ),
-                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                  Padding(
-                                                                    padding: const EdgeInsets.only(right: 2, top: 2, bottom: 2),
-                                                                    child: SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
-                                                                  )
-                                                                ],
+                                                          const SizedBox(width: 5),
+                                                          Row(
+                                                            children: [
+                                                              CustomeText(
+                                                              //  text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
+                                                                text: "50.00",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
                                                               ),
-                                                              onTap: () {
-                                                                openEditBatteryBottomDialog(
-                                                                    context,
-                                                                    uldDetail!.uLDNo!,
-                                                                    "${uldDetail!.tareWeight!}",
-                                                                    uldDetail!.uLDSeqNo!,
-                                                                    lableModel,
-                                                                    textDirection);
-                                                              },
-                                                            ),
+                                                              CustomeText(
+                                                                text: " Kg",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                            ],
                                                           )
-                                                              : Row(
-                                                            children: [
-                                                              CustomeText(
-                                                                text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              CustomeText(
-                                                                text: " Kg",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ],
-                                                          ) : Row(
-                                                            children: [
-                                                              CustomeText(
-                                                                text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              CustomeText(
-                                                                text: " Kg",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ],
-                                                          ),
+
                                                         ],
                                                       ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical),
@@ -624,16 +517,18 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Net Wt. :",
+                                                            text: "Net Wt. : ",
                                                             fontColor: MyColor.textColorGrey2,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
                                                             textAlign: TextAlign.start,
                                                           ),
+                                                          const SizedBox(width: 5),
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.netWeight!) : "-",
+                                                                //text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.netWeight!) : "-",
+                                                                text: "20.00",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -656,16 +551,18 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Equip Wt. :",
+                                                              text: "Equip Wt. : ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.start,
                                                             ),
+                                                            const SizedBox(width: 5),
                                                             Row(
                                                               children: [
                                                                 CustomeText(
-                                                                  text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.equipmentWeight!) : "-",
+                                                                 // text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.equipmentWeight!) : "-",
+                                                                  text: "50.00",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -688,16 +585,18 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Scale Wt. :",
+                                                              text: "Scale Wt. : ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.start,
                                                             ),
+                                                            const SizedBox(width: 5),
                                                             Row(
                                                               children: [
                                                                 CustomeText(
-                                                                  text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.scaleWeight!) : "-",
+                                                                  //text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.scaleWeight!) : "-",
+                                                                  text: "120.00",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -717,7 +616,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         )
                                                     ],),
                                                   ),
-                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
                                                   Expanded(
                                                     flex : 1,
                                                     child: Column(
@@ -733,31 +632,10 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.start,
                                                             ),
-                                                            Flexible(
-                                                              child: CustomeText(
-                                                                text: (uldDetail != null) ? "${uldDetail!.deviation!} Kg (${uldDetail!.deviationPer!} %)" : "-",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical),
-                                                        Row(
-                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            CustomeText(
-                                                              text: "Contour : ",
-                                                              fontColor: MyColor.textColorGrey2,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.start,
-                                                            ),
                                                             const SizedBox(width: 5),
                                                             CustomeText(
-                                                              text: (uldDetail != null) ? uldDetail!.contour! : "-",
+                                                              //text: (uldDetail != null) ? "${uldDetail!.deviation!} Kg (${uldDetail!.deviationPer!} %)" : "-",
+                                                              text: "10.00 Kg (15 %)",
                                                               fontColor: MyColor.colorBlack,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w700,
@@ -778,7 +656,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             ),
                                                             const SizedBox(width: 5),
                                                             CustomeText(
-                                                              text: (uldDetail != null) ? "${uldDetail!.equipmentCount!}" : "-",
+                                                              text: "20",
                                                               fontColor: MyColor.colorBlack,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w700,
@@ -786,6 +664,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             ),
                                                           ],
                                                         ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
                                                         Row(
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
@@ -797,38 +676,33 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                               textAlign: TextAlign.start,
                                                             ),
                                                             const SizedBox(width: 5),
-                                                            InkWell(
-                                                              onTap: () {
-                                                                scanULDFocusNode.unfocus();
-                                                                scanULDBtnFocusNode.unfocus();
-                                                                if(uldDetail != null){
-                                                                  Navigator.push(context, CupertinoPageRoute(
-                                                                    builder: (context) => ULDDetailPage(
-                                                                    importSubMenuList: widget.importSubMenuList,
-                                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                                    title: "ULD Detail",
-                                                                    refrelCode: widget.refrelCode,
-                                                                    menuId: widget.menuId,
-                                                                    mainMenuName: widget.mainMenuName,
-                                                                    uldNo: uldDetail!.uLDNo!,
-                                                                    uldType: "U",
-                                                                    uldSeqNo: uldDetail!.uLDSeqNo!,
-                                                                  ),));
-                                                                }else{
-                                                                  SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                    FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                                  });
-                                                                }
-                                                              },
-                                                              child: Container(
-                                                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                                                decoration: BoxDecoration(
-                                                                    color: MyColor.dropdownColor,
-                                                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                                                ),
-                                                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                                              ),
+                                                            CustomeText(
+                                                              text: "",
+                                                              fontColor: MyColor.colorBlack,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w700,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
+                                                            const SizedBox(width: 5),
+                                                            CustomeText(
+                                                              text: "",
+                                                              fontColor: MyColor.colorBlack,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w700,
+                                                              textAlign: TextAlign.start,
                                                             ),
                                                           ],
                                                         ),
@@ -836,6 +710,12 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   ),
                                                 ],
                                               ),
+
+
+
+
+
+
                                             ],
                                           ),
                                         ),
@@ -869,7 +749,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   ),
                                                   const SizedBox(width: 5),
                                                   CustomeText(
-                                                    text: (uldDetail != null) ? "${uldDetail!.flightNo} / ${uldDetail!.flightDate!.replaceAll(" ", "-")}" : "-",
+                                                  //  text: (uldDetail != null) ? "${uldDetail!.flightNo} / ${uldDetail!.flightDate!.replaceAll(" ", "-")}" : "-",
+                                                    text: "BA 199 / 23-Dec-2024",
                                                     fontColor: MyColor.colorBlack,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w700,
@@ -890,7 +771,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   ),
                                                   const SizedBox(width: 5),
                                                   CustomeText(
-                                                    text: (uldDetail != null) ? "${uldDetail!.uLDOffPoint}" : "-",
+                                                  //  text: (uldDetail != null) ? "${uldDetail!.uLDOffPoint}" : "-",
+                                                    text: "DXB",
                                                     fontColor: MyColor.colorBlack,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w700,
@@ -940,71 +822,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   press: () {
-                                                    scanULDFocusNode.unfocus();
-                                                    scanULDBtnFocusNode.unfocus();
-                                                   if(uldDetail != null){
-                                                     Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
-                                                       importSubMenuList: widget.importSubMenuList,
-                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                       title: "Equipment",
-                                                       refrelCode: widget.refrelCode,
-                                                       menuId: widget.menuId,
-                                                       mainMenuName: widget.mainMenuName,
-                                                       uldNo: uldDetail!.uLDNo!,
-                                                       uldType: "U",
-                                                       uldSeqNo: uldDetail!.uLDSeqNo!,
-                                                       flightSeqNo : uldDetail!.flightSeqNo!
-                                                     ),));
-                                                   }else{
-                                                     SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                       FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                     });
-                                                   }
+                                                    scanTrolleyFocusNode.unfocus();
+                                                    scanTrolleyBtnFocusNode.unfocus();
+
 
                                                   },
                                                 ),
                                               ),
                                               SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: RoundedButtonBlue(
-                                                  focusNode: contorBtnFocusNode,
-                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
-                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Contour",
-                                                  press: () {
-                                                    scanULDFocusNode.unfocus();
-                                                    scanULDBtnFocusNode.unfocus();
-                                                    if(uldDetail != null){
-                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(
-                                                          importSubMenuList: widget.importSubMenuList,
-                                                          exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Contour",
-                                                          refrelCode: widget.refrelCode,
-                                                          menuId: widget.menuId,
-                                                          mainMenuName: widget.mainMenuName,
-                                                          uldNo: uldDetail!.uLDNo!,
-                                                          uldType: "U",
-                                                          flightSeqNo: uldDetail!.flightSeqNo!,
-                                                          uldSeqNo: uldDetail!.uLDSeqNo!,
-                                                      ),));
-                                                    }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                      });
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(top: 12, right:0, left:0, bottom: 0),
-                                          child: Row(
-                                            children: [
                                               Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonBlue(
@@ -1013,60 +838,10 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Scale",
                                                   press: () {
-                                                    scanULDFocusNode.unfocus();
-                                                    scanULDBtnFocusNode.unfocus();
-                                                    if(uldDetail != null){
-                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(
-                                                          importSubMenuList: widget.importSubMenuList,
-                                                          exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Scale", refrelCode: widget.refrelCode,
-                                                          menuId: widget.menuId,
-                                                          mainMenuName: widget.mainMenuName,
-                                                          uldNo: uldDetail!.uLDNo!,
-                                                          uldType: "U",
-                                                          flightSeqNo: uldDetail!.flightSeqNo!,
-                                                          uldSeqNo: uldDetail!.uLDSeqNo!,
-                                                      ),));
-                                                    }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                      });
-                                                    }
+                                                    scanTrolleyFocusNode.unfocus();
+                                                    scanTrolleyBtnFocusNode.unfocus();
 
 
-                                                  },
-                                                ),
-                                              ),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
-                                              Expanded(
-                                                flex: 1,
-                                                child: RoundedButtonBlue(
-                                                  focusNode: remarkBtnFocusNode,
-                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
-                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Remarks",
-                                                  press: () {
-                                                    scanULDFocusNode.unfocus();
-                                                    scanULDBtnFocusNode.unfocus();
-                                                    if(uldDetail != null){
-                                                      Navigator.push(context, CupertinoPageRoute(builder: (context) => RemarkULDPage(
-                                                          importSubMenuList: widget.importSubMenuList,
-                                                          exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Remarks", refrelCode: widget.refrelCode,
-                                                          menuId: widget.menuId,
-                                                          mainMenuName: widget.mainMenuName,
-                                                          uldNo: uldDetail!.uLDNo!,
-                                                          uldType: "U",
-                                                          flightSeqNo: uldDetail!.flightSeqNo!,
-                                                          uldSeqNo: uldDetail!.uLDSeqNo!,
-                                                      ),));
-                                                    }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
-                                                      });
-                                                    }
 
                                                   },
                                                 ),
@@ -1074,6 +849,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                             ],
                                           ),
                                         ),
+
                                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                                         Row(
                                           children: [
@@ -1093,33 +869,24 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                               child: RoundedButtonBlue(
                                                 text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O") ? "Close" : "Re-Open" : "Close",
                                                 press: () async {
-                                                  scanULDFocusNode.unfocus();
-                                                  scanULDBtnFocusNode.unfocus();
+                                                  scanTrolleyFocusNode.unfocus();
+                                                  scanTrolleyBtnFocusNode.unfocus();
                                                   if(uldDetail != null){
                                                     // call api for close and re open
 
-                                                    bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O") ? "Closed ULD" : "Re-Open ULD", (uldDetail!.uLDStatus == "O") ? "Are you sure want to close this ULD ?" : "Are you sure want to re-open this ULD ?" , lableModel);
 
-
-                                                    if(closeReopenULD == true){
-
-                                                      await context.read<CloseULDCubit>().closeReopenULDModel(
-                                                          uldDetail!.uLDSeqNo!,
-                                                          (uldDetail!.uLDStatus == "O") ? "C" : "R",
-                                                          _user!.userProfile!.userIdentity!,
-                                                          _splashDefaultData!.companyCode!,
-                                                          widget.menuId);
-                                                    }else{
-                                                      _resumeTimerOnInteraction();
-                                                    }
-
-
-
+                                                   /* await context.read<CloseULDCubit>().closeReopenULDModel(
+                                                        uldDetail!.uLDSeqNo!,
+                                                        "U",
+                                                        (uldDetail!.uLDStatus == "O") ? "C" : "R",
+                                                        _user!.userProfile!.userIdentity!,
+                                                        _splashDefaultData!.companyCode!,
+                                                        widget.menuId);*/
 
                                                   }else{
                                                     SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                     WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                      FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                                      FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                                     });
                                                   }
                                                 },
@@ -1166,58 +933,20 @@ class _CloseULDPageState extends State<CloseULDPage>{
         // unloadUldListModel = null;
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.onlyAlphaNumericValueMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
-        scanULDController.clear();
+        scanTrolleyController.clear();
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(scanULDFocusNode);
+          FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
         });
       }else{
         // unloadUldListModel = null;
         String result = groupcodeScanResult.replaceAll(" ", "");
-        scanULDController.text = result;
-        String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
-        if(uldNumber == "Valid"){
-          setState(() {
-            String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
-            List<String> parts = uldNumbes.split(' ');
-            // call search api
-            callSearchApi(scanULDController.text);
-
-          });
-        }
-        else{
-          scanULDController.clear();
-          SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-          Vibration.vibrate(duration: 500);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            FocusScope.of(context).requestFocus(scanULDFocusNode);
-          });
-        }
+        scanTrolleyController.text = result;
+        callSearchApi(scanTrolleyController.text);
 
       }
     }
   }
 
-  Future<void> openEditBatteryBottomDialog(BuildContext context, String uldNo, String tareWeight, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
-    FocusScope.of(context).unfocus();
-    String? updatedTareWeight = await DialogUtils.showTareWtChangeBottomULDDialog(context, uldNo, tareWeight, lableModel, textDirection);
-    if (updatedTareWeight != null) {
-      if(updatedTareWeight.isNotEmpty){
-        double newTareWeight = double.parse(updatedTareWeight);
-
-        await callTareWeightApi(
-            uldSeqNo,
-            newTareWeight);
-
-
-      }else{
-        Vibration.vibrate(duration: 500);
-        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-      }
-
-    } else {
-
-    }
-  }
 
   Future<void> callSearchApi(String scanNo) async {
     await context.read<CloseULDCubit>().closeULDSearchModel(
@@ -1226,15 +955,5 @@ class _CloseULDPageState extends State<CloseULDPage>{
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
-
-  Future<void> callTareWeightApi(int uldSeqNo, double tareWeight) async {
-    await context.read<CloseULDCubit>().saveTareWeight(
-        uldSeqNo,
-        tareWeight,
-        _user!.userProfile!.userIdentity!,
-        _splashDefaultData!.companyCode!,
-        widget.menuId);
-  }
-
 }
 

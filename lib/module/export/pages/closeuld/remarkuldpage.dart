@@ -39,6 +39,7 @@ import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/closeuld/equipmentmodel.dart';
+import '../../model/closeuld/getremarklistmodel.dart';
 import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
 import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
@@ -51,6 +52,7 @@ class RemarkULDPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
+  int flightSeqNo;
   int uldSeqNo;
   String uldType;
 
@@ -65,6 +67,7 @@ class RemarkULDPage extends StatefulWidget {
       required this.menuId,
       required this.mainMenuName,
         required this.uldNo,
+        required this.flightSeqNo,
         required this.uldSeqNo,
         required this.uldType});
 
@@ -85,7 +88,8 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
   SplashDefaultModel? _splashDefaultData;
   final ScrollController scrollController = ScrollController();
 
-
+  GetRemarkListModel? getRemarkListModel;
+  List<ULDRemarksList> uLDRemarksList = [];
 
 
 
@@ -96,7 +100,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
 
   int? selectedSwitchIndex;
 
-  final List<String> remarkList = [
+  /*final List<String> remarkList = [
     "Testing is underway to ensure functionality and reliability. Please verify all inputs and outputs for accuracy. Your feedback is valuable!",
     "{boy count} boys are enjoying a sunny day flying kites in the open field. Each one has their own unique kite soaring high in the sky.",
     "There are {boy count} boys and {girl count} girls in the classroom, creating a lively and balanced environment for learning and collaboration.",
@@ -107,7 +111,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
     "{boy count} boys are enjoying a sunny day flying kites in the open field. Each one has their own unique kite soaring high in the sky.",
     "There are {boy count} boys and {girl count} girls in the classroom, creating a lively and balanced environment for learning and collaboration."
   ];
-
+*/
 
 
   @override
@@ -147,7 +151,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
         _splashDefaultData = splashDefaultData;
       });
     }
-
+    getRemarkList();
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -297,6 +301,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  remarkController.clear();
                                   setState(() {
 
                                   });
@@ -339,7 +344,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                         SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                         SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                         CustomeText(
-                                            text: "BAY 87865 AJ",
+                                            text: widget.uldNo,
                                             fontColor: MyColor.textColorGrey2,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                             fontWeight: FontWeight.w700,
@@ -400,6 +405,12 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getRemarkListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    getRemarkListModel = state.getRemarkListModel;
+                                    uLDRemarksList = state.getRemarkListModel.uLDRemarksList!;
+                                    remarkController.text = getRemarkListModel!.uLDRemarksDetail!.remarks!;
+                                    setState(() {
+
+                                    });
                                     // responce
 
                                   }
@@ -414,8 +425,11 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                   if(state.saveRemarkModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveRemarkModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  } else if(state.saveRemarkModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.saveRemarkModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-                                    // Responce
+                                    getRemarkList();
                                   }
                                 }
                                 else if (state is SaveRemarkFailureState){
@@ -439,32 +453,51 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                         children: [
 
                                           ListView.builder(
-                                            itemCount: remarkList.length,
+                                            itemCount: uLDRemarksList.length,
                                             shrinkWrap: true,
                                             physics: const NeverScrollableScrollPhysics(),
                                             itemBuilder: (context, index) {
 
-                                              String content = remarkList[index];
+                                              ULDRemarksList content = uLDRemarksList[index];
                                               return InkWell(
                                                 onTap: () {
                                                   _handleTap(content, index);
                                                 },
-                                                child: Container(
-                                                    padding: const EdgeInsets.all(10),
-                                                    margin: EdgeInsets.only(bottom: 8),
-                                                    decoration: BoxDecoration(
-                                                      color:MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
-                                                      borderRadius: BorderRadius.circular(8),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: MyColor.colorBlack.withOpacity(0.09),
-                                                          spreadRadius: 2,
-                                                          blurRadius: 15,
-                                                          offset: Offset(0, 3), // changes position of shadow
-                                                        ),
-                                                      ],
+                                                child: Row(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: [
+                                                    CustomeText(
+                                                      text: "${index + 1}",
+                                                      fontColor: MyColor.textColorGrey3,
+                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                      fontWeight: FontWeight.w500,
+                                                      textAlign: TextAlign.start,
                                                     ),
-                                                    child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                    SizedBox(width: 8), // Add spacing between index and container
+                                                    Expanded( // Ensures RichText can use available space
+                                                      child: Container(
+                                                        padding: const EdgeInsets.all(10),
+                                                        margin: const EdgeInsets.only(bottom: 8),
+                                                        decoration: BoxDecoration(
+                                                          color: MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
+                                                          borderRadius: BorderRadius.circular(8),
+                                                          boxShadow: [
+                                                            BoxShadow(
+                                                              color: MyColor.colorBlack.withOpacity(0.09),
+                                                              spreadRadius: 2,
+                                                              blurRadius: 15,
+                                                              offset: Offset(0, 3), // Changes position of shadow
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        child: RichText(
+                                                          text: _buildTextSpan(content.referenceDescription!),
+                                                          // Prevents overflow
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               );
                                             },
                                           ),
@@ -512,6 +545,24 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                       text: "Save",
                                       press: () {
 
+                                        if(remarkController.text.isNotEmpty){
+                                          if(remarkController.text.length >= 53){
+                                            Vibration.vibrate(duration: 500);
+                                            SnackbarUtil.showSnackbar(context, "Remarks should not be more than 53 characters.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(remarkFocus);
+                                            });
+                                          }else{
+                                            saveRemark();
+                                          }
+
+                                        }else{
+                                          Vibration.vibrate(duration: 500);
+                                          SnackbarUtil.showSnackbar(context, lableModel.enterRemarkMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(remarkFocus);
+                                          });
+                                        }
                                       },
                                     ),
                                   ),
@@ -533,10 +584,10 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
     );
   }
 
-  void _handleTap(String content, int index) async {
+  void _handleTap(ULDRemarksList content, int index) async {
     // Check if content contains placeholders
     final regex = RegExp(r"\{(.*?)\}");
-    final matches = regex.allMatches(content);
+    final matches = regex.allMatches(content.referenceDescription!);
 
     if (matches.isNotEmpty) {
       // Extract placeholders
@@ -627,7 +678,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
 
       // Update the remarkList if values are provided
       if (updatedValues != null) {
-        String updatedContent = content;
+        String updatedContent = content.referenceDescription!;
         updatedValues.forEach((key, value) {
           updatedContent = updatedContent.replaceAll("{$key}", value);
         });
@@ -640,7 +691,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
       }
     } else {
       // Directly set content in the remarkController if no placeholders
-      remarkController.text = content;
+      remarkController.text = content.referenceDescription!;
     }
   }
 
@@ -648,19 +699,76 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
   Future<void> getRemarkList() async {
     await context.read<CloseULDCubit>().getRemarkList(
         widget.uldSeqNo,
-        widget.uldType,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
 
   Future<void> saveRemark() async {
-    /*await context.read<CloseULDCubit>().saveContour(
+    await context.read<CloseULDCubit>().saveRemark(
+        widget.flightSeqNo,
         widget.uldSeqNo,
-        widget.uldType,
+        remarkController.text,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);*/
+        widget.menuId);
+  }
+
+  TextSpan _buildTextSpan(String text) {
+    final regex = RegExp(r"\{(.*?)\}");
+    final matches = regex.allMatches(text);
+
+    List<TextSpan> spans = [];
+    int lastMatchEnd = 0;
+
+    for (var match in matches) {
+      // Add normal text before the match
+      if (match.start > lastMatchEnd) {
+        spans.add(TextSpan(
+          text: text.substring(lastMatchEnd, match.start),
+          style: GoogleFonts.roboto(
+              textStyle: TextStyle(
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2,
+                  color: MyColor.textColorGrey3,
+                  fontWeight: FontWeight.normal,
+                  decorationColor: MyColor.textColorGrey3
+              )
+          ),
+        ));
+      }
+
+      // Add bold text for the match
+      spans.add(TextSpan(
+        text: text.substring(match.start, match.end),
+        style: GoogleFonts.roboto(
+            textStyle: TextStyle(
+              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2,
+              color: MyColor.textColorGrey3,
+              fontWeight: FontWeight.bold,
+              decorationColor: MyColor.textColorGrey3
+            )
+        ),
+      ));
+
+      lastMatchEnd = match.end;
+    }
+
+    // Add remaining normal text after the last match
+    if (lastMatchEnd < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(lastMatchEnd),
+        style: GoogleFonts.roboto(
+            textStyle: TextStyle(
+              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2,
+              color: MyColor.textColorGrey3,
+              fontWeight: FontWeight.normal,
+              decorationColor: MyColor.textColorGrey3
+            )
+        ),
+      ));
+    }
+
+    return TextSpan(children: spans);
   }
 
 

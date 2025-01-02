@@ -29,6 +29,7 @@ import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
 import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
+import '../../export/pages/closetrolley/closetrolleypage.dart';
 import '../../export/pages/closeuld/closeuldpage.dart';
 import '../../export/pages/emptyuldtrolley/emptyuldtrolleypage.dart';
 import '../../export/pages/palletstatck/palletstackpage.dart';
@@ -251,7 +252,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                    //state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1292", menuName: "Close ULD", sNo: 3325, imageIcon: "closeuld", refMenuCode: "§§HHT017§§", IsEnable: "Y"));
+                                   // state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1293", menuName: "Close Trolley", sNo: 3326, imageIcon: "closeuld", refMenuCode: "§§HHT018§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
@@ -393,6 +394,16 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                             }
                                             else if(refrelCode == SubMenuCodeUtils.CLOSEULD){
                                               NextScreen(CloseULDPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }
+                                            else if(refrelCode == SubMenuCodeUtils.CLOSETrolley){
+                                              NextScreen(CloseTrolleyPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

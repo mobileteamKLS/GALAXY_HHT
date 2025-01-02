@@ -29,6 +29,7 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/closeuld/getscaleistmodel.dart';
 import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
 import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
@@ -41,6 +42,7 @@ class ScaleULDPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
+  int flightSeqNo;
   int uldSeqNo;
   String uldType;
 
@@ -54,6 +56,7 @@ class ScaleULDPage extends StatefulWidget {
       required this.menuId,
       required this.mainMenuName,
         required this.uldNo,
+        required this.flightSeqNo,
         required this.uldSeqNo,
         required this.uldType
       });
@@ -75,7 +78,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
   SplashDefaultModel? _splashDefaultData;
   final ScrollController scrollController = ScrollController();
 
-
+  GetScaleListModel? getScaleListModel;
 
 
 
@@ -84,15 +87,18 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
 
-  int? selectedSwitchIndex;
+  String selectedSwitchIndex = "";
 
-  final List<String> contourList = [
+  List<ULDScaleWeightList> scaleWeightList = [];
+
+
+ /* final List<String> scaleWeightList = [
     "ETV00001",
     "ETV00002",
     "ETV00003",
     "ETV00004",
     "ETV00005",
-  ];
+  ];*/
 
   bool _showFullList = false;
 
@@ -102,7 +108,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
 
     _loadUser(); //load user data
 
-    weightController.text = "165.00";
+    weightController.text = "0.00";
   }
 
 
@@ -134,7 +140,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
         _splashDefaultData = splashDefaultData;
       });
     }
-
+    getScaleList();
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -284,7 +290,8 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-
+                                  weightController.clear();
+                                  selectedSwitchIndex = "";
                                   setState(() {
 
                                   });
@@ -307,6 +314,14 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getScaleListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+
+                                    getScaleListModel = state.getScaleListModel;
+                                    scaleWeightList = getScaleListModel!.uLDScaleWeightList!;
+                                    weightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getScaleListModel!.uLDScaleWeightDetail!.scaleWeight!);
+                                    selectedSwitchIndex = getScaleListModel!.uLDScaleWeightDetail!.machineNo!;
+                                    setState(() {
+
+                                    });
                                     // responce
 
                                   }
@@ -322,7 +337,8 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveScaleModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-                                    // Responce
+                                    SnackbarUtil.showSnackbar(context, state.saveScaleModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    getScaleList();
                                   }
                                 }
                                 else if (state is SaveScaleFailureState){
@@ -369,7 +385,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                       CustomeText(
-                                                          text: "AKE 19191 BA",
+                                                          text: widget.uldNo,
                                                           fontColor: MyColor.textColorGrey2,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.w700,
@@ -393,15 +409,15 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                           hastextcolor: true,
                                                           animatedLabel: true,
                                                           needOutlineBorder: true,
-                                                          labelText: "${lableModel.weight}",
+                                                          labelText: "${lableModel.weight}*",
                                                           readOnly: false,
                                                           maxLength: 10,
                                                           digitsOnly: false,
                                                           doubleDigitOnly: true,
                                                           onChanged: (value) {
-                                                            setState(() {
+                                                           /* setState(() {
                                                               weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
-                                                            });
+                                                            });*/
 
                                                           },
                                                           fillColor:  Colors.grey.shade100,
@@ -484,13 +500,13 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                 ),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
                                                 ListView.builder(
-                                                  itemCount: contourList.length,
+                                                  itemCount: scaleWeightList.length,
                                                   shrinkWrap: true,
                                                   physics: const NeverScrollableScrollPhysics(),
                                                   itemBuilder: (context, index) {
                                                     Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
-                                                    String content = contourList[index];
+                                                    ULDScaleWeightList content = scaleWeightList[index];
                                                     return Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
@@ -505,18 +521,18 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                                     CircleAvatar(
                                                                       radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
                                                                       backgroundColor: backgroundColor,
-                                                                      child: CustomeText(text: "${content}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                                                                      child: CustomeText(text: "${content.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                                                     ),
                                                                     SizedBox(
                                                                       width: 15,
                                                                     ),
-                                                                    Flexible(child: CustomeText(text: content, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
+                                                                    Flexible(child: CustomeText(text: content.referenceDescription!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
                                                                   ],
                                                                 ),
                                                               ),
                                                               SizedBox(width: 2,),
                                                               Switch(
-                                                                value: selectedSwitchIndex == index,
+                                                                value: selectedSwitchIndex == content.referenceDataIdentifier,
                                                                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                                                 activeColor: MyColor.primaryColorblue,
                                                                 inactiveThumbColor: MyColor.thumbColor,
@@ -524,7 +540,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                                 trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                                                 onChanged: (value) {
                                                                   setState(() {
-                                                                    selectedSwitchIndex = value ? index : null;
+                                                                    selectedSwitchIndex = value ? content.referenceDataIdentifier! : "";
                                                                   });
                                                                 },
                                                               )
@@ -598,6 +614,17 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                     child: RoundedButtonBlue(
                                       text: "Save",
                                       press: () {
+                                        if(weightController.text.isNotEmpty){
+                                          if(selectedSwitchIndex.isNotEmpty){
+                                            saveScale();
+                                          }else{
+                                            Vibration.vibrate(duration: 500);
+                                            SnackbarUtil.showSnackbar(context, "Please select 1 machine", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          }
+                                        }else{
+                                          Vibration.vibrate(duration: 500);
+                                          SnackbarUtil.showSnackbar(context, "Please enter weight", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        }
 
                                       },
                                     ),
@@ -624,19 +651,20 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
   Future<void> getScaleList() async {
     await context.read<CloseULDCubit>().getScaleList(
         widget.uldSeqNo,
-        widget.uldType,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
 
   Future<void> saveScale() async {
-    /*await context.read<CloseULDCubit>().saveContour(
+    await context.read<CloseULDCubit>().saveScale(
+        widget.flightSeqNo,
         widget.uldSeqNo,
-        widget.uldType,
+        double.parse(CommonUtils.formateToTwoDecimalPlacesValue(double.parse(weightController.text))),
+        selectedSwitchIndex,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);*/
+        widget.menuId);
   }
 
 
