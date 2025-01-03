@@ -11,8 +11,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasecubit.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasestate.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:galaxy/widget/customdivider.dart';
-import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:vibration/vibration.dart';
 
@@ -427,7 +425,6 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                   onChanged: (value) async {
 
                                                                     updateSearchList(value);
-
                                                                   },
                                                                   fillColor: MyColor.colorWhite,
                                                                   textInputType: TextInputType.number,

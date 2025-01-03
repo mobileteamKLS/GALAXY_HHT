@@ -21,6 +21,7 @@ import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -206,7 +207,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
     isBackPressed = true; // Set to true to avoid showing snackbar on back press
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+    Navigator.pop(context, "true");
     inactivityTimerManager?.stopTimer();
 
 
@@ -437,12 +438,13 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                     children: [
                                                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                      CustomeText(
-                                                          text: widget.uldNo,
-                                                          fontColor: MyColor.textColorGrey2,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                          fontWeight: FontWeight.w700,
-                                                          textAlign: TextAlign.start)
+                                                      ULDNumberWidget(
+                                                        uldNo: widget.uldNo,
+                                                        smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        uldType: widget.uldType,
+                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -680,7 +682,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                           text: "${lableModel.cancel}",
                                           isborderButton: true,
                                           press: () {
-                                            Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                            _onWillPop();  // Return null when "Cancel" is pressed
                                           },
                                         ),
                                       ),

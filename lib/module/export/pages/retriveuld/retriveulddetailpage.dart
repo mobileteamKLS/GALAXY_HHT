@@ -24,6 +24,7 @@ import '../../../../widget/customebuttons/roundbuttonblue.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -546,7 +547,14 @@ class _RetriveULDDetailPagetate extends State<RetriveULDDetailPage>
                                                                      children: [
                                                                        Row(
                                                                          children: [
-                                                                           CustomeText(text: "${uldDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                                           ULDNumberWidget(
+                                                                             uldNo: "${uldDetails.uLDNo}",
+                                                                             smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                             bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                             fontColor: MyColor.textColorGrey3,
+                                                                             uldType: "U",
+                                                                           ),
+                                                                           /*CustomeText(text: "${uldDetails.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontWeight: FontWeight.w700, textAlign: TextAlign.start),*/
                                                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                                                                            (uldDetails.intact! == "Y")
                                                                                ? Padding(

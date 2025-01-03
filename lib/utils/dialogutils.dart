@@ -4392,6 +4392,9 @@ class DialogUtils {
                       });
                     }
                     else{
+
+                      SnackbarUtil.showSnackbar(context, state.unloadRemoveAWBModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
                       Navigator.pop(context, {
                         "status": "D",
                       });
@@ -5243,5 +5246,30 @@ class DialogUtils {
       },
     );
   }
+
+  static Future<bool?> commingSoonDialog(BuildContext context,
+      String title,
+      LableModel lableModel) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
+          title: Center(child: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.center, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600)),
+          content: RoundedButtonBlue(text: "${lableModel.ok}", press: () {
+            Navigator.of(context).pop(false);
+          },),
+
+        );
+      },
+    );
+  }
+
 
 }

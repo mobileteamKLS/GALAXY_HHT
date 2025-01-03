@@ -142,4 +142,13 @@ class Apilist{
 
   static String closeULDGetDocumentList = "/CloseULD/GetDocumentList";
 
+
+  // ULD Trolley
+  static String closeTrolleySearchApi = "/CloseTrolley/Search";
+  static String closeTrolleyGetDocumentList = "/CloseTrolley/GetDocumentList";
+  static String closeTrolleyScaleApi = "/CloseTrolley/GetScaleWeightList";
+  static String closeTrolleySaveScaleApi = "/CloseTrolley/ScaleWeightSave";
+  static String closeTrolleyStatusUpdate = "/CloseTrolley/StatusUpdate";
+
+
 }

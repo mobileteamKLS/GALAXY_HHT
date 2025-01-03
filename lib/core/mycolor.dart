@@ -57,6 +57,11 @@ class MyColor {
   static const Color colorgreenProgress = Color(0xFF43a047);
   static const Color colorGrey = Color(0xff555555);
 
+  static const Color btnColor1 = Color(0xffCCF1F6);
+  static const Color btnColor2 = Color(0xffDFD6EF);
+  static const Color btnColor3 = Color(0xffFFC4E4);
+  static const Color btnColor4 = Color(0xffD3ECB5);
+
   static const Color transparentColor = Colors.transparent;
 
   static const Color colorBlueWhite = Color(0xffCCF1F6);
@@ -98,33 +103,19 @@ class MyColor {
 
   static List<Color> subMenuColorList = [
     // Color for position 0, 10, 19, 28, etc.
-    Color(0xffFFD7BC),
+    Color(0xffCCF1F6),
+    Color(0xffDFD6EF),
+    Color(0xffFFC4E4),
+    Color(0xffD3ECB5),
+    Color(0xffFDEECF),
     Color(0xffD1E2FB),
+    Color(0xffFFD7BC),
+    Color(0xffFFD0D0),
     Color(0xffB3D8B4),
 
 
   ];
 
 
-
-  /*static List<Color> colorList = [
-    Color(0xffD50000).withOpacity(0.5),
-    Color(0xffFF6D00).withOpacity(0.5),
-    Color(0xff6200EA).withOpacity(0.5),
-    Color(0xffC51162).withOpacity(0.5),
-    Color(0xff304FFE).withOpacity(0.5),
-    Color(0xffB388FF).withOpacity(0.5),
-    Color(0xff0091EA).withOpacity(0.5),
-    Color(0xff00B8D4).withOpacity(0.5),
-    Color(0xffFFD600).withOpacity(0.5),
-   *//* Colors.lightGreen,
-    Colors.amber,
-    Colors.pink,
-    Colors.deepOrange,
-    Colors.purple,
-    Colors.teal,
-    Colors.cyan,
-    Colors.lime,*//*
-  ];*/
 
 }

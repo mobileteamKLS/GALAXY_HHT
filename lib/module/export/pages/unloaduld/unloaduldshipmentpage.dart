@@ -312,6 +312,10 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                   if(state.unloadUldAWBListModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.unloadUldAWBListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    unloadUldAWBListModel = null;
+                                    setState(() {
+
+                                    });
                                   } else{
                                     unloadUldAWBListModel = state.unloadUldAWBListModel;
                                     setState(() {
@@ -346,6 +350,7 @@ class _UnloadULDShipmentPageState extends State<UnloadULDShipmentPage> with Sing
                                     }
 
                                   } else{
+                                    SnackbarUtil.showSnackbar(context, state.unloadRemoveAWBModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                     getAWBDetails();
                                   }
                                 }

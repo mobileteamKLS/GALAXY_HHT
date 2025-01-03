@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/utils/sizeutils.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttongreen.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -22,6 +23,7 @@ import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -108,7 +110,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
 
     _loadUser(); //load user data
 
-    weightController.text = "0.00";
+    weightController.text = "0";
   }
 
 
@@ -187,7 +189,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
 
     isBackPressed = true; // Set to true to avoid showing snackbar on back press
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+    Navigator.pop(context, "true");
     inactivityTimerManager?.stopTimer();
 
 
@@ -317,7 +319,11 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
 
                                     getScaleListModel = state.getScaleListModel;
                                     scaleWeightList = getScaleListModel!.uLDScaleWeightList!;
-                                    weightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getScaleListModel!.uLDScaleWeightDetail!.scaleWeight!);
+
+
+
+                                    //weightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getScaleListModel!.uLDScaleWeightDetail!.scaleWeight!);
+                                    weightController.text = "${getScaleListModel!.uLDScaleWeightDetail!.scaleWeight!.toInt()}";
                                     selectedSwitchIndex = getScaleListModel!.uLDScaleWeightDetail!.machineNo!;
                                     setState(() {
 
@@ -384,12 +390,13 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                     children: [
                                                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                      CustomeText(
-                                                          text: widget.uldNo,
-                                                          fontColor: MyColor.textColorGrey2,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                          fontWeight: FontWeight.w700,
-                                                          textAlign: TextAlign.start)
+                                                      ULDNumberWidget(
+                                                        uldNo: widget.uldNo,
+                                                        smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                        fontColor: MyColor.textColorGrey2,
+                                                        uldType: "U",
+                                                      )
                                                     ],
                                                   ),
                                                 ),
@@ -557,11 +564,14 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                   },
                                                 ),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
-                                                RoundedButtonBlue(
+                                                RoundedButtonGreen(
+                                                  color: MyColor.btnColor1,
+                                                  textColor: MyColor.colorBlack,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Get Weight",
-                                                  press: () {
+                                                  press: () async {
+                                                    bool? closeReopenTrolley = await DialogUtils.commingSoonDialog(context, "Comming soon..." , lableModel);
 
                                                   },
                                                 )
@@ -604,7 +614,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                       text: "${lableModel.cancel}",
                                       isborderButton: true,
                                       press: () {
-                                        Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                        _onWillPop();  // Return null when "Cancel" is pressed
                                       },
                                     ),
                                   ),

@@ -1,7 +1,9 @@
 class AwbFormateNumberUtils{
   static String formatAWBNumber(String awbNumber) {
 
-    String awbNo = awbNumber.replaceAll(" ", "");
+    String cleanedAwbno = awbNumber.replaceAll(RegExp(r'[\s-]'), '');
+
+    String awbNo = cleanedAwbno.replaceAll(" ", "");
 
     if (awbNo.length == 11) {
       // Format the number as 115-7988 3754

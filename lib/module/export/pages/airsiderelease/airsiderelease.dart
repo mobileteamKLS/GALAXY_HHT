@@ -28,6 +28,7 @@ import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -1027,7 +1028,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                   AirsideReleaseDetailList airSideReleaseDetail = filteredAirsideReleaseDetailList[index];
 
                                                   List<String> shcCodes = airSideReleaseDetail.sHCCode!.split(',');
-                                                 // final isSelected = _selectedIndices.contains(index);
+
                                                   final isSelected = _selectedItems.contains(airSideReleaseDetail);
 
 
@@ -1115,7 +1116,14 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                                               children: [
                                                                                 SvgPicture.asset((airSideReleaseDetail.uLDType == "T") ? trolleySvg : (airSideReleaseDetail.uLDType == "P") ? palletsSvg : uldSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
                                                                                 SizedBox(width: 8,),
-                                                                                CustomeText(text: "${airSideReleaseDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                                                                                ULDNumberWidget(
+                                                                                  uldNo: "${airSideReleaseDetail.uLDNo}",
+                                                                                  smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                  bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                                  fontColor: MyColor.textColorGrey3,
+                                                                                  uldType: airSideReleaseDetail.uLDType!,
+                                                                                )
+                                                                                /*CustomeText(text: "${airSideReleaseDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),*/
                                                                               ],
                                                                             )),
                                                                         (airSideReleaseDetail.isReleased == "N") ? Expanded(

@@ -31,6 +31,7 @@ import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -198,7 +199,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
 
     isBackPressed = true; // Set to true to avoid showing snackbar on back press
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+    Navigator.pop(context, "true");
     inactivityTimerManager?.stopTimer();
 
 
@@ -343,12 +344,13 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                       children: [
                                         SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                         SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                        CustomeText(
-                                            text: widget.uldNo,
-                                            fontColor: MyColor.textColorGrey2,
-                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                            fontWeight: FontWeight.w700,
-                                            textAlign: TextAlign.start)
+                                        ULDNumberWidget(
+                                          uldNo: widget.uldNo,
+                                          smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                          fontColor: MyColor.textColorGrey2,
+                                          uldType: "U",
+                                        )
                                       ],
                                     ),
                                   ),
@@ -388,6 +390,25 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
 
                                   SizedBox(height: SizeConfig.blockSizeVertical),
                                 ],
+                              ),
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 10),
+                              child: Directionality(
+                                textDirection: textDirection,
+                                child: Row(
+                                  children: [
+                                    SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                    CustomeText(
+                                        text: "Presets Remark",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                        fontWeight: FontWeight.w700,
+                                        textAlign: TextAlign.start)
+                                  ],
+                                ),
                               ),
                             ),
                             SizedBox(height: SizeConfig.blockSizeVertical),
@@ -452,6 +473,8 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
 
+
+
                                           ListView.builder(
                                             itemCount: uLDRemarksList.length,
                                             shrinkWrap: true,
@@ -479,7 +502,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                                         padding: const EdgeInsets.all(10),
                                                         margin: const EdgeInsets.only(bottom: 8),
                                                         decoration: BoxDecoration(
-                                                          color: MyColor.subMenuColorList[index % MyColor.subMenuColorList.length],
+                                                          color: MyColor.subMenuColorList[index % 4],
                                                           borderRadius: BorderRadius.circular(8),
                                                           boxShadow: [
                                                             BoxShadow(
@@ -534,7 +557,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                       text: "${lableModel.cancel}",
                                       isborderButton: true,
                                       press: () {
-                                        Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                        _onWillPop();  // Return null when "Cancel" is pressed
                                       },
                                     ),
                                   ),

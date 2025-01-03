@@ -23,7 +23,6 @@ import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
-import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -31,11 +30,13 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/closeuld/getdocumentlistmodel.dart';
-import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
-import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
 
-class ULDDetailPage extends StatefulWidget {
+import '../../model/closetrolley/gettrolleydocumentlistmodel.dart';
+import '../../services/closetrolley/closetrolleylogic/closetrolleycubit.dart';
+import '../../services/closetrolley/closetrolleylogic/closetrolleystate.dart';
+
+
+class TrolleyDetailPage extends StatefulWidget {
   String mainMenuName;
   String title;
   String refrelCode;
@@ -45,9 +46,8 @@ class ULDDetailPage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
   int uldSeqNo;
-  String uldType;
 
-  ULDDetailPage(
+  TrolleyDetailPage(
       {super.key,
       required this.importSubMenuList,
       required this.exportSubMenuList,
@@ -57,18 +57,17 @@ class ULDDetailPage extends StatefulWidget {
       required this.menuId,
       required this.mainMenuName,
         required this.uldNo,
-        required this.uldSeqNo,
-        required this.uldType
+        required this.uldSeqNo
       });
 
   @override
-  State<ULDDetailPage> createState() => _ULDDetailPageState();
+  State<TrolleyDetailPage> createState() => _TrolleyDetailPageState();
 }
 
-class _ULDDetailPageState extends State<ULDDetailPage>{
+class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
 
 
-  GetDocumentListModel? getDocumentListModel;
+  GetTrolleyDocumentListModel? getDocumentListModel;
   List<AirWaybillDetail> airWaybillDetail = [];
   List<MailDetail> mailDetail = [];
   List<CourierDetail> courierDetail = [];
@@ -299,21 +298,21 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
 
                             // start api responcer
 
-                            BlocListener<CloseULDCubit, CloseULDState>(
+                            BlocListener<CloseTrolleyCubit, CloseTrolleyState>(
                               listener: (context, state) async {
-                                if (state is CloseULDInitialState) {}
-                                else if (state is CloseULDLoadingState) {
+                                if (state is CloseTrolleyInitialState) {}
+                                else if (state is CloseTrolleyLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
-                                else if (state is GetDocumentListSuccessState){
+                                else if (state is GetTrolleyDocumentListSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
-                                  if(state.getDocumentListModel.status == "E"){
+                                  if(state.getTrolleyDocumentListModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.getDocumentListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    SnackbarUtil.showSnackbar(context, state.getTrolleyDocumentListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
 
-                                    getDocumentListModel = state.getDocumentListModel;
+                                    getDocumentListModel = state.getTrolleyDocumentListModel;
                                     airWaybillDetail = getDocumentListModel!.airWaybillDetail!;
                                     mailDetail = getDocumentListModel!.mailDetail!;
                                     courierDetail = getDocumentListModel!.courierDetail!;
@@ -352,7 +351,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
 
                                   }
                                 }
-                                else if (state is GetDocumentListFailureState){
+                                else if (state is GetTrolleyDocumentListFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -395,14 +394,13 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   child: Row(
                                                     children: [
                                                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                      SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                                      ULDNumberWidget(
-                                                        uldNo: widget.uldNo,
-                                                        smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        uldType: "U",
-                                                      )
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                      CustomeText(
+                                                          text: "${widget.uldNo}",
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                          fontWeight: FontWeight.w700,
+                                                          textAlign: TextAlign.start)
                                                     ],
                                                   ),
                                                 ),
@@ -411,7 +409,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "ULD Tare Weight : ",
+                                                      text: "Trolley Tare Weight : ",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -421,7 +419,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                     Row(
                                                       children: [
                                                         CustomeText(
-                                                          text: (getDocumentListModel != null) ? getDocumentListModel!.uLDDetails![0].uLDTareWeight! : "-",
+                                                          text: (getDocumentListModel != null) ? CommonUtils.formateToTwoDecimalPlacesValue(getDocumentListModel!.trolleyDetails![0].trolleyTareWeight!) : "-",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -444,7 +442,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "ULD Net Weight : ",
+                                                      text: "Trolley Net Weight : ",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -502,7 +500,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -518,7 +516,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -558,7 +556,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   shrinkWrap: true,
                                                   physics: const NeverScrollableScrollPhysics(),
                                                   itemBuilder: (context, index) {
-                                                    AirWaybillDetail content = airWaybillDetail[index];
+                                                    AirWaybillDetail content = airWaybillDetail![index];
                                                     return Padding(
                                                       padding: const EdgeInsets.only(bottom: 5),
                                                       child: Row(
@@ -588,7 +586,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                                   fontColor: MyColor.textColorGrey2,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w500,
-                                                                  textAlign: TextAlign.end,
+                                                                  textAlign: TextAlign.start,
                                                                 ),
 
                                                               ],),
@@ -662,7 +660,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -732,7 +730,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                                   fontColor: MyColor.textColorGrey2,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w500,
-                                                                  textAlign: TextAlign.end,
+                                                                  textAlign: TextAlign.start,
                                                                 ),
 
                                                               ],),
@@ -747,7 +745,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                                   fontColor: MyColor.textColorGrey2,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w500,
-                                                                  textAlign: TextAlign.end,
+                                                                  textAlign: TextAlign.start,
                                                                 ),
 
 
@@ -789,7 +787,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -805,7 +803,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -847,7 +845,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   itemBuilder: (context, index) {
                                                     CourierDetail content = courierDetail[index];
                                                     return Padding(
-                                                      padding: const EdgeInsets.only(bottom: 5.0),
+                                                      padding: const EdgeInsets.only(bottom: 5),
                                                       child: Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
@@ -875,9 +873,9 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                                   fontColor: MyColor.textColorGrey2,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w500,
-                                                                  textAlign: TextAlign.end,
+                                                                  textAlign: TextAlign.start,
                                                                 ),
-                                                      
+
                                                               ],),
                                                           ),
                                                           Expanded(
@@ -890,10 +888,10 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                                   fontColor: MyColor.textColorGrey2,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w500,
-                                                                  textAlign: TextAlign.end,
+                                                                  textAlign: TextAlign.start,
                                                                 ),
-                                                      
-                                                      
+
+
                                                               ],),
                                                           ),
                                                         ],
@@ -932,7 +930,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -948,7 +946,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.end,
+                                                            textAlign: TextAlign.start,
                                                           ),
 
                                                         ],),
@@ -982,7 +980,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
 
 
   Future<void> getDocumentList() async {
-    await context.read<CloseULDCubit>().getDocumentList(
+    await context.read<CloseTrolleyCubit>().getTrolleyDocumentList(
         widget.uldSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

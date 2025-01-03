@@ -7,14 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
-import 'package:galaxy/module/export/pages/closeuld/closeuldequipmentpage.dart';
-import 'package:galaxy/module/export/pages/closeuld/contouruldpage.dart';
-import 'package:galaxy/module/export/pages/closeuld/remarkuldpage.dart';
-import 'package:galaxy/module/export/pages/closeuld/scaleuldpage.dart';
-import 'package:galaxy/module/export/services/closeuld/closeuldlogic/closeuldcubit.dart';
-import 'package:galaxy/module/export/services/closeuld/closeuldlogic/closeuldstate.dart';
+import 'package:galaxy/module/export/pages/closetrolley/trolleydetailpage.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttongreen.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -37,7 +33,11 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/closeuld/closeuldsearchmodel.dart';
+import '../../model/closetrolley/closetrolleysearchmodel.dart';
+import 'scaletrolleypage.dart';
+import '../../services/closetrolley/closetrolleylogic/closetrolleycubit.dart';
+import '../../services/closetrolley/closetrolleylogic/closetrolleystate.dart';
+import '../closeuld/closeuldequipmentpage.dart';
 
 class CloseTrolleyPage extends StatefulWidget {
   String mainMenuName;
@@ -66,13 +66,12 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
 
 
-  ULDDetailList? uldDetail;
+  TrolleyDetail? trolleyDetail;
 
 
   FocusNode equipmentBtnFocusNode = FocusNode();
-  FocusNode contorBtnFocusNode = FocusNode();
   FocusNode scaleBtnFocusNode = FocusNode();
-  FocusNode remarkBtnFocusNode = FocusNode();
+
 
   TextEditingController scanTrolleyController = TextEditingController();
   FocusNode scanTrolleyFocusNode = FocusNode();
@@ -90,9 +89,6 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
 
   bool isBackPressed = false; // Track if the back button was pressed
-
-
-
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
@@ -301,7 +297,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                 //add clear text to clear all feild
                                 onClear: () {
                                   scanTrolleyController.clear();
-                                  uldDetail = null;
+                                  trolleyDetail = null;
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                   });
@@ -313,24 +309,24 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                             ),
 
                             // start api responcer
-                            BlocListener<CloseULDCubit, CloseULDState>(
+                            BlocListener<CloseTrolleyCubit, CloseTrolleyState>(
                               listener: (context, state) async {
-                                if (state is CloseULDInitialState) {
+                                if (state is CloseTrolleyInitialState) {
                                 }
-                                else if (state is CloseULDLoadingState) {
+                                else if (state is CloseTrolleyLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
-                                else if (state is CloseULDSearchSuccessState){
+                                else if (state is CloseTrolleySearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
-                                  if(state.closeULDSearchModel.status == "E"){
+                                  if(state.closeTrolleySearchModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.closeULDSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    SnackbarUtil.showSnackbar(context, state.closeTrolleySearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                     });
                                   }else{
-                                    uldDetail = state.closeULDSearchModel.uLDDetailList![0];
+                                    trolleyDetail = state.closeTrolleySearchModel.trolleyDetail![0];
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
                                     });
@@ -339,7 +335,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                     });
                                   }
                                 }
-                                else if (state is CloseULDSearchFailureState){
+                                else if (state is CloseTrolleySearchFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -392,7 +388,13 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                         readOnly: false,
                                                         maxLength: 15,
                                                         onChanged: (value) {
+                                                          trolleyDetail = null;
+                                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                            FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+                                                          });
+                                                          setState(() {
 
+                                                          });
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
@@ -437,8 +439,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                 children: [
                                                   Row(
                                                     children: [
-                                                   //   CustomeText(text: (uldDetail != null) ? uldDetail!.uLDNo! : "-", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                                                      CustomeText(text: "TTL214541", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
+                                                      CustomeText(text: (trolleyDetail != null) ? trolleyDetail!.trolleyNo! : "-", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
                                                     ],
                                                   ),
                                                   Row(
@@ -450,21 +451,62 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                         fontWeight: FontWeight.w400,
                                                         textAlign: TextAlign.start,
                                                       ),
-                                                      const SizedBox(width: 5),
-                                                      Container(
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                                      (trolleyDetail != null) ? Container(
                                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
                                                         decoration : BoxDecoration(
                                                             borderRadius: BorderRadius.circular(20),
-                                                            color: MyColor.flightFinalize
+                                                            color: (trolleyDetail!.trolleyStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                         ),
                                                         child: CustomeText(
-                                                          text: "${lableModel.open}",
+                                                          text: (trolleyDetail!.trolleyStatus == "O") ? "${lableModel.open}" : "${lableModel.closed}",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.bold,
                                                           textAlign: TextAlign.center,
                                                         ),
-                                                      ) ,
+                                                      ) : SizedBox(),
+                                                      SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
+                                                      InkWell(
+                                                        onTap: () async {
+                                                          scanTrolleyFocusNode.unfocus();
+                                                          scanTrolleyBtnFocusNode.unfocus();
+                                                          if(trolleyDetail != null){
+                                                            var value = await Navigator.push(context, CupertinoPageRoute(
+                                                              builder: (context) => TrolleyDetailPage(
+                                                                importSubMenuList: widget.importSubMenuList,
+                                                                exportSubMenuList: widget.exportSubMenuList,
+                                                                title: "Trolley Detail",
+                                                                refrelCode: widget.refrelCode,
+                                                                menuId: widget.menuId,
+                                                                mainMenuName: widget.mainMenuName,
+                                                                uldNo: trolleyDetail!.trolleyNo!,
+                                                                uldSeqNo:trolleyDetail!.trolleySeqNo!,
+                                                              ),));
+
+                                                            if(value == "true"){
+                                                              _resumeTimerOnInteraction();
+                                                              callSearchApi(scanTrolleyController.text);
+                                                            }else{
+                                                              _resumeTimerOnInteraction();
+                                                            }
+
+                                                          }else{
+                                                            SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                              FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Container(
+                                                          padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                                          decoration: BoxDecoration(
+                                                              color: MyColor.dropdownColor,
+                                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                                          ),
+                                                          child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                                        ),
+                                                      ),
                                                     ],
                                                   ),
 
@@ -475,7 +517,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
                                                   Expanded(
-                                                    flex : 1,
+                                                    flex : 6,
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
@@ -493,8 +535,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                              //  text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
-                                                                text: "50.00",
+                                                                text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.tareWeight!): "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -527,8 +568,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           Row(
                                                             children: [
                                                               CustomeText(
-                                                                //text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.netWeight!) : "-",
-                                                                text: "20.00",
+                                                                text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.netWeight!) : "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -561,8 +601,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             Row(
                                                               children: [
                                                                 CustomeText(
-                                                                 // text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.equipmentWeight!) : "-",
-                                                                  text: "50.00",
+                                                                  text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.equipmentWeight!) : "-",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -595,8 +634,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             Row(
                                                               children: [
                                                                 CustomeText(
-                                                                  //text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.scaleWeight!) : "-",
-                                                                  text: "120.00",
+                                                                  text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.scaleWeight!) : "-",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -618,7 +656,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                   ),
                                                   SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH6,),
                                                   Expanded(
-                                                    flex : 1,
+                                                    flex : 5,
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
@@ -626,20 +664,42 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Dev. : ",
+                                                              text: "Dev. Wt: ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.start,
                                                             ),
-                                                            const SizedBox(width: 5),
+                                                            Flexible(
+                                                              child: CustomeText(
+                                                                text: (trolleyDetail != null) ? "${trolleyDetail!.deviation!} Kg" : "-",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
+                                                        Row(
+                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
+                                                          children: [
                                                             CustomeText(
-                                                              //text: (uldDetail != null) ? "${uldDetail!.deviation!} Kg (${uldDetail!.deviationPer!} %)" : "-",
-                                                              text: "10.00 Kg (15 %)",
-                                                              fontColor: MyColor.colorBlack,
+                                                              text: "Dev. Per: ",
+                                                              fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w700,
+                                                              fontWeight: FontWeight.w500,
                                                               textAlign: TextAlign.start,
+                                                            ),
+                                                            Flexible(
+                                                              child: CustomeText(
+                                                                text: (trolleyDetail != null) ? "${trolleyDetail!.deviationPer!} %" : "-",
+                                                                fontColor: MyColor.colorBlack,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontWeight: FontWeight.w700,
+                                                                textAlign: TextAlign.start,
+                                                              ),
                                                             ),
                                                           ],
                                                         ),
@@ -656,7 +716,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             ),
                                                             const SizedBox(width: 5),
                                                             CustomeText(
-                                                              text: "20",
+                                                              text: (trolleyDetail != null) ? "${trolleyDetail!.equipmentCount!}" : "-",
                                                               fontColor: MyColor.colorBlack,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w700,
@@ -685,27 +745,8 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             ),
                                                           ],
                                                         ),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical),
-                                                        Row(
-                                                          mainAxisAlignment:MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            CustomeText(
-                                                              text: "",
-                                                              fontColor: MyColor.textColorGrey2,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w500,
-                                                              textAlign: TextAlign.start,
-                                                            ),
-                                                            const SizedBox(width: 5),
-                                                            CustomeText(
-                                                              text: "",
-                                                              fontColor: MyColor.colorBlack,
-                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                              fontWeight: FontWeight.w700,
-                                                              textAlign: TextAlign.start,
-                                                            ),
-                                                          ],
-                                                        ),
+
+
                                                       ],),
                                                   ),
                                                 ],
@@ -749,8 +790,8 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                   ),
                                                   const SizedBox(width: 5),
                                                   CustomeText(
-                                                  //  text: (uldDetail != null) ? "${uldDetail!.flightNo} / ${uldDetail!.flightDate!.replaceAll(" ", "-")}" : "-",
-                                                    text: "BA 199 / 23-Dec-2024",
+                                                    text: (trolleyDetail != null) ? "${trolleyDetail!.flightNo} / ${trolleyDetail!.flightDate!.replaceAll(" ", "-")}" : "-",
+                                                   // text: "BA 199 / 23-Dec-2024",
                                                     fontColor: MyColor.colorBlack,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w700,
@@ -771,8 +812,8 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                   ),
                                                   const SizedBox(width: 5),
                                                   CustomeText(
-                                                  //  text: (uldDetail != null) ? "${uldDetail!.uLDOffPoint}" : "-",
-                                                    text: "DXB",
+                                                    text: (trolleyDetail != null) ? "${trolleyDetail!.trolleyOffPoint}" : "-",
+                                                  //  text: "DXB",
                                                     fontColor: MyColor.colorBlack,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w700,
@@ -781,29 +822,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
                                                 ],
                                               ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical),
-                                              Row(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  CustomeText(
-                                                    text: "Remarks : ",
-                                                    fontColor: MyColor.textColorGrey2,
-                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                    fontWeight: FontWeight.w500,
-                                                    textAlign: TextAlign.start,
-                                                  ),
-                                                  const SizedBox(width: 5),
-                                                  Flexible(
-                                                    child: CustomeText(
-                                                      text: (uldDetail != null) ? "${uldDetail!.remarks}" : "-",
-                                                      fontColor: MyColor.colorBlack,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                      fontWeight: FontWeight.w700,
-                                                      textAlign: TextAlign.start,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+
 
                                             ],
                                           ),
@@ -816,15 +835,44 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                             children: [
                                               Expanded(
                                                 flex: 1,
-                                                child: RoundedButtonBlue(
+                                                child: RoundedButtonGreen(
+                                                  color: MyColor.btnColor1,
+                                                  textColor: MyColor.colorBlack,
                                                   focusNode: equipmentBtnFocusNode,
                                                   text: "Equipment",
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  press: () {
+                                                  press: () async {
                                                     scanTrolleyFocusNode.unfocus();
                                                     scanTrolleyBtnFocusNode.unfocus();
+                                                    if(trolleyDetail != null){
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Equipment",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: trolleyDetail!.trolleyNo!,
+                                                          uldType: "T",
+                                                          uldSeqNo: trolleyDetail!.trolleySeqNo!,
+                                                          flightSeqNo : trolleyDetail!.flightSeqNo!
+                                                      ),));
 
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      callSearchApi(scanTrolleyController.text);
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+
+
+                                                    }else{
+                                                      SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                        FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+                                                      });
+                                                    }
 
                                                   },
                                                 ),
@@ -832,15 +880,40 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                               SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
                                               Expanded(
                                                 flex: 1,
-                                                child: RoundedButtonBlue(
+                                                child: RoundedButtonGreen(
+                                                  color: MyColor.btnColor3,
+                                                  textColor: MyColor.colorBlack,
                                                   focusNode: scaleBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Scale",
-                                                  press: () {
+                                                  press: () async {
                                                     scanTrolleyFocusNode.unfocus();
                                                     scanTrolleyBtnFocusNode.unfocus();
+                                                    if(trolleyDetail != null){
+                                                      var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleTrolleyPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Scale", refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: trolleyDetail!.trolleyNo!,
+                                                        flightSeqNo: trolleyDetail!.flightSeqNo!,
+                                                        uldSeqNo: trolleyDetail!.trolleySeqNo!,
+                                                      ),));
 
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        callSearchApi(scanTrolleyController.text);
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+                                                    }else{
+                                                      SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                        FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+                                                      });
+                                                    }
 
 
                                                   },
@@ -849,57 +922,82 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                             ],
                                           ),
                                         ),
-
-                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              flex: 1,
-                                              child: RoundedButtonBlue(
-                                                text: "${lableModel.cancel}",
-                                                isborderButton: true,
-                                                press: () {
-                                                  Navigator.pop(context, null);  // Return null when "Cancel" is pressed
-                                                },
-                                              ),
-                                            ),
-                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
-                                            Expanded(
-                                              flex: 1,
-                                              child: RoundedButtonBlue(
-                                                text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O") ? "Close" : "Re-Open" : "Close",
-                                                press: () async {
-                                                  scanTrolleyFocusNode.unfocus();
-                                                  scanTrolleyBtnFocusNode.unfocus();
-                                                  if(uldDetail != null){
-                                                    // call api for close and re open
-
-
-                                                   /* await context.read<CloseULDCubit>().closeReopenULDModel(
-                                                        uldDetail!.uLDSeqNo!,
-                                                        "U",
-                                                        (uldDetail!.uLDStatus == "O") ? "C" : "R",
-                                                        _user!.userProfile!.userIdentity!,
-                                                        _splashDefaultData!.companyCode!,
-                                                        widget.menuId);*/
-
-                                                  }else{
-                                                    SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                      FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-                                                    });
-                                                  }
-                                                },
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                       ],
                                     ),
                                   ),
                                 ),
                               ),
-                            )
+                            ),
+
+
+                            SizedBox(height: SizeConfig.blockSizeVertical),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: MyColor.colorWhite,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: MyColor.colorBlack.withOpacity(0.09),
+                                    spreadRadius: 2,
+                                    blurRadius: 15,
+                                    offset: Offset(0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      text: "${lableModel.cancel}",
+                                      isborderButton: true,
+                                      press: () {
+                                        Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      text: (trolleyDetail != null) ? (trolleyDetail!.trolleyStatus == "O") ? "Close" : "Re-Open" : "Close",
+                                      press: () async {
+                                        scanTrolleyFocusNode.unfocus();
+                                        scanTrolleyBtnFocusNode.unfocus();
+                                        if(trolleyDetail != null){
+                                          // call api for close and re open
+
+                                          bool? closeReopenTrolley = await DialogUtils.closeReopenULDDialog(context, trolleyDetail!.trolleyNo!, (trolleyDetail!.trolleyStatus == "O") ? "Closed Trolley" : "Re-Open Trolley", (trolleyDetail!.trolleyStatus == "O") ? "Are you sure want to close this Trolley ?" : "Are you sure want to re-open this Trolley ?" , lableModel);
+
+
+                                          if(closeReopenTrolley == true){
+
+                                            await context.read<CloseTrolleyCubit>().closeTrolleyReopenModel(
+                                                trolleyDetail!.flightSeqNo!,
+                                                trolleyDetail!.trolleySeqNo!,
+                                                (trolleyDetail!.trolleyStatus == "O") ? "C" : "R",
+                                                _user!.userProfile!.userIdentity!,
+                                                _splashDefaultData!.companyCode!,
+                                                widget.menuId);
+                                          }else{
+                                            _resumeTimerOnInteraction();
+                                          }
+
+
+                                        }else{
+                                          SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+                                          });
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
                           ],
                         ),
                       ),
@@ -948,8 +1046,9 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
   }
 
 
+
   Future<void> callSearchApi(String scanNo) async {
-    await context.read<CloseULDCubit>().closeULDSearchModel(
+    await context.read<CloseTrolleyCubit>().closeTrolleySearchModel(
         scanNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

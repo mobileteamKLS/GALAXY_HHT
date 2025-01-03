@@ -1,17 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
-import 'package:galaxy/module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleystate.dart';
+import 'package:galaxy/module/export/services/closetrolley/closetrolleylogic/closetrolleycubit.dart';
 import 'package:galaxy/utils/sizeutils.dart';
-import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -21,16 +16,14 @@ import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
-import '../../../../utils/uldvalidationutil.dart';
+import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
+import '../../../../widget/customebuttons/roundbuttongreen.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
-import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customtextfield.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
-import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -38,12 +31,11 @@ import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/closeuld/equipmentmodel.dart';
-import '../../model/closeuld/getcontourlistmodel.dart';
-import '../../services/closeuld/closeuldlogic/closeuldcubit.dart';
-import '../../services/closeuld/closeuldlogic/closeuldstate.dart';
+import '../../model/closetrolley/gettrolleyscalelistmodel.dart';
+import '../../services/closetrolley/closetrolleylogic/closetrolleystate.dart';
 
-class ContourULDPage extends StatefulWidget {
+
+class ScaleTrolleyPage extends StatefulWidget {
   String mainMenuName;
   String title;
   String refrelCode;
@@ -54,9 +46,8 @@ class ContourULDPage extends StatefulWidget {
   String uldNo;
   int flightSeqNo;
   int uldSeqNo;
-  String uldType;
 
-  ContourULDPage(
+  ScaleTrolleyPage(
       {super.key,
       required this.importSubMenuList,
       required this.exportSubMenuList,
@@ -67,19 +58,19 @@ class ContourULDPage extends StatefulWidget {
       required this.mainMenuName,
         required this.uldNo,
         required this.flightSeqNo,
-        required this.uldSeqNo,
-        required this.uldType});
+        required this.uldSeqNo
+      });
 
   @override
-  State<ContourULDPage> createState() => _ContourULDPageState();
+  State<ScaleTrolleyPage> createState() => _ScaleTrolleyPageState();
 }
 
-class _ContourULDPageState extends State<ContourULDPage>{
+class _ScaleTrolleyPageState extends State<ScaleTrolleyPage>{
 
 
 
-  TextEditingController heightController = TextEditingController();
-  FocusNode heightFocusNode = FocusNode();
+  TextEditingController weightController = TextEditingController();
+  FocusNode weightFocusNode = FocusNode();
 
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
@@ -87,7 +78,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
   SplashDefaultModel? _splashDefaultData;
   final ScrollController scrollController = ScrollController();
 
-
+  GetTrolleyScaleListModel? getScaleListModel;
 
 
 
@@ -96,23 +87,13 @@ class _ContourULDPageState extends State<ContourULDPage>{
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
 
-  String selectedSwitchIndex = "";
-
-  GetContourListModel? getContourListModel;
-
- /* final List<String> contourList = [
-    "Q6 Medium Pallet",
-    "Q7 High Pallet",
-    "Q6 Medium Pallet",
-    "Q7 High Pallet",
-  ];*/
-
-
   @override
   void initState() {
     super.initState();
 
     _loadUser(); //load user data
+
+    weightController.text = "0.00";
   }
 
 
@@ -144,9 +125,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
         _splashDefaultData = splashDefaultData;
       });
     }
-
-    getContourList();
-
+    getTrolleyScaleList();
 
     inactivityTimerManager = InactivityTimerManager(
       context: context,
@@ -296,8 +275,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  heightController.clear();
-                                  selectedSwitchIndex = "";
+                                  weightController.clear();
                                   setState(() {
 
                                   });
@@ -307,51 +285,45 @@ class _ContourULDPageState extends State<ContourULDPage>{
 
                             // start api responcer
 
-                            BlocListener<CloseULDCubit, CloseULDState>(
+                            BlocListener<CloseTrolleyCubit, CloseTrolleyState>(
                               listener: (context, state) async {
-                                if (state is CloseULDInitialState) {}
-                                else if (state is CloseULDLoadingState) {
+                                if (state is CloseTrolleyInitialState) {}
+                                else if (state is CloseTrolleyLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
-                                else if (state is GetContourListSuccessState){
+                                else if (state is GetTrolleyScaleListSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
-                                  if(state.getContourListModel.status == "E"){
+                                  if(state.getTrolleyScaleListModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.getContourListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    SnackbarUtil.showSnackbar(context, state.getTrolleyScaleListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
 
-                                    getContourListModel =  state.getContourListModel;
-
-                                   // heightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getContourListModel!.uLDContourDetail!.height!);
-                                    heightController.text = "${getContourListModel!.uLDContourDetail!.height!.toInt()}";
-                                    selectedSwitchIndex = getContourListModel!.uLDContourDetail!.contourCode!;
+                                    getScaleListModel = state.getTrolleyScaleListModel;
+                                    weightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getScaleListModel!.trolleyScaleWeightDetail!.scaleWeight!);
                                     setState(() {
 
                                     });
-                                   // responce
+
 
                                   }
                                 }
-                                else if (state is GetContourListFailureState){
+                                else if (state is GetTrolleyScaleListFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                                else if (state is SaveContourSuccessState){
+                                else if (state is SaveTrolleyScaleSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
-                                  if(state.saveContourModel.status == "E"){
+                                  if(state.saveTrolleyScaleModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }if(state.saveContourModel.status == "501"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    SnackbarUtil.showSnackbar(context, state.saveTrolleyScaleModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
-                                    SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
-                                    getContourList();
+                                    SnackbarUtil.showSnackbar(context, state.saveTrolleyScaleModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    getTrolleyScaleList();
                                   }
                                 }
-                                else if (state is SaveContourFailureState){
+                                else if (state is SaveTrolleyScaleFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -359,7 +331,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
 
 
                               },
-                              child:  Expanded(
+                              child:Expanded(
                                   child: SingleChildScrollView(
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -394,13 +366,12 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                     children: [
                                                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                      ULDNumberWidget(
-                                                        uldNo: widget.uldNo,
-                                                        smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                        bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        uldType: "U",
-                                                      )
+                                                      CustomeText(
+                                                          text: widget.uldNo,
+                                                          fontColor: MyColor.textColorGrey2,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                          fontWeight: FontWeight.w700,
+                                                          textAlign: TextAlign.start)
                                                     ],
                                                   ),
                                                 ),
@@ -409,38 +380,44 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                   children: [
                                                     Expanded(
                                                       flex:1,
-                                                      child: CustomTextField(
+                                                      child: Directionality(
                                                         textDirection: textDirection,
-                                                        controller: heightController,
-                                                        focusNode: heightFocusNode,
-                                                        onPress: () {},
-                                                        hasIcon: false,
-                                                        hastextcolor: true,
-                                                        animatedLabel: true,
-                                                        needOutlineBorder: true,
-                                                        labelText: "Height *",
-                                                        readOnly: false,
-                                                        maxLength: 10,
-                                                        digitsOnly: false,
-                                                        doubleDigitOnly: true,
-                                                        onChanged: (value) {
+                                                        child: CustomTextField(
+                                                          textDirection: textDirection,
+                                                          controller: weightController,
+                                                          focusNode: weightFocusNode,
+                                                          onPress: () {},
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          labelText: "${lableModel.weight}*",
+                                                          readOnly: false,
+                                                          maxLength: 10,
+                                                          digitsOnly: false,
+                                                          doubleDigitOnly: true,
+                                                          onChanged: (value) {
+                                                           /* setState(() {
+                                                              weightController.text = "${double.parse(CommonUtils.formateToTwoDecimalPlacesValue(value))}";
+                                                            });*/
 
-                                                        },
-                                                        fillColor: Colors.grey.shade100,
-                                                        textInputType: TextInputType.text,
-                                                        inputAction: TextInputAction.next,
-                                                        hintTextcolor: Colors.black45,
-                                                        verticalPadding: 0,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                        circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                        boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                        validator: (value) {
-                                                          if (value!.isEmpty) {
-                                                            return "Please fill out this field";
-                                                          } else {
-                                                            return null;
-                                                          }
-                                                        },
+                                                          },
+                                                          fillColor:  Colors.grey.shade100,
+                                                          textInputType: TextInputType.number,
+                                                          inputAction: TextInputAction.next,
+                                                          hintTextcolor: Colors.black45,
+                                                          verticalPadding: 0,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                          circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                          boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                          validator: (value) {
+                                                            if (value!.isEmpty) {
+                                                              return "Please fill out this field";
+                                                            } else {
+                                                              return null;
+                                                            }
+                                                          },
+                                                        ),
                                                       ),
                                                     ),
 
@@ -463,18 +440,40 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                                 borderRadius: BorderRadius.only(
                                                                   topLeft: Radius.circular(10),
                                                                   bottomLeft: Radius.circular(10),
+                                                                ),
+                                                                border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
+                                                              ),
+                                                              padding: EdgeInsets.symmetric(vertical:10, horizontal: 20),
+                                                              child: Center(
+                                                                  child: CustomeText(text: "KG", fontColor:  tUnit == "C" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                              ),
+                                                            ),
+                                                          ),
+
+                                                          // No Option
+                                                          InkWell(
+                                                            onTap: () {
+
+                                                              setState(() {
+                                                                tUnit = "F";
+                                                              });
+
+                                                            },
+                                                            child: Container(
+                                                              decoration: BoxDecoration(
+                                                                color: tUnit == "F" ? MyColor.primaryColorblue : MyColor.colorWhite, // Selected blue, unselected white
+                                                                borderRadius: BorderRadius.only(
                                                                   topRight: Radius.circular(10),
                                                                   bottomRight: Radius.circular(10),
                                                                 ),
                                                                 border: Border.symmetric(horizontal: BorderSide(color: MyColor.primaryColorblue), vertical: BorderSide(color: MyColor.primaryColorblue)), // Border color
                                                               ),
-                                                              padding: EdgeInsets.symmetric(vertical:10, horizontal: 10),
+                                                              padding: EdgeInsets.symmetric(vertical:10, horizontal: 20),
                                                               child: Center(
-                                                                  child: CustomeText(text: "inch", fontColor:  tUnit == "C" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                                  child: CustomeText(text: "LB", fontColor: tUnit == "F" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                                               ),
                                                             ),
-                                                          ),
-
+                                                          )
 
                                                         ],
                                                       ),
@@ -482,67 +481,18 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                   ],
                                                 ),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
-                                                (getContourListModel != null) ? ListView.builder(
-                                                  itemCount: getContourListModel!.uLDContourList!.length,
-                                                  shrinkWrap: true,
-                                                  physics: const NeverScrollableScrollPhysics(),
-                                                  itemBuilder: (context, index) {
-                                                    Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
+                                                RoundedButtonGreen(
+                                                  color: MyColor.btnColor1,
+                                                  textColor: MyColor.colorBlack,
+                                                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
+                                                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                  text: "Get Weight",
+                                                  press: () async {
+                                                    bool? closeReopenTrolley = await DialogUtils.commingSoonDialog(context, "Comming soon..." , lableModel);
 
-                                                    ULDContourList content = getContourListModel!.uLDContourList![index];
-                                                    return Column(
-                                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                                      children: [
-                                                        Padding(
-                                                          padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
-                                                          child: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                            children: [
-                                                              Expanded(
-                                                                child: Row(
-                                                                  children: [
-                                                                    CircleAvatar(
-                                                                      radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
-                                                                      backgroundColor: backgroundColor,
-                                                                      child: CustomeText(text: "${content.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 15,
-                                                                    ),
-                                                                    Flexible(child: CustomeText(text: content.referenceDescription!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width:
-                                                                2,
-                                                              ),
-                                                              Switch(
-                                                                value: selectedSwitchIndex == content.referenceDataIdentifier,
-                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                activeColor: MyColor.primaryColorblue,
-                                                                inactiveThumbColor: MyColor.thumbColor,
-                                                                inactiveTrackColor: MyColor.textColorGrey2,
-                                                                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                                onChanged: (value) {
-                                                                  setState(() {
-                                                                    selectedSwitchIndex = value ? content.referenceDataIdentifier! : "";
-                                                                  });
-                                                                },
-                                                              )
-                                                            ],
-                                                          ),
-                                                        ),
-                                                        CustomDivider(
-                                                          space: 0,
-                                                          color: Colors.black,
-                                                          hascolor: true,
-                                                        ),
-                                                      ],
-                                                    );
+
                                                   },
-                                                ) : SizedBox(),
-
+                                                )
 
 
                                               ],
@@ -592,16 +542,11 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                     child: RoundedButtonBlue(
                                       text: "Save",
                                       press: () {
-                                        if(heightController.text.isNotEmpty){
-                                          if(selectedSwitchIndex.isNotEmpty){
-                                            saveContour();
-                                          }else{
-                                            Vibration.vibrate(duration: 500);
-                                            SnackbarUtil.showSnackbar(context, "Please select 1 contour", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                          }
+                                        if(weightController.text.isNotEmpty){
+                                          saveScale();
                                         }else{
                                           Vibration.vibrate(duration: 500);
-                                          SnackbarUtil.showSnackbar(context, "Please enter height", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "Please enter weight", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         }
 
                                       },
@@ -626,24 +571,25 @@ class _ContourULDPageState extends State<ContourULDPage>{
   }
 
 
-  Future<void> getContourList() async {
-    await context.read<CloseULDCubit>().getContourList(
+  Future<void> getTrolleyScaleList() async {
+    await context.read<CloseTrolleyCubit>().getTrolleyScaleList(
         widget.uldSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
 
-  Future<void> saveContour() async {
-    await context.read<CloseULDCubit>().saveContour(
-      widget.flightSeqNo,
+  Future<void> saveScale() async {
+    await context.read<CloseTrolleyCubit>().saveTrolleyScale(
+        widget.flightSeqNo,
         widget.uldSeqNo,
-       selectedSwitchIndex,
-        double.parse(CommonUtils.formateToTwoDecimalPlacesValue(double.parse(heightController.text))),
+        double.parse(CommonUtils.formateToTwoDecimalPlacesValue(double.parse(weightController.text))),
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
+
+
 
 }
 
