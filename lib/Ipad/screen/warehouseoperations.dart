@@ -29,6 +29,7 @@ import 'acceptBooking.dart';
 import 'appointmentBooingNew.dart';
 import 'appointmentBooking.dart';
 import 'availableforExamination.dart';
+import 'onHoldShipment.dart';
 
 class WarehouseOperations extends StatefulWidget {
   const WarehouseOperations({super.key});
@@ -564,7 +565,14 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                  SizedBox(width: 40,),
-
+                                RoundedIconButtonNew(
+                                  icon: CupertinoIcons.cube_box,
+                                  text: 'On Hand\nShipment',
+                                  targetPage: OnHandShipment(),
+                                  containerColor: Color(0xffFFD7BC),
+                                  iconColor: MyColor.textColorGrey3,
+                                  textColor: MyColor.textColorGrey3,
+                                ),
                               ],
                             ),
                           )

@@ -46,9 +46,9 @@ class Global{
       case 'REQUESTED FOR EXAMINATION':
         return "Forward For Exam.";
       case 'FORWARDED FOR EXAMINATION':
-        return "";
-      case 'EXAMINATION MARKED COMPLETED':
         return "Back To Storage";
+      case 'EXAMINATION MARKED COMPLETED':
+        return "";
       case 'BACK TO STORAGE':
         return "";
       case 'DELIVERED':

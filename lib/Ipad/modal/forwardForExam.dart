@@ -41,3 +41,47 @@ class ForwardForExamData {
     "RemainExaminationNOP": remainExaminationNop,
   };
 }
+
+class OnHandShipReq {
+  String awb;
+  String hawb;
+  int pieces;
+  double weight;
+  String commodity;
+  int rfePieces;
+  String remarks;
+  int impShipRowId;
+
+  OnHandShipReq({
+    required this.awb,
+    required this.hawb,
+    required this.pieces,
+    required this.weight,
+    required this.commodity,
+    required this.rfePieces,
+    required this.remarks,
+    required this.impShipRowId,
+  });
+
+  factory OnHandShipReq.fromJson(Map<String, dynamic> json) => OnHandShipReq(
+    awb: json["AWB"],
+    hawb: json["HAWB"],
+    pieces: json["Pieces"],
+    weight: json["Weight"],
+    commodity: json["Commodity"],
+    rfePieces: json["RFEPieces"],
+    remarks: json["Remarks"],
+    impShipRowId: json["IMPSHIPROWID"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "AWB": awb,
+    "HAWB": hawb,
+    "Pieces": pieces,
+    "Weight": weight,
+    "Commodity": commodity,
+    "RFEPieces": rfePieces,
+    "Remarks": remarks,
+    "IMPSHIPROWID": impShipRowId,
+  };
+}

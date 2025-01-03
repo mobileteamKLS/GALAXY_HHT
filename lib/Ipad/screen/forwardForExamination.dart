@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/auth/auth.dart';
+import 'package:intl/intl.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/import/model/flightcheck/mailtypemodel.dart';
@@ -17,9 +18,11 @@ import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../modal/ShipmentListingDetails.dart';
 import '../modal/forwardForExam.dart';
+import '../utils/global.dart';
 import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
 import 'ImportShipmentListing.dart';
+import 'package:xml/xml.dart';
 
 class ForwardForExamination extends StatefulWidget {
   final ShipmentListDetails shipmentListDetails;
@@ -42,6 +45,7 @@ class _ForwardForExaminationState
   AuthService authService=AuthService();
   List<TextEditingController> examPiecesControllers = [];
   List<bool?> isOnList = [];
+  List<Map<String, dynamic>> saveList = [];
   // TextEditingController prefixController = TextEditingController();
   // TextEditingController prefixController = TextEditingController();
   @override
@@ -54,6 +58,7 @@ class _ForwardForExaminationState
     await Future.delayed(Duration.zero);
     searchForwardForExamData(widget.shipmentListDetails);
   }
+
   void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
@@ -65,14 +70,15 @@ class _ForwardForExaminationState
       ),
     );
   }
+
   searchForwardForExamData(ShipmentListDetails data) async{
     DialogUtils.showLoadingDialog(context);
     forwardExamData=[];
     var queryParams = {
-      "AWBPrefix": "125",
-      "AWBNo": "31120084",
-      "HAWBNumber": "",
-      "ISID": "803",
+      "AWBPrefix": data.documentNo.substring(0,3),
+      "AWBNo": data.documentNo.substring(4),
+      "HAWBNumber": data.houseNo,
+      "ISID": data.impShipRowId,
       "CompanyCode": "3",
       "UserID": 1,
       "AirportCode": "JFK",
@@ -109,7 +115,7 @@ class _ForwardForExaminationState
           examPiecesControllers = List.generate(
               forwardExamData.length,
                   (index) =>
-                  TextEditingController());
+                  TextEditingController(text: forwardExamData[index].examinationNop.toString()));
 
           // nopControllers = List.generate(
           //     wareHouseLocationList.length,
@@ -134,14 +140,93 @@ class _ForwardForExaminationState
     });
   }
 
+  saveExamPieces() async {
+    FocusScope.of(context).requestFocus(FocusNode());
+    String xml = buildInputXml(
+      saveList: saveList,
+      companyCode: "3",
+      userId: "1",
+      airportCity: "JFK",
+      mode: "S",
+    );
+    var queryParams = {
+      "XMLDoc":xml,
+      "MAWBNo": widget.shipmentListDetails.documentNo.replaceAll("-", ""),
+      "HouseNo": widget.shipmentListDetails.houseNo,
+      "CompanyCode": "3",
+      "UserID": 1,
+      "AirportCode": "JFK",
+      "CultureCode": "en-US",
+      "MenuId": 1
+    };
+    bool allFalse = isOnList.every((element) => element == false);
+    if(allFalse){
+      showDataNotFoundDialog(context,"Please select at least one record.");
+      return;
+    }
+
+    print(xml);
+
+    DialogUtils.showLoadingDialog(context);
+    await authService
+        .postData(
+      "OnHandShipment/ForwardExamination",
+      queryParams,
+    )
+        .then((response) async {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      String status = jsonData['Status'];
+      String? statusMessage = jsonData['StatusMessage']??"";
+      if (jsonData.isNotEmpty) {
+        DialogUtils.hideLoadingDialog(context);
+        if (status != "S") {
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+        if ((status == "S")) {
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            // searchCustomOperationsData(slotFilterDate,selectedTimes.join(','));
+          }
+
+        }
+
+      }
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
+      print(onError);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-            title: const Text(
-              'Imports',
-              style: TextStyle(color: Colors.white),
+            automaticallyImplyLeading: false,
+            title: Row(
+              children: [
+                InkWell(
+                  onTap: () {
+                  },
+                  child: Padding(padding: const EdgeInsets.all(2.0),
+                    child: SvgPicture.asset(drawer, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  ),
+                ),
+                Text(
+                  isCES?'  Warehouse Operations':"  Customs Operation",
+                  style: const TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
+                ),
+              ],
             ),
             iconTheme: const IconThemeData(color: Colors.white, size: 32),
             toolbarHeight: 80,
@@ -158,20 +243,20 @@ class _ForwardForExaminationState
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
             ]),
         drawer: const Drawer(),
         body: Stack(
@@ -290,7 +375,7 @@ class _ForwardForExaminationState
                                               Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  _buildDetailColumn('Remarks', '${forwardExamData.first.status}'),
+                                                  _buildDetailColumn('Remarks', forwardExamData.isNotEmpty?'${forwardExamData.first.status}':""),
                                                   SizedBox(height: 20),
 
 
@@ -325,7 +410,7 @@ class _ForwardForExaminationState
                                               child:   Center(child: Column(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                  Text("${forwardExamData.first.remainExaminationNop}",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 32),),
+                                                  Text(forwardExamData.isNotEmpty?"${forwardExamData.first.remainExaminationNop}":"",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 32),),
                                                   Text("Exam Pieces",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 18),),
                                                 ],
                                               )),
@@ -433,7 +518,7 @@ class _ForwardForExaminationState
                                         hastextcolor: true,
                                         animatedLabel: true,
                                         needOutlineBorder: true,
-                                        labelText: "Remark*",
+                                        labelText: "Remark",
                                         // controller: originController,
                                         readOnly: false,
                                         maxLength: 15,
@@ -551,7 +636,7 @@ class _ForwardForExaminationState
                                       ),
                                     ),
                                     onPressed: () {
-
+                                      saveExamPieces();
                                     },
                                     child: const Text(
                                       "Forward For Examination",
@@ -634,14 +719,48 @@ class _ForwardForExaminationState
     setState(() {
       isOnList[index] = value;
       if (value !=false) {
-        // saveList.removeWhere(
-        //         (element) => element["item"] == appointBookingList[index]);
-        //saveList.add({"item": appointBookingList[index], "value": value});
+        saveList.removeWhere(
+                (element) => element["item"] == forwardExamData[index]);
+        saveList.add({"item": forwardExamData[index], "value": value});
       } else {
-        // saveList.removeWhere(
-        //         (element) => element["item"] == appointBookingList[index]);
+        saveList.removeWhere(
+                (element) => element["item"] == forwardExamData[index]);
       }
     });
+  }
+
+  String buildInputXml({
+    required List<Map<String, dynamic>> saveList,
+    required String companyCode,
+    required String userId,
+    required String airportCity,
+    required String mode,
+  }) {
+    final builder = XmlBuilder();
+    DateTime customRefDate;
+    String formattedCustomRefDate="";
+    if(customRefDateController.text.isNotEmpty){
+      customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
+       formattedCustomRefDate = DateFormat('MM/dd/yyyy').format(customRefDate);
+    }
+
+    builder.element('Root', nest: () {
+      for (var item in saveList) {
+        final data = item['item'] as ForwardForExamData;
+        builder.element('ForwordForExamination', nest: () {
+          builder.element('uxHdnWLID', nest: data.sequenceNumber);
+          builder.element('Location', nest: locController.text);
+          builder.element('NOP', nest: data.nop.toString());
+          builder.element('ExamPieces', nest: data.examinationNop.toString());
+          builder.element('CustomsRefNo', nest: customRefNoController.text);
+          builder.element('CustomsRefDate', nest:formattedCustomRefDate??"");
+          builder.element('Remark', nest: remarkController.text);
+        });
+      }
+    });
+
+    final xmlDocument = builder.buildDocument();
+    return xmlDocument.toXmlString(pretty: true, indent: '  ');
   }
 
   DataRow buildDataRow( {
@@ -670,6 +789,7 @@ class _ForwardForExaminationState
           onChanged: (value) {
             setState(() {
               examPiecesControllers[index].text = value;
+              data.examinationNop=int.parse(value);
 
             });
           },
@@ -735,6 +855,7 @@ class _ForwardForExaminationState
               ),))),
     ]);
   }
+
   Widget _buildDetailColumn(String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -757,4 +878,6 @@ class _ForwardForExaminationState
       ],
     );
   }
+
+
 }

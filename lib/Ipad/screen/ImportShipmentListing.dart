@@ -8,10 +8,12 @@ import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
+import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
 import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../auth/auth.dart';
 import '../utils/global.dart';
+import '../widget/customDialog.dart';
 import 'ImportCreateShipment.dart';
 import 'ShipmentAcceptanceManually.dart';
 import 'forwardForExamination.dart';
@@ -97,6 +99,66 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       setState(() {
         isLoading = false;
       });
+      print(onError);
+    });
+  }
+
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomAlertMessageDialogNew(
+        description: message,
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false,
+      ),
+    );
+  }
+
+  performBackToStorage(ShipmentListDetails data) async {
+    var queryParams={
+      "IMPSHIPROWID": data.impShipRowId.toString(),
+      "UserID": 1,
+      "CompanyCode": "3",
+      "AirportCode": "JFK",
+      "CultureCode": "en-US",
+      "MenuId": 1
+    };
+    DialogUtils.showLoadingDialog(context);
+    await authService
+        .postData(
+      "OnHandShipment/BackwardExamination",
+      queryParams,
+    )
+        .then((response) async {
+      print("data received ");
+      Map<String, dynamic> jsonData = json.decode(response.body);
+      String status = jsonData['Status'];
+      String? statusMessage = jsonData['StatusMessage']??"";
+      if (jsonData.isNotEmpty) {
+        DialogUtils.hideLoadingDialog(context);
+        if (status != "S") {
+          showDataNotFoundDialog(context, statusMessage!);
+        }
+        if ((status == "S")) {
+          bool isTrue=await showDialog(
+            context: context,
+            builder: (BuildContext context) => CustomAlertMessageDialogNew(
+              description: "$statusMessage",
+              buttonText: "Okay",
+              imagepath:'assets/images/successchk.gif',
+              isMobile: false,
+            ),
+          );
+          if(isTrue){
+            getShipmentListing(mawbNo:"",statusFilter: selectedFilters.join(","));
+          }
+
+        }
+
+      }
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
       print(onError);
     });
   }
@@ -871,7 +933,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                             );
                                             break;
                                           case 'Back To Storage':
-                                            backToStorage();
+                                            performBackToStorage(shipment);
                                             break;
                                           default:
                                           // Handle other actions or show a default message
@@ -1391,114 +1453,6 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
 
 }
 
-class ShipmentDetailsList extends StatelessWidget {
-  final List<ShipmentDetails> shipmentDetailsList;
-
-  ShipmentDetailsList({required this.shipmentDetailsList});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: shipmentDetailsList.length,
-      itemBuilder: (context, index) {
-        final shipment = shipmentDetailsList[index];
-        return buildShipmentCard(shipment);
-      },
-    );
-  }
-
-  Widget buildShipmentCard(ShipmentDetails shipment) {
-    return Card(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      elevation: 3,
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  shipment.awbNumber,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                SizedBox(width: 8),
-                _buildLabel("AWB", Colors.blueAccent),
-                SizedBox(width: 4),
-                _buildLabel("CONSOL", Colors.grey),
-                SizedBox(width: 4),
-                _buildLabel("CREATED", Colors.lightBlue),
-                Spacer(),
-                Text(
-                  shipment.date,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("MAWB No: ${shipment.mawbNumber}",
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                Text("Declared PCS: ${shipment.declaredPcs}"),
-                Text("Declared Weight: ${shipment.declaredWeight}"),
-                Text("Unit: ${shipment.unit}"),
-                Text("Accepted Pcs: ${shipment.acceptedPcs}"),
-                Text("Accepted Wt: ${shipment.acceptedWeight}"),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLabel(String text, Color color) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(4),
-      ),
-      child: Text(
-        text,
-        style: TextStyle(color: color, fontWeight: FontWeight.bold),
-      ),
-    );
-  }
-}
-
-class ShipmentDetails {
-  final String awbNumber;
-  final String mawbNumber;
-  final String date;
-  final int declaredPcs;
-  final double declaredWeight;
-  final String unit;
-  final int acceptedPcs;
-  final int acceptedWeight;
-  final String awb;
-  final String shipmentType;
-  final String status;
-
-  ShipmentDetails({
-    required this.awbNumber,
-    required this.mawbNumber,
-    required this.date,
-    required this.declaredPcs,
-    required this.declaredWeight,
-    required this.unit,
-    required this.acceptedPcs,
-    required this.acceptedWeight,
-    required this.awb,
-    required this.shipmentType,
-    required this.status,
-  });
-}
 
 class AppBarPainterGradient extends CustomPainter {
   @override

@@ -59,9 +59,9 @@ class _IpadDashboardState extends State<IpadDashboard> {
                     ),
                   ),
                 ),
-                Text(
+                const Text(
                   "  Dashboard",
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 24,
                       color: Colors.white),
@@ -195,30 +195,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                           iconColor: MyColor.textColorGrey3,
                           textColor: MyColor.textColorGrey3,
                         ),
-                        // RoundedIconButton(
-                        //   icon: CupertinoIcons.square_stack_3d_up,
-                        //   text: 'Acceptance',
-                        //   targetPage: ShipmentAcceptance(),
-                        //   containerColor: Color(0xffE1D9F0),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
-                        // RoundedIconButton(
-                        //   icon: Icons.fireplace_outlined,
-                        //   text: 'Place Holder',
-                        //   targetPage: ImportShipmentListing(),
-                        //   containerColor: Color(0xffffffff),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
-                        // RoundedIconButton(
-                        //   icon: Icons.fireplace_outlined,
-                        //   text: 'Place Holder',
-                        //   targetPage: ImportShipmentListing(),
-                        //   containerColor: Color(0xffffffff),
-                        //   iconColor: MyColor.textColorGrey3,
-                        //   textColor: MyColor.textColorGrey3,
-                        // ),
+
 
                       ],
                     ),
