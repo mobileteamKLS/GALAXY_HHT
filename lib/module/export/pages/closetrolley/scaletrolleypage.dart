@@ -488,7 +488,7 @@ class _ScaleTrolleyPageState extends State<ScaleTrolleyPage>{
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   text: "Get Weight",
                                                   press: () async {
-                                                    bool? closeReopenTrolley = await DialogUtils.commingSoonDialog(context, "Comming soon..." , lableModel);
+                                                    bool? closeReopenTrolley = await DialogUtils.commingSoonDialog(context, "Coming soon..." , lableModel);
 
 
                                                   },
@@ -546,7 +546,7 @@ class _ScaleTrolleyPageState extends State<ScaleTrolleyPage>{
                                           saveScale();
                                         }else{
                                           Vibration.vibrate(duration: 500);
-                                          SnackbarUtil.showSnackbar(context, "Please enter weight", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "Please enter weight.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         }
 
                                       },

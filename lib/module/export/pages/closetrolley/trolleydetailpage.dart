@@ -442,7 +442,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "Trolley Net Weight : ",
+                                                      text: "Trolley Shipment Weight : ",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,

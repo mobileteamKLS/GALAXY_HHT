@@ -597,11 +597,11 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                             saveContour();
                                           }else{
                                             Vibration.vibrate(duration: 500);
-                                            SnackbarUtil.showSnackbar(context, "Please select 1 contour", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            SnackbarUtil.showSnackbar(context, "Please select 1 contour.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           }
                                         }else{
                                           Vibration.vibrate(duration: 500);
-                                          SnackbarUtil.showSnackbar(context, "Please enter height", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "Please enter height.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         }
 
                                       },

@@ -450,6 +450,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveRemarkModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    SnackbarUtil.showSnackbar(context, state.saveRemarkModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                     getRemarkList();
                                   }
                                 }

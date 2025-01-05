@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttongreen.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -45,6 +46,7 @@ class CloseULDEquipmentPage extends StatefulWidget {
   int uldSeqNo;
   int flightSeqNo;
   String uldType;
+  String uldStatus;
 
   CloseULDEquipmentPage(
       {super.key,
@@ -58,6 +60,7 @@ class CloseULDEquipmentPage extends StatefulWidget {
       required this.uldNo,
       required this.uldSeqNo,
       required this.uldType,
+      required this.uldStatus,
       required this.flightSeqNo});
 
   @override
@@ -83,6 +86,8 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
   List<EequipmentList> equipmentList = [];
+
+  int EQUIPPOSITION = 0;
 
   List<TextEditingController> volumeControllers = [];
   List<TextEditingController> weightControllers = [];
@@ -308,7 +313,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                 onBack: () {
                                   _onWillPop();
                                 },
-                                clearText: lableModel!.clear,
+                                clearText: (widget.uldStatus == "C") ? "" : lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
                                   setState(() {
@@ -323,6 +328,13 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                     if (volumeFocusNodes.isNotEmpty) {
                                       FocusScope.of(context).requestFocus(volumeFocusNodes[0]);
                                     }
+
+                                    for(var equipment in equipmentList){
+                                      equipment.quantity = "";
+                                      equipment.weight = 0.00;
+
+                                    }
+
 
                                     totalWeight = 0.00;
 
@@ -342,7 +354,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                 if (state is CloseULDInitialState) {}
                                 else if (state is CloseULDLoadingState) {
                                   // showing loading dialog in this state
-                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                  DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
                                 else if (state is CloseULDEquipmentSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
@@ -502,7 +514,8 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                                     readOnly: false,
                                                                     onChanged: (value) {
                                                                       setState(() {
-                                                                        equipmentList[index].quantity = value.isEmpty ? "0.00" : value;
+                                                                        EQUIPPOSITION = index;
+                                                                        equipmentList[index].quantity = value.isEmpty ? "" : value;
                                                                       });
                                                                       //updateSelectedContentList(index, value);
                                                                     },
@@ -540,7 +553,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                                     hastextcolor: true,
                                                                     animatedLabel: true,
                                                                     needOutlineBorder: true,
-                                                                    labelText: "${lableModel.weight}",
+                                                                    labelText: "${lableModel!.weight}",
                                                                     readOnly: false,
                                                                     maxLength: 10,
                                                                     digitsOnly: false,
@@ -679,7 +692,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                       Expanded(
                                         flex: 1,
                                         child: RoundedButtonBlue(
-                                          text: "${lableModel.cancel}",
+                                          text: "${lableModel!.cancel}",
                                           isborderButton: true,
                                           press: () {
                                             _onWillPop();  // Return null when "Cancel" is pressed
@@ -689,21 +702,60 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                       SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
                                       Expanded(
                                         flex: 1,
-                                        child: RoundedButtonBlue(
+                                        child: RoundedButtonGreen(
+                                          color: (widget.uldStatus == "C") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
                                           text: "Save",
                                           press: () async {
 
-                                            String equipXML = generateEquipXML(equipmentList);
-                                            print("CHECK FOR XML ==== ${equipXML}");
+                                            if(widget.uldStatus == "C"){
 
-                                            await context.read<CloseULDCubit>().saveEquipmentList(
-                                                widget.flightSeqNo,
-                                                widget.uldSeqNo,
-                                                widget.uldType,
-                                                equipXML,
-                                                _user!.userProfile!.userIdentity!,
-                                                _splashDefaultData!.companyCode!,
-                                                widget.menuId);
+
+
+                                            }else{
+                                              bool isValid = true;
+
+                                              for (int i = 0; i < equipmentList.length; i++) {
+                                                String? quantity = equipmentList[i].quantity;
+                                                double? weight = equipmentList[i].weight;
+
+                                                if ((quantity == "" || quantity == "0" || quantity!.isEmpty) && (weight! > 0)) {
+                                                  // Show validation message for quantity
+                                                  Vibration.vibrate(duration: 500);
+                                                  SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} quantity should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  FocusScope.of(context).requestFocus(volumeFocusNodes[i]);
+                                                  isValid = false;
+                                                  break;
+                                                } else if ((weight == null || weight == 0) && (quantity != null && quantity != "0" && quantity.isNotEmpty)) {
+                                                  // Show validation message for weight
+                                                  Vibration.vibrate(duration: 500);
+                                                  SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} weight should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  FocusScope.of(context).requestFocus(weightFocusNodes[i]);
+                                                  isValid = false;
+                                                  break;
+                                                }
+                                              }
+
+
+                                              if(isValid){
+                                                String equipXML = generateEquipXML(equipmentList);
+                                                print("CHECK FOR XML ==== ${equipXML}");
+
+                                                await context.read<CloseULDCubit>().saveEquipmentList(
+                                                    widget.flightSeqNo,
+                                                    widget.uldSeqNo,
+                                                    widget.uldType,
+                                                    equipXML,
+                                                    _user!.userProfile!.userIdentity!,
+                                                    _splashDefaultData!.companyCode!,
+                                                    widget.menuId);
+                                              }
+
+                                            }
+
+
+
+
+
                                           },
                                         ),
                                       ),

@@ -789,7 +789,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                               child: CustomeText(
                                                                 text: (uldDetail != null) ? "${uldDetail!.deviation!} Kg" : "-",
                                                                 fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
                                                                 textAlign: TextAlign.start,
                                                               ),
@@ -811,7 +811,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                               child: CustomeText(
                                                                 text: (uldDetail != null) ? "${uldDetail!.deviationPer!} %" : "-",
                                                                 fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
                                                                 textAlign: TextAlign.start,
                                                               ),
@@ -984,7 +984,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                        uldNo: uldDetail!.uLDNo!,
                                                        uldType: "U",
                                                        uldSeqNo: uldDetail!.uLDSeqNo!,
-                                                       flightSeqNo : uldDetail!.flightSeqNo!
+                                                       flightSeqNo : uldDetail!.flightSeqNo!,
+                                                       uldStatus: uldDetail!.uLDStatus!,
                                                      ),));
 
                                                      if(value == "true"){
@@ -995,7 +996,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                      }
 
                                                    }else{
-                                                     SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                     SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                     Vibration.vibrate(duration: 500);
                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
                                                      });
@@ -1039,7 +1041,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       }
 
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanULDFocusNode);
                                                       });
@@ -1088,6 +1091,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
                                                     }else{
                                                       SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanULDFocusNode);
                                                       });
@@ -1131,7 +1135,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       }
 
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanULDFocusNode);
                                                       });
@@ -1206,7 +1211,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
 
                                         }else{
-                                          SnackbarUtil.showSnackbar(context, "Please scan ULD/Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(scanULDFocusNode);
                                           });
@@ -1245,7 +1251,29 @@ class _CloseULDPageState extends State<CloseULDPage>{
     if(groupcodeScanResult == "-1"){
 
     }else{
-      bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
+
+      String result = groupcodeScanResult.replaceAll(" ", "");
+      scanULDController.text = result;
+      String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+      if(uldNumber == "Valid"){
+        setState(() {
+          String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
+          List<String> parts = uldNumbes.split(' ');
+          // call search api
+          callSearchApi(scanULDController.text);
+
+        });
+      }
+      else{
+        scanULDController.clear();
+        SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        Vibration.vibrate(duration: 500);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(scanULDFocusNode);
+        });
+      }
+
+     /* bool specialCharAllow = CommonUtils.containsSpecialCharacters(groupcodeScanResult);
 
       if(specialCharAllow == true){
         // unloadUldListModel = null;
@@ -1256,29 +1284,10 @@ class _CloseULDPageState extends State<CloseULDPage>{
           FocusScope.of(context).requestFocus(scanULDFocusNode);
         });
       }else{
-        // unloadUldListModel = null;
-        String result = groupcodeScanResult.replaceAll(" ", "");
-        scanULDController.text = result;
-        String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
-        if(uldNumber == "Valid"){
-          setState(() {
-            String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
-            List<String> parts = uldNumbes.split(' ');
-            // call search api
-            callSearchApi(scanULDController.text);
 
-          });
-        }
-        else{
-          scanULDController.clear();
-          SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-          Vibration.vibrate(duration: 500);
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            FocusScope.of(context).requestFocus(scanULDFocusNode);
-          });
-        }
 
-      }
+
+      }*/
     }
   }
 

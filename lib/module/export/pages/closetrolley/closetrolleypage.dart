@@ -493,6 +493,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
                                                           }else{
                                                             SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                            Vibration.vibrate(duration: 500);
                                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                                               FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                                             });
@@ -674,7 +675,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                               child: CustomeText(
                                                                 text: (trolleyDetail != null) ? "${trolleyDetail!.deviation!} Kg" : "-",
                                                                 fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
                                                                 textAlign: TextAlign.start,
                                                               ),
@@ -696,7 +697,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                               child: CustomeText(
                                                                 text: (trolleyDetail != null) ? "${trolleyDetail!.deviationPer!} %" : "-",
                                                                 fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
                                                                 textAlign: TextAlign.start,
                                                               ),
@@ -856,7 +857,8 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           uldNo: trolleyDetail!.trolleyNo!,
                                                           uldType: "T",
                                                           uldSeqNo: trolleyDetail!.trolleySeqNo!,
-                                                          flightSeqNo : trolleyDetail!.flightSeqNo!
+                                                          flightSeqNo : trolleyDetail!.flightSeqNo!,
+                                                          uldStatus: trolleyDetail!.trolleyStatus!,
                                                       ),));
 
                                                     if(value == "true"){
@@ -869,6 +871,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
                                                     }else{
                                                       SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                                       });
@@ -910,6 +913,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                       }
                                                     }else{
                                                       SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                                       });
@@ -987,6 +991,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
                                         }else{
                                           SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                           });

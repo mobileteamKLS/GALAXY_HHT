@@ -444,7 +444,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "ULD Net Weight : ",
+                                                      text: "ULD Shipment Weight : ",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
