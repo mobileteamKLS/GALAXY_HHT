@@ -142,12 +142,8 @@ class _ForwardForExaminationState
 
   saveExamPieces() async {
     FocusScope.of(context).requestFocus(FocusNode());
-    String xml = buildInputXml(
+    String xml = buildInputXmlForFirstFormat(
       saveList: saveList,
-      companyCode: "3",
-      userId: "1",
-      airportCity: "JFK",
-      mode: "S",
     );
     var queryParams = {
       "XMLDoc":xml,
@@ -744,7 +740,7 @@ class _ForwardForExaminationState
        formattedCustomRefDate = DateFormat('MM/dd/yyyy').format(customRefDate);
     }
 
-    builder.element('Root', nest: () {
+    builder.element('ROOT', nest: () {
       for (var item in saveList) {
         final data = item['item'] as ForwardForExamData;
         builder.element('ForwordForExamination', nest: () {
@@ -762,6 +758,40 @@ class _ForwardForExaminationState
     final xmlDocument = builder.buildDocument();
     return xmlDocument.toXmlString(pretty: true, indent: '  ');
   }
+
+  String buildInputXmlForFirstFormat({
+    required List<Map<String, dynamic>> saveList,
+
+  }) {
+    final builder = XmlBuilder();
+    DateTime customRefDate;
+    String formattedCustomRefDate = "";
+
+    // Check if the date controller has a value and format it
+    if (customRefDateController.text.isNotEmpty) {
+      customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
+      formattedCustomRefDate = DateFormat('MM/dd/yyyy').format(customRefDate);
+    }
+
+    builder.element('ROOT', nest: () {
+      for (var item in saveList) {
+        final data = item['item'] as ForwardForExamData;
+        builder.element('ForwordForExamination', attributes: {
+          'uxHdnWLID': data.sequenceNumber.toString(),
+          'Location': locController.text,
+          'NOP': data.nop.toString(),
+          'ExamPieces': data.examinationNop.toString(),
+          'CustomsRefNo': customRefNoController.text,
+          'CustomsRefDate': formattedCustomRefDate.isNotEmpty ? formattedCustomRefDate : '',
+          'Remark': remarkController.text,
+        });
+      }
+    });
+
+    final xmlDocument = builder.buildDocument();
+    return xmlDocument.toXmlString(pretty: true, indent: '  ');
+  }
+
 
   DataRow buildDataRow( {
     required ForwardForExamData data,

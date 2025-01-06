@@ -44,6 +44,14 @@ class _CreateNewDOState extends State<CreateNewDO> {
   void initState() {
     super.initState();
   }
+  resetData(){
+    prefixController.clear();
+    awbController.clear();
+    hawbController.clear();
+    nopController.clear();
+    customRefController.clear();
+    wdoDetailsList=[];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,6 +141,22 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                 ),
                               ],
                             ),
+                            GestureDetector(
+                              child: const Row(
+                                children: [Icon(CupertinoIcons.restart, color: MyColor.primaryColorblue,),
+                                  Text(
+                                    ' Reset',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
+                                  ),],
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  resetData();
+                                });
+
+                              },
+                            )
                           ],
                         ),
                         const SizedBox(

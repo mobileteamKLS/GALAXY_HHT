@@ -34,7 +34,8 @@ class _AcceptBookingState extends State<AcceptBooking> {
   bool isLoading = false;
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
-  DateTime? selectedDate;
+  DateTime selectedDate=DateTime.now();
+  final ScrollController _scrollController = ScrollController();
   List<CustomExaminationData> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
   List<CustomExaminationMasterData> masterData = [];
@@ -58,6 +59,15 @@ class _AcceptBookingState extends State<AcceptBooking> {
   late GlobalKey datePickerKey;
   int totalPcs=0;
   double totalWeight=0.00;
+
+  void _centerSelectedItem() {
+    int index = selectedDate.difference(DateTime.now()).inDays;
+    _scrollController.animateTo(
+      2 * 105.0 - (MediaQuery.of(context).size.width / 2) + 52.5,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
   Future<void> pickDate(BuildContext context, StateSetter setState) async {
     DateTime? pickedDate = await showDatePicker(
@@ -99,7 +109,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
       });
       // pickedDateFromPickerController.animateToDate(pickedDateFromPicker);
 
-     // searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+     searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
 
     }
   }
@@ -491,23 +501,80 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                             SizedBox(height: 4,),
                                             SizedBox(
                                               height: 104,
-                                              child: ValueListenableBuilder<DateTime>(
-                                                valueListenable: selectedDateNotifier,
-                                                builder: (context, selectedDate, _) {
-                                                  return DatePicker(
-                                                    pickedDateFromPicker,
-                                                    initialSelectedDate: selectedDate,
-                                                    selectionColor: MyColor.primaryColorblue,
-                                                    selectedTextColor: Colors.white,
-                                                    onDateChange: (date) {
-                                                      setState(() {
-                                                        selectedDateNotifier.value = date;
-                                                        var formatter = DateFormat('dd-MM-yyyy');
-                                                        String formattedDate = formatter.format(date);
-                                                        slotFilterDate=formattedDate;
-                                                        searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
-                                                      });
-                                                    },
+                                              child: ListView.builder(
+                                                itemCount: 30,
+                                                controller:_scrollController ,
+                                                scrollDirection: Axis.horizontal,
+                                                itemBuilder: (ctx, index) {
+
+                                                  DateTime currentDay = selectedDate.add(Duration(days: index-2));
+                                                  print("---$currentDay");
+                                                  bool isPickedDate = currentDay.day == selectedDate.day &&
+                                                      currentDay.month == selectedDate.month &&
+                                                      currentDay.year == selectedDate.year;
+
+                                                  return FittedBox(
+                                                    child: GestureDetector(
+                                                      child: Container(
+                                                        width: 90,
+                                                        height: 145,
+
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color: isPickedDate
+                                                              ?  MyColor.primaryColorblue
+                                                              :Colors.white,
+                                                          borderRadius: BorderRadius.circular(16.0),
+                                                        ),
+                                                        padding: const EdgeInsets.all(15.0),
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              DateFormat('MMM').format(currentDay).toUpperCase(), // Month format
+                                                              style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:FontWeight.bold,
+                                                                color: isPickedDate
+                                                                    ? Colors.white
+                                                                    : Colors.black87,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(height: 5),
+                                                            Text(
+                                                              "${currentDay.day}",
+                                                              style: TextStyle(
+                                                                fontSize: 25,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: isPickedDate
+                                                                    ? Colors.white
+                                                                    : Colors.black87,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(height: 5),
+                                                            Text(
+                                                              DateFormat('EE').format(currentDay).toUpperCase(),
+                                                              style: TextStyle(
+                                                                fontSize: 18,
+                                                                color:
+                                                                isPickedDate ? Colors.white : Colors.black87,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      onTap: (){
+                                                        setState(() {
+                                                          selectedDate = currentDay;
+                                                          var formatter = DateFormat('dd-MM-yyyy');
+                                                          String formattedDate = formatter.format(selectedDate);
+                                                          slotFilterDate=formattedDate;
+                                                          searchCustomOperationsData(formattedDate,"${selectedTimes.join(',')}");
+                                                        });
+                                                        _centerSelectedItem();
+                                                      },
+                                                    ),
                                                   );
                                                 },
                                               ),

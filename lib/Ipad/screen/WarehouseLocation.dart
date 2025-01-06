@@ -213,20 +213,7 @@ class _WarehouseLocationState
     if(awbController.text.isEmpty){
       return;
     }
-    // if (locController.text.isEmpty) {
-    //   showDataNotFoundDialog(context, "Location is required.");
-    //   return;
-    // }
-    //
-    // if (groupController.text.isEmpty) {
-    //   showDataNotFoundDialog(context, "Group Id is required.");
-    //   return;
-    // }
-    //
-    // if (nopController.text.isEmpty) {
-    //   showDataNotFoundDialog(context, "NOP is required.");
-    //   return;
-    // }
+
     String xml = buildInputXmlSaveUpdate(
       wareHouseLocationList: wareHouseLocationList,
       iSId: '${wareHouseShipmentList.first.impshiprowid.toString()}',
@@ -349,8 +336,6 @@ class _WarehouseLocationState
     });
   }
 
-
-
   void addBlankRow() {
     setState(() {
       wareHouseLocationList.add(WarehouseLocationList(nop: 0, sequenceNumber: '', locCode: '', weight: 0.00, whInTime: null, whOutTime: null, groupId: '', isid: 0, iwSeqNo: 0));
@@ -381,6 +366,14 @@ class _WarehouseLocationState
   }
   double roundNumber(double value, int decimals) {
     return (value * (10 ^ decimals)).round() / (10 ^ decimals);
+  }
+
+  resetData(){
+    prefixController.clear();
+    awbController.clear();
+    hawbController.clear();
+    wareHouseLocationList=[];
+    wareHouseShipmentList=[];
   }
 
 
@@ -422,20 +415,20 @@ class _WarehouseLocationState
               ),
             ),
             actions: [
-              SvgPicture.asset(
-                usercog,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              SvgPicture.asset(
-                bell,
-                height: 25,
-              ),
-              const SizedBox(
-                width: 10,
-              ),
+              // SvgPicture.asset(
+              //   usercog,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
+              // SvgPicture.asset(
+              //   bell,
+              //   height: 25,
+              // ),
+              // const SizedBox(
+              //   width: 10,
+              // ),
             ]),
         drawer: const Drawer(),
         body: Stack(
@@ -471,6 +464,22 @@ class _WarehouseLocationState
                                 ),
                               ],
                             ),
+                            GestureDetector(
+                              child: const Row(
+                                children: [Icon(CupertinoIcons.restart, color: MyColor.primaryColorblue,),
+                                  Text(
+                                    ' Reset',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
+                                  ),],
+                              ),
+                              onTap: (){
+                                setState(() {
+                                  resetData();
+                                });
+
+                              },
+                            )
                           ],
                         ),
                         const SizedBox(
@@ -774,7 +783,7 @@ class _WarehouseLocationState
                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
                                     const Text("  Current Location",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w800,fontSize: 20),),
-                                    GestureDetector(
+                                    wareHouseShipmentList.isNotEmpty? GestureDetector(
                                       child: const Row(
                                         children: [
                                           Icon(Icons.add,
@@ -789,7 +798,7 @@ class _WarehouseLocationState
                                       onTap: (){
                                         addBlankRow();
                                       },
-                                    ),
+                                    ):SizedBox(),
                                   ],
                                 ),
                                 const SizedBox(height: 10,),

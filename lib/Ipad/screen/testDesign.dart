@@ -6,7 +6,6 @@ import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
@@ -16,27 +15,23 @@ import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
 import '../../utils/snackbarutil.dart';
 import '../../widget/customebuttons/roundbuttonblue.dart';
-import '../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../widget/custometext.dart';
 import '../auth/auth.dart';
 import '../modal/CustomsOperations.dart';
-import '../modal/ShipmentAcceptanceModal.dart';
-import '../modal/forwardForExam.dart';
 import '../utils/global.dart';
 import '../widget/customDialog.dart';
-import '../widget/customIpadTextfield.dart';
 import '../widget/horizontalCalendar.dart';
 import 'ImportShipmentListing.dart';
 import 'package:xml/xml.dart';
 
-class OnHandShipment extends StatefulWidget {
-  const OnHandShipment({super.key});
+class TestDesigns extends StatefulWidget {
+  const TestDesigns({super.key});
 
   @override
-  State<OnHandShipment> createState() => _OnHandShipmentState();
+  State<TestDesigns> createState() => _TestDesignsState();
 }
 
-class _OnHandShipmentState extends State<OnHandShipment> {
+class _TestDesignsState extends State<TestDesigns> {
   DateTime _selectedDate = DateTime.now();
   String? selectedTime = '10:00-11:00';
   String? selectedSlot;
@@ -45,8 +40,9 @@ class _OnHandShipmentState extends State<OnHandShipment> {
   bool isLoading = false;
   bool hasNoRecord = false;
   String slotFilterDate = "Slot Date";
-  DateTime? selectedDate;
-  List<OnHandShipReq> appointBookingList = [];
+  DateTime selectedDate = DateTime.now();
+  final ScrollController _scrollController = ScrollController();
+  List<CustomExaminationData> appointBookingList = [];
   List<Map<String, dynamic>> saveList = [];
   List<CustomExaminationMasterData> masterData = [];
   List<bool?> isOnList = [];
@@ -74,9 +70,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
   late GlobalKey datePickerKey;
   int totalPcs=0;
   double totalWeight=0.00;
-  TextEditingController commTypeController = TextEditingController();
-  TextEditingController toDateController = TextEditingController();
-  TextEditingController fromDateController = TextEditingController();
+
   bool isOn=true;
   @override
   void initState() {
@@ -94,35 +88,30 @@ class _OnHandShipmentState extends State<OnHandShipment> {
   String formatTime(int value) => value.toString().padLeft(2, '0');
   int activeIndex = 0;
 
-  searchOnHandRequests(String fromDate, String toDate,String comm) async {
+  searchCustomOperationsData(String date, String slot) async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
+    masterData = [];
     totalPcs=0;
     totalWeight=0.00;
     setState(() {
       hasNoRecord=true;
     });
     var queryParams = {
-      "FromDate": fromDate,
-      "ToDate": toDate,
-      "Commodity": comm.isEmpty?"-1":comm,
-      "CompanyCode": "3",
-      "UserID": 1,
-      "AirportCode": "JFK",
-      "CultureCode": "en-US",
-      "MenuId": 1
+      "InputXml":
+      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
-        .sendGetWithBody("OnHandShipment/GetListReqForExamination", queryParams)
+        .sendGetWithBody("CustomExamination/GetCustomExamination", queryParams)
         .then((response) {
       print("data received ");
       Map<String, dynamic> jsonData = json.decode(response.body);
 
       print(jsonData);
       print("is empty record$hasNoRecord");
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage'];
+      String status = jsonData['RetOutput'][0]['Status'];
+      String statusMessage = jsonData['RetOutput'][0]['StrMessage'];
 
       if (status == 'E') {
         print("Error: $statusMessage");
@@ -130,7 +119,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
         showDataNotFoundDialog(context, statusMessage);
         return;
       } else {
-        List<dynamic> resp = jsonData['OnHandShiReqForExamList'];
+        List<dynamic> resp = jsonData['CustomExaminationPList'];
         // List<dynamic> accConsignment = jsonData['ConsignmentAcceptance'];
         if (resp.isEmpty) {
           print("No data");
@@ -144,11 +133,24 @@ class _OnHandShipmentState extends State<OnHandShipment> {
           hasNoRecord=false;
         });
         setState(() {
-         
+          List<CustomExaminationMasterData> tempList = resp
+              .where((json) {
+            return json["ElementRowID"] != -1 && json["ElementRowID"] != 0;
+          })
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
+              .toList();
+          masterData = resp
+              .where((json) {
+            return json["ElementRowID"] == -1;
+          })
+              .map((json) => CustomExaminationMasterData.fromJSON(json))
+              .toList();
+          print("length==  = ${masterData.length}");
+          print(masterData.toList());
 
-          appointBookingList=resp.map((data)=>OnHandShipReq.fromJson(data)).toList();
-          totalPcs = appointBookingList.fold(0, (sum, pc) => sum + pc.pieces);
-          totalWeight = appointBookingList.fold(0, (sum, wt) => sum + wt.weight);
+          appointBookingList=mergeLists(tempList,masterData);
+          totalPcs = masterData.fold(0, (sum, pc) => sum + int.parse(pc.col7));
+          totalWeight = masterData.fold(0, (sum, wt) => sum + double.parse(wt.col8));
         });
 
         setState(() {
@@ -156,12 +158,12 @@ class _OnHandShipmentState extends State<OnHandShipment> {
           piecesControllers = List.generate(
               appointBookingList.length,
                   (index) =>
-                  TextEditingController(text: appointBookingList[index].rfePieces.toString()));
-          print("Piecs${appointBookingList.first.rfePieces}");
+                  TextEditingController(text: appointBookingList[index].col7));
+          print("Piecs${appointBookingList.first.col5}");
           remarksControllers = List.generate(
               appointBookingList.length,
                   (index) =>
-                  TextEditingController(text: appointBookingList[index].remarks));
+                  TextEditingController(text: appointBookingList[index].col8));
         });
 
       }
@@ -172,368 +174,17 @@ class _OnHandShipmentState extends State<OnHandShipment> {
     });
   }
 
-  void showShipmentSearchBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      constraints: const BoxConstraints(
-        minWidth: double.infinity,
-      ),
 
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding:  EdgeInsets.only( bottom: MediaQuery.of(context).viewInsets.bottom),
-                  child: SizedBox(
-                    width: MediaQuery.sizeOf(context).width,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text("Filter",
-                                style: TextStyle(
-                                    fontSize: 24, fontWeight: FontWeight.bold)),
-                            GestureDetector(
-                              child: const Row(
-                                children: [Icon(CupertinoIcons.restart, color: MyColor.primaryColorblue,),
-                                  Text(
-                                    ' Reset',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w500, fontSize: 18,color: MyColor.primaryColorblue,),
-                                  ),],
-                              ),
-                              onTap: (){
-                                setState(() {
-                                  commTypeController.clear();
-                                  fromDateController.clear();
-                                  toDateController.clear();
-                                });
-
-                              },
-                            )
-                          ],
-                        ),
-
-                        const SizedBox(
-                          width: double.infinity,
-                          child: Divider(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 4),
-                        SizedBox(
-                          width: MediaQuery.sizeOf(context).width,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'FILTER BY DATE',
-                                    style: TextStyle(fontSize: 16),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        height:
-                                        MediaQuery.sizeOf(
-                                            context)
-                                            .height *
-                                            0.04,
-                                        width:
-                                        MediaQuery.sizeOf(
-                                            context)
-                                            .width *
-                                            0.44,
-                                        child:
-                                        CustomeEditTextWithBorderDatePicker(
-                                          lablekey: 'MAWB',
-                                          controller:
-                                          fromDateController,
-                                          labelText:
-                                          "From Date",
-                                          readOnly: false,
-                                          maxLength: 15,
-                                          fontSize: 18,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      SizedBox(
-                                        height:
-                                        MediaQuery.sizeOf(
-                                            context)
-                                            .height *
-                                            0.04,
-                                        width:
-                                        MediaQuery.sizeOf(
-                                            context)
-                                            .width *
-                                            0.44,
-                                        child:
-                                        CustomeEditTextWithBorderDatePicker(
-                                          lablekey: 'MAWB',
-                                          controller:
-                                          toDateController,
-                                          labelText:
-                                          "To Date",
-                                          readOnly: false,
-                                          maxLength: 15,
-                                          fontSize: 18,
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  const SizedBox(height: 16),
-                                ],
-                              ),
-
-                            ],
-                          ),
-                        ),
-                        const Divider(color: Colors.grey),
-                        const SizedBox(height: 8),
-                        const Text('SORT BY COMMODITY',
-                            style: TextStyle(fontSize: 16)),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height:
-                          MediaQuery.sizeOf(
-                              context)
-                              .height *
-                              0.04,
-                          width: MediaQuery.of(context).size.width*0.44,
-                          child:  TypeAheadField<Commodity>(
-                            controller: commTypeController,
-                            debounceDuration: const Duration(
-                                milliseconds: 300),
-                            suggestionsCallback: (search){
-                              if (search.isEmpty) {
-                                return null;
-                              }
-                              return CommodityService.find(search);},
-                            itemBuilder: (context, item) {
-                              return Container(
-                                decoration:
-                                const BoxDecoration(
-                                  border: Border(
-                                    top: BorderSide(
-                                        color: Colors.black,
-                                        width: 0.2),
-                                    left: BorderSide(
-                                        color: Colors.black,
-                                        width: 0.2),
-                                    right: BorderSide(
-                                        color: Colors.black,
-                                        width: 0.2),
-                                    bottom: BorderSide
-                                        .none, // No border on the bottom
-                                  ),
-                                ),
-                                padding:
-                                const EdgeInsets.all(8.0),
-                                child: Row(
-                                  children: [
-                                    Text(item.commodityType
-                                        .toUpperCase()),
-                                  ],
-                                ),
-                              );
-                            },
-                            builder: (context, controller,
-                                focusNode) =>
-                                CustomeEditTextWithBorder(
-                                  lablekey: 'MAWB',
-                                  controller: controller,
-                                  focusNode: focusNode,
-                                  hasIcon: false,
-                                  hastextcolor: true,
-                                  animatedLabel: true,
-                                  needOutlineBorder: true,
-                                  noUpperCase: true,
-                                  onPress: () {},
-                                  labelText:
-                                  "Commodity",
-                                  readOnly: false,
-                                  fontSize: 18,
-                                  onChanged: (String, bool) {},
-                                ),
-                            decorationBuilder:
-                                (context, child) => Material(
-                              type: MaterialType.card,
-                              elevation: 4,
-                              borderRadius:
-                              BorderRadius.circular(8.0),
-                              child: child,
-                            ),
-                            // itemSeparatorBuilder: (context, index) =>
-                            //     Divider(),
-                            emptyBuilder: (context) =>
-                            const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                  'No Commodity Found',
-                                  style: TextStyle(
-                                      fontSize: 16)),
-                            ),
-                            onSelected: (value) {
-                              setState((){
-                                commTypeController.text = value
-                                    .commodityType;
-                                print(commTypeController.text);
-                              });
-
-                            },
-                          ),
-                        ),
-                         SizedBox(height: MediaQuery.sizeOf(
-                            context)
-                            .height *
-                            0.12,),
-
-                        Container(
-                          width: double.infinity,
-                          child: const Divider(color: Colors.grey),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          mainAxisAlignment:
-                          MainAxisAlignment.spaceAround,
-                          children: [
-                            SizedBox(
-                              height: 45,
-                              width: MediaQuery.sizeOf(context).width *
-                                  0.42,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  side: const BorderSide(
-                                      color: MyColor.primaryColorblue),
-                                  textStyle: const TextStyle(
-                                    fontSize: 18,
-                                    color: MyColor.primaryColorblue,
-                                  ),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(8)),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  commTypeController.clear();
-                                  fromDateController.clear();
-                                  toDateController.clear();
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Cancel"),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            SizedBox(
-                              height: 45,
-                              width: MediaQuery.sizeOf(context).width *
-                                  0.42,
-                              child: ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                  MyColor.primaryColorblue,
-                                  textStyle: const TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.white,
-                                  ),
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.all(
-                                        Radius.circular(8)),
-                                  ),
-                                ),
-                                onPressed: () {
-                                  if(fromDateController.text.isNotEmpty){
-                                    DateTime fromDateTime = DateFormat('dd/MM/yyyy').parse(fromDateController.text.trim());
-                                    DateTime toDateTime = DateFormat('dd/MM/yyyy').parse(toDateController.text.trim());
-
-                                    String formattedFromDate = DateFormat('MM/dd/yyyy').format(fromDateTime);
-                                    String formattedToDate = DateFormat('MM/dd/yyyy').format(toDateTime);
-                                    searchOnHandRequests(formattedFromDate,formattedToDate,commTypeController.text);
-
-                                    Navigator.pop(context);
-                                  }
-                                  //getShipmentListing(mawbNo:"${prefixController.text.trim()}${awbController.text.trim()}",statusFilter: selectedFilters.join(","));
-
-                                },
-                                child: const Text(
-                                  "Search",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        // ElevatedButton(
-                        //   onPressed: () {
-                        //     Navigator.pop(context);
-                        //     // filterShipments();
-                        //     setState(() {
-                        //       // isFilterApplied = true;
-                        //     });
-                        //   },
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: MyColor.primaryColorblue,
-                        //     minimumSize: const Size.fromHeight(50),
-                        //   ),
-                        //   child: const Text("SEARCH",
-                        //       style: TextStyle(color: Colors.white)),
-                        // ),
-                        // const SizedBox(height: 16),
-                        // OutlinedButton(
-                        //   onPressed: () {
-                        //     setState(() {
-                        //       // selectedFilters.clear();
-                        //       // isFilterApplied = false;
-                        //       // selectedDate = null;
-                        //       // slotFilterDate = "Slot Date";
-                        //     });
-                        //     Navigator.pop(context);
-                        //     // filterShipments();
-                        //   },
-                        //   style: OutlinedButton.styleFrom(
-                        //     side: const BorderSide(color: MyColor.primaryColorblue),
-                        //     minimumSize: const Size.fromHeight(50),
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //     ),
-                        //   ),
-                        //   child: const Text(
-                        //     "RESET",
-                        //     style: TextStyle(color:MyColor.primaryColorblue),
-                        //   ),
-                        // ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
 
   void fetchMasterData() async {
     await Future.delayed(Duration.zero);
     DateTime today = DateTime.now();
-    var formatter = DateFormat('MM/dd/yyyy');
+    var formatter = DateFormat('dd-MM-yyyy');
     String formattedDate = formatter.format(today);
     setState(() {
       slotFilterDate = formattedDate;
     });
-    searchOnHandRequests(formattedDate,formattedDate,"");
+    searchCustomOperationsData(formattedDate,"");
   }
 
   saveBookings() async {
@@ -580,7 +231,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
             ),
           );
           if(isTrue){
-            // searchCustomOperationsData(slotFilterDate,selectedTimes.join(','));
+            searchCustomOperationsData(slotFilterDate,selectedTimes.join(','));
           }
 
         }
@@ -590,6 +241,15 @@ class _OnHandShipmentState extends State<OnHandShipment> {
     }).catchError((onError) {
       print(onError);
     });
+  }
+
+  void _centerSelectedItem() {
+        int index = selectedDate.difference(DateTime.now()).inDays;
+    _scrollController.animateTo(
+      2 * 105.0 - (MediaQuery.of(context).size.width / 2) + 52.5,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
   }
 
   @override
@@ -681,40 +341,275 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                       },
                                     ),
                                     const Text(
-                                      '  On Hand Shipment',
+                                      '  TestDesigns',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22),
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  children: [
-                                    GestureDetector(
-                                      child: const Row(
-                                        children: [
-                                          Icon(
-                                            Icons.filter_alt_outlined,
-                                            color: MyColor.primaryColorblue,
-                                          ),
-                                          Text(
-                                            ' Filter',
-                                            style: TextStyle(fontSize: 18),
-                                          )
-                                        ],
-                                      ),
-                                      onTap: () {
-                                        showShipmentSearchBottomSheet(context);
-                                      },
-                                    ),
-                                  ],
-                                )
                               ],
                             ),
                             SizedBox(height: 20),
                             Column(
                               children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      height:168,
+                                      width: MediaQuery.sizeOf(context).width*0.47,
 
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(12.0),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                            Colors.black.withOpacity(0.1),
+                                            spreadRadius: 2,
+                                            blurRadius: 8,
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                const Text(" Slot Date",style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold,
+                                                ),),
+                                                GestureDetector(
+                                                  child: Row(
+                                                    children: [
+                                                      // Text(
+                                                      //   slotFilterDate,
+                                                      //   style: const TextStyle(
+                                                      //       fontSize: 16,
+                                                      //       color: MyColor
+                                                      //           .primaryColorblue),
+                                                      // ),
+                                                      // const SizedBox(width: 8),
+                                                      const Icon(Icons.calendar_today,
+                                                          color: MyColor
+                                                              .primaryColorblue),
+                                                    ],
+                                                  ),
+                                                  onTap: () {
+                                                    pickDate(context, setState);
+                                                  },
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(height: 4,),
+                                            SizedBox(
+                                              height: 104,
+                                              child: ListView.builder(
+                                                itemCount: 30,
+                                                controller:_scrollController ,
+                                                scrollDirection: Axis.horizontal,
+                                                itemBuilder: (ctx, index) {
+
+                                                  DateTime currentDay = selectedDate.add(Duration(days: index-2));
+                                                  print("---$currentDay");
+                                                  bool isPickedDate = currentDay.day == selectedDate.day &&
+                                                      currentDay.month == selectedDate.month &&
+                                                      currentDay.year == selectedDate.year;
+
+                                                  return FittedBox(
+                                                    child: GestureDetector(
+                                                      child: Container(
+                                                        width: 90,
+                                                        height: 145,
+
+                                                        alignment: Alignment.center,
+                                                        decoration: BoxDecoration(
+                                                          color: isPickedDate
+                                                              ?  MyColor.primaryColorblue
+                                                              :Colors.white,
+                                                          borderRadius: BorderRadius.circular(16.0),
+                                                        ),
+                                                        padding: const EdgeInsets.all(15.0),
+                                                        child: Column(
+                                                          mainAxisAlignment: MainAxisAlignment.center,
+                                                          children: <Widget>[
+                                                            Text(
+                                                              DateFormat('MMM').format(currentDay).toUpperCase(), // Month format
+                                                              style: TextStyle(
+                                                                fontSize: 20,
+                                                                fontWeight:FontWeight.bold,
+                                                                color: isPickedDate
+                                                                    ? Colors.white
+                                                                    : Colors.black87,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(height: 5),
+                                                            Text(
+                                                              "${currentDay.day}",
+                                                              style: TextStyle(
+                                                                fontSize: 25,
+                                                                fontWeight: FontWeight.bold,
+                                                                color: isPickedDate
+                                                                    ? Colors.white
+                                                                    : Colors.black87,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(height: 5),
+                                                            Text(
+                                                              DateFormat('EE').format(currentDay).toUpperCase(),
+                                                              style: TextStyle(
+                                                                fontSize: 18,
+                                                                color:
+                                                                isPickedDate ? Colors.white : Colors.black87,
+                                                                fontWeight: FontWeight.bold,
+                                                              ),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      ),
+                                                      onTap: (){
+                                                        setState(() {
+                                                          selectedDate = currentDay;
+                                                          var formatter = DateFormat('dd-MM-yyyy');
+                                                          String formattedDate = formatter.format(selectedDate);
+                                                          slotFilterDate=formattedDate;
+                                                          searchCustomOperationsData(formattedDate,"${selectedTimes.join(',')}");
+                                                        });
+                                                        _centerSelectedItem();
+                                                      },
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                            // SizedBox(
+                                            //   height: 120,
+                                            //   child:  Column(
+                                            //     mainAxisAlignment: MainAxisAlignment.center,
+                                            //     children: [
+                                            //       EasyDateTimeLine(
+                                            //         initialDate: DateTime.now(),
+                                            //         onDateChange: (selectedDate) {
+                                            //           //[selectedDate] the new date selected.
+                                            //         },
+                                            //         activeColor: const Color(0xffFFBF9B),
+                                            //         dayProps: const EasyDayProps(
+                                            //           dayStructure: DayStructure.dayNumDayStr,
+                                            //           inactiveBorderRadius: 48.0,
+                                            //           height: 56.0,
+                                            //           width: 56.0,
+                                            //           activeDayNumStyle: TextStyle(
+                                            //             fontSize: 18.0,
+                                            //             fontWeight: FontWeight.bold,
+                                            //           ),
+                                            //           inactiveDayNumStyle: TextStyle(
+                                            //             fontSize: 18.0,
+                                            //           ),
+                                            //         ),
+                                            //       )
+                                            //     ],
+                                            //   ),
+                                            // ),
+                                          ],
+                                        ),
+                                      ),),
+                                    Spacer(),
+                                    Container(
+                                      height:168,
+                                      width: MediaQuery.sizeOf(context).width*0.47,
+
+                                      decoration: BoxDecoration(
+                                        borderRadius:
+                                        BorderRadius.circular(12.0),
+                                        color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                            Colors.black.withOpacity(0.1),
+                                            spreadRadius: 2,
+                                            blurRadius: 8,
+                                            offset: const Offset(0,
+                                                3), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 10),
+                                        child:Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            const Text(" Slot Schedule",style: TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.bold,
+                                            ),),
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.start,
+                                              children: List.generate(slotData.length, (index) {
+                                                final bool isSelected = selectedIndices.contains(index);
+                                                return GestureDetector(
+                                                  onTap: () {
+
+                                                    setState(() {
+                                                      if (isSelected) {
+                                                        selectedIndices.remove(index);
+                                                        selectedTimes.remove(slotData[index]["time"]);
+                                                      } else {
+                                                        selectedIndices.add(index);
+                                                        selectedTimes.add(slotData[index]["time"]!);
+                                                      }
+                                                    });
+                                                    print("Selected Times: ${selectedTimes.join(', ')}");
+                                                    searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.all(4.0),
+                                                    width: 80,
+                                                    padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
+                                                    decoration: BoxDecoration(
+                                                      color: isSelected ? MyColor.primaryColorblue : Colors.white,
+                                                      border: Border.all(color: Colors.grey),
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    child: Column(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Image.asset(
+                                                          imagePaths[index],
+                                                          height: 40,
+                                                          width: 40,
+                                                          color: isSelected ? Colors.white : null,
+                                                        ),
+                                                        SizedBox(height: 8.0),
+                                                        Text(
+                                                          slotData[index]['label']!,
+                                                          textAlign: TextAlign.center,
+                                                          style: TextStyle(
+                                                            color: isSelected ? Colors.white : Colors.black,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                            ),
+                                          ],
+                                        ),
+                                      ),),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 20,
+                                ),
                                 Container(
                                   padding:  const EdgeInsets.symmetric(
                                       vertical: 14, horizontal: 10),
@@ -811,7 +706,6 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                 ),
                                 (!hasNoRecord)
                                     ? SingleChildScrollView(
-
                                   child: Padding(
                                     padding: const EdgeInsets.only(
                                         top: 8.0, left: 0.0, bottom: 100),
@@ -825,7 +719,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                         const NeverScrollableScrollPhysics(),
                                         itemBuilder:
                                             (BuildContext, index) {
-                                              OnHandShipReq
+                                          CustomExaminationData
                                           shipmentDetails =
                                           appointBookingList
                                               .elementAt(index);
@@ -950,8 +844,8 @@ class _OnHandShipmentState extends State<OnHandShipment> {
     );
   }
 
-  Widget buildShipmentCardV3(
-      OnHandShipReq shipment,
+  Widget buildShipmentCardV2(
+      CustomExaminationData shipment,
       bool? isOn,
       int index,
       ValueChanged<bool?> onCheckboxChanged,
@@ -976,15 +870,12 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      width: MediaQuery.sizeOf(context).width*0.20,
-                      child: Text(
-                        shipment.awb,
-                        style:
-                        const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
+                    Text(
+                      shipment.col2,
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 10,
                     ),
                     Column(
@@ -994,15 +885,15 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               " HAWB No: ",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
-                              shipment.hawb,
-                              style: const TextStyle(
+                              shipment.col3,
+                              style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -1013,15 +904,15 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            const Text(
+                            Text(
                               " Pieces: ",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
-                              shipment.pieces.toString(),
-                              style: const TextStyle(
+                              shipment.col5,
+                              style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -1032,15 +923,15 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                         SizedBox(height: 8),
                         Row(
                           children: [
-                            const Text(
-                              " Weight: ",
+                            Text(
+                              " Agent: ",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                             Text(
-                              shipment.weight.toStringAsFixed(2),
-                              style: const TextStyle(
+                              shipment.col1,
+                              style: TextStyle(
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 16,
@@ -1061,12 +952,20 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                 const SizedBox(width: 8),
                 buildLabel("AWB", Colors.deepPurpleAccent, 8,
                     isBorder: true, borderColor: Colors.deepPurpleAccent),
-
+                // const SizedBox(width: 8),
+                // SizedBox(
+                //     width: MediaQuery.sizeOf(context).width*0.11,
+                //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                const SizedBox(width: 20),
+                buildLabel(shipment.col4, Colors.lightBlue, 20),
                 const SizedBox(width: 8),
                 Row(
                   children: [
-                    buildLabel(shipment.commodity.toUpperCase(),  Color(0xffCCDFFA), 8,
-                       ),
+                    Text(
+                      shipment.slot!,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
                     SizedBox(width: 8),
                     Icon(
                       Icons.info_outline_rounded,
@@ -1111,7 +1010,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                         onChanged: (value) {
                           setState(() {
                             piecesControllers[index].text = value;
-                            shipment.rfePieces = int.parse(value);
+                            shipment.col7 = value;
                           });
                         },
                       ),
@@ -1150,7 +1049,266 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                         onChanged: (value) {
                           setState(() {
                             remarksControllers[index].text = value;
-                            shipment.remarks = value;
+                            shipment.col8 = value;
+                          });
+                        },
+                      ),
+                    )
+                  ],
+                ),
+                Center(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 40, horizontal: 24),
+                    child: Theme(
+                      data: ThemeData(useMaterial3: false),
+                      child: Transform.scale(
+                        scale: 2.5,
+                        child: Checkbox(
+                          isError: true,
+                          tristate: true,
+                          activeColor: isOn == null
+                              ? Colors.red
+                              : isOn!
+                              ? Colors.green
+                              : MyColor.primaryColorblue,
+                          value: isOn,
+                          onChanged: (bool? value) {
+                            setState(() {
+                              onCheckboxChanged(value);
+                            });
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(2),
+                            side: BorderSide(
+                              color: isOn == null
+                                  ? Colors.red
+                                  : isOn!
+                                  ? Colors.green
+                                  : MyColor.primaryColorblue,
+                              // border color based on state
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildShipmentCardV3(
+      CustomExaminationData shipment,
+      bool? isOn,
+      int index,
+      ValueChanged<bool?> onCheckboxChanged,
+      TextEditingController piecesController,
+      TextEditingController remarksController,
+      ) {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8),
+      ),
+      elevation: 3,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 2),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      shipment.col2,
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            const Text(
+                              " HAWB No: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col3,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Text(
+                              " Pieces: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col5,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            const Text(
+                              " Agent: ",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              shipment.col1,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Row(
+                        //   children: [
+                        //     const Text("Unit: "),
+                        //     Text("",style: const TextStyle(color: Colors.black,fontWeight: FontWeight.bold),),
+                        //   ],
+                        // ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(width: 8),
+                buildLabel("AWB", Colors.deepPurpleAccent, 8,
+                    isBorder: true, borderColor: Colors.deepPurpleAccent),
+                // const SizedBox(width: 8),
+                // SizedBox(
+                //     width: MediaQuery.sizeOf(context).width*0.11,
+                //     child: buildLabel((false)?"DIRECT":"CONSOL", Colors.white,8,isBorder: true,borderColor: Colors.grey)),
+                const SizedBox(width: 20),
+                buildLabel(shipment.col4, Colors.lightBlue, 20),
+                const SizedBox(width: 8),
+                Row(
+                  children: [
+                    Text(
+                      shipment.slot!,
+                      style: TextStyle(
+                          color: Colors.black, fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(width: 8),
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: MyColor.primaryColorblue,
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  width: 8,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 200,
+                      child: TextFormField(
+                        controller: piecesController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter RFE Pieces',
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 0, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.primaryColorblue,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            piecesControllers[index].text = value;
+                            shipment.col7 = value;
+                          });
+                        },
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    SizedBox(
+                      width: 200,
+                      child: TextFormField(
+                        maxLines: 2,
+                        controller: remarksController,
+                        decoration: InputDecoration(
+                          hintText: 'Enter Remarks',
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 15),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.borderColor,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: const BorderSide(
+                              color: MyColor.primaryColorblue,
+                            ),
+                          ),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            remarksControllers[index].text = value;
+                            shipment.col8 = value;
                           });
                         },
                       ),
@@ -1164,7 +1322,9 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                       data: ThemeData(useMaterial3: false),
                       child: Transform.scale(
                         scale: 2.5,
-                        child:Checkbox(
+                        child: Checkbox(
+                          // isError: true,
+                          tristate: true,
                           activeColor: isOn == null
                               ? Colors.red
                               : isOn!
@@ -1173,7 +1333,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                           value: isOn,
                           onChanged: (bool? value) {
                             setState(() {
-                              onCheckboxChanged(value!);
+                              onCheckboxChanged(value);
                             });
                           },
                           shape: RoundedRectangleBorder(
@@ -1184,6 +1344,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                   : isOn!
                                   ? Colors.green
                                   : MyColor.primaryColorblue,
+
                               width: 2,
                             ),
                           ),
@@ -1213,6 +1374,33 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                 (element) => element["item"] == appointBookingList[index]);
       }
     });
+  }
+
+  List<CustomExaminationData> mergeLists(List<CustomExaminationMasterData> listA, List<CustomExaminationMasterData> listB) {
+    Map<int, CustomExaminationMasterData> mapB = {
+      for (var item in listB) item.queueRowId: item,
+    };
+    List<CustomExaminationData> result = listA.map((itemA) {
+      CustomExaminationMasterData? matchingItemB = mapB[itemA.queueRowId];
+      return CustomExaminationData(
+        rowId: itemA.rowId,
+        messageRowId: itemA.messageRowId,
+        queueRowId: itemA.queueRowId,
+        elementRowId: itemA.elementRowId,
+        elementGuid: itemA.elementGuid,
+        col1: itemA.col1,
+        col2: itemA.col2,
+        col3: itemA.col3,
+        col4: itemA.col4,
+        col5: itemA.col5,
+        col6: itemA.col6,
+        col7: itemA.col7,
+        col8: itemA.col8,
+        slot: "${matchingItemB?.col3}-${matchingItemB?.col4}",
+      );
+    }).toList();
+
+    return result;
   }
 
   String buildInputXml({
@@ -1257,6 +1445,51 @@ class _OnHandShipmentState extends State<OnHandShipment> {
 
     final xmlDocument = builder.buildDocument();
     return xmlDocument.toXmlString(pretty: true, indent: '  ');
+  }
+
+  Future<void> pickDate(BuildContext context, StateSetter setState) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: selectedDate ?? DateTime.now(),
+      firstDate: DateTime(2001),
+      lastDate: DateTime(2101),
+      builder: (BuildContext context, Widget? child) {
+        return Theme(
+          data: ThemeData(
+            useMaterial3: false,
+            primaryColor: MyColor.primaryColorblue,
+
+            dialogBackgroundColor: Colors.white,
+            // Change dialog background color
+            colorScheme: const ColorScheme.light(
+              primary: MyColor.primaryColorblue,
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: MyColor.primaryColorblue,
+              ),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate != null && pickedDate != selectedDate) {
+      setState(() {
+        selectedDate = pickedDate;
+        pickedDateFromPicker=pickedDate;
+        slotFilterDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+        selectedDateNotifier.value = pickedDate;
+        print("DATE is $slotFilterDate");
+      });
+      // pickedDateFromPickerController.animateToDate(pickedDateFromPicker);
+
+      // searchCustomOperationsData(slotFilterDate,"${selectedTimes.join(',')}");
+
+    }
   }
 
   void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
