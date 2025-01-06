@@ -383,6 +383,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                 onBack: _onWillPop,
                                 clearText: lableModel!.clear,
                                 onClear: () {
+                                  _pageIndex = 0;
                                   _selectedItems.clear();
                                   _isvalidateLocation = false;
                                   locationController.clear();

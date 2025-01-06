@@ -551,6 +551,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             }
 
                                                           }else{
+                                                            Vibration.vibrate(duration: 500);
                                                             SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                                               FocusScope.of(context).requestFocus(scanULDFocusNode);
@@ -1187,14 +1188,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O") ? "Close" : "Re-Open" : "Close",
+                                      text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O") ? "Close" : "${lableModel.reOpen}" : "Close",
                                       press: () async {
                                         scanULDFocusNode.unfocus();
                                         scanULDBtnFocusNode.unfocus();
                                         if(uldDetail != null){
                                           // call api for close and re open
 
-                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O") ? "Closed ULD" : "Re-Open ULD", (uldDetail!.uLDStatus == "O") ? "Are you sure want to close this ULD ?" : "Are you sure want to re-open this ULD ?" , lableModel);
+                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O") ? "${lableModel.closed} " : "Re-Open ULD", (uldDetail!.uLDStatus == "O") ? "Are you sure want to close this ULD ?" : "Are you sure want to re-open this ULD ?" , lableModel);
 
 
                                           if(closeReopenULD == true){
@@ -1223,7 +1224,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                 ],
                               ),
                             ),
-
                           ],
                         ),
                       ),
