@@ -70,7 +70,6 @@ class CloseULDEquipmentPage extends StatefulWidget {
 class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
 
 
-
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
@@ -313,7 +312,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                 onBack: () {
                                   _onWillPop();
                                 },
-                                clearText: (widget.uldStatus == "C") ? "" : lableModel!.clear,
+                                clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
                                   setState(() {
@@ -703,53 +702,46 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                       Expanded(
                                         flex: 1,
                                         child: RoundedButtonGreen(
-                                          color: (widget.uldStatus == "C") ? MyColor.colorGrey.withOpacity(0.3) : MyColor.primaryColorblue,
+                                          color: MyColor.primaryColorblue,
                                           text: "Save",
                                           press: () async {
 
-                                            if(widget.uldStatus == "C"){
+                                            bool isValid = true;
 
+                                            for (int i = 0; i < equipmentList.length; i++) {
+                                              String? quantity = equipmentList[i].quantity;
+                                              double? weight = equipmentList[i].weight;
 
-
-                                            }else{
-                                              bool isValid = true;
-
-                                              for (int i = 0; i < equipmentList.length; i++) {
-                                                String? quantity = equipmentList[i].quantity;
-                                                double? weight = equipmentList[i].weight;
-
-                                                if ((quantity == "" || quantity == "0" || quantity!.isEmpty) && (weight! > 0)) {
-                                                  // Show validation message for quantity
-                                                  Vibration.vibrate(duration: 500);
-                                                  SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} quantity should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                  FocusScope.of(context).requestFocus(volumeFocusNodes[i]);
-                                                  isValid = false;
-                                                  break;
-                                                } else if ((weight == null || weight == 0) && (quantity != null && quantity != "0" && quantity.isNotEmpty)) {
-                                                  // Show validation message for weight
-                                                  Vibration.vibrate(duration: 500);
-                                                  SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} weight should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                  FocusScope.of(context).requestFocus(weightFocusNodes[i]);
-                                                  isValid = false;
-                                                  break;
-                                                }
+                                              if ((quantity == "" || quantity == "0" || quantity!.isEmpty) && (weight! > 0)) {
+                                                // Show validation message for quantity
+                                                Vibration.vibrate(duration: 500);
+                                                SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} quantity should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                FocusScope.of(context).requestFocus(volumeFocusNodes[i]);
+                                                isValid = false;
+                                                break;
+                                              } else if ((weight == null || weight == 0) && (quantity != null && quantity != "0" && quantity.isNotEmpty)) {
+                                                // Show validation message for weight
+                                                Vibration.vibrate(duration: 500);
+                                                SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} weight should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                FocusScope.of(context).requestFocus(weightFocusNodes[i]);
+                                                isValid = false;
+                                                break;
                                               }
+                                            }
 
 
-                                              if(isValid){
-                                                String equipXML = generateEquipXML(equipmentList);
-                                                print("CHECK FOR XML ==== ${equipXML}");
+                                            if(isValid){
+                                              String equipXML = generateEquipXML(equipmentList);
+                                              print("CHECK FOR XML ==== ${equipXML}");
 
-                                                await context.read<CloseULDCubit>().saveEquipmentList(
-                                                    widget.flightSeqNo,
-                                                    widget.uldSeqNo,
-                                                    widget.uldType,
-                                                    equipXML,
-                                                    _user!.userProfile!.userIdentity!,
-                                                    _splashDefaultData!.companyCode!,
-                                                    widget.menuId);
-                                              }
-
+                                              await context.read<CloseULDCubit>().saveEquipmentList(
+                                                  widget.flightSeqNo,
+                                                  widget.uldSeqNo,
+                                                  widget.uldType,
+                                                  equipXML,
+                                                  _user!.userProfile!.userIdentity!,
+                                                  _splashDefaultData!.companyCode!,
+                                                  widget.menuId);
                                             }
 
 

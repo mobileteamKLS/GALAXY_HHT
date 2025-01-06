@@ -13,6 +13,7 @@ import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsid
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasestate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/custometext.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -66,6 +67,27 @@ class AirSideRelease extends StatefulWidget {
 
 class _AirSideReleaseState extends State<AirSideRelease>
     with SingleTickerProviderStateMixin {
+
+  final List<String> flightList = [
+    "BA 321",
+    "Aj 1993",
+    "BA 199",
+    "EK 0532",
+  ];
+
+  final List<String> uldList = [
+    "AKE",
+    "BAY",
+    "PIH",
+    "PAX",
+  ];
+
+
+
+
+  final List<String> _tabs = ['Detail', 'Flight', 'ULD'];
+  int _pageIndex = 0;
+
 
 
   List<DesignationWiseSignatureSettingList> signatureList = [];
@@ -328,7 +350,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                     onDrawerIconTap: () => _scaffoldKey.currentState?.openDrawer(),
                     onUserProfileIconTap: () {
                       _scaffoldKey.currentState?.closeDrawer();
-                      // navigate to profile picture
                       inactivityTimerManager?.stopTimer(); // Stop the timer when the screen is disposed
                       Navigator.push(context, CupertinoPageRoute(builder: (context) => const Profilepagescreen(),));
                     },
@@ -354,7 +375,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                         SizeUtils.WIDTH2))),
                         child: Column(
                           children: [
-                            // header of title and clear function
                             Padding(
                               padding: const EdgeInsets.only(left: 10, right: 15, top: 12, bottom: 12),
                               child: HeaderWidget(
@@ -362,7 +382,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                 title: widget.title,
                                 onBack: _onWillPop,
                                 clearText: lableModel!.clear,
-                                //add clear text to clear all feild
                                 onClear: () {
                                   _selectedItems.clear();
                                   _isvalidateLocation = false;
@@ -381,8 +400,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                 },
                               ),
                             ),
-
-                            // start api responcer
                             BlocListener<AirSideReleaseCubit, AirSideReleaseState>(
                               listener: (context, state) {
 
@@ -440,7 +457,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                     },
                                     );
                                   } else {
-                                    // DialogUtils.hideLoadingDialog(context);
                                     _isvalidateLocation = true;
                                     setState(() {});
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -450,7 +466,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                   }
                                 }
                                 else if (state is ValidateLocationFailureState) {
-                                  // validate location failure
                                   DialogUtils.hideLoadingDialog(context);
                                   _isvalidateLocation = false;
                                   Vibration.vibrate(duration: 500);
@@ -481,11 +496,9 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                     airsideReleaseDetailList = state.airSideReleaseSearchModel.airsideReleaseDetailList!;
                                     filteredAirsideReleaseDetailList = airsideReleaseDetailList
                                         .where((item) => item.isReleased == "N")
-                                        .toList(); // Default filter
+                                        .toList();
                                     filteredAirsideReleaseDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
-
-
-
+                                    _pageIndex = 0;
                                     setState(() {
 
                                     });
@@ -609,7 +622,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // location textfield
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 10,
@@ -640,7 +652,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-
                                                   SizedBox(
                                                     height: SizeConfig.blockSizeVertical,
                                                   ),
@@ -703,7 +714,6 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                                           focusNode: locationBtnFocusNode,
                                                           onTap: () {
                                                             scanLocationQR();
-
                                                           },
                                                           child: Padding(padding: const EdgeInsets.all(8.0),
                                                             child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
@@ -796,6 +806,7 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                       ),
                                       SizedBox(height: SizeConfig.blockSizeVertical,),
 
+                                     // comment for old side detail
                                       Padding(
                                         padding: const EdgeInsets.only(
                                             left: 10,
@@ -817,677 +828,63 @@ class _AirSideReleaseState extends State<AirSideRelease>
                                               ),
                                             ],
                                           ),
-                                          child: (airSideReleaseSearchModel != null)
-                                              ? (airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo != null)
-                                              ? Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
+                                         child:  Column(
+                                           children: [
+                                             Row(children: List.generate(_tabs.length, (index) {
+                                               return InkWell(
+                                                 onTap: () {
+                                                   if (index == 0) {
+                                                     setState(() {
+                                                       _pageIndex = index;
 
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo}",
-                                                        fontColor: MyColor.colorBlack,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                        fontWeight: FontWeight.w800,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: " ${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightDate!.replaceAll(" ", "-")}",
-                                                        fontColor: MyColor.textColorGrey2,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                        fontWeight: FontWeight.w800,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                              Container(
-                                                padding: const EdgeInsets.all(8),
-                                                decoration: BoxDecoration(
-                                                  color: MyColor.cardBgColor,
-                                                  borderRadius: BorderRadius.circular(8),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Column(
-                                                          children: [
-                                                            CustomeText(
-                                                                text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.containerCount}",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                fontWeight: FontWeight.w600,
-                                                                textAlign: TextAlign.center),
+                                                     });
+                                                   }
+                                                   else if (index == 1) {
+                                                     setState(() {
+                                                       _pageIndex = index;
+                                                     });
+                                                   }
+                                                   else if (index == 2) {
+                                                     setState(() {
+                                                       _pageIndex = index;
+                                                     });
+                                                   }
+                                                 },
+                                                 child: Container(
+                                                   padding: const EdgeInsets.only(bottom: 8),
+                                                   margin: const EdgeInsets.only(right: 20),
+                                                   decoration: BoxDecoration(
+                                                     border: Border(
 
-                                                            CustomeText(
-                                                                text: "${lableModel.containers}",
-                                                                fontColor: MyColor.textColorGrey2,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                fontWeight: FontWeight.w400,
-                                                                textAlign: TextAlign.center)
-
-
-
-                                                          ],
-                                                        )),
-
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Column(
-                                                          children: [
-                                                            CustomeText(
-                                                                text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.palletCount}",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                fontWeight: FontWeight.w600,
-                                                                textAlign: TextAlign.center),
-
-                                                            CustomeText(
-                                                                text: "${lableModel.pallet}",
-                                                                fontColor: MyColor.textColorGrey2,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                fontWeight: FontWeight.w400,
-                                                                textAlign: TextAlign.center)
-                                                          ],
-                                                        )),
-
-                                                    Expanded(
-                                                        flex: 1,
-                                                        child: Column(
-                                                          children: [
-                                                            CustomeText(
-                                                                text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.bulkCount}",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                fontWeight: FontWeight.w600,
-                                                                textAlign: TextAlign.center),
-
-                                                            CustomeText(
-                                                                text: "${lableModel.bULK} / ${lableModel.trolley}",
-                                                                fontColor: MyColor.textColorGrey2,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                fontWeight: FontWeight.w400,
-                                                                textAlign: TextAlign.center)
-                                                          ],
-                                                        )),
-                                                  ],
-                                                ),
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-
-                                              (_selectedItems.isNotEmpty) ? RoundedButtonBlue(
-                                                focusNode: releaseAllFocusNode,
-                                                text: "${lableModel.release}",
-                                                press: () async {
-                                                  if (_selectedItems.isNotEmpty) {
-
-                                                    if(signatureRequired == "Y"){
-                                                  var value = await Navigator.push(context, CupertinoPageRoute(
-                                                        builder: (context) => ESignaturePage(
-                                                            importSubMenuList: widget.importSubMenuList,
-                                                            exportSubMenuList: widget.exportSubMenuList,
-                                                            title: "${lableModel.esignRelease}",
-                                                            selectedItems: _selectedItems,
-                                                            locationCode: locationController.text,
-                                                            flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
-                                                            refrelCode: widget.refrelCode,
-                                                            menuId: widget.menuId,
-                                                            mainMenuName: widget.mainMenuName,
-                                                          signatureList: signatureList,
-                                                        ),));
-
-                                                  if(value == "true"){
-                                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                    setState(() {
-                                                      _selectedItems.clear();
-                                                    });
-                                                    _resumeTimerOnInteraction();
-                                                  }else{
-                                                    _resumeTimerOnInteraction();
-                                                  }
-
-
-                                                    }else{
-                                                      for (var item in _selectedItems) {
-                                                        await releaseAirsideDetail(item);
-                                                      }
-
-                                                      setState(() {
-                                                        _selectedItems.clear();
-                                                      });
-                                                    }
-
-
-
-                                                  } else {
-                                                    // If no items are selected, show a warning message
-                                                    ScaffoldMessenger.of(context).showSnackBar(
-                                                       SnackBar(
-                                                        content: Text("${lableModel.noitemselected}"),
-                                                      ),
-                                                    );
-                                                  }
-                                                },
-                                              ) : SizedBox(),
-                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Row(
-                                                    children: [
-                                                      SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
-                                                      SizedBox(
-                                                        width: SizeConfig.blockSizeHorizontal,
-                                                      ),
-                                                      CustomeText(
-                                                          text: "${lableModel.showreleasepending}",
-                                                          fontColor: MyColor.textColorGrey2,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                          fontWeight: FontWeight.w500,
-                                                          textAlign: TextAlign.start)
-                                                    ],
-                                                  ),
-                                                  Switch(
-                                                    value: _isOpenULDFlagEnable,
-                                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                    activeColor: MyColor.primaryColorblue,
-                                                    inactiveThumbColor: MyColor.thumbColor,
-                                                    inactiveTrackColor: MyColor.textColorGrey2,
-                                                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                    onChanged: (value) {
-                                                      setState(() {
-                                                        _isOpenULDFlagEnable = value;
-                                                        _filterList();
-                                                      });
-
-                                                      //call api //
-                                                    },
-                                                  )
-                                                ],
-                                              ),
-                                              SizedBox(height: SizeConfig.blockSizeVertical,),
-                                              (airSideReleaseSearchModel != null)
-                                                  ? (airSideReleaseSearchModel!.airsideReleaseDetailList!.isNotEmpty)
-                                                  ? (filteredAirsideReleaseDetailList.isNotEmpty)
-                                                  ? ListView.builder(
-                                                itemCount: (airSideReleaseSearchModel != null)
-                                                    ? filteredAirsideReleaseDetailList.length
-                                                    : 0,
-                                                physics: const NeverScrollableScrollPhysics(),
-                                                shrinkWrap: true,
-                                                controller: scrollController,
-                                                itemBuilder: (context, index) {
-                                                  AirsideReleaseDetailList airSideReleaseDetail = filteredAirsideReleaseDetailList[index];
-
-                                                  List<String> shcCodes = airSideReleaseDetail.sHCCode!.split(',');
-
-                                                  final isSelected = _selectedItems.contains(airSideReleaseDetail);
-
-
-                                                  return Directionality(
-                                                    textDirection: textDirection,
-                                                    child: InkWell(
-                                                     // focusNode: uldListFocusNode,
-                                                      onTap: () {
-
-
-                                                      },
-                                                      onDoubleTap: () async {
-
-                                                        if(airSideReleaseDetail.shipmentCount != 0){
-                                                          var value = await Navigator.push(
-                                                              context,
-                                                              CupertinoPageRoute(
-                                                                  builder: (context) => AirsideShipmentListPage(
-                                                                    importSubMenuList: widget.importSubMenuList,
-                                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                                    buttonRightsList: const [],
-                                                                    mainMenuName: widget.mainMenuName,
-                                                                    uldNo: airSideReleaseDetail.uLDNo!,
-                                                                    uldType: airSideReleaseDetail.uLDType!,
-                                                                    flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
-                                                                    uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
-                                                                    menuId: widget.menuId,
-                                                                    location: locationController.text,
-                                                                    lableModel: lableModel,
-                                                                  )));
-                                                          if(value == "true"){
-                                                            _resumeTimerOnInteraction();
-                                                            getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                          }
-                                                          else if(value == "Done"){
-                                                            _resumeTimerOnInteraction();
-                                                            getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                          }
-                                                        }else{
-                                                          SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                          Vibration.vibrate(duration: 500);
-                                                        }
-
-
-                                                      },
-                                                      child: Container(
-                                                        margin: const EdgeInsets.symmetric(vertical: 4),
-                                                        decoration: BoxDecoration(
-                                                          color: MyColor.colorWhite,
-                                                          borderRadius: BorderRadius.circular(8),
-
-                                                          boxShadow: [
-                                                            BoxShadow(
-                                                              color: MyColor.colorBlack.withOpacity(0.09),
-                                                              spreadRadius: 2,
-                                                              blurRadius: 15,
-                                                              offset: const Offset(0, 3), // changes position of shadow
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        child: DottedBorder(
-                                                          dashPattern: const [7, 7, 7, 7],
-                                                          strokeWidth: 1,
-                                                          borderType: BorderType.RRect,
-                                                          color: airSideReleaseDetail.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                                                          radius: const Radius.circular(8),
-                                                          child: Container(
-                                                            // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
-                                                            padding: const EdgeInsets.all(8),
-                                                            decoration: BoxDecoration(
-                                                              color: isSelected ? MyColor.dropdownColor : MyColor.colorWhite,
-                                                              borderRadius: BorderRadius.circular(8),
-                                                            ),
-                                                            child: Stack(
-                                                              children: [
-                                                                Column(
-                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                  children: [
-                                                                    Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.start,
-                                                                      children: [
-                                                                        Expanded(
-                                                                            flex:4,
-                                                                            child: Row(
-                                                                              children: [
-                                                                                SvgPicture.asset((airSideReleaseDetail.uLDType == "T") ? trolleySvg : (airSideReleaseDetail.uLDType == "P") ? palletsSvg : uldSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
-                                                                                SizedBox(width: 8,),
-                                                                                ULDNumberWidget(
-                                                                                  uldNo: "${airSideReleaseDetail.uLDNo}",
-                                                                                  smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                  bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                                  fontColor: MyColor.textColorGrey3,
-                                                                                  uldType: airSideReleaseDetail.uLDType!,
-                                                                                )
-                                                                                /*CustomeText(text: "${airSideReleaseDetail.uLDNo}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),*/
-                                                                              ],
-                                                                            )),
-                                                                        (airSideReleaseDetail.isReleased == "N") ? Expanded(
-                                                                          flex: 2,
-                                                                          child: RoundedButtonBlue(text: isSelected ? "${lableModel.unselect}" : "${lableModel.select}",
-                                                                            textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                            verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
-                                                                            press: () {
-
-                                                                             setState(() {
-                                                                               if (isSelected) {
-                                                                                 _selectedItems.remove(airSideReleaseDetail); // Deselect
-                                                                               } else {
-                                                                                 _selectedItems.add(airSideReleaseDetail); // Select the current object
-                                                                               }
-                                                                             });
-                                                                          },),
-                                                                        ) : const SizedBox()
-                                                                      ],
-                                                                    ),
-                                                                    airSideReleaseDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
-                                                                    Row(
-                                                                      children: [
-                                                                        airSideReleaseDetail.sHCCode!.isNotEmpty
-                                                                            ? Row(
-                                                                          children:shcCodes.asMap().entries.take(3).map((entry) {
-                                                                            int index = entry.key; // Get the index for colorList assignment
-                                                                            String code = entry.value.trim(); // Get the code value and trim it
-
-                                                                            return Padding(
-                                                                              padding: EdgeInsets.only(right: 5.0),
-                                                                              child: AnimatedBuilder(
-                                                                                animation: _colorAnimation,
-                                                                                builder: (context, child) {
-                                                                                  return Container(
-                                                                                    padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                                                                    decoration : BoxDecoration(
-                                                                                      borderRadius: BorderRadius.circular(5),
-                                                                                      color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                                                                    child: CustomeText(
-                                                                                      text: code.trim(),
-                                                                                      fontColor: MyColor.textColorGrey3,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                      textAlign: TextAlign.center,
-                                                                                    ),
-                                                                                  );
-                                                                                },
-                                                                              ),
-                                                                            );
-                                                                          }).toList(),
-                                                                        )
-                                                                            : SizedBox(),
-                                                                      ],
-                                                                    ),
-                                                                    airSideReleaseDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                    Row(
-                                                                      children: [
-                                                                        CustomeText(
-                                                                          text: "${lableModel.shipment} : ",
-                                                                          fontColor: MyColor.textColorGrey2,
-                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                          fontWeight: FontWeight.w400,
-                                                                          textAlign: TextAlign.start,
-                                                                        ),
-                                                                        const SizedBox(width: 5),
-                                                                        CustomeText(
-                                                                          text: "${airSideReleaseDetail.shipmentCount}",
-                                                                          fontColor: MyColor.colorBlack,
-                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                          fontWeight: FontWeight.w600,
-                                                                          textAlign: TextAlign.start,
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                    SizedBox(height: SizeConfig.blockSizeVertical * 0.8),
-                                                                    Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                      children: [
-                                                                        (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
-                                                                          children: [
-                                                                            CustomeText(
-                                                                              text: "${lableModel.temp}. : ",
-                                                                              fontColor: MyColor.textColorGrey2,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                              fontWeight: FontWeight.w400,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            Container(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                                                              decoration: BoxDecoration(
-                                                                                  color: MyColor.dropdownColor,
-                                                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                                              ),
-                                                                              child: InkWell(
-                                                                                child: Row(
-                                                                                  mainAxisSize: MainAxisSize.min,
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                        text: (airSideReleaseDetail.rTemp!.isNotEmpty) ? "${airSideReleaseDetail.rTemp}\u00B0 ${airSideReleaseDetail.rTempUnit}" : "- ${airSideReleaseDetail.rTempUnit}",
-                                                                                        fontColor: MyColor.textColorGrey3,
-                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                        fontWeight: FontWeight.w700,
-                                                                                        textAlign: TextAlign.center),
-                                                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                                    SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                                                                  ],
-                                                                                ),
-                                                                                onTap: () {
-                                                                                  openEditTempBottomDialog(
-                                                                                      context,
-                                                                                      airSideReleaseDetail.uLDNo!,
-                                                                                      airSideReleaseDetail.rTemp!,
-                                                                                      airSideReleaseDetail.rTempUnit!,
-                                                                                      index,
-                                                                                      airSideReleaseDetail.uLDSeqNo!,
-                                                                                      lableModel,
-                                                                                      textDirection);
-                                                                                },
-                                                                              ),
-                                                                            ),
-
-
-                                                                          ],
-                                                                        ),
-                                                                        (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
-                                                                          children: [
-                                                                            CustomeText(
-                                                                              text: "${lableModel.battery} : ",
-                                                                              fontColor: MyColor.textColorGrey2,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                              fontWeight: FontWeight.w400,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            Container(
-                                                                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                                                              decoration: BoxDecoration(
-                                                                                  color: MyColor.dropdownColor,
-                                                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                                              ),
-                                                                              child: InkWell(
-                                                                                child: Row(
-                                                                                  mainAxisSize: MainAxisSize.min,
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                        text: (airSideReleaseDetail.battery != -1) ? "${airSideReleaseDetail.battery}%" : "-",
-                                                                                        fontColor: MyColor.textColorGrey3,
-                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                        fontWeight: FontWeight.w700,
-                                                                                        textAlign: TextAlign.center),
-                                                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                                    SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                                                                  ],
-                                                                                ),
-                                                                                onTap: () {
-                                                                                  openEditBatteryBottomDialog(
-                                                                                      context,
-                                                                                      airSideReleaseDetail.uLDNo!,
-                                                                                      "${airSideReleaseDetail.battery}",
-                                                                                      index,
-                                                                                      airSideReleaseDetail.uLDSeqNo!,
-                                                                                      lableModel,
-                                                                                      textDirection);
-                                                                                },
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-
-
-
-
-
-                                                                    (airSideReleaseDetail.uLDType == "T") ? const SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                                    Row(
-                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                      children: [
-                                                                        Container(
-                                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                                                          decoration: BoxDecoration(
-                                                                              color: MyColor.dropdownColor,
-                                                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                                          ),
-                                                                          child: InkWell(
-                                                                            child: Row(
-                                                                              mainAxisSize: MainAxisSize.min,
-                                                                              children: [
-                                                                                CustomeText(
-                                                                                    text: "P - ${airSideReleaseDetail.priority}",
-                                                                                    fontColor: MyColor.textColorGrey3,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w700,
-                                                                                    textAlign: TextAlign.center),
-                                                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                                SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                                                              ],
-                                                                            ),
-                                                                            onTap: () {
-                                                                             /* setState(() {
-                                                                                _selectedIndex = index; // Update the selected index
-                                                                              });*/
-                                                                              openEditPriorityBottomDialog(
-                                                                                  context,
-                                                                                  airSideReleaseDetail.uLDNo!,
-                                                                                  "${airSideReleaseDetail.priority}",
-                                                                                  index,
-                                                                                  airSideReleaseDetail.uLDSeqNo!,
-                                                                                  lableModel,
-                                                                                  textDirection,
-                                                                                airSideReleaseDetail.uLDType!);
-                                                                            },
-                                                                          ),
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-
-                                                                            Container(
-                                                                              padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                                                              decoration : BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(20),
-                                                                                  color: airSideReleaseDetail.isReleased == "Y" ? MyColor.flightFinalize : MyColor.flightNotArrived
-                                                                              ),
-                                                                              child: CustomeText(
-                                                                                text: airSideReleaseDetail.isReleased == "Y" ? "${lableModel.released}" : "${lableModel.pendingrelease}",
-                                                                                fontColor: MyColor.textColorGrey3,
-                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                                                                fontWeight: FontWeight.w400,
-                                                                                textAlign: TextAlign.center,
-                                                                              ),
-                                                                            ),
-                                                                            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-
-                                                                            InkWell(
-                                                                              onTap: () async {
-
-                                                                                if(airSideReleaseDetail.shipmentCount != 0){
-                                                                                  var value = await Navigator.push(
-                                                                                      context,
-                                                                                      CupertinoPageRoute(
-                                                                                          builder: (context) => AirsideShipmentListPage(
-                                                                                            importSubMenuList: widget.importSubMenuList,
-                                                                                            exportSubMenuList: widget.exportSubMenuList,
-                                                                                            buttonRightsList: const [],
-                                                                                            mainMenuName: widget.mainMenuName,
-                                                                                            uldNo: airSideReleaseDetail.uLDNo!,
-                                                                                            uldType: airSideReleaseDetail.uLDType!,
-                                                                                            flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
-                                                                                            uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
-                                                                                            menuId: widget.menuId,
-                                                                                            location: locationController.text,
-                                                                                            lableModel: lableModel,
-                                                                                          )));
-                                                                                  if(value == "true"){
-                                                                                    _resumeTimerOnInteraction();
-                                                                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                                                  }
-                                                                                  else if(value == "Done"){
-                                                                                    _resumeTimerOnInteraction();
-                                                                                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                                                                                  }
-                                                                                }else{
-                                                                                  SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                                  Vibration.vibrate(duration: 500);
-                                                                                }
-
-                                                                              },
-                                                                              child: Container(
-                                                                                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                                                                decoration: BoxDecoration(
-                                                                                    color: MyColor.dropdownColor,
-                                                                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                                                                ),
-                                                                                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    )
-
-                                                                  ],
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              )
-                                                  : Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 20),
-                                                  child: CustomeText(
-                                                      text: (_isOpenULDFlagEnable == false) ? "${lableModel.alluldtrolleyarerelease}" : "${lableModel.recordNotFound}",
-                                                      // if record not found
-                                                      fontColor: MyColor.textColorGrey,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                      fontWeight: FontWeight.w500,
-                                                      textAlign: TextAlign.center),
-                                                ),
-                                              )
-                                                  : Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 20),
-                                                  child: CustomeText(
-                                                      text: "${lableModel.recordNotFound}",
-                                                      // if record not found
-                                                      fontColor: MyColor.textColorGrey,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                      fontWeight: FontWeight.w500,
-                                                      textAlign: TextAlign.center),
-                                                ),
-                                              )
-                                                  : Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets.symmetric(vertical: 20),
-                                                  child: CustomeText(
-                                                      text: "${lableModel.recordNotFound}",
-                                                      // if record not found
-                                                      fontColor: MyColor.textColorGrey,
-                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                      fontWeight: FontWeight.w500,
-                                                      textAlign: TextAlign.center),
-                                                ),
-                                              )
-
-
-                                            ],
-                                          )
-                                              : Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 20),
-                                              child: CustomeText(
-                                                  text: "${lableModel.recordNotFound}",
-                                                  // if record not found
-                                                  fontColor: MyColor.textColorGrey,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  fontWeight: FontWeight.w500,
-                                                  textAlign: TextAlign.center),
-                                            ),
-                                          )
-                                              : Center(
-                                            child: Padding(
-                                              padding: const EdgeInsets.symmetric(vertical: 20),
-                                              child: CustomeText(
-                                                  text: "${lableModel.recordNotFound}",
-                                                  // if record not found
-                                                  fontColor: MyColor.textColorGrey,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  fontWeight: FontWeight.w500,
-                                                  textAlign: TextAlign.center),
-                                            ),
-                                          )
+                                                       bottom: BorderSide(
+                                                         color: _pageIndex == index
+                                                             ? MyColor.bottomBorderColor
+                                                             : Colors.transparent,
+                                                         width: 3.0,
+                                                       ),
+                                                     ),
+                                                   ),
+                                                   child: Text(
+                                                       _tabs[index],
+                                                       style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                         fontWeight: _pageIndex == index
+                                                             ? FontWeight.w600
+                                                             : FontWeight.w600,
+                                                         color: _pageIndex == index
+                                                             ? MyColor.colorBlack
+                                                             :  MyColor.textColorGrey,
+                                                       ),)
+                                                   ),
+                                                 ),
+                                               );
+                                             }),),
+                                             SizedBox(height: SizeConfig.blockSizeVertical,),
+                                             isViewEnable(lableModel, _pageIndex, textDirection, localizations),
+                                           ],
+                                         ),
                                         ),
                                       ),
-
-
-
                                     ],
                                   ),
                                 ),
@@ -1507,6 +904,835 @@ class _AirSideReleaseState extends State<AirSideRelease>
     );
   }
 
+  Widget isViewEnable(LableModel lableModel, int pageIndex, ui.TextDirection textDirection, AppLocalizations? localizations) {
+    if (pageIndex == 0) {
+      return (airSideReleaseSearchModel != null)
+          ? (airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo != null)
+          ? Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  CustomeText(
+                    text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightNo}",
+                    fontColor: MyColor.colorBlack,
+                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                    fontWeight: FontWeight.w800,
+                    textAlign: TextAlign.start,
+                  ),
+                  const SizedBox(width: 5),
+                  CustomeText(
+                    text: " ${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightDate!.replaceAll(" ", "-")}",
+                    fontColor: MyColor.textColorGrey2,
+                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                    fontWeight: FontWeight.w800,
+                    textAlign: TextAlign.start,
+                  ),
+                ],
+              ),
+            ],
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: MyColor.cardBgColor,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        CustomeText(
+                            text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.containerCount}",
+                            fontColor: MyColor.colorBlack,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.center),
+
+                        CustomeText(
+                            text: "${lableModel.containers}",
+                            fontColor: MyColor.textColorGrey2,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                            fontWeight: FontWeight.w400,
+                            textAlign: TextAlign.center)
+                      ],
+                    )),
+
+                Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        CustomeText(
+                            text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.palletCount}",
+                            fontColor: MyColor.colorBlack,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.center),
+
+                        CustomeText(
+                            text: "${lableModel.pallet}",
+                            fontColor: MyColor.textColorGrey2,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                            fontWeight: FontWeight.w400,
+                            textAlign: TextAlign.center)
+                      ],
+                    )),
+
+                Expanded(
+                    flex: 1,
+                    child: Column(
+                      children: [
+                        CustomeText(
+                            text: "${airSideReleaseSearchModel!.airsideReleaseFlightDetail!.bulkCount}",
+                            fontColor: MyColor.colorBlack,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                            fontWeight: FontWeight.w600,
+                            textAlign: TextAlign.center),
+
+                        CustomeText(
+                            text: "${lableModel.bULK} / ${lableModel.trolley}",
+                            fontColor: MyColor.textColorGrey2,
+                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                            fontWeight: FontWeight.w400,
+                            textAlign: TextAlign.center)
+                      ],
+                    )),
+              ],
+            ),
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+
+          (_selectedItems.isNotEmpty) ? RoundedButtonBlue(
+            focusNode: releaseAllFocusNode,
+            text: "${lableModel.release}",
+            press: () async {
+              if (_selectedItems.isNotEmpty) {
+                if(signatureRequired == "Y"){
+                  var value = await Navigator.push(context, CupertinoPageRoute(
+                    builder: (context) => ESignaturePage(
+                      importSubMenuList: widget.importSubMenuList,
+                      exportSubMenuList: widget.exportSubMenuList,
+                      title: "${lableModel.esignRelease}",
+                      selectedItems: _selectedItems,
+                      locationCode: locationController.text,
+                      flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                      refrelCode: widget.refrelCode,
+                      menuId: widget.menuId,
+                      mainMenuName: widget.mainMenuName,
+                      signatureList: signatureList,
+                    ),));
+
+                  if(value == "true"){
+                    getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                    setState(() {
+                      _selectedItems.clear();
+                    });
+                    _resumeTimerOnInteraction();
+                  }else{
+                    _resumeTimerOnInteraction();
+                  }
+                }
+                else{
+                  for (var item in _selectedItems) {
+                    await releaseAirsideDetail(item);
+                  }
+
+                  setState(() {
+                    _selectedItems.clear();
+                  });
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("${lableModel.noitemselected}"),
+                  ),
+                );
+              }
+            },
+          ) : SizedBox(),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                  SizedBox(
+                    width: SizeConfig.blockSizeHorizontal,
+                  ),
+                  CustomeText(
+                      text: "${lableModel.showreleasepending}",
+                      fontColor: MyColor.textColorGrey2,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.start)
+                ],
+              ),
+              Switch(
+                value: _isOpenULDFlagEnable,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                activeColor: MyColor.primaryColorblue,
+                inactiveThumbColor: MyColor.thumbColor,
+                inactiveTrackColor: MyColor.textColorGrey2,
+                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                onChanged: (value) {
+                  setState(() {
+                    _isOpenULDFlagEnable = value;
+                    _filterList();
+                  });
+                },
+              )
+            ],
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical,),
+          (airSideReleaseSearchModel != null)
+              ? (airSideReleaseSearchModel!.airsideReleaseDetailList!.isNotEmpty)
+              ? (filteredAirsideReleaseDetailList.isNotEmpty)
+              ? ListView.builder(
+            itemCount: (airSideReleaseSearchModel != null)
+                ? filteredAirsideReleaseDetailList.length
+                : 0,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: scrollController,
+            itemBuilder: (context, index) {
+              AirsideReleaseDetailList airSideReleaseDetail = filteredAirsideReleaseDetailList[index];
+
+              List<String> shcCodes = airSideReleaseDetail.sHCCode!.split(',');
+              final isSelected = _selectedItems.contains(airSideReleaseDetail);
+              return Directionality(
+                textDirection: textDirection,
+                child: InkWell(
+                  onTap: () {
+
+
+                  },
+                  onDoubleTap: () async {
+
+                    if(airSideReleaseDetail.shipmentCount != 0){
+                      var value = await Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => AirsideShipmentListPage(
+                                importSubMenuList: widget.importSubMenuList,
+                                exportSubMenuList: widget.exportSubMenuList,
+                                buttonRightsList: const [],
+                                mainMenuName: widget.mainMenuName,
+                                uldNo: airSideReleaseDetail.uLDNo!,
+                                uldType: airSideReleaseDetail.uLDType!,
+                                flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
+                                menuId: widget.menuId,
+                                location: locationController.text,
+                                lableModel: lableModel,
+                              )));
+                      if(value == "true"){
+                        _resumeTimerOnInteraction();
+                        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                      }
+                      else if(value == "Done"){
+                        _resumeTimerOnInteraction();
+                        getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                      }
+                    }else{
+                      SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                      Vibration.vibrate(duration: 500);
+                    }
+
+
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MyColor.colorWhite,
+                      borderRadius: BorderRadius.circular(8),
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: MyColor.colorBlack.withOpacity(0.09),
+                          spreadRadius: 2,
+                          blurRadius: 15,
+                          offset: const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: DottedBorder(
+                      dashPattern: const [7, 7, 7, 7],
+                      strokeWidth: 1,
+                      borderType: BorderType.RRect,
+                      color: airSideReleaseDetail.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                      radius: const Radius.circular(8),
+                      child: Container(
+                        // margin: flightDetails.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? MyColor.dropdownColor : MyColor.colorWhite,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Stack(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Expanded(
+                                        flex:4,
+                                        child: Row(
+                                          children: [
+                                            SvgPicture.asset((airSideReleaseDetail.uLDType == "T") ? trolleySvg : (airSideReleaseDetail.uLDType == "P") ? palletsSvg : uldSvg, height: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_5,),
+                                            SizedBox(width: 8,),
+                                            ULDNumberWidget(
+                                              uldNo: "${airSideReleaseDetail.uLDNo}",
+                                              smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                              bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                              fontColor: MyColor.textColorGrey3,
+                                              uldType: airSideReleaseDetail.uLDType!,
+                                            )
+                                          ],
+                                        )),
+                                    (airSideReleaseDetail.isReleased == "N") ? Expanded(
+                                      flex: 2,
+                                      child: RoundedButtonBlue(text: isSelected ? "${lableModel.unselect}" : "${lableModel.select}",
+                                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.BUTTONVERTICALSIZE /SizeUtils.HEIGHT2,
+                                        press: () {
+
+                                          setState(() {
+                                            if (isSelected) {
+                                              _selectedItems.remove(airSideReleaseDetail); // Deselect
+                                            } else {
+                                              _selectedItems.add(airSideReleaseDetail); // Select the current object
+                                            }
+                                          });
+                                        },),
+                                    ) : const SizedBox()
+                                  ],
+                                ),
+                                airSideReleaseDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
+                                Row(
+                                  children: [
+                                    airSideReleaseDetail.sHCCode!.isNotEmpty
+                                        ? Row(
+                                      children:shcCodes.asMap().entries.take(3).map((entry) {
+                                        int index = entry.key; // Get the index for colorList assignment
+                                        String code = entry.value.trim(); // Get the code value and trim it
+
+                                        return Padding(
+                                          padding: EdgeInsets.only(right: 5.0),
+                                          child: AnimatedBuilder(
+                                            animation: _colorAnimation,
+                                            builder: (context, child) {
+                                              return Container(
+                                                padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                                decoration : BoxDecoration(
+                                                  borderRadius: BorderRadius.circular(5),
+                                                  color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                                child: CustomeText(
+                                                  text: code.trim(),
+                                                  fontColor: MyColor.textColorGrey3,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                  fontWeight: FontWeight.w500,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        );
+                                      }).toList(),
+                                    )
+                                        : SizedBox(),
+                                  ],
+                                ),
+                                airSideReleaseDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                Row(
+                                  children: [
+                                    CustomeText(
+                                      text: "${lableModel.shipment} : ",
+                                      fontColor: MyColor.textColorGrey2,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                      fontWeight: FontWeight.w400,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    CustomeText(
+                                      text: "${airSideReleaseDetail.shipmentCount}",
+                                      fontColor: MyColor.colorBlack,
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                      fontWeight: FontWeight.w600,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: SizeConfig.blockSizeVertical * 0.8),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
+                                      children: [
+                                        CustomeText(
+                                          text: "${lableModel.temp}. : ",
+                                          fontColor: MyColor.textColorGrey2,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w400,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                          decoration: BoxDecoration(
+                                              color: MyColor.dropdownColor,
+                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                          ),
+                                          child: InkWell(
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                CustomeText(
+                                                    text: (airSideReleaseDetail.rTemp!.isNotEmpty) ? "${airSideReleaseDetail.rTemp}\u00B0 ${airSideReleaseDetail.rTempUnit}" : "- ${airSideReleaseDetail.rTempUnit}",
+                                                    fontColor: MyColor.textColorGrey3,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w700,
+                                                    textAlign: TextAlign.center),
+                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                              ],
+                                            ),
+                                            onTap: () {
+                                              openEditTempBottomDialog(
+                                                  context,
+                                                  airSideReleaseDetail.uLDNo!,
+                                                  airSideReleaseDetail.rTemp!,
+                                                  airSideReleaseDetail.rTempUnit!,
+                                                  index,
+                                                  airSideReleaseDetail.uLDSeqNo!,
+                                                  lableModel,
+                                                  textDirection);
+                                            },
+                                          ),
+                                        ),
+
+
+                                      ],
+                                    ),
+                                    (airSideReleaseDetail.uLDType == "T") ? SizedBox() : Row(
+                                      children: [
+                                        CustomeText(
+                                          text: "${lableModel.battery} : ",
+                                          fontColor: MyColor.textColorGrey2,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w400,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                          decoration: BoxDecoration(
+                                              color: MyColor.dropdownColor,
+                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                          ),
+                                          child: InkWell(
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                CustomeText(
+                                                    text: (airSideReleaseDetail.battery != -1) ? "${airSideReleaseDetail.battery}%" : "-",
+                                                    fontColor: MyColor.textColorGrey3,
+                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                    fontWeight: FontWeight.w700,
+                                                    textAlign: TextAlign.center),
+                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                              ],
+                                            ),
+                                            onTap: () {
+                                              openEditBatteryBottomDialog(
+                                                  context,
+                                                  airSideReleaseDetail.uLDNo!,
+                                                  "${airSideReleaseDetail.battery}",
+                                                  index,
+                                                  airSideReleaseDetail.uLDSeqNo!,
+                                                  lableModel,
+                                                  textDirection);
+                                            },
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+
+
+
+                                (airSideReleaseDetail.uLDType == "T") ? const SizedBox() : SizedBox(height: SizeConfig.blockSizeVertical,),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                                      decoration: BoxDecoration(
+                                          color: MyColor.dropdownColor,
+                                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                      ),
+                                      child: InkWell(
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            CustomeText(
+                                                text: "P - ${airSideReleaseDetail.priority}",
+                                                fontColor: MyColor.textColorGrey3,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w700,
+                                                textAlign: TextAlign.center),
+                                            SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                            SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          openEditPriorityBottomDialog(
+                                              context,
+                                              airSideReleaseDetail.uLDNo!,
+                                              "${airSideReleaseDetail.priority}",
+                                              index,
+                                              airSideReleaseDetail.uLDSeqNo!,
+                                              lableModel,
+                                              textDirection,
+                                              airSideReleaseDetail.uLDType!);
+                                        },
+                                      ),
+                                    ),
+                                    Row(
+                                      children: [
+
+                                        Container(
+                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                          decoration : BoxDecoration(
+                                              borderRadius: BorderRadius.circular(20),
+                                              color: airSideReleaseDetail.isReleased == "Y" ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                          ),
+                                          child: CustomeText(
+                                            text: airSideReleaseDetail.isReleased == "Y" ? "${lableModel.released}" : "${lableModel.pendingrelease}",
+                                            fontColor: MyColor.textColorGrey3,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                            fontWeight: FontWeight.w400,
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                        SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+                                        InkWell(
+                                          onTap: () async {
+
+                                            if(airSideReleaseDetail.shipmentCount != 0){
+                                              var value = await Navigator.push(
+                                                  context,
+                                                  CupertinoPageRoute(
+                                                      builder: (context) => AirsideShipmentListPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        buttonRightsList: const [],
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: airSideReleaseDetail.uLDNo!,
+                                                        uldType: airSideReleaseDetail.uLDType!,
+                                                        flightSeqNo: airSideReleaseSearchModel!.airsideReleaseFlightDetail!.flightSeqNo!,
+                                                        uldSeqNo: airSideReleaseDetail.uLDSeqNo!,
+                                                        menuId: widget.menuId,
+                                                        location: locationController.text,
+                                                        lableModel: lableModel,
+                                                      )));
+                                              if(value == "true"){
+                                                _resumeTimerOnInteraction();
+                                                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                              }
+                                              else if(value == "Done"){
+                                                _resumeTimerOnInteraction();
+                                                getAirsideReleaseDetail(context, locationController.text, igmNoEditingController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+                                              }
+                                            }else{
+                                              SnackbarUtil.showSnackbar(context, "${lableModel.noShipmentFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              Vibration.vibrate(duration: 500);
+                                            }
+
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                            decoration: BoxDecoration(
+                                                color: MyColor.dropdownColor,
+                                                borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                            ),
+                                            child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+              : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: (_isOpenULDFlagEnable == false) ? "${lableModel.alluldtrolleyarerelease}" : "${lableModel.recordNotFound}",
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          )
+              : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: "${lableModel.recordNotFound}",
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          )
+              : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: "${lableModel.recordNotFound}",
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          )
+
+
+        ],
+      )
+          : Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: CustomeText(
+              text: "${lableModel.recordNotFound}",
+              fontColor: MyColor.textColorGrey,
+              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+              fontWeight: FontWeight.w500,
+              textAlign: TextAlign.center),
+        ),
+      )
+          : Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: CustomeText(
+              text: "${lableModel.recordNotFound}",
+              fontColor: MyColor.textColorGrey,
+              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+              fontWeight: FontWeight.w500,
+              textAlign: TextAlign.center),
+        ),
+      );
+    }
+    if(pageIndex == 1){
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                decoration: BoxDecoration(
+                    color: MyColor.dropdownColor,
+                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                ),
+                child: Icon(Icons.navigate_before_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+              ),
+              CustomeText(
+                  text: "06-Jan-2025",
+                  // if record not found
+                  fontColor: MyColor.primaryColorblue,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                  fontWeight: FontWeight.w600,
+                  textAlign: TextAlign.center),
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                decoration: BoxDecoration(
+                    color: MyColor.dropdownColor,
+                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                ),
+                child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
+              )
+            ],
+          ),
+          SizedBox(height: SizeConfig.blockSizeVertical),
+
+          (flightList.isNotEmpty)
+              ? GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Number of columns
+              crossAxisSpacing: 12, // Horizontal spacing between columns
+              mainAxisSpacing: 2, // Vertical spacing between rows
+              childAspectRatio: 3, // Aspect ratio of each grid item
+            ),
+            itemCount: flightList.length,
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            controller: scrollController,
+            itemBuilder: (context, index) {
+              String flight = flightList![index];
+
+              return Directionality(
+                textDirection: textDirection,
+                child: InkWell(
+                  // focusNode: uldListFocusNode,
+                  onTap: () async {
+
+                  },
+                  onDoubleTap: () async {
+
+
+                  },
+                  child: Container(
+                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    decoration: BoxDecoration(
+                      color: MyColor.colorWhite,
+                      borderRadius: BorderRadius.circular(8),
+
+                      boxShadow: [
+                        BoxShadow(
+                          color: MyColor.colorBlack.withOpacity(0.09),
+                          spreadRadius: 2,
+                          blurRadius: 15,
+                          offset: const Offset(0, 3), // changes position of shadow
+                        ),
+                      ],
+                    ),
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: MyColor.colorWhite,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomeText(text: flight, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
+          )
+              : Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 20),
+              child: CustomeText(
+                  text: "${lableModel.recordNotFound}",
+                  // if record not found
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),
+            ),
+          ),
+        ],
+      );
+    }
+    if(pageIndex == 2){
+      return (uldList.isNotEmpty)
+          ? GridView.builder(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2, // Number of columns
+          crossAxisSpacing: 12, // Horizontal spacing between columns
+          mainAxisSpacing: 2, // Vertical spacing between rows
+          childAspectRatio: 3, // Aspect ratio of each grid item
+        ),
+        itemCount: uldList.length,
+        physics: const NeverScrollableScrollPhysics(),
+        shrinkWrap: true,
+        controller: scrollController,
+        itemBuilder: (context, index) {
+          String uld = uldList![index];
+
+          return Directionality(
+            textDirection: textDirection,
+            child: InkWell(
+              // focusNode: uldListFocusNode,
+              onTap: () async {
+
+              },
+              onDoubleTap: () async {
+
+
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                decoration: BoxDecoration(
+                  color: MyColor.colorWhite,
+                  borderRadius: BorderRadius.circular(8),
+
+                  boxShadow: [
+                    BoxShadow(
+                      color: MyColor.colorBlack.withOpacity(0.09),
+                      spreadRadius: 2,
+                      blurRadius: 15,
+                      offset: const Offset(0, 3), // changes position of shadow
+                    ),
+                  ],
+                ),
+                child: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: MyColor.colorWhite,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      CustomeText(text: uld, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                      CustomeText(text: "3", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6_5, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      )
+          : Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 20),
+          child: CustomeText(
+              text: "${lableModel.recordNotFound}",
+              // if record not found
+              fontColor: MyColor.textColorGrey,
+              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+              fontWeight: FontWeight.w500,
+              textAlign: TextAlign.center),
+        ),
+      );
+    }
+
+
+
+    return const SizedBox();
+  }
 
   Future<void> scanLocationQR() async{
     String locationcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
@@ -1785,6 +2011,8 @@ class _AirSideReleaseState extends State<AirSideRelease>
     await context.read<AirSideReleaseCubit>().airsideReleaseTempUpdate(
         seqNo, int.parse(temp), tempUnit, userId, companyCode, menuId);
   }
+
+
 
 }
 
