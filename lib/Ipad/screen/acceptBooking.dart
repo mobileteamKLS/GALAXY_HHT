@@ -508,7 +508,7 @@ class _AcceptBookingState extends State<AcceptBooking> {
                                                 itemBuilder: (ctx, index) {
 
                                                   DateTime currentDay = selectedDate.add(Duration(days: index-2));
-                                                  print("---$currentDay");
+                                                //  print("---$currentDay");
                                                   bool isPickedDate = currentDay.day == selectedDate.day &&
                                                       currentDay.month == selectedDate.month &&
                                                       currentDay.year == selectedDate.year;

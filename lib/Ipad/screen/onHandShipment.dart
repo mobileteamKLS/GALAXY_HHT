@@ -1069,7 +1069,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                 const SizedBox(width: 8),
                 Row(
                   children: [
-                    buildLabel(shipment.commodity.toUpperCase(),  Color(0xffCCDFFA), 8,
+                    buildLabel(shipment.commodity.toUpperCase(),  Color(0xffD1E2FB), 8,
                        ),
                     SizedBox(width: 8),
                     // Icon(
@@ -1263,7 +1263,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: isBorder?color.withOpacity(0.2):color,
         borderRadius: BorderRadius.circular(radius),
         border: isBorder ? Border.all(color: borderColor, width: borderWidth) : null,
       ),

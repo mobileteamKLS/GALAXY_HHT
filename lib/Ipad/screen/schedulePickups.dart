@@ -412,7 +412,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                 itemBuilder: (ctx, index) {
 
                                                   DateTime currentDay = selectedDate.add(Duration(days: index-2));
-                                                  print("---$currentDay");
+                                                //  print("---$currentDay");
                                                   bool isPickedDate = currentDay.day == selectedDate.day &&
                                                       currentDay.month == selectedDate.month &&
                                                       currentDay.year == selectedDate.year;
@@ -474,7 +474,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                                           var formatter = DateFormat('dd-MM-yyyy');
                                                           String formattedDate = formatter.format(selectedDate);
                                                           slotFilterDate=formattedDate;
-                                                          getPickupRequestData(formattedDate,"${selectedTimes.join(',')}");
+                                                          getPickupRequestData(formattedDate,selectedTimes.join(','));
                                                         });
                                                         _centerSelectedItem();
                                                       },
