@@ -29,6 +29,7 @@ import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
 import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
+import '../../export/pages/buildup/builduppage.dart';
 import '../../export/pages/closetrolley/closetrolleypage.dart';
 import '../../export/pages/closeuld/closeuldpage.dart';
 import '../../export/pages/emptyuldtrolley/emptyuldtrolleypage.dart';
@@ -252,7 +253,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                   // state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1293", menuName: "Close Trolley", sNo: 3326, imageIcon: "closeuld", refMenuCode: "§§HHT018§§", IsEnable: "Y"));
+                                   // state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1294", menuName: "Build Up", sNo: 3326, imageIcon: "closeuld", refMenuCode: "§§HHT019§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
@@ -404,6 +405,15 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                             }
                                             else if(refrelCode == SubMenuCodeUtils.CLOSETrolley){
                                               NextScreen(CloseTrolleyPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.BuildUp){
+                                              NextScreen(BuildUpPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

@@ -381,7 +381,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                   if(state.closeReopenModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.closeReopenModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-
                                   }else{
                                     callSearchApi(scanULDController.text);
                                   }
@@ -514,10 +513,10 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
                                                         decoration : BoxDecoration(
                                                             borderRadius: BorderRadius.circular(20),
-                                                            color: (uldDetail!.uLDStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                            color: (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                         ),
                                                         child: CustomeText(
-                                                          text: (uldDetail!.uLDStatus == "O") ? "${lableModel!.open}" : "${lableModel!.closed}",
+                                                          text: (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel!.open}" : "${lableModel!.closed}",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.bold,
@@ -569,7 +568,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       ),
                                                     ],
                                                   ),
-
                                                 ],
                                               ),
                                               SizedBox(height: SizeConfig.blockSizeVertical),
@@ -593,7 +591,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           ),
 
 
-                                                          (uldDetail != null) ? (uldDetail!.uLDStatus == "O")
+                                                          (uldDetail != null) ? (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R")
                                                               ? Container(
                                                             padding: const EdgeInsets.only(left: 2,),
                                                             decoration: BoxDecoration(
@@ -1188,21 +1186,21 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O") ? "Close" : "${lableModel.reOpen}" : "Close",
+                                      text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "Close" : "${lableModel.reOpen}" : "Close",
                                       press: () async {
                                         scanULDFocusNode.unfocus();
                                         scanULDBtnFocusNode.unfocus();
                                         if(uldDetail != null){
                                           // call api for close and re open
 
-                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O") ? "${lableModel.closed} " : "Re-Open ULD", (uldDetail!.uLDStatus == "O") ? "Are you sure want to close this ULD ?" : "Are you sure want to re-open this ULD ?" , lableModel);
+                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel.closed} " : "Re-Open ULD", (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "Are you sure want to close this ULD ?" : "Are you sure want to re-open this ULD ?" , lableModel);
 
 
                                           if(closeReopenULD == true){
 
                                             await context.read<CloseULDCubit>().closeReopenULDModel(
                                                 uldDetail!.uLDSeqNo!,
-                                                (uldDetail!.uLDStatus == "O") ? "C" : "R",
+                                                (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "C" : "R",
                                                 _user!.userProfile!.userIdentity!,
                                                 _splashDefaultData!.companyCode!,
                                                 widget.menuId);

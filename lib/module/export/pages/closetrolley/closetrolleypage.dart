@@ -326,6 +326,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                       FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
                                     });
                                   }else{
+                                    trolleyDetail = null;
                                     trolleyDetail = state.closeTrolleySearchModel.trolleyDetail![0];
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
@@ -340,7 +341,21 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-
+                                else if (state is CloseTrolleyReopenSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.closeTrolleyReopenModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.closeTrolleyReopenModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    SnackbarUtil.showSnackbar(context, state.closeTrolleyReopenModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    callSearchApi(scanTrolleyController.text);
+                                  }
+                                }
+                                else if (state is CloseTrolleyReopenFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
 
                               },
@@ -456,10 +471,10 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.0, vertical: SizeConfig.blockSizeVertical * 0.2),
                                                         decoration : BoxDecoration(
                                                             borderRadius: BorderRadius.circular(20),
-                                                            color: (trolleyDetail!.trolleyStatus == "O") ? MyColor.flightFinalize : MyColor.flightNotArrived
+                                                            color: (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                         ),
                                                         child: CustomeText(
-                                                          text: (trolleyDetail!.trolleyStatus == "O") ? "${lableModel.open}" : "${lableModel.closed}",
+                                                          text: (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "${lableModel.open}" : "${lableModel.closed}",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.bold,
@@ -965,14 +980,15 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: (trolleyDetail != null) ? (trolleyDetail!.trolleyStatus == "O") ? "Close" : "Re-Open" : "Close",
+                                      text: (trolleyDetail != null) ? (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "Close" : "Re-Open" : "Close",
                                       press: () async {
-                                        scanTrolleyFocusNode.unfocus();
-                                        scanTrolleyBtnFocusNode.unfocus();
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
+                                        });
                                         if(trolleyDetail != null){
                                           // call api for close and re open
 
-                                          bool? closeReopenTrolley = await DialogUtils.closeReopenULDDialog(context, trolleyDetail!.trolleyNo!, (trolleyDetail!.trolleyStatus == "O") ? "Closed Trolley" : "Re-Open Trolley", (trolleyDetail!.trolleyStatus == "O") ? "Are you sure want to close this Trolley ?" : "Are you sure want to re-open this Trolley ?" , lableModel);
+                                          bool? closeReopenTrolley = await DialogUtils.closeReopenULDDialog(context, trolleyDetail!.trolleyNo!, (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "Closed Trolley" : "Re-Open Trolley", (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "Are you sure want to close this Trolley ?" : "Are you sure want to re-open this Trolley ?" , lableModel);
 
 
                                           if(closeReopenTrolley == true){
@@ -980,16 +996,15 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                             await context.read<CloseTrolleyCubit>().closeTrolleyReopenModel(
                                                 trolleyDetail!.flightSeqNo!,
                                                 trolleyDetail!.trolleySeqNo!,
-                                                (trolleyDetail!.trolleyStatus == "O") ? "C" : "R",
+                                                (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "C" : "R",
                                                 _user!.userProfile!.userIdentity!,
                                                 _splashDefaultData!.companyCode!,
                                                 widget.menuId);
                                           }else{
                                             _resumeTimerOnInteraction();
                                           }
-
-
-                                        }else{
+                                        }
+                                        else{
                                           SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {

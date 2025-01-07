@@ -8,6 +8,8 @@ const business = 'assets/images/business.webp';
 const courier = 'assets/images/courier.webp';
 const done = 'assets/images/done.webp';
 
+
+
 const kaleGalaxyLogo = 'assets/images/kalegalaxylogo.png';
 const kaleLogisticsLogo = 'assets/images/kalelogo.png';
 const galaxylogo = 'assets/images/galaxylogo.png';
@@ -111,5 +113,8 @@ const loginbg = 'assets/images/loginbg.jpg';
 
 const palletsSvg = 'assets/svgImages/pallets.svg';
 const trolleySvg = 'assets/svgImages/trolley.svg';
+const notApplicable = 'assets/svgImages/notapplicable.svg';
+const donesvg = 'assets/svgImages/donesvg.svg';
+const closesvg = 'assets/svgImages/close.svg';
 const uldSvg = 'assets/svgImages/uld.svg';
 

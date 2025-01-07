@@ -1,21 +1,9 @@
 import 'package:galaxy/module/export/model/closetrolley/gettrolleydocumentlistmodel.dart';
-import 'package:galaxy/module/export/model/closeuld/getscaleistmodel.dart';
-import 'package:galaxy/module/export/model/closeuld/savecontourmodel.dart';
-import 'package:galaxy/module/export/model/closeuld/saveequipmentmodel.dart';
-import 'package:galaxy/module/export/model/closeuld/savescalemodel.dart';
-import 'package:galaxy/module/export/model/closeuld/savetareweightmodel.dart';
-
 import '../../../model/closetrolley/closetrolleyreopenmodel.dart';
 import '../../../model/closetrolley/closetrolleysearchmodel.dart';
 import '../../../model/closetrolley/gettrolleyscalelistmodel.dart';
 import '../../../model/closetrolley/savetrolleyscalemodel.dart';
-import '../../../model/closeuld/closereopenmodel.dart';
-import '../../../model/closeuld/closeuldsearchmodel.dart';
-import '../../../model/closeuld/equipmentmodel.dart';
-import '../../../model/closeuld/getcontourlistmodel.dart';
-import '../../../model/closeuld/getdocumentlistmodel.dart';
-import '../../../model/closeuld/getremarklistmodel.dart';
-import '../../../model/closeuld/saveremarkmodel.dart';
+
 
 class CloseTrolleyState {}
 
