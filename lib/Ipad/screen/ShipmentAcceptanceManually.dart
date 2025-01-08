@@ -1094,6 +1094,7 @@ class _ShipmentAcceptanceManuallyState
                                                 hasIcon: false,
                                                 hastextcolor: true,
                                                 animatedLabel: true,
+                                                isSpaceAllowed: true,
                                                 needOutlineBorder: true,
                                                 onPress: () {},
                                                 labelText: "Agent Code - Name*",

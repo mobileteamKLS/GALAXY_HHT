@@ -791,7 +791,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                             children: [
 
                                               Center(
-                                                child: Text("Total Shipments  ",style: TextStyle(
+                                                child: Text("Total Weight  ",style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   color: Colors.grey[700],

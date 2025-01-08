@@ -205,11 +205,15 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     var queryParams = {
       "InputXML":xml
     };
-    bool allNull = isOnList.every((element) => element == null);
+    bool allFalse = isOnList.every((element) => element == false);
+    if(allFalse){
+      showDataNotFoundDialog(context,"Please select at least one record.");
+      return;
+    }
+    print("---$allFalse");
 
-    print("---$allNull");
     print(xml);
-
+    return;
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
@@ -679,7 +683,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                             children: [
 
                                               Center(
-                                                child: Text("Total Shipments  ",style: TextStyle(
+                                                child: Text("Total Weight  ",style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   color: Colors.grey[700],
@@ -1362,11 +1366,12 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
   void checkboxChanged(bool? value, int index) {
     setState(() {
       isOnList[index] = value;
+      print("---$value");
       if (value !=false) {
         // saveList.removeWhere(
         //         (element) => element["item"] == appointBookingList[index]);
         saveList.add({"item": appointBookingList[index], "value": value});
-      } else {
+      } else if(value==true) {
         saveList.removeWhere(
                 (element) => element["item"] == appointBookingList[index]);
       }

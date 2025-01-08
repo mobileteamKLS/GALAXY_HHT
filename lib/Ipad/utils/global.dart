@@ -44,11 +44,11 @@ class Global{
       case 'ACCEPTED':
         return "";
       case 'REQUESTED FOR EXAMINATION':
-        return "Forward For Exam.";
-      case 'FORWARDED FOR EXAMINATION':
-        return "Back To Storage";
-      case 'EXAMINATION MARKED COMPLETED':
         return "";
+      case 'FORWARDED FOR EXAMINATION':
+        return "Forward For Exam.";
+      case 'EXAMINATION MARKED COMPLETED':
+        return "Back To Storage";
       case 'BACK TO STORAGE':
         return "";
       case 'DELIVERED':

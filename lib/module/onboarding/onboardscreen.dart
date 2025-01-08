@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+  import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
@@ -73,9 +73,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       backgroundColor: MyColor.colorWhite,
       body: Stack(
         children: [
-
-
-
           Positioned(
             top: 0,
             bottom: 0,

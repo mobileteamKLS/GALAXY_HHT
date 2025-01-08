@@ -623,6 +623,7 @@ class _WarehouseLocationState
                                                   child:
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
+                                                    controller: hawbController,
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,

@@ -55,6 +55,7 @@ class CustomeEditTextWithBorder extends StatefulWidget {
   final TextDirection textDirection;
   final List<TextInputFormatter>? inputFormatters;
   final noUpperCase;
+  final isSpaceAllowed;
 
   const CustomeEditTextWithBorder(
       {Key? key,
@@ -89,6 +90,7 @@ class CustomeEditTextWithBorder extends StatefulWidget {
         this.hastextcolor = false,
         this.showErrorText = true,
         this.noUpperCase = false,
+        this.isSpaceAllowed=false,
         this.prefixIconcolor,
         this.hintTextcolor,
         this.verticalPadding = 0,
@@ -143,7 +145,9 @@ class _ULDCustomTextFieldState extends State<CustomeEditTextWithBorder> {
       maxLength: widget.maxLength,
       maxLines: widget.maxLines,
       readOnly: widget.readOnly,
-      inputFormatters: <TextInputFormatter>[
+      inputFormatters:widget.isSpaceAllowed?  [
+        FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z.\\s]")),
+      ]:[
         FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z.]")),
       ],
       /*  inputFormatters: [

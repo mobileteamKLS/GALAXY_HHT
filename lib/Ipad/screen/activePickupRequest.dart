@@ -156,6 +156,12 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
               }
               filteredMap[item.queueRowId]!.add(item);
             }
+            if (item.elementRowId == -1){
+              setState(() {
+                totalPcs += int.parse(item.col7);
+                totalWeight += double.parse(item.col8);
+              });
+            }
           }
           queueRowIds= filteredMap.keys.toList();
           isExpandedList = List<bool>.filled(queueRowIds.length, false);
@@ -165,9 +171,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                   (index) =>
                   TextEditingController());
         });
-        setState(() {
 
-        });
 
       }
       DialogUtils.hideLoadingDialog(context);
@@ -274,6 +278,17 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     getPickupRequestData(formattedDate,"");
   }
 
+  bool validateControllers() {
+    for (int i = 0; i < assignToControllers.length; i++) {
+      if (isOnList[i] && assignToControllers[i].text.isEmpty) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+
   saveBookings() async {
     FocusScope.of(context).requestFocus(FocusNode());
     String xml = buildInputXml(
@@ -286,9 +301,17 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     var queryParams = {
       "InputXML":xml
     };
-    bool allNull = isOnList.every((element) => element == null);
+    bool allFalse = isOnList.every((element) => element == false);
+    if(allFalse){
+      showDataNotFoundDialog(context,"Please select at least one record.");
+      return;
+    }
+    if(!validateControllers()){
+      showDataNotFoundDialog(context,"Please enter Assignee for selected item.");
+      return;
+    }
 
-    print("---$allNull");
+    print("---$allFalse");
     print(xml);
 
     DialogUtils.showLoadingDialog(context);
@@ -759,7 +782,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                             children: [
 
                                               Center(
-                                                child: Text("Total Shipments  ",style: TextStyle(
+                                                child: Text("Total Weight  ",style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   color: Colors.grey[700],

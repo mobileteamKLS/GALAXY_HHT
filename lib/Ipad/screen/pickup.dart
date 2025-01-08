@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:galaxy/Ipad/screen/schedulePickups.dart';
 import 'package:galaxy/Ipad/utils/global.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import 'package:intl/intl.dart';
@@ -361,7 +362,8 @@ class _PickUpsState
             ),
           );
           if(isTrue){
-            awbSearch();
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => const ScheduledPickups()));
           }
         }
       }
@@ -752,7 +754,7 @@ class _PickUpsState
                                                   width:
                                                   MediaQuery.sizeOf(context)
                                                       .width *
-                                                      0.22,
+                                                      0.12,
                                                   child:
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -784,25 +786,90 @@ class _PickUpsState
                                                   width:
                                                   MediaQuery.sizeOf(context)
                                                       .width *
-                                                      0.20,
+                                                      0.30,
                                                   child:
-                                                  CustomeEditTextWithBorder(
-                                                    lablekey: 'MAWB',
-                                                    hasIcon: false,
-                                                    hastextcolor: true,
-                                                    animatedLabel: true,
-                                                    controller:
-                                                    customBrokerController,
-                                                    needOutlineBorder: true,
-                                                    labelText: "Custom Broker",
-                                                    onPress: () {},
-                                                    readOnly: false,
-
-                                                    maxLength: 8,
-                                                    fontSize: 18,
-                                                    onChanged:
-                                                        (String, bool) {},
+                                                  TypeAheadField<Customer>(
+                                                    controller: customBrokerController,
+                                                    debounceDuration: const Duration(
+                                                        milliseconds: 300),
+                                                    suggestionsCallback: (search){
+                                                      if (search.isEmpty) {
+                                                        return null;
+                                                      }
+                                                      return AgentService.find(search);},
+                                                    itemBuilder: (context, item) {
+                                                      return Container(
+                                                        decoration:
+                                                        const BoxDecoration(
+                                                          border: Border(
+                                                            top: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            left: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            right: BorderSide(
+                                                                color: Colors.black,
+                                                                width: 0.2),
+                                                            bottom: BorderSide
+                                                                .none, // No border on the bottom
+                                                          ),
+                                                        ),
+                                                        padding:
+                                                        const EdgeInsets.all(8.0),
+                                                        child: Row(
+                                                          children: [
+                                                            Text(item.customerName
+                                                                .toUpperCase()),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                    builder: (context, controller,
+                                                        focusNode) =>
+                                                        CustomeEditTextWithBorder(
+                                                          lablekey: 'MAWB',
+                                                          controller: controller,
+                                                          focusNode: focusNode,
+                                                          hasIcon: false,
+                                                          isSpaceAllowed: true,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          onPress: () {},
+                                                          labelText: "Custom Broker",
+                                                          readOnly: false,
+                                                          fontSize: 18,
+                                                          onChanged: (String, bool) {},
+                                                        ),
+                                                    decorationBuilder:
+                                                        (context, child) => Material(
+                                                      type: MaterialType.card,
+                                                      elevation: 4,
+                                                      borderRadius:
+                                                      BorderRadius.circular(8.0),
+                                                      child: child,
+                                                    ),
+                                                    // itemSeparatorBuilder: (context, index) =>
+                                                    //     Divider(),
+                                                    emptyBuilder: (context) =>
+                                                    const Padding(
+                                                      padding: EdgeInsets.all(8.0),
+                                                      child: Text('No Customer Found',
+                                                          style: TextStyle(
+                                                              fontSize: 16)),
+                                                    ),
+                                                    onSelected: (value) {
+                                                      setState(() {
+                                                        customBrokerController.text = value
+                                                            .customerName
+                                                            .toUpperCase();
+                                                        selectedAgentId=value.customerId;
+                                                        print("Agent ID $selectedAgentId");
+                                                      });
+                                                    },
                                                   ),
+
                                                 )
                                               ],
                                             ),
@@ -926,7 +993,7 @@ class _PickUpsState
                                                   width:
                                                   MediaQuery.sizeOf(context)
                                                       .width *
-                                                      0.22,
+                                                      0.12,
                                                   child:
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
@@ -1048,7 +1115,8 @@ class _PickUpsState
                                                     animatedLabel: true,
                                                     needOutlineBorder: true,
                                                     noUpperCase: true,
-                                                    labelText: "Remark",
+                                                    isSpaceAllowed: true,
+                                                    labelText: "Remarks",
                                                     onPress: () {},
                                                     maxLength: 4,
                                                     fontSize: 18,
@@ -1152,7 +1220,7 @@ class _PickUpsState
                                           performPickUpAction(false);
                                         },
                                         child: const Text(
-                                            "Fail Pick Up",style: TextStyle(color: Color(0xffD50000)),),
+                                            "Fail Pickup",style: TextStyle(color: Color(0xffD50000)),),
                                       ),
                                     ),
                                     const SizedBox(
@@ -1181,7 +1249,7 @@ class _PickUpsState
                                           }
                                         },
                                         child: const Text(
-                                          "Complete Pick Up",
+                                          "Complete Pickup",
                                           style: TextStyle(color: Colors.white),
                                         ),
                                       ),

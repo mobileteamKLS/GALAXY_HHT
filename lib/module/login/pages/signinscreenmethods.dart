@@ -198,9 +198,6 @@ class _SignInScreenMethodState extends State<SignInScreenMethod> {
 
               child: Stack(
                 children: [
-
-
-
                   Positioned(
                     top: 50,
                     child: Padding(

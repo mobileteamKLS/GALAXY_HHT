@@ -1442,7 +1442,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       ),
       child: Center(
         child: Text(
-          text,
+          text=="EXAMINATION MARKED COMPLETED"?"EXAM. MARKED COMPLETED":text,
           style: const TextStyle(color: Colors.black87, fontWeight: FontWeight.bold),
         ),
       ),

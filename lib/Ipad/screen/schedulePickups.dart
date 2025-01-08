@@ -157,6 +157,12 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
               }
               filteredMap[item.queueRowId]!.add(item);
             }
+            if (item.elementRowId == -1){
+              setState(() {
+                totalPcs += int.parse(item.col7);
+                totalWeight += double.parse(item.col8);
+              });
+            }
           }
           queueRowIds= filteredMap.keys.toList();
           isExpandedList = List<bool>.filled(queueRowIds.length, false);
@@ -675,7 +681,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                             children: [
 
                                               Center(
-                                                child: Text("Total Shipments  ",style: TextStyle(
+                                                child: Text("Total Weight  ",style: TextStyle(
                                                   fontWeight: FontWeight.bold,
                                                   fontSize: 16,
                                                   color: Colors.grey[700],
