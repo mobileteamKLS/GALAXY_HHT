@@ -1,11 +1,7 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
@@ -14,39 +10,30 @@ import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/uldnumberwidget.dart';
 import 'package:vibration/vibration.dart';
-
-import '../../../../core/images.dart';
 import '../../../../core/mycolor.dart';
 import '../../../../language/appLocalizations.dart';
 import '../../../../language/model/lableModel.dart';
 import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
-import '../../../../utils/awbformatenumberutils.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
-import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
-import '../../../../widget/roundbutton.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
 import 'dart:ui' as ui;
-
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/buildup/buildupawblistmodel.dart';
 import '../../services/buildup/builduplogic/buildupstate.dart';
-import 'buildupawbremarklistack.dart';
 
 class BuildUpAddShipmentPage extends StatefulWidget {
 
 
-  String location;
   String mainMenuName;
   int menuId;
   LableModel lableModel;
@@ -54,12 +41,13 @@ class BuildUpAddShipmentPage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   String title;
   String refrelCode;
-  String uldType;
+
   int flightSeqNo;
   int uldSeqNo;
   String uldNo;
   String awbNo;
   int awbRowId;
+  String uldType;
   int pieces;
   double weight;
 
@@ -67,18 +55,17 @@ class BuildUpAddShipmentPage extends StatefulWidget {
   BuildUpAddShipmentPage({super.key,
     required this.importSubMenuList,
     required this.exportSubMenuList,
-    required this.uldNo,
     required this.mainMenuName,
-    required this.uldSeqNo,
     required this.menuId,
-    required this.location,
     required this.lableModel,
     required this.title,
     required this.refrelCode,
-    required this.uldType,
     required this.flightSeqNo,
+    required this.uldSeqNo,
+    required this.uldNo,
     required this.awbNo,
     required this.awbRowId,
+    required this.uldType,
     required this.pieces,
     required this.weight
    });
@@ -103,8 +90,12 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
   TextEditingController nopController = TextEditingController();
   TextEditingController weightController = TextEditingController();
 
+  TextEditingController shcController = TextEditingController();
+
+
   FocusNode nopFocusNode = FocusNode();
   FocusNode weightFocusNode = FocusNode();
+  FocusNode shcFocusNode = FocusNode();
 
 
   double weightCount = 0.00;
@@ -117,6 +108,8 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
 
 
 
+  String shcCodes = "DGR,GEN,VAL,PER";
+  List<String> selectedShcCodes = [];
 
 
 
@@ -124,6 +117,8 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
   void initState() {
     // TODO: implement initState
     super.initState();
+
+    selectedShcCodes = shcCodes.split(",");
 
     totalNop = int.parse("${widget.pieces}");
     totalWt = double.parse("${widget.weight}");
@@ -161,7 +156,6 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
   Future<void> _handleInactivityTimeout() async {
 
     bool? activateORNot = await DialogUtils.showingActivateTimerDialog(context, _user!.userProfile!.userId!, _splashDefaultData!.companyCode!);
-    print("CHECK_ACTIVATE_OR_NOT FLIGHT_CHECK====== ${activateORNot}");
     if(activateORNot == true){
       inactivityTimerManager!.resetTimer();
     }else{
@@ -544,14 +538,92 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
                                                     child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
 
+                                                        CustomeText(text: "SHC Codes", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.end),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                        ListView.builder(
+                                                          itemCount: shcCodes.split(",").length,
+                                                          shrinkWrap: true,
+                                                          physics: const NeverScrollableScrollPhysics(),
+                                                          itemBuilder: (context, index) {
+                                                            Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
+                                                            String content = shcCodes.split(",")[index];
+                                                            bool isSwitchOn = selectedShcCodes.contains(content);
 
-
-
-
-                                                        
+                                                            return Column(
+                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                              children: [
+                                                                Padding(
+                                                                  padding: EdgeInsets.symmetric(vertical: SizeUtils.HEIGHT5),
+                                                                  child: Row(
+                                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child: Row(
+                                                                          children: [
+                                                                            CircleAvatar(
+                                                                              radius: SizeConfig.blockSizeVertical * SizeUtils.TEXTSIZE_2_2,
+                                                                              backgroundColor: backgroundColor,
+                                                                              child: CustomeText(
+                                                                                text: "${content}".substring(0, 2).toUpperCase(),
+                                                                                fontColor: MyColor.colorBlack,
+                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                                fontWeight: FontWeight.w500,
+                                                                                textAlign: TextAlign.center,
+                                                                              ),
+                                                                            ),
+                                                                            SizedBox(
+                                                                              width: 15,
+                                                                            ),
+                                                                            Flexible(
+                                                                              child: CustomeText(
+                                                                                text: content!,
+                                                                                fontColor: MyColor.colorBlack,
+                                                                                fontSize: SizeConfig.textMultiplier * 1.5,
+                                                                                fontWeight: FontWeight.w400,
+                                                                                textAlign: TextAlign.start,
+                                                                              ),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                      SizedBox(width: 2),
+                                                                      Switch(
+                                                                        value: isSwitchOn,
+                                                                        materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                        activeColor: MyColor.primaryColorblue,
+                                                                        inactiveThumbColor: MyColor.thumbColor,
+                                                                        inactiveTrackColor: MyColor.textColorGrey2,
+                                                                        trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                                        onChanged: (value) {
+                                                                          setState(() {
+                                                                            if (value) {
+                                                                              // Add to the selected list
+                                                                              if (!selectedShcCodes.contains(content)) {
+                                                                                selectedShcCodes.add(content);
+                                                                              }
+                                                                            } else {
+                                                                              // Remove from the selected list
+                                                                              selectedShcCodes.remove(content);
+                                                                            }
+                                                                          });
+                                                                        },
+                                                                      )
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                                CustomDivider(
+                                                                  space: 0,
+                                                                  color: Colors.black,
+                                                                  hascolor: true,
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        )
                                                       ],
                                                     ),
 
@@ -564,7 +636,73 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                   ),
                                 ),
                               ),
-                            )
+                            ),
+                            SizedBox(height: SizeConfig.blockSizeVertical),
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: MyColor.colorWhite,
+                                borderRadius: BorderRadius.circular(8),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: MyColor.colorBlack.withOpacity(0.09),
+                                    spreadRadius: 2,
+                                    blurRadius: 15,
+                                    offset: Offset(0, 3), // changes position of shadow
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 2,
+                                    child: CustomTextField(
+                                      textDirection: textDirection,
+                                      controller: shcController,
+                                      focusNode: shcFocusNode,
+                                      onPress: () {},
+                                      hasIcon: false,
+                                      maxLength: 3,
+                                      hastextcolor: true,
+                                      animatedLabel: true,
+                                      needOutlineBorder: true,
+                                      labelText: "SHC *",
+                                      readOnly: false,
+                                      onChanged: (value) {
+
+                                      },
+                                      fillColor:  Colors.grey.shade100,
+                                      textInputType: TextInputType.text,
+                                      inputAction: TextInputAction.next,
+                                      hintTextcolor: Colors.black45,
+                                      verticalPadding: 0,
+                                      digitsOnly: false,
+
+                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                      circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                      boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                      validator: (value) {
+                                        if (value!.isEmpty) {
+                                          return "Please fill out this field";
+                                        } else {
+                                          return null;
+                                        }
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT3,),
+                                  Expanded(
+                                    flex: 1,
+                                    child: RoundedButtonBlue(
+                                      text: "Add to list",
+                                      press: () {
+
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),

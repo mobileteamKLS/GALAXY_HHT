@@ -1128,13 +1128,19 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                 color: MyColor.primaryColorblue,
                                 press: () async {
                                   inactivityTimerManager?.stopTimer();
-                                  await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpAWBListPage(
+                                  await Navigator.push(context, CupertinoPageRoute(
+                                      builder: (context) => BuildUpAWBListPage(
                                       importSubMenuList: widget.importSubMenuList,
                                       exportSubMenuList: widget.exportSubMenuList,
                                       title: "AWB List",
                                       refrelCode: widget.refrelCode,
                                       menuId: widget.menuId,
-                                      mainMenuName: widget.mainMenuName, uldNo: 'AKE 12345 AJ', uldSeqNo: 12345, location: locationController.text, lableModel: lableModel, uldType: "U", flightSeqNo: 12360,),));
+                                      mainMenuName: widget.mainMenuName,
+                                      lableModel: lableModel,
+                                      flightSeqNo: 12360,
+                                      uldNo: 'AKE 12345 AJ',
+                                      uldSeqNo: 12345,
+                                      uldType: "U")));
                               },)
 
                             ],
@@ -1454,13 +1460,19 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                 color: MyColor.primaryColorblue,
                                 press: () async {
                                   inactivityTimerManager?.stopTimer();
-                                  await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpAWBListPage(
+                                  await Navigator.push(context, CupertinoPageRoute(
+                                    builder: (context) => BuildUpAWBListPage(
                                     importSubMenuList: widget.importSubMenuList,
                                     exportSubMenuList: widget.exportSubMenuList,
                                     title: "AWB List",
                                     refrelCode: widget.refrelCode,
                                     menuId: widget.menuId,
-                                    mainMenuName: widget.mainMenuName, uldNo: 'TTL11221', uldSeqNo: 12345, location: locationController.text, lableModel: lableModel, uldType: "T", flightSeqNo: 12360,),));
+                                    mainMenuName: widget.mainMenuName,
+                                    lableModel: lableModel,
+                                    flightSeqNo: 12360,
+                                    uldNo: 'TTL11221',
+                                    uldSeqNo: 12345,
+                                    uldType: "T"),));
                                 },)
 
                             ],

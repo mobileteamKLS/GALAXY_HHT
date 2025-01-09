@@ -46,32 +46,36 @@ import 'buildupawbremarklistack.dart';
 class BuildUpGroupListPage extends StatefulWidget {
 
 
-  String location;
   String mainMenuName;
-  String uldNo;
-  int uldSeqNo;
   int menuId;
   LableModel lableModel;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   String title;
   String refrelCode;
-  String uldType;
+
   int flightSeqNo;
+  int uldSeqNo;
+  String uldNo;
+  String awbNo;
+  int awbRowId;
+  String uldType;
+
 
   BuildUpGroupListPage({super.key,
     required this.importSubMenuList,
     required this.exportSubMenuList,
-    required this.uldNo,
     required this.mainMenuName,
-    required this.uldSeqNo,
     required this.menuId,
-    required this.location,
     required this.lableModel,
     required this.title,
     required this.refrelCode,
+    required this.flightSeqNo,
+    required this.uldSeqNo,
+    required this.uldNo,
+    required this.awbNo,
+    required this.awbRowId,
     required this.uldType,
-    required this.flightSeqNo
    });
 
   @override
@@ -540,7 +544,6 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                               mainMenuName: widget.mainMenuName,
                                                                                               uldNo: widget.uldNo,
                                                                                               uldSeqNo: widget.uldSeqNo,
-                                                                                              location: "",
                                                                                               lableModel: lableModel!,
                                                                                               uldType: widget.uldType,
                                                                                               flightSeqNo: widget.flightSeqNo,

@@ -46,33 +46,30 @@ import 'buildupawbremarklistack.dart';
 
 class BuildUpAWBListPage extends StatefulWidget {
 
-
-  String location;
   String mainMenuName;
-  String uldNo;
-  int uldSeqNo;
   int menuId;
   LableModel lableModel;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   String title;
   String refrelCode;
-  String uldType;
   int flightSeqNo;
+  int uldSeqNo;
+  String uldNo;
+  String uldType;
 
   BuildUpAWBListPage({super.key,
     required this.importSubMenuList,
     required this.exportSubMenuList,
-    required this.uldNo,
     required this.mainMenuName,
-    required this.uldSeqNo,
     required this.menuId,
-    required this.location,
     required this.lableModel,
     required this.title,
     required this.refrelCode,
+    required this.flightSeqNo,
+    required this.uldSeqNo,
+    required this.uldNo,
     required this.uldType,
-    required this.flightSeqNo
    });
 
   @override
@@ -518,7 +515,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                           dashPattern: const [7, 7, 7, 7],
                                                                           strokeWidth: 1,
                                                                           borderType: BorderType.RRect,
-                                                                          color: shcCodes.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                                                                          color: aWBItem.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
                                                                           radius: const Radius.circular(8),
                                                                           child: Container(
                                                                             padding: const EdgeInsets.all(8),
@@ -700,13 +697,22 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                             } else if (aWBItem.groupBasedAcceptInd == "Y") {
                                                                                               // Navigate to GroupList screen
 
-                                                                                              await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpGroupListPage(
+                                                                                              await Navigator.push(context, CupertinoPageRoute(
+                                                                                                builder: (context) => BuildUpGroupListPage(
                                                                                                 importSubMenuList: widget.importSubMenuList,
                                                                                                 exportSubMenuList: widget.exportSubMenuList,
                                                                                                 title: "AWB Group List",
                                                                                                 refrelCode: widget.refrelCode,
                                                                                                 menuId: widget.menuId,
-                                                                                                mainMenuName: widget.mainMenuName, uldNo: '125-1123 4212', uldSeqNo: 12345, location: "", lableModel: lableModel, uldType: "", flightSeqNo: 12360,),));
+                                                                                                mainMenuName: widget.mainMenuName,
+                                                                                                  lableModel: lableModel,
+                                                                                                  flightSeqNo: widget.flightSeqNo,
+                                                                                                  uldNo: widget.uldNo,
+                                                                                                  uldSeqNo: widget.uldSeqNo,
+                                                                                                  awbNo: aWBItem.aWBNo!,
+                                                                                                  awbRowId: aWBItem.expAWBRowId!,
+                                                                                                  uldType: widget.uldType,
+                                                                                                ),));
 
 
                                                                                             } else {
@@ -720,16 +726,15 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 refrelCode: widget.refrelCode,
                                                                                                 menuId: widget.menuId,
                                                                                                 mainMenuName: widget.mainMenuName,
-                                                                                                  uldNo: widget.uldNo,
-                                                                                                  uldSeqNo: widget.uldSeqNo,
-                                                                                                  location: "",
-                                                                                                  lableModel: lableModel,
-                                                                                                  uldType: widget.uldType,
-                                                                                                  flightSeqNo: widget.flightSeqNo,
+                                                                                                lableModel: lableModel,
+                                                                                                flightSeqNo: widget.flightSeqNo,
+                                                                                                uldNo: widget.uldNo,
+                                                                                                uldSeqNo: widget.uldSeqNo,
                                                                                                 awbNo: aWBItem.aWBNo!,
                                                                                                 awbRowId: aWBItem.expAWBRowId!,
+                                                                                                uldType: widget.uldType,
                                                                                                 pieces: aWBItem.nOP!,
-                                                                                                  weight: aWBItem.weightKg!,
+                                                                                                weight: aWBItem.weightKg!,
                                                                                                 ),));
 
 
