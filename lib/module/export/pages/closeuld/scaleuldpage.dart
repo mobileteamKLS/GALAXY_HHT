@@ -46,7 +46,6 @@ class ScaleULDPage extends StatefulWidget {
   String uldNo;
   int flightSeqNo;
   int uldSeqNo;
-  String uldType;
 
   ScaleULDPage(
       {super.key,
@@ -59,8 +58,7 @@ class ScaleULDPage extends StatefulWidget {
       required this.mainMenuName,
         required this.uldNo,
         required this.flightSeqNo,
-        required this.uldSeqNo,
-        required this.uldType
+        required this.uldSeqNo
       });
 
   @override

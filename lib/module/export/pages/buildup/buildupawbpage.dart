@@ -1,4 +1,3 @@
-import 'package:dashed_circular_progress_bar/dashed_circular_progress_bar.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,10 +7,13 @@ import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasecubit.dart';
-import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasestate.dart';
+import 'package:galaxy/module/export/pages/buildup/buildupgrouppage.dart';
+import 'package:galaxy/module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
+import 'package:galaxy/widget/customdivider.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/customedrawer/customedrawer.dart';
+import 'package:galaxy/widget/uldnumberwidget.dart';
 import 'package:vibration/vibration.dart';
 
 import '../../../../core/images.dart';
@@ -26,11 +28,9 @@ import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
-import '../../../../widget/customtextfield.dart';
 import '../../../../widget/groupidcustomtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../../widget/roundbutton.dart';
-import '../../../import/model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -39,56 +39,64 @@ import 'dart:ui' as ui;
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/airsiderelease/airsideshipmentlistmodel.dart';
+import '../../model/buildup/buildupawblistmodel.dart';
+import '../../services/buildup/builduplogic/buildupstate.dart';
+import 'buildupaddshipmentpage.dart';
+import 'buildupawbremarklistack.dart';
+
+class BuildUpAWBListPage extends StatefulWidget {
 
 
-class AirsideShipmentListPage extends StatefulWidget {
-
-  List<ButtonRight> buttonRightsList;
   String location;
   String mainMenuName;
   String uldNo;
-  int flightSeqNo;
   int uldSeqNo;
   int menuId;
   LableModel lableModel;
-  String uldType;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String title;
+  String refrelCode;
+  String uldType;
+  int flightSeqNo;
 
-  AirsideShipmentListPage({super.key,
+  BuildUpAWBListPage({super.key,
     required this.importSubMenuList,
     required this.exportSubMenuList,
-    required this.buttonRightsList,
     required this.uldNo,
-    required this.uldType,
     required this.mainMenuName,
-    required this.flightSeqNo,
     required this.uldSeqNo,
     required this.menuId,
     required this.location,
     required this.lableModel,
-  });
+    required this.title,
+    required this.refrelCode,
+    required this.uldType,
+    required this.flightSeqNo
+   });
 
   @override
-  State<AirsideShipmentListPage> createState() => _AirsideShipmentListPageState();
+  State<BuildUpAWBListPage> createState() => _BuildUpAWBListPageState();
 }
 
-class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with SingleTickerProviderStateMixin{
+class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTickerProviderStateMixin{
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
 
-
-  List<AirsideReleaseAWBDetailList> awbItemList = [];
-  List<AirsideReleaseAWBDetailList> filterAWBDetailsList = [];
+  bool _isOpenULDFlagEnable = false;
 
 
-  AirsideShipmentListModel? awbModel;
+
+  List<BuildUpAWBDetailList> awbItemList = [];
+  List<BuildUpAWBDetailList> filterAWBDetailsList = [];
+
+
+  BuildUpAWBModel? awbModel;
 
   final ScrollController scrollController = ScrollController();
-  FocusNode awbFocusNode = FocusNode();
+  //FocusNode awbFocusNode = FocusNode();
 
   TextEditingController scanNoEditingController = TextEditingController();
   FocusNode scanAwbFocusNode = FocusNode();
@@ -101,7 +109,6 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
 
   int? _isExpandedDetails;
 
-  final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
   @override
   void initState() {
@@ -132,8 +139,7 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
         _splashDefaultData = splashDefaultData;
       });
 
-
-      context.read<AirSideReleaseCubit>().getAirsideShipmentList(widget.flightSeqNo, widget.uldSeqNo, widget.uldType, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+      getAWBList();
 
       inactivityTimerManager = InactivityTimerManager(
         context: context,
@@ -175,6 +181,7 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
     FocusScope.of(context).unfocus();
 
     Navigator.pop(context, "Done");
+
 
     return false; // Stay in the app (Cancel was clicked)
 
@@ -280,74 +287,41 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                             ),
 
                             // start api responcer
-                            BlocListener<AirSideReleaseCubit, AirSideReleaseState>(
+                            BlocListener<BuildUpCubit, BuildUpState>(
                               listener: (context, state) {
 
-                                if (state is AirSideMainInitialState) {
+                                if (state is BuildUpInitialState) {
                                 }
-                                else if (state is AirSideMainLoadingState) {
+                                else if (state is BuildUpLoadingState) {
                                   // showing loading dialog in this state
-                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                  DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
-                                else if(state is AirsideShipmentListSuccessState){
-                                  print("CHECK_AWB_PAGE______SUCCESS");
+                                else if (state is BuildUpAWBDetailSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
-
                                   _resumeTimerOnInteraction();
-
-                                  if(state.airsideShipmentListModel.status == "E"){
-                                    SnackbarUtil.showSnackbar(context, state.airsideShipmentListModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  if(state.buildUpAWBModel.status == "E"){
+                                    SnackbarUtil.showSnackbar(context, state.buildUpAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
                                   }else{
-
-                                    awbModel = state.airsideShipmentListModel;
-
-
-
-                                    awbItemList = List.from(awbModel!.airsideReleaseAWBDetailList != null ? awbModel!.airsideReleaseAWBDetailList! : []);
+                                    awbModel = state.buildUpAWBModel;
+                                    awbItemList = List.from(awbModel!.buildUpAWBDetailList != null ? awbModel!.buildUpAWBDetailList! : []);
 
                                     filterAWBDetailsList = List.from(awbItemList);
                                     filterAWBDetailsList.sort((a, b) => a.priority!.compareTo(b.priority!));
 
-
-                                    print("CHECK_LIST====== ${awbItemList.length}");
                                     setState(() {
 
                                     });
-
                                   }
 
 
                                 }
-                                else if(state is AirsideShipmentListFailureState){
-                                  print("CHECK_AWB_PAGE______FAILURE");
-                                  DialogUtils.hideLoadingDialog(context);
-                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-
-                                }
-                                else if (state is AirsideReleasePriorityUpdateSuccessState){
-                                  DialogUtils.hideLoadingDialog(context);
-                                  if(state.airsideReleasePriorityUpdateModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(
-                                        context,
-                                        state.airsideReleasePriorityUpdateModel.statusMessage!,
-                                        MyColor.colorRed,
-                                        icon: FontAwesomeIcons.times);
-                                  }else{
-                                    context.read<AirSideReleaseCubit>().getAirsideShipmentList(widget.flightSeqNo, widget.uldSeqNo, widget.uldType, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-                                  }
-                                }
-                                else if (state is AirsideReleasePriorityUpdateFailureState){
+                                else if (state is BuildUpAWBDetailFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(
-                                      context,
-                                      state.error,
-                                      MyColor.colorRed,
-                                      icon: FontAwesomeIcons.times);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -388,18 +362,23 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                     SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                                     SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                                     Expanded(
-                                                                      child: CustomeText(
-                                                                          text: "${lableModel.detailsForUldNo} ${widget.uldNo}",
-                                                                          fontColor: MyColor.textColorGrey2,
-                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                          fontWeight: FontWeight.w500,
-                                                                          textAlign: TextAlign.start),
+                                                                      child: Row(
+                                                                        mainAxisAlignment: MainAxisAlignment.start,
+                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                        children: [
+                                                                          CustomeText(
+                                                                              text: (widget.uldType == "U") ? "Add to this ULD No. " : "Add to this Trolley No. ",
+                                                                              fontColor: MyColor.textColorGrey2,
+                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                              fontWeight: FontWeight.w500,
+                                                                              textAlign: TextAlign.start),
+                                                                          ULDNumberWidget(uldNo: widget.uldNo, smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontColor: MyColor.textColorGrey3, uldType: widget.uldType),
+                                                                        ],
+                                                                      ),
                                                                     ),
                                                                   ],
                                                                 ),
-                                                              ),
-
-
+                                                              )
                                                             ],
                                                           ),
                                                         ),
@@ -423,8 +402,8 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                   hintText: "${lableModel.scanAWB}",
                                                                   readOnly: false,
                                                                   onChanged: (value) async {
-
                                                                     updateSearchList(value);
+
                                                                   },
                                                                   fillColor: MyColor.colorWhite,
                                                                   textInputType: TextInputType.number,
@@ -447,7 +426,16 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                               ),
                                                               InkWell(
                                                                 onTap: () async {
-                                                                  scanQR(lableModel);
+
+                                                                  if(_isOpenULDFlagEnable == false){
+                                                                    _isOpenULDFlagEnable = true;
+                                                                   // await context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
+                                                                    scanQR(lableModel);
+                                                                  }else{
+                                                                    scanQR(lableModel);
+                                                                  }
+
+
                                                                 },
                                                                 child: Padding(padding: const EdgeInsets.all(8.0),
                                                                   child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
@@ -485,8 +473,9 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                     child: Column(
                                                       children: [
 
-                                                        (awbModel != null) ? (awbItemList.isNotEmpty)
-                                                            ? (filterAWBDetailsList.isNotEmpty) ? Column(
+                                                        (awbModel != null)
+                                                            ? (filterAWBDetailsList.isNotEmpty)
+                                                            ? Column(
                                                           children: [
                                                             ListView.builder(
                                                               itemCount: (awbModel != null)
@@ -496,25 +485,21 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                               shrinkWrap: true,
                                                               controller: scrollController,
                                                               itemBuilder: (context, index) {
-                                                                AirsideReleaseAWBDetailList aWBItem = filterAWBDetailsList[index];
+                                                                BuildUpAWBDetailList aWBItem = filterAWBDetailsList![index];
                                                                 bool isSelected = _selectedIndex == index;
                                                                 bool isExpand = _isExpandedDetails == index;
                                                                 List<String> shcCodes = aWBItem.sHCCode!.split(',');
 
-                                                                return InkWell(
-                                                                    focusNode: awbFocusNode,
+                                                                return  InkWell(
                                                                     onTap: () {
                                                                       FocusScope.of(context).unfocus();
-                                                                      setState(() {
-                                                                        _selectedIndex = index; // Update the selected index
-                                                                      });
+
                                                                     },
                                                                     onDoubleTap: () async {
 
-
                                                                     },
                                                                     child: Container(
-                                                                        margin: EdgeInsets.symmetric(vertical: 4),
+                                                                        margin: const EdgeInsets.symmetric(vertical: 4),
                                                                         decoration: BoxDecoration(
                                                                           color: MyColor.colorWhite,
                                                                           borderRadius: BorderRadius.circular(8),
@@ -524,20 +509,19 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                               color: MyColor.colorBlack.withOpacity(0.09),
                                                                               spreadRadius: 2,
                                                                               blurRadius: 15,
-                                                                              offset: Offset(0, 3), // changes position of shadow
+                                                                              offset: const Offset(0, 3), // changes position of shadow
                                                                             ),
                                                                           ],
 
                                                                         ),
                                                                         child: DottedBorder(
-                                                                          dashPattern: [7, 7, 7, 7],
+                                                                          dashPattern: const [7, 7, 7, 7],
                                                                           strokeWidth: 1,
                                                                           borderType: BorderType.RRect,
-                                                                          color: aWBItem.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                                                                          radius: Radius.circular(8),
+                                                                          color: shcCodes.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                                                                          radius: const Radius.circular(8),
                                                                           child: Container(
-                                                                            /*    margin: aWBItem.sHCCode!.contains("DGR") ? EdgeInsets.all(3) : EdgeInsets.all(0),*/
-                                                                            padding: EdgeInsets.all(8),
+                                                                            padding: const EdgeInsets.all(8),
                                                                             decoration: BoxDecoration(
                                                                               color: MyColor.colorWhite,
                                                                               borderRadius: BorderRadius.circular(8),
@@ -548,36 +532,17 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
                                                                                     Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                       children: [
                                                                                         CustomeText(text: AwbFormateNumberUtils.formatAWBNumber(aWBItem.aWBNo!), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-                                                                                        Row(
-                                                                                          children: [
-                                                                                            CustomeText(
-                                                                                              text: "Screening :",
-                                                                                              fontColor: MyColor.textColorGrey2,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                              textAlign: TextAlign.start,
-                                                                                            ),
-                                                                                            SizedBox(width: 5),
-                                                                                            CustomeText(
-                                                                                              text: "${aWBItem.screeningStatus}",
-                                                                                              fontColor: MyColor.colorBlack,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w600,
-                                                                                              textAlign: TextAlign.start,
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
+
                                                                                       ],
                                                                                     ),
-                                                                                    aWBItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
+                                                                                    shcCodes.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
                                                                                     Row(
                                                                                       children: [
-                                                                                        aWBItem.sHCCode!.isNotEmpty
+                                                                                        shcCodes.isNotEmpty
                                                                                             ? Row(
-                                                                                          children:shcCodes.asMap().entries.take(3).map((entry) {
+                                                                                          children: shcCodes.asMap().entries.take(3).map((entry) {
                                                                                             int index = entry.key; // Get the index for colorList assignment
                                                                                             String code = entry.value.trim(); // Get the code value and trim it
 
@@ -607,32 +572,57 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                                             : SizedBox(),
                                                                                       ],
                                                                                     ),
-                                                                                    aWBItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                                    shcCodes.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
                                                                                     Row(
-                                                                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                       children: [
-                                                                                        Row(
-                                                                                          children: [
-                                                                                            CustomeText(
-                                                                                              text: "NOP :",
-                                                                                              fontColor: MyColor.textColorGrey2,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                              textAlign: TextAlign.start,
-                                                                                            ),
-                                                                                            SizedBox(width: 5),
-                                                                                            CustomeText(
-                                                                                              text: "${aWBItem.nOP}",
-                                                                                              fontColor: MyColor.colorBlack,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w600,
-                                                                                              textAlign: TextAlign.start,
-                                                                                            ),
-                                                                                          ],
+                                                                                        Expanded(
+                                                                                          flex: 1,
+                                                                                          child: Row(
+                                                                                            children: [
+                                                                                              CustomeText(
+                                                                                                text: "NoP :",
+                                                                                                fontColor: MyColor.textColorGrey2,
+                                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                fontWeight: FontWeight.w400,
+                                                                                                textAlign: TextAlign.start,
+                                                                                              ),
+                                                                                              SizedBox(width: 5),
+                                                                                              CustomeText(
+                                                                                                text: "${aWBItem.nOP}",
+                                                                                                fontColor: MyColor.colorBlack,
+                                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                fontWeight: FontWeight.w600,
+                                                                                                textAlign: TextAlign.start,
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
+                                                                                        ),
+                                                                                        Expanded(
+                                                                                          flex: 1,
+                                                                                          child: Row(
+                                                                                            children: [
+                                                                                              CustomeText(
+                                                                                                text: "Weight :",
+                                                                                                fontColor: MyColor.textColorGrey2,
+                                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                fontWeight: FontWeight.w400,
+                                                                                                textAlign: TextAlign.start,
+                                                                                              ),
+                                                                                              SizedBox(width: 5),
+                                                                                              CustomeText(
+                                                                                                text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.weightKg!)} Kg",
+                                                                                                fontColor: MyColor.colorBlack,
+                                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                fontWeight: FontWeight.w600,
+                                                                                                textAlign: TextAlign.start,
+                                                                                              ),
+                                                                                            ],
+                                                                                          ),
                                                                                         ),
                                                                                       ],
                                                                                     ),
                                                                                     SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+
                                                                                     Row(
                                                                                       children: [
                                                                                         CustomeText(
@@ -652,100 +642,101 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                                                         ),
                                                                                       ],
                                                                                     ),
-                                                                                    SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                                                    Row(
-                                                                                      children: [
-                                                                                        CustomeText(
-                                                                                          text: "Commodity :",
-                                                                                          fontColor: MyColor.textColorGrey2,
-                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                          fontWeight: FontWeight.w400,
-                                                                                          textAlign: TextAlign.start,
-                                                                                        ),
-                                                                                        SizedBox(width: 5),
-                                                                                        CustomeText(
-                                                                                          text: "${aWBItem.commodity}",
-                                                                                          fontColor: MyColor.colorBlack,
-                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                          fontWeight: FontWeight.w500,
-                                                                                          textAlign: TextAlign.start,
-                                                                                        ),
-                                                                                      ],
-                                                                                    ),
 
 
                                                                                     SizedBox(height: SizeConfig.blockSizeVertical,),
                                                                                     Row(
                                                                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                       children: [
-                                                                                        Row(
-                                                                                          children: [
-                                                                                            Container(
-                                                                                              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                                                                                              decoration: BoxDecoration(
-                                                                                                  color: MyColor.dropdownColor,
-                                                                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                                                                              ),
-                                                                                              child: InkWell(
-                                                                                                child: Row(
-                                                                                                  children: [
-                                                                                                    CustomeText(
-                                                                                                        text: "P - ${aWBItem.priority}",
-                                                                                                        fontColor: MyColor.textColorGrey3,
-                                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                                        fontWeight: FontWeight.w700,
-                                                                                                        textAlign: TextAlign.center),
-                                                                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                                                    SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                                                                                  ],
-                                                                                                  mainAxisSize: MainAxisSize.min,
-                                                                                                ),
-                                                                                                onTap: () {
-                                                                                                  setState(() {
-                                                                                                    _selectedIndex = index; // Update the selected index
-                                                                                                  });
-                                                                                                  openEditPriorityBottomDialog(
-                                                                                                      context,
-                                                                                                      aWBItem.aWBNo!,
-                                                                                                      "${aWBItem.priority}",
-                                                                                                      index,
-                                                                                                      aWBItem,
-                                                                                                      lableModel,
-                                                                                                      textDirection);
+                                                                                        Container(
+                                                                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                                                                          decoration: BoxDecoration(
+                                                                                              color: MyColor.dropdownColor,
+                                                                                              borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                                                          ),
+                                                                                          child: InkWell(
+                                                                                            child: Row(
+                                                                                              mainAxisSize: MainAxisSize.min,
+                                                                                              mainAxisAlignment: MainAxisAlignment.center,
+                                                                                              children: [
+                                                                                                CustomeText(
+                                                                                                    text: "P - ${aWBItem.priority}",
+                                                                                                    fontColor: MyColor.textColorGrey3,
+                                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                                    fontWeight: FontWeight.w700,
+                                                                                                    textAlign: TextAlign.center),
+                                                                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                                                SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                                                                              ],
+                                                                                            ),
+                                                                                            onTap: () {
+                                                                                              setState(() {
 
-                                                                                                },
-                                                                                              ),
-                                                                                            ),
-                                                                                          ],
+                                                                                              });
+                                                                                              // call BD Priority
+                                                                                            },
+                                                                                          ),
                                                                                         ),
-                                                                                        Row(
-                                                                                          children: [
-                                                                                            CustomeText(
-                                                                                              text: "ShockWatch Alert :",
-                                                                                              fontColor: MyColor.textColorGrey2,
-                                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                              fontWeight: FontWeight.w400,
-                                                                                              textAlign: TextAlign.start,
-                                                                                            ),
-                                                                                            const SizedBox(width: 5),
-                                                                                            Transform.scale(
-                                                                                              scale: 0.9,
-                                                                                              child: Switch(
-                                                                                                value: false,
-                                                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                                activeColor: MyColor.primaryColorblue,
-                                                                                                inactiveThumbColor: MyColor.thumbColor,
-                                                                                                inactiveTrackColor: MyColor.textColorGrey2,
-                                                                                                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                                                                onChanged: (value) {
-                                                                                                  setState(() {
-                                                                                              
-                                                                                                  });
-                                                                                                },
-                                                                                              ),
-                                                                                            )
-                                                                                          ],
-                                                                                        ),
+                                                                                        RoundedButton(text: "Next",
+                                                                                          horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
+                                                                                          verticalPadding: SizeConfig.blockSizeVertical,
+                                                                                          color: MyColor.primaryColorblue,
+                                                                                          press: () async {
+                                                                                            inactivityTimerManager?.stopTimer();
+                                                                                            if (aWBItem.aWBRemarksInd == "Y") {
+                                                                                              List<AWBRemarksList> remarkList = filterAWBRemarksById(awbModel!.aWBRemarksList!, aWBItem.expAWBRowId!);
+
+                                                                                              var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                                builder: (context) => BuildUpAWBRemarkListAckPage(
+                                                                                                  importSubMenuList: widget.importSubMenuList,
+                                                                                                  exportSubMenuList: widget.exportSubMenuList,
+                                                                                                  mainMenuName: widget.mainMenuName,
+                                                                                                  aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
+
+
+
+                                                                                              // Navigate to RemarksAck screen
+
+                                                                                            } else if (aWBItem.groupBasedAcceptInd == "Y") {
+                                                                                              // Navigate to GroupList screen
+
+                                                                                              await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpGroupListPage(
+                                                                                                importSubMenuList: widget.importSubMenuList,
+                                                                                                exportSubMenuList: widget.exportSubMenuList,
+                                                                                                title: "AWB Group List",
+                                                                                                refrelCode: widget.refrelCode,
+                                                                                                menuId: widget.menuId,
+                                                                                                mainMenuName: widget.mainMenuName, uldNo: '125-1123 4212', uldSeqNo: 12345, location: "", lableModel: lableModel, uldType: "", flightSeqNo: 12360,),));
+
+
+                                                                                            } else {
+                                                                                              // Navigate to AddPieces screen
+
+                                                                                              await Navigator.push(context, CupertinoPageRoute(
+                                                                                                builder: (context) => BuildUpAddShipmentPage(
+                                                                                                importSubMenuList: widget.importSubMenuList,
+                                                                                                exportSubMenuList: widget.exportSubMenuList,
+                                                                                                title: "Add Shipment",
+                                                                                                refrelCode: widget.refrelCode,
+                                                                                                menuId: widget.menuId,
+                                                                                                mainMenuName: widget.mainMenuName,
+                                                                                                  uldNo: widget.uldNo,
+                                                                                                  uldSeqNo: widget.uldSeqNo,
+                                                                                                  location: "",
+                                                                                                  lableModel: lableModel,
+                                                                                                  uldType: widget.uldType,
+                                                                                                  flightSeqNo: widget.flightSeqNo,
+                                                                                                awbNo: aWBItem.aWBNo!,
+                                                                                                awbRowId: aWBItem.expAWBRowId!,
+                                                                                                pieces: aWBItem.nOP!,
+                                                                                                  weight: aWBItem.weightKg!,
+                                                                                                ),));
+
+
+                                                                                            }
+
+                                                                                          },)
+
                                                                                       ],
                                                                                     ),
                                                                                   ],
@@ -760,37 +751,34 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
                                                           ],
                                                         )
                                                             : Padding(
-                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                              child: Center(
-                                                                child: CustomeText(text: "${lableModel.recordNotFound}", fontColor:
-                                                                MyColor.textColorGrey,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                                fontWeight: FontWeight.w500,
-                                                                textAlign: TextAlign.center),),
-                                                            )
-                                                            : Padding(
-                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                              child: Center(
-                                                                child: CustomeText(text: "${lableModel.allShipment}",
+                                                          padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                          child: Center(
+                                                            child: CustomeText(text: "${lableModel.recordNotFound}",
                                                                 fontColor: MyColor.textColorGrey,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                                 fontWeight: FontWeight.w500,
                                                                 textAlign: TextAlign.center),),
-                                                            )
+                                                        )
                                                             : Column(
-                                                              children: [
-                                                                Padding(
-                                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                                                                  child: Center(
-                                                                    child: CustomeText(text: "${lableModel.recordNotFound}",
+                                                          children: [
+                                                            Padding(
+                                                              padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                              child: Center(
+                                                                child: CustomeText(text: "${lableModel.recordNotFound}",
                                                                     fontColor: MyColor.textColorGrey,
                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                                     fontWeight: FontWeight.w500,
                                                                     textAlign: TextAlign.center),),
-                                                                ),
+                                                            ),
 
-                                                              ],
-                                                            )
+                                                          ],
+                                                        )
+
+
+
+
+
+                                                        
                                                       ],
                                                     ),
 
@@ -822,6 +810,48 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
 
 
 
+  // update serch list function
+ /* void updateSearchList(String searchText, LableModel lableModel) {
+    setState(() {
+      _selectedIndex = -1;
+      if (searchText.isEmpty) {
+        filterAWBDetailsList = List.from(awbItemList);
+        filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
+      } else {
+        filterAWBDetailsList = List.from(awbItemList);
+        filterAWBDetailsList.sort((a, b) {
+          final aContains = a.aWBNo!
+              .replaceAll(" ", "")
+              .toLowerCase()
+              .contains(searchText.toLowerCase());
+          final bContains = b.aWBNo!
+              .replaceAll(" ", "")
+              .toLowerCase()
+              .contains(searchText.toLowerCase());
+
+          if (aContains && !bContains) {
+            return -1;
+          } else if (!aContains && bContains) {
+            return 1;
+          } else {
+            return 0;
+          }
+        });
+
+
+        
+      }
+    });
+
+    if (filterAWBDetailsList.isEmpty || !filterAWBDetailsList.any((awb) =>
+        awb.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchText.toLowerCase()))) {
+
+
+      SnackbarUtil.showSnackbar(context, "${lableModel.recordNotFound} $searchText", MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+    }
+  }*/
+
   //update search
   void updateSearchList(String searchString) {
     setState(() {
@@ -833,9 +863,9 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
   }
 
   //appliying filter for sorting
-  List<AirsideReleaseAWBDetailList> _applyFiltersAndSorting(List<AirsideReleaseAWBDetailList> list, String searchString) {
+  List<BuildUpAWBDetailList> _applyFiltersAndSorting(List<BuildUpAWBDetailList> list, String searchString) {
     // Filter by search string
-    List<AirsideReleaseAWBDetailList> filteredList = list.where((item) {
+    List<BuildUpAWBDetailList> filteredList = list.where((item) {
       return item.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchString.toLowerCase());
     }).toList();
 
@@ -843,6 +873,10 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
   }
 
 
+
+ /* List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int iMPAWBRowId) {
+    return awbRemarkList.where((remark) => remark.iMPAWBRowId == iMPAWBRowId).toList();
+  }*/
 
 
   Future<void> scanQR(LableModel lableModel) async {
@@ -888,62 +922,13 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
               : result;
 
           scanNoEditingController.text = truncatedResult.toString();
-
-
           updateSearchList(truncatedResult);
-
         }
-
-
-
-
       }
 
 
     }
   }
-
-
-  // open dialog for chnage bdpriority
-  Future<void> openEditPriorityBottomDialog(
-      BuildContext context,
-      String awbNo,
-      String priority,
-      int index,
-      AirsideReleaseAWBDetailList awbItm,
-      LableModel lableModel,
-      ui.TextDirection textDirection) async {
-    FocusScope.of(context).unfocus();
-    String? updatedPriority = await DialogUtils.showPriorityChangeBottomAWBDialog(context, awbNo, priority, lableModel, textDirection);
-    if (updatedPriority != null) {
-      int newPriority = int.parse(updatedPriority);
-
-      if (newPriority != 0) {
-        await callPriorityApi(
-            context,
-            awbItm.emiSeqNo!,
-            newPriority,
-            "A",
-            _user!.userProfile!.userIdentity!,
-            _splashDefaultData!.companyCode!,
-            widget.menuId);
-
-        setState(() {
-          // Update the BDPriority for the selected item
-          filterAWBDetailsList[index].priority = newPriority;
-
-          // Sort the list based on BDPriority
-          filterAWBDetailsList.sort((a, b) => a.priority!.compareTo(b.priority!));
-        });
-      } else {
-        Vibration.vibrate(duration: 500);
-        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-      }
-    } else {
-      print("Priority update was canceled");
-    }
-  }
-
 
 
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
@@ -958,17 +943,16 @@ class _AirsideShipmentListPageState extends State<AirsideShipmentListPage> with 
   }
 
 
-  // priority chnage api call function
-  Future<void> callPriorityApi(
-      BuildContext context,
-      int seqNo,
-      int priority,
-      String mode,
-      int userId,
-      int companyCode,
-      int menuId) async {
-    await context.read<AirSideReleaseCubit>().airsideReleasePriorityUpdate(
-        seqNo, priority, mode, userId, companyCode, menuId);
+  Future<void> getAWBList() async {
+    await context.read<BuildUpCubit>().getAwbList(
+        widget.flightSeqNo,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int expAwbRowId) {
+    return awbRemarkList.where((remark) => remark.expAWBRowId == expAwbRowId).toList();
   }
 
 }

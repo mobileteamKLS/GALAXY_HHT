@@ -54,7 +54,6 @@ class ContourULDPage extends StatefulWidget {
   String uldNo;
   int flightSeqNo;
   int uldSeqNo;
-  String uldType;
 
   ContourULDPage(
       {super.key,
@@ -67,8 +66,7 @@ class ContourULDPage extends StatefulWidget {
       required this.mainMenuName,
         required this.uldNo,
         required this.flightSeqNo,
-        required this.uldSeqNo,
-        required this.uldType});
+        required this.uldSeqNo});
 
   @override
   State<ContourULDPage> createState() => _ContourULDPageState();
@@ -322,14 +320,11 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                   }else{
 
                                     getContourListModel =  state.getContourListModel;
-
-                                   // heightController.text = CommonUtils.formateToTwoDecimalPlacesValue(getContourListModel!.uLDContourDetail!.height!);
                                     heightController.text = "${getContourListModel!.uLDContourDetail!.height!.toInt()}";
                                     selectedSwitchIndex = getContourListModel!.uLDContourDetail!.contourCode!;
                                     setState(() {
 
                                     });
-                                   // responce
 
                                   }
                                 }
@@ -341,9 +336,6 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                 else if (state is SaveContourSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.saveContourModel.status == "E"){
-                                    Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }if(state.saveContourModel.status == "501"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveContourModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{

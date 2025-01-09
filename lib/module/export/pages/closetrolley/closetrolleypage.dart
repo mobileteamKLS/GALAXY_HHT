@@ -320,10 +320,14 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                 else if (state is CloseTrolleySearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.closeTrolleySearchModel.status == "E"){
+                                    trolleyDetail = null;
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.closeTrolleySearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+                                    });
+                                    setState(() {
+
                                     });
                                   }else{
                                     trolleyDetail = null;
@@ -352,6 +356,23 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                   }
                                 }
                                 else if (state is CloseTrolleyReopenFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is SaveTrolleyTareWeightSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.saveTrolleyTareWeightModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.saveTrolleyTareWeightModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                  }else{
+                                    SnackbarUtil.showSnackbar(context, state.saveTrolleyTareWeightModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
+                                    callSearchApi(scanTrolleyController.text);
+                                  }
+                                }
+                                else if (state is SaveTrolleyTareWeightFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -538,37 +559,96 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          CustomeText(
-                                                            text: "Tare Wt. : ",
-                                                            fontColor: MyColor.textColorGrey2,
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                            fontWeight: FontWeight.w500,
-                                                            textAlign: TextAlign.start,
-                                                          ),
-                                                          const SizedBox(width: 5),
-                                                          Row(
-                                                            children: [
-                                                              CustomeText(
-                                                                text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.tareWeight!): "-",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              CustomeText(
-                                                                text: " Kg",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w700,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ],
-                                                          )
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            CustomeText(
+                                                              text: "Tare Wt. :",
+                                                              fontColor: MyColor.textColorGrey2,
+                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                              fontWeight: FontWeight.w500,
+                                                              textAlign: TextAlign.start,
+                                                            ),
 
-                                                        ],
-                                                      ),
+
+                                                            (trolleyDetail != null) ? (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R")
+                                                                ? Container(
+                                                              padding: const EdgeInsets.only(left: 2,),
+                                                              decoration: BoxDecoration(
+                                                                  color: MyColor.dropdownColor,
+                                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                                              ),
+                                                              child: InkWell(
+                                                                child: Row(
+                                                                  children: [
+                                                                    CustomeText(
+                                                                      text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.tareWeight!): "-",
+                                                                      fontColor: MyColor.colorBlack,
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      textAlign: TextAlign.start,
+                                                                    ),
+                                                                    CustomeText(
+                                                                      text: " Kg",
+                                                                      fontColor: MyColor.colorBlack,
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                      fontWeight: FontWeight.w700,
+                                                                      textAlign: TextAlign.start,
+                                                                    ),
+                                                                    SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets.only(right: 2, top: 2, bottom: 2),
+                                                                      child: SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,),
+                                                                    )
+                                                                  ],
+                                                                ),
+                                                                onTap: () {
+                                                                  openEditTareWeightBottomDialog(
+                                                                      context,
+                                                                      trolleyDetail!.trolleyNo!,
+                                                                      "${trolleyDetail!.tareWeight!}",
+                                                                      trolleyDetail!.trolleySeqNo!,
+                                                                      lableModel,
+                                                                      textDirection);
+                                                                },
+                                                              ),
+                                                            )
+                                                                : Row(
+                                                              children: [
+                                                                CustomeText(
+                                                                  text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.tareWeight!): "-",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                                CustomeText(
+                                                                  text: " Kg",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                              ],
+                                                            ) : Row(
+                                                              children: [
+                                                                CustomeText(
+                                                                  text: (trolleyDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.tareWeight!): "-",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                                CustomeText(
+                                                                  text: " Kg",
+                                                                  fontColor: MyColor.colorBlack,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                  fontWeight: FontWeight.w700,
+                                                                  textAlign: TextAlign.start,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ],
+                                                        ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical),
                                                         Row(
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -688,7 +768,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             ),
                                                             Flexible(
                                                               child: CustomeText(
-                                                                text: (trolleyDetail != null) ? "${trolleyDetail!.deviation!} Kg" : "-",
+                                                                text: (trolleyDetail != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.deviation!)} Kg" : "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -710,7 +790,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             ),
                                                             Flexible(
                                                               child: CustomeText(
-                                                                text: (trolleyDetail != null) ? "${trolleyDetail!.deviationPer!} %" : "-",
+                                                                text: (trolleyDetail != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(trolleyDetail!.deviationPer!)} %" : "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -862,7 +942,8 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                     scanTrolleyFocusNode.unfocus();
                                                     scanTrolleyBtnFocusNode.unfocus();
                                                     if(trolleyDetail != null){
-                                                    var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => CloseULDEquipmentPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
                                                           title: "Equipment",
@@ -1033,6 +1114,29 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
   }
 
 
+  Future<void> openEditTareWeightBottomDialog(BuildContext context, String uldNo, String tareWeight, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
+    FocusScope.of(context).unfocus();
+    String? updatedTareWeight = await DialogUtils.showTareWtChangeBottomULDDialog(context, uldNo, tareWeight, lableModel, textDirection);
+    if (updatedTareWeight != null) {
+      if(updatedTareWeight.isNotEmpty){
+        double newTareWeight = double.parse(updatedTareWeight);
+
+        await callTrolleyTareWeightApi(
+            uldSeqNo,
+            newTareWeight);
+
+
+      }else{
+        Vibration.vibrate(duration: 500);
+        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      }
+
+    } else {
+
+    }
+  }
+
+
 
   Future<void> scanULDScanQR() async{
     String groupcodeScanResult =  await FlutterBarcodeScanner.scanBarcode(
@@ -1074,5 +1178,17 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
+
+
+  Future<void> callTrolleyTareWeightApi(int uldSeqNo, double tareWeight) async {
+    await context.read<CloseTrolleyCubit>().saveTrolleyTareWeight(
+        uldSeqNo,
+        tareWeight,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+
 }
 

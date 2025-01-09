@@ -10,7 +10,16 @@ class BuildUpCubit extends Cubit<BuildUpState>{
 
   BuildUpRepository buildUpRepository = BuildUpRepository();
 
-
+  // getValidateLocation api call repo
+  Future<void> getValidateLocation(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
+    emit(BuildUpLoadingState());
+    try {
+      final validateLocationModelData = await buildUpRepository.locationValidate(locationCode, userId, companyCode, menuId, processCode);
+      emit(ValidateLocationSuccessState(validateLocationModelData));
+    } catch (e) {
+      emit(ValidateLocationFailureState(e.toString()));
+    }
+  }
 
   Future<void> getFlightSearch(String flightNo, String flightDate, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
@@ -22,6 +31,89 @@ class BuildUpCubit extends Cubit<BuildUpState>{
       emit(FlightSearchFailureState(e.toString()));
     }
   }
+
+  Future<void> getULDTrolleySearchList(int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final getULDTrolleySearchModelData = await buildUpRepository.getULDTrolleySearchList(userId, companyCode, menuId);
+      emit(GetULDTrolleySearchSuccessState(getULDTrolleySearchModelData));
+    } catch (e) {
+      emit(GetULDTrolleySearchFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getULDTrolleyPriorityUpdate(int flightSeqNo, int uldSeqNo, int priority, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final uldTrolleyPriorityModelData = await buildUpRepository.uldTrolleyPriorityUpdate(flightSeqNo, uldSeqNo, priority, userId, companyCode, menuId);
+      emit(ULDTrolleyPrioritySuccessState(uldTrolleyPriorityModelData));
+    } catch (e) {
+      emit(ULDTrolleyPriorityFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getContourList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final getContourModelData = await buildUpRepository.getContourList(uldSeqNo, userId, companyCode, menuId);
+      emit(BuildUpGetContourListSuccessState(getContourModelData));
+    } catch (e) {
+      emit(BuildUpGetContourListFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getULDTrolleySave(
+      int flightSeqNo,
+      String uldType,
+      String uldNumber,
+      String uldOwner,
+      String uldSpecification,
+      String trolleyType,
+      String trolleyNumber,
+      double tareWeight,
+      String contourCode,
+      int contourHeight,
+      int priority,
+      String offPoint,
+      String uldTrolleyType,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final getULDTrolleySaveModelData = await buildUpRepository.getULDTrolleySave(
+          flightSeqNo,
+          uldType,
+          uldNumber,
+          uldOwner,
+          uldSpecification,
+          trolleyType,
+          trolleyNumber,
+          tareWeight,
+          contourCode,
+          contourHeight,
+          priority,
+          offPoint,
+          uldTrolleyType,
+          userId, companyCode, menuId);
+      emit(GetULDTrolleySaveSuccessState(getULDTrolleySaveModelData));
+    } catch (e) {
+      emit(GetULDTrolleySaveFailureState(e.toString()));
+    }
+  }
+
+
+  Future<void> getAwbList(int flightSeqNo, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final getAwbModelData = await buildUpRepository.getAwbDetailList(flightSeqNo, userId, companyCode, menuId);
+      emit(BuildUpAWBDetailSuccessState(getAwbModelData));
+    } catch (e) {
+      emit(BuildUpAWBDetailFailureState(e.toString()));
+    }
+  }
+
+
 
   // getButtonsRoles & Rights api call repo
 /*

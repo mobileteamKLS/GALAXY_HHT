@@ -70,6 +70,16 @@ class CloseTrolleyCubit extends Cubit<CloseTrolleyState>{
     }
   }
 
+  Future<void> saveTrolleyTareWeight(int uldSeqNo, double tareWeight, int userId, int companyCode, int menuId) async {
+    emit(CloseTrolleyLoadingState());
+    try {
+      final saveTrolleyTareWeightModelData = await closeTrolleyRepository.saveTrolleyTareWeightModel(uldSeqNo, tareWeight, userId, companyCode, menuId);
+      emit(SaveTrolleyTareWeightSuccessState(saveTrolleyTareWeightModelData));
+    } catch (e) {
+      emit(SaveTrolleyTareWeightFailureState(e.toString()));
+    }
+  }
+
 /*
   Future<void> closeULDEquipmentList(int uldSeqNo, String uldType, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());

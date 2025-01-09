@@ -3,13 +3,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animation_progress_bar/flutter_animation_progress_bar.dart';
-import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/export/pages/buildup/buildupuldpage.dart';
 import 'package:galaxy/module/export/services/buildup/builduplogic/buildupcubit.dart';
-import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
 import 'package:galaxy/widget/custometext.dart';
@@ -28,10 +27,8 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
 import '../../../../widget/customdivider.dart';
-import '../../../../widget/customebuttons/roundbuttongreen.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
-import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
@@ -80,14 +77,6 @@ class _BuildUpPageState extends State<BuildUpPage>
 
   FlightSearchModel? flightSearchModel;
 
- /* FlightCheckULDListModel? flightCheckULDListModel;
-  FlightCheckSummaryModel? flightCheckSummaryModel;
-
-  List<FlightDetailList> originalFlightDetails = [];
-  List<FlightDetailList> flightDetailsList = [];
-
-  List<ButtonRight> buttonRightsList = [];*/
-
   Map<String, String>? validationMessages;
 
 
@@ -120,7 +109,7 @@ class _BuildUpPageState extends State<BuildUpPage>
   final ValueNotifier<double> _valueNotifier = ValueNotifier(0);
 
 
-  final List<String> _tabs = ['Flight', 'ULD', 'SLA'];
+  final List<String> _tabs = ['Flight', 'SLA'];
 
   final List<String> shcCodeList = ["DGR", "VAL", "GEN"];
 
@@ -574,67 +563,66 @@ class _BuildUpPageState extends State<BuildUpPage>
                                                   ),
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                    child: Column(
+                                                    child:  Column(
                                                       children: [
-                                                        Column(
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            Row(children: List.generate(_tabs.length, (index) {
-                                                              return InkWell(
-                                                                onTap: () {
-                                                                  if (index == 0) {
-                                                                    setState(() {
-                                                                      _pageIndex = index;
-                                                                    });
-                                                                  }
-                                                                  else if (index == 1) {
-                                                                    setState(() {
-                                                                      _pageIndex = index;
-                                                                    });
-                                                                  }
-                                                                  else if (index == 2) {
-                                                                    setState(() {
-                                                                      _pageIndex = index;
-                                                                    });
-                                                                  }
+                                                            Expanded(
+                                                              flex :2,
+                                                              child:  Row(children: List.generate(_tabs.length, (index) {
+                                                            return InkWell(
+                                                              onTap: () {
+                                                                if (index == 0) {
+                                                                  setState(() {
+                                                                    _pageIndex = index;
+                                                                  });
+                                                                }
+                                                                else if (index == 1) {
+                                                                  setState(() {
+                                                                    _pageIndex = index;
+                                                                  });
+                                                                }
 
-                                                                },
-                                                                child: Container(
-                                                                  padding: const EdgeInsets.only(bottom: 8),
-                                                                  margin: const EdgeInsets.only(right: 35),
-                                                                  decoration: BoxDecoration(
-                                                                    border: Border(
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets.only(bottom: 8),
+                                                                margin: const EdgeInsets.only(right: 35),
+                                                                decoration: BoxDecoration(
+                                                                  border: Border(
 
-                                                                      bottom: BorderSide(
-                                                                        color: _pageIndex == index
-                                                                            ? MyColor.bottomBorderColor
-                                                                            : Colors.transparent,
-                                                                        width: 3.0,
-                                                                      ),
+                                                                    bottom: BorderSide(
+                                                                      color: _pageIndex == index
+                                                                          ? MyColor.bottomBorderColor
+                                                                          : Colors.transparent,
+                                                                      width: 3.0,
                                                                     ),
                                                                   ),
-                                                                  child: Text(
-                                                                      _tabs[index],
-                                                                      style: GoogleFonts.roboto(textStyle: TextStyle(
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                                        fontWeight: _pageIndex == index
-                                                                            ? FontWeight.w600
-                                                                            : FontWeight.w600,
-                                                                        color: _pageIndex == index
-                                                                            ? MyColor.colorBlack
-                                                                            :  MyColor.textColorGrey,
-                                                                      ),)
-                                                                  ),
                                                                 ),
-                                                              );
-                                                            }),),
-                                                            SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                            isViewEnable(lableModel, _pageIndex, textDirection, localizations),
+                                                                child: Text(
+                                                                    _tabs[index],
+                                                                    style: GoogleFonts.roboto(textStyle: TextStyle(
+                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                      fontWeight: _pageIndex == index
+                                                                          ? FontWeight.w600
+                                                                          : FontWeight.w600,
+                                                                      color: _pageIndex == index
+                                                                          ? MyColor.colorBlack
+                                                                          :  MyColor.textColorGrey,
+                                                                    ),)
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),),),
+                                                            Expanded(
+                                                                child:  RoundedButtonBlue(text: "Start", press: () async {
+                                                                  inactivityTimerManager?.stopTimer();
+                                                                  await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Build Up", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "",)));
+                                                            },))
                                                           ],
                                                         ),
-                                                        /*  Padding(
-                                                          padding: const EdgeInsets.only(left: 12, right: 12,),
-                                                          child: _checkWidget(_pageIndex, textDirection, lableModel),
-                                                        ),*/
+                                                        SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                        isViewEnable(lableModel, _pageIndex, textDirection, localizations),
                                                       ],
                                                     ),
                                                   ),
@@ -720,6 +708,7 @@ class _BuildUpPageState extends State<BuildUpPage>
 
 
   Widget isViewEnable(LableModel lableModel, int pageIndex, ui.TextDirection textDirection, AppLocalizations? localizations) {
+
     if (pageIndex == 0) {
 
       return Column(
@@ -734,33 +723,38 @@ class _BuildUpPageState extends State<BuildUpPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SvgPicture.asset(arrival, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
                       SizedBox(height: SizeConfig.blockSizeVertical,),
-                      Container(
+                      (flightSearchModel != null) ? Container(
                         padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
                         decoration : BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
-                            color: MyColor.flightFinalize
+                            color: getFlightStatusColor(flightSearchModel!.flightDetail!.flightStatus),
                         ),
                         child: CustomeText(
-                            text: "Open",
+                            text: getFlightStatusText(flightSearchModel!.flightDetail!.flightStatus),
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
                             textAlign: TextAlign.start),
-                      ),
+                      ) : CustomeText(
+                          text: "-",
+                          fontColor: MyColor.textColorGrey3,
+                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.start),
                     ],
                   ),
                 ),
                 Expanded(
-                    flex: 2,
+                    flex: 1,
                     child: Container()),
                 Expanded(
-                  flex:4,
+                  flex:5,
                   child: Column(
                     children: [
                       Row(
@@ -775,7 +769,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                           ),
                           const SizedBox(width: 5),
                           CustomeText(
-                            text: "11:55",
+                            text: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.eTD! : "-",
                             fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -795,7 +789,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                           ),
                           const SizedBox(width: 5),
                           CustomeText(
-                            text: "120 min",
+                            text: (flightSearchModel != null) ? "${flightSearchModel!.flightDetail!.remainingTime! ~/ 60} min" : "-",
                             fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -819,18 +813,15 @@ class _BuildUpPageState extends State<BuildUpPage>
                 textAlign: TextAlign.start,
               ),
               Expanded(
-                child: Column(children: [
-                  FAProgressBar(
-                    animatedDuration: const Duration(milliseconds: 300),
-                    borderRadius: BorderRadius.circular(16),
-                    currentValue: 50.0,
-                    displayText: '%',
-                    progressColor: MyColor.colorGreen,
-                    backgroundColor: MyColor.dropdownColor,
-                  ),
-
-
-                ]),
+                child: FAProgressBar(
+                  animatedDuration: const Duration(milliseconds: 300),
+                  borderRadius: BorderRadius.circular(16),
+                  currentValue: (flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.lAvsMAN! : 0,
+                  displayText: '%',
+                  displayTextStyle: TextStyle(color: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5),
+                  progressColor: MyColor.colorGreen,
+                  backgroundColor: MyColor.dropdownColor,
+                ),
               ),
             ],
           ),
@@ -839,7 +830,7 @@ class _BuildUpPageState extends State<BuildUpPage>
             children: [
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10,),
+                  padding: const EdgeInsets.symmetric(vertical: 10,),
                   decoration: BoxDecoration(
                     color: MyColor.colorGrey.withOpacity(0.05), // Background color of the widget
                     borderRadius: BorderRadius.circular(20),
@@ -848,7 +839,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CustomeText(text: "UWS", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                      SvgPicture.asset(donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: MyColor.colorGreen,),
+                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : closesvg : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                     ],
                   ),
                 ),
@@ -856,7 +847,7 @@ class _BuildUpPageState extends State<BuildUpPage>
               SizedBox(width: SizeConfig.blockSizeHorizontal,),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10,),
+                  padding: const EdgeInsets.symmetric(vertical: 10,),
                   decoration: BoxDecoration(
                     color: MyColor.colorGrey.withOpacity(0.05), // Background color of the widget
                     borderRadius: BorderRadius.circular(20),
@@ -864,8 +855,8 @@ class _BuildUpPageState extends State<BuildUpPage>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CustomeText(text: "NOTOC", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                      SvgPicture.asset(closesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: MyColor.colorRed,),
+                      CustomeText(text: "NTM", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : closesvg : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                     ],
                   ),
                 ),
@@ -873,7 +864,7 @@ class _BuildUpPageState extends State<BuildUpPage>
               SizedBox(width: SizeConfig.blockSizeHorizontal,),
               Expanded(
                 child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 10,),
+                  padding: const EdgeInsets.symmetric(vertical: 10,),
                   decoration: BoxDecoration(
                     color: MyColor.colorGrey.withOpacity(0.05), // Background color of the widget
                     borderRadius: BorderRadius.circular(20),
@@ -881,8 +872,8 @@ class _BuildUpPageState extends State<BuildUpPage>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      CustomeText(text: "Manifest", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                      SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                      CustomeText(text: "FFM", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
+                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : closesvg : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                     ],
                   ),
                 ),
@@ -916,7 +907,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                     color: MyColor.subMenuColorList[0]
                                 ),
                                 child: CustomeText(
-                                  text: "ULD - 35",
+                                  text: "ULD - ${(flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.uLDCount : ""}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w600,
@@ -931,7 +922,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                     color: MyColor.subMenuColorList[1]
                                 ),
                                 child: CustomeText(
-                                  text: "Trolley - 13",
+                                  text: "Trolley - ${ (flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.trolleyCount : ""}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w600,
@@ -1006,7 +997,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CustomeText(
-                            text: "11",
+                            text:  (flightSearchModel != null) ? "${flightSearchModel!.flightStatusDetail!.cargoPieces}" : "-",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
@@ -1021,7 +1012,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           CustomeText(
-                            text: "110.00 Kg",
+                            text:  (flightSearchModel != null) ?  "${CommonUtils.formateToTwoDecimalPlacesValue(flightSearchModel!.flightStatusDetail!.cargoWeight!)} Kg" : "-",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
@@ -1064,7 +1055,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CustomeText(
-                            text: "-",
+                            text:  (flightSearchModel != null) ?  "${flightSearchModel!.flightStatusDetail!.mailPieces}" : "-",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
@@ -1079,7 +1070,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           CustomeText(
-                            text: "-",
+                            text:  (flightSearchModel != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightSearchModel!.flightStatusDetail!.mailWeight!)} Kg" : "-",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
@@ -1122,7 +1113,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CustomeText(
-                            text: "100",
+                            text:  (flightSearchModel != null) ? "${flightSearchModel!.flightStatusDetail!.courierPieces}" : "-",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
@@ -1137,7 +1128,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           CustomeText(
-                            text: "500.00 Kg",
+                            text:  (flightSearchModel != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightSearchModel!.flightStatusDetail!.courierWeight!)} Kg" : "-",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w500,
@@ -1180,7 +1171,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CustomeText(
-                            text: "111",
+                            text:  (flightSearchModel != null) ?  "${flightSearchModel!.flightStatusDetail!.cargoPieces! + flightSearchModel!.flightStatusDetail!.mailPieces! + flightSearchModel!.flightStatusDetail!.courierPieces!}" : "-",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -1195,7 +1186,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           CustomeText(
-                            text: "610.00 Kg",
+                            text:  (flightSearchModel != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightSearchModel!.flightStatusDetail!.cargoWeight! + flightSearchModel!.flightStatusDetail!.mailWeight! + flightSearchModel!.flightStatusDetail!.courierWeight!)} Kg" : "-",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -1216,532 +1207,7 @@ class _BuildUpPageState extends State<BuildUpPage>
       );
 
 
-    }
-
-    if (pageIndex == 1) {
-      return Column(
-        children: [
-          SizedBox(height: SizeConfig.blockSizeVertical,),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-            decoration: BoxDecoration(
-              color: MyColor.cardBgColor,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CustomeText(text: "BULK", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                      decoration: BoxDecoration(
-                          color: MyColor.dropdownColor,
-                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                      ),
-                      child: InkWell(
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CustomeText(
-                                text: "P - 10",
-                                fontColor: MyColor.textColorGrey3,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                fontWeight: FontWeight.w700,
-                                textAlign: TextAlign.center),
-                            SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                            SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                          ],
-                        ),
-                        onTap: () {
-                          setState(() {
-
-                          });
-
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    InkWell(
-                      focusNode: uldListFocusNode,
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                        setState(() {
-
-                        });
-                      },
-                      onDoubleTap: () {
-
-                        setState(() {
-
-                        });
-
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        decoration: BoxDecoration(
-                          color: MyColor.colorWhite,
-                          borderRadius: BorderRadius.circular(8),
-
-                          boxShadow: [
-                            BoxShadow(
-                              color: MyColor.colorBlack.withOpacity(0.09),
-                              spreadRadius: 2,
-                              blurRadius: 15,
-                              offset: const Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-
-                        ),
-                        child: DottedBorder(
-                          dashPattern: const [7, 7, 7, 7],
-                          strokeWidth: 1,
-                          borderType: BorderType.RRect,
-                          color: Colors.transparent,
-                          radius: const Radius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: MyColor.colorWhite,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Stack(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ULDNumberWidget(uldNo: "TTL 11121", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "T"),
-                                        SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                        Container(
-                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                          decoration : BoxDecoration(
-                                              borderRadius: BorderRadius.circular(20),
-                                              color:  MyColor.subMenuColorList[4]
-                                          ),
-                                          child: CustomeText(
-                                            text: "In-Progress",
-                                            fontColor: MyColor.textColorGrey3,
-                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                            fontWeight: FontWeight.w400,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-
-                                    SizedBox(height: SizeConfig.blockSizeVertical),
-
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-
-                                        Row(
-                                          children: [
-                                            CustomeText(
-                                              text: "Shipment :",
-                                              fontColor: MyColor.textColorGrey2,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                              fontWeight: FontWeight.w600,
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            const SizedBox(width: 5),
-                                            CustomeText(
-                                              text: "5",
-                                              fontColor: MyColor.colorBlack,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                              fontWeight: FontWeight.w600,
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ],
-                                        ),
-
-                                        SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH5),
-
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                            });
-
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                            decoration: BoxDecoration(
-                                                color: MyColor.dropdownColor,
-                                                borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                            ),
-                                            child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-
-                                  ],
-                                ),
-
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    InkWell(
-                      focusNode: uldListFocusNode,
-                      onTap: () {
-                        FocusScope.of(context).unfocus();
-                        setState(() {
-
-                        });
-                      },
-                      onDoubleTap: () {
-
-                        setState(() {
-
-                        });
-
-                      },
-                      child: Container(
-                        margin: const EdgeInsets.symmetric(vertical: 4),
-                        decoration: BoxDecoration(
-                          color: MyColor.colorWhite,
-                          borderRadius: BorderRadius.circular(8),
-
-                          boxShadow: [
-                            BoxShadow(
-                              color: MyColor.colorBlack.withOpacity(0.09),
-                              spreadRadius: 2,
-                              blurRadius: 15,
-                              offset: const Offset(0, 3), // changes position of shadow
-                            ),
-                          ],
-
-                        ),
-                        child: DottedBorder(
-                          dashPattern: const [7, 7, 7, 7],
-                          strokeWidth: 1,
-                          borderType: BorderType.RRect,
-                          color:  Colors.transparent,
-                          radius: const Radius.circular(8),
-                          child: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: MyColor.colorWhite,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Stack(
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        ULDNumberWidget(uldNo: "TTL 11122", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "T"),
-                                        SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                        Container(
-                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                          decoration : BoxDecoration(
-                                              borderRadius: BorderRadius.circular(20),
-                                              color:  MyColor.flightNotArrived
-                                          ),
-                                          child: CustomeText(
-                                            text: "Closed",
-                                            fontColor: MyColor.textColorGrey3,
-                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                            fontWeight: FontWeight.w400,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-
-                                      ],
-                                    ),
-                                    SizedBox(height: SizeConfig.blockSizeVertical),
-
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            CustomeText(
-                                              text: "Shipment :",
-                                              fontColor: MyColor.textColorGrey2,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                              fontWeight: FontWeight.w600,
-                                              textAlign: TextAlign.start,
-                                            ),
-                                            const SizedBox(width: 5),
-                                            CustomeText(
-                                              text: "2",
-                                              fontColor: MyColor.colorBlack,
-                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                              fontWeight: FontWeight.w600,
-                                              textAlign: TextAlign.start,
-                                            ),
-                                          ],
-                                        ),
-
-                                        SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH5),
-
-                                        InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                            });
-
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                            decoration: BoxDecoration(
-                                                color: MyColor.dropdownColor,
-                                                borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                            ),
-                                            child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                          ),
-                                        ),
-                                      ],
-                                    )
-
-                                  ],
-                                ),
-
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: SizeConfig.blockSizeVertical,),
-          InkWell(
-            focusNode: uldListFocusNode,
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              setState(() {
-
-              });
-            },
-            onDoubleTap: () {
-
-              setState(() {
-
-              });
-
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
-                color: MyColor.colorWhite,
-                borderRadius: BorderRadius.circular(8),
-
-                boxShadow: [
-                  BoxShadow(
-                    color: MyColor.colorBlack.withOpacity(0.09),
-                    spreadRadius: 2,
-                    blurRadius: 15,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-
-              ),
-              child: DottedBorder(
-                dashPattern: const [7, 7, 7, 7],
-                strokeWidth: 1,
-                borderType: BorderType.RRect,
-                color: shcCodeList.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                radius: const Radius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: MyColor.colorWhite,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              ULDNumberWidget(uldNo: "AKE 12345 AJ", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: "U"),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal),
-                              Container(
-                                padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                decoration : BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color:  MyColor.flightFinalize
-                                ),
-                                child: CustomeText(
-                                  text: "Open",
-                                  fontColor: MyColor.textColorGrey3,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                  fontWeight: FontWeight.w400,
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-
-                            ],
-                          ),
-                          shcCodeList.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          shcCodeList.isNotEmpty
-                              ? Row(
-                            children:shcCodeList.asMap().entries.take(3).map((entry) {
-                              int index = entry.key; // Get the index for colorList assignment
-                              String code = entry.value.trim(); // Get the code value and trim it
-
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: AnimatedBuilder(
-                                  animation: _colorAnimation,
-                                  builder: (context, child) {
-                                    return Container(
-                                      padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                      decoration : BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                      child: CustomeText(
-                                        text: code.trim(),
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                        fontWeight: FontWeight.w500,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            }).toList(),
-                          )
-                              : const SizedBox(),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            children: [
-                              CustomeText(
-                                text: "Contour :",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start,
-                              ),
-                              const SizedBox(width: 5),
-                              CustomeText(
-                                text: "Q1 Contour",
-                                fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                ),
-                                child: InkWell(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      CustomeText(
-                                          text: "P - 10",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w700,
-                                          textAlign: TextAlign.center),
-                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                      SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
-                                    ],
-                                  ),
-                                  onTap: () {
-                                    setState(() {
-
-                                    });
-                                    /*openEditPriorityBottomDialog(
-                                        context,
-                                        flightDetails.uLDNo!,
-                                        "${flightDetails.bDPriority}",
-                                        index,
-                                        flightDetails,
-                                        lableModel,
-                                        textDirection);*/
-                                  },
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Row(
-                                    children: [
-                                      CustomeText(
-                                        text: "Shipment :",
-                                        fontColor: MyColor.textColorGrey2,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                      const SizedBox(width: 5),
-                                      CustomeText(
-                                        text: "3",
-                                        fontColor: MyColor.colorBlack,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                        fontWeight: FontWeight.w600,
-                                        textAlign: TextAlign.start,
-                                      ),
-                                    ],
-                                  ),
-
-                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH5),
-
-                                  InkWell(
-                                    onTap: () {
-                                      setState(() {
-                                      });
-
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                      decoration: BoxDecoration(
-                                          color: MyColor.dropdownColor,
-                                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
-                                      ),
-                                      child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          )
-
-                        ],
-                      ),
-
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          )
-        ],
-      );
-
-    }
-
-    else if (pageIndex == 2) {
+    } else if (pageIndex == 1) {
       return  Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -1770,13 +1236,6 @@ class _BuildUpPageState extends State<BuildUpPage>
         widget.menuId);
   }
 
-  // flight check Summary details api call function
-  void callFlightCheckSummaryApi(BuildContext context, int flightSeqNo,
-      int userId, int companyCode, int menuId) {
-    context
-        .read<FlightCheckCubit>()
-        .getFlightCheckSummaryDetails(flightSeqNo, userId, companyCode, menuId);
-  }
 
 
 
@@ -1789,6 +1248,40 @@ class _BuildUpPageState extends State<BuildUpPage>
       WidgetsBinding.instance.addPostFrameCallback((_) {
         FocusScope.of(context).requestFocus(focuseNode);
       });
+    }
+  }
+
+  Color getFlightStatusColor(String? status) {
+    switch (status) {
+      case "F":
+        return MyColor.subMenuColorList[1];
+      case "D":
+        return MyColor.subMenuColorList[2];
+      case "C":
+        return MyColor.subMenuColorList[3];
+      case "I":
+        return MyColor.subMenuColorList[4];
+      case "O":
+        return MyColor.subMenuColorList[7];
+      default:
+        return MyColor.transparentColor;
+    }
+  }
+
+  String getFlightStatusText(String? status) {
+    switch (status) {
+      case "F":
+        return "Finalize";
+      case "D":
+        return "Departed";
+      case "C":
+        return "Closed";
+      case "I":
+        return "Inprogress";
+      case "O":
+        return "Open";
+      default:
+        return "-";
     }
   }
 }

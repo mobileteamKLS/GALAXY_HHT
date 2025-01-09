@@ -8,6 +8,7 @@ import '../../model/closetrolley/closetrolleysearchmodel.dart';
 import '../../model/closetrolley/gettrolleydocumentlistmodel.dart';
 import '../../model/closetrolley/gettrolleyscalelistmodel.dart';
 import '../../model/closetrolley/savetrolleyscalemodel.dart';
+import '../../model/closetrolley/savetrolleytareweightmodel.dart';
 
 
 
@@ -271,5 +272,49 @@ class CloseTrolleyRepository{
       }
     }
   }
+
+
+  Future<SaveTrolleyTareWeightModel> saveTrolleyTareWeightModel(int uldSeqNo, double tareWeight, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "TrolleySeqNo" : uldSeqNo,
+        "TareWeight" : tareWeight,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('saveTareWeightModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.saveTrolleyTareWeightApi,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        SaveTrolleyTareWeightModel saveTrolleyTareWeightModel = SaveTrolleyTareWeightModel.fromJson(response.data);
+        return saveTrolleyTareWeightModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
 
 }

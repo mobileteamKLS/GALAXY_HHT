@@ -143,9 +143,18 @@ class Apilist{
   static String closeTrolleyScaleApi = "/CloseTrolley/GetScaleWeightList";
   static String closeTrolleySaveScaleApi = "/CloseTrolley/ScaleWeightSave";
   static String closeTrolleyStatusUpdate = "/CloseTrolley/StatusUpdate";
+  static String saveTrolleyTareWeightApi = "/CloseTrolley/TareWeightSave";
 
   //Build UP
-  static String buildUpFlightSearch = "/BuildUp/FlightSearch";
+  static String buildUpFlightSearch = "/BuildUp/GetFlightSearch";
+
+  static String buildUpULDTrolleySearch = "/BuildUp/GetULDTrolleySearch";
+  static String buildUpULDTrolleySave = "/BuildUp/ULDTrolleySave";
+  static String buildUpULDTrolleypriorityUpdate = "/BuildUp/ULDTrolleyPriorityUpdate";
+
+
+
+  static String buildUpGetAWBDetails = "/BuildUp/GetAWBDetails";
 
 
 }

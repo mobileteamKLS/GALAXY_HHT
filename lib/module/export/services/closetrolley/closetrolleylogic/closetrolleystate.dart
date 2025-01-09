@@ -3,6 +3,7 @@ import '../../../model/closetrolley/closetrolleyreopenmodel.dart';
 import '../../../model/closetrolley/closetrolleysearchmodel.dart';
 import '../../../model/closetrolley/gettrolleyscalelistmodel.dart';
 import '../../../model/closetrolley/savetrolleyscalemodel.dart';
+import '../../../model/closetrolley/savetrolleytareweightmodel.dart';
 
 
 class CloseTrolleyState {}
@@ -70,6 +71,17 @@ class CloseTrolleyReopenSuccessState extends CloseTrolleyState {
 class CloseTrolleyReopenFailureState extends CloseTrolleyState {
   final String error;
   CloseTrolleyReopenFailureState(this.error);
+}
+
+
+class SaveTrolleyTareWeightSuccessState extends CloseTrolleyState {
+  final SaveTrolleyTareWeightModel saveTrolleyTareWeightModel;
+  SaveTrolleyTareWeightSuccessState(this.saveTrolleyTareWeightModel);
+}
+
+class SaveTrolleyTareWeightFailureState extends CloseTrolleyState {
+  final String error;
+  SaveTrolleyTareWeightFailureState(this.error);
 }
 
 

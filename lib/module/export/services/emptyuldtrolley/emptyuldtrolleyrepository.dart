@@ -7,11 +7,6 @@ import '../../../import/model/uldacceptance/locationvalidationmodel.dart';
 import '../../model/emptyuldtrolley/createuldtrolleymodel.dart';
 import '../../model/emptyuldtrolley/emptyuldtrolpageloadmodel.dart';
 import '../../model/emptyuldtrolley/searchuldtrolleymodel.dart';
-import '../../model/unloaduld/unloadpageloadmodel.dart';
-import '../../model/unloaduld/unloadremoveawbmodel.dart';
-import '../../model/unloaduld/unloaduldawblistmodel.dart';
-import '../../model/unloaduld/unloadopenuldmodel.dart';
-import '../../model/unloaduld/unloaduldlistmodel.dart';
 
 
 class EmptyULDTrolleyRepository{

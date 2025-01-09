@@ -127,6 +127,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
         callSearchApi(scanULDController.text);
       }
       else{
+        uldDetail = null;
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -341,12 +342,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                 else if (state is CloseULDSearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.closeULDSearchModel.status == "E"){
+                                    uldDetail = null;
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.closeULDSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanULDFocusNode);
                                     });
                                   }else{
+                                    uldDetail = null;
                                     uldDetail = state.closeULDSearchModel.uLDDetailList![0];
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanULDBtnFocusNode);
@@ -368,6 +371,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                     SnackbarUtil.showSnackbar(context, state.saveTareWeightModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
                                   }else{
+                                    SnackbarUtil.showSnackbar(context, state.saveTareWeightModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
                                     callSearchApi(scanULDController.text);
                                   }
                                 }
@@ -382,6 +387,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.closeReopenModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    SnackbarUtil.showSnackbar(context, state.closeReopenModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+
                                     callSearchApi(scanULDController.text);
                                   }
                                 }
@@ -623,7 +630,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                 ],
                                                               ),
                                                               onTap: () {
-                                                                openEditBatteryBottomDialog(
+                                                                openEditTareWeightBottomDialog(
                                                                     context,
                                                                     uldDetail!.uLDNo!,
                                                                     "${uldDetail!.tareWeight!}",
@@ -786,7 +793,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             ),
                                                             Flexible(
                                                               child: CustomeText(
-                                                                text: (uldDetail != null) ? "${uldDetail!.deviation!} Kg" : "-",
+                                                                text: (uldDetail != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.deviation!)} Kg" : "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -808,7 +815,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             ),
                                                             Flexible(
                                                               child: CustomeText(
-                                                                text: (uldDetail != null) ? "${uldDetail!.deviationPer!} %" : "-",
+                                                                text: (uldDetail != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.deviationPer!)} %" : "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -973,7 +980,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                     scanULDFocusNode.unfocus();
                                                     scanULDBtnFocusNode.unfocus();
                                                    if(uldDetail != null){
-                                                     var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDEquipmentPage(
+                                                     var value = await Navigator.push(context, CupertinoPageRoute(
+                                                       builder: (context) => CloseULDEquipmentPage(
                                                        importSubMenuList: widget.importSubMenuList,
                                                        exportSubMenuList: widget.exportSubMenuList,
                                                        title: "Equipment",
@@ -1027,7 +1035,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
                                                           uldNo: uldDetail!.uLDNo!,
-                                                          uldType: "U",
                                                           flightSeqNo: uldDetail!.flightSeqNo!,
                                                           uldSeqNo: uldDetail!.uLDSeqNo!,
                                                       ),));
@@ -1076,7 +1083,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
                                                           uldNo: uldDetail!.uLDNo!,
-                                                          uldType: "U",
                                                           flightSeqNo: uldDetail!.flightSeqNo!,
                                                           uldSeqNo: uldDetail!.uLDSeqNo!,
                                                       ),));
@@ -1263,11 +1269,15 @@ class _CloseULDPageState extends State<CloseULDPage>{
         });
       }
       else{
+        uldDetail = null;
         scanULDController.clear();
         SnackbarUtil.showSnackbar(context, "${widget.lableModel!.entervalidULDNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanULDFocusNode);
+        });
+        setState(() {
+
         });
       }
 
@@ -1289,7 +1299,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
     }
   }
 
-  Future<void> openEditBatteryBottomDialog(BuildContext context, String uldNo, String tareWeight, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
+  Future<void> openEditTareWeightBottomDialog(BuildContext context, String uldNo, String tareWeight, int uldSeqNo, LableModel lableModel, ui.TextDirection textDirection) async {
     FocusScope.of(context).unfocus();
     String? updatedTareWeight = await DialogUtils.showTareWtChangeBottomULDDialog(context, uldNo, tareWeight, lableModel, textDirection);
     if (updatedTareWeight != null) {

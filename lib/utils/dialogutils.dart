@@ -5,6 +5,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/language/model/dashboardModel.dart';
 import 'package:galaxy/language/model/lableModel.dart';
+import 'package:galaxy/module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'package:galaxy/module/export/services/palletstack/palletstacklogic/palletstackcubit.dart';
 import 'package:galaxy/module/export/services/palletstack/palletstacklogic/palletstackstate.dart';
 import 'package:galaxy/module/export/services/unloaduld/unloaduldlogic/unloaduldcubit.dart';
@@ -25,6 +26,7 @@ import 'package:vibration/vibration.dart';
 import '../core/images.dart';
 import '../module/export/model/palletstock/designtype.dart';
 import '../module/export/model/palletstock/palletstackuldconditioncodemodel.dart';
+import '../module/export/services/buildup/builduplogic/buildupstate.dart';
 import '../module/import/model/uldacceptance/buttonrolesrightsmodel.dart';
 import '../module/import/pages/uldacceptance/ulddamagedpage.dart';
 import '../module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
@@ -3656,9 +3658,6 @@ class DialogUtils {
       isScrollControlled: true,
       builder: (BuildContext newContext) {
 
-
-
-
         return StatefulBuilder(
             builder:(BuildContext context, StateSetter setState) {
 
@@ -3669,7 +3668,8 @@ class DialogUtils {
                   });
                   return true; // Allow the modal to close
                 },
-                child: BlocListener<PalletStackCubit, PalletStackState>(listener: (context, state) {
+                child: BlocListener<PalletStackCubit, PalletStackState>(
+                  listener: (context, state) {
                   if (state is PalletStackInitialState) {
                   }
                   else if (state is PalletStackLoadingState) {
@@ -5266,6 +5266,254 @@ class DialogUtils {
             Navigator.of(context).pop(false);
           },),
 
+        );
+      },
+    );
+  }
+
+
+  static Future<int?> showULDMoreOptionDialog(BuildContext context, String message, LableModel lableModel, String uldStatus) {
+
+
+    return showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          widthFactor: 1, // Adjust the width to 90% of the screen width
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: SizeConfig.blockSizeVertical * 2,
+              horizontal: SizeConfig.blockSizeHorizontal * 4,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomeText(
+                  text: message,
+                  fontColor: MyColor.colorBlack,
+                  fontSize: SizeConfig.textMultiplier * 2.2,
+                  fontWeight: FontWeight.w400,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical ),
+
+                CustomDivider(
+                  space: 0,
+                  color: MyColor.textColorGrey,
+                  hascolor: true,
+                  thickness: 1,
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonGreen(
+                        color: MyColor.btnColor1,
+                        textColor: MyColor.textColorGrey3,
+                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                        text: "Equipment",
+                        press: () {
+                          Navigator.pop(context, 1);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonGreen(
+                        color: MyColor.btnColor2,
+                        textColor: MyColor.textColorGrey3,
+                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                        text: "Contour",
+
+                        press: () {
+                          Navigator.pop(context, 2);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical,),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonGreen(
+                        color: MyColor.btnColor3,
+                        textColor: MyColor.textColorGrey3,
+                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                        text: "Scale",
+
+                        press: () {
+                          Navigator.pop(context, 3);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonGreen(
+                        color: MyColor.btnColor4,
+                        textColor: MyColor.textColorGrey3,
+                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                        text: "Add Mail",
+                        press: () {
+                          Navigator.pop(context, 4);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical,),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonBlue(
+                        isborderButton: true,
+                        text: "${lableModel.cancel}",
+                        color: MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButton(
+                        text: "Close ULD",
+                        color: MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context, 5);
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<int?> showTrolleyMoreOptionDialog(BuildContext context, String message, LableModel lableModel, String trolleyStatus) {
+
+
+    return showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          widthFactor: 1, // Adjust the width to 90% of the screen width
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: SizeConfig.blockSizeVertical * 2,
+              horizontal: SizeConfig.blockSizeHorizontal * 4,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomeText(
+                  text: message,
+                  fontColor: MyColor.colorBlack,
+                  fontSize: SizeConfig.textMultiplier * 2.2,
+                  fontWeight: FontWeight.w400,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical ),
+
+                CustomDivider(
+                  space: 0,
+                  color: MyColor.textColorGrey,
+                  hascolor: true,
+                  thickness: 1,
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonGreen(
+                        color: MyColor.btnColor1,
+                        textColor: MyColor.textColorGrey3,
+                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                        text: "Equipment",
+                        press: () {
+                          Navigator.pop(context, 1);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonGreen(
+                        color: MyColor.btnColor3,
+                        textColor: MyColor.textColorGrey3,
+                        verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                        textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                        text: "Scale",
+
+                        press: () {
+                          Navigator.pop(context, 2);
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical,),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonBlue(
+                        isborderButton: true,
+                        text: "${lableModel.cancel}",
+                        color: MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButton(
+                        text: "Close Trolley",
+                        color: MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context, 3);
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
         );
       },
     );

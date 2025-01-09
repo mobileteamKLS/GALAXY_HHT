@@ -932,13 +932,7 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                 SizedBox(height: SizeConfig.blockSizeVertical,),
                                                                 Row(
                                                                   children: [
-                                                                   /* CustomeText(
-                                                                      text: "Flight : ",
-                                                                      fontColor: MyColor.textColorGrey2,
-                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                      fontWeight: FontWeight.w500,
-                                                                      textAlign: TextAlign.start,
-                                                                    ),*/
+
                                                                     Expanded(
                                                                       flex:4,
                                                                       child: RoundedButtonBlue(text: (palletStackDetail.flightNo!.isEmpty) ? "${lableModel.assignFlight}" : "${palletStackDetail.flightAirline} ${palletStackDetail.flightNo}  ${palletStackDetail.flightDate!.replaceAll(" ", "-")}" /*"Assign flight"*/,
