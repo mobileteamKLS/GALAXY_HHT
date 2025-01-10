@@ -15,6 +15,7 @@ import '../../../../language/appLocalizations.dart';
 import '../../../../language/model/lableModel.dart';
 import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
+import '../../../../utils/awbformatenumberutils.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
@@ -50,6 +51,7 @@ class BuildUpAddShipmentPage extends StatefulWidget {
   String uldType;
   int pieces;
   double weight;
+  String shcCodes;
 
 
   BuildUpAddShipmentPage({super.key,
@@ -67,7 +69,8 @@ class BuildUpAddShipmentPage extends StatefulWidget {
     required this.awbRowId,
     required this.uldType,
     required this.pieces,
-    required this.weight
+    required this.weight,
+    required this.shcCodes
    });
 
   @override
@@ -108,7 +111,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
 
 
 
-  String shcCodes = "DGR,GEN,VAL,PER";
+  String shcCodes = "GEN,VAL,PER";
   List<String> selectedShcCodes = [];
 
 
@@ -298,6 +301,42 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
+                                else if (state is SHCValidateSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.shcValidateModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.shcValidateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }
+                                  else{
+
+                                    String newShcCode = shcController.text;
+
+                                    if (!shcCodes.split(",").contains(newShcCode)) {
+                                      setState(() {
+                                        // Update the SHC codes list
+                                        shcCodes = "$shcCodes,$newShcCode";
+
+                                        // Add to selected SHC codes
+                                        selectedShcCodes.add(newShcCode);
+
+                                        // Clear the input field
+                                        shcController.clear();
+                                      });
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(content: Text("SHC code already exists in the list.")),
+                                      );
+                                    }
+
+
+                                    SnackbarUtil.showSnackbar(context, state.shcValidateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                  }
+                                }
+                                else if (state is SHCValidateFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
                               },
                               child: Expanded(
@@ -330,8 +369,20 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                         Row(
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
-                                                            ULDNumberWidget(uldNo: "AKE 12345 AJ", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontColor: MyColor.textColorGrey3, uldType: "U"),
-                                                            CustomeText(text: "125-1111 2222", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.end)
+                                                            Row(
+                                                              children: [
+                                                                CustomeText(text: "ULD :", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.end),
+                                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                ULDNumberWidget(uldNo: widget.uldNo, smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontColor: MyColor.textColorGrey3, uldType: "U"),
+                                                              ],
+                                                            ),
+                                                            Row(
+                                                              children: [
+                                                                CustomeText(text: "AWB :", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.end),
+                                                                SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                CustomeText(text: AwbFormateNumberUtils.formatAWBNumber(widget.awbNo), fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.end),
+                                                              ],
+                                                            )
                                                           ],
                                                         ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
@@ -351,7 +402,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                                     hastextcolor: true,
                                                                     animatedLabel: true,
                                                                     needOutlineBorder: true,
-                                                                    labelText: "Pieces",
+                                                                    labelText: "NoP",
                                                                     readOnly: false,
                                                                     onChanged: (value) {
                                                                       if (value.isNotEmpty) {
@@ -697,6 +748,15 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                       text: "Add to list",
                                       press: () {
 
+                                        if(shcController.text.isNotEmpty){
+                                          shcValidate();
+                                        }else{
+                                          SnackbarUtil.showSnackbar(context, "Please enter SHC code.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
+                                        }
+
+
+
                                       },
                                     ),
                                   ),
@@ -732,9 +792,9 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
   }
 
 
-  Future<void> getAWBList() async {
-    await context.read<BuildUpCubit>().getAwbList(
-        widget.flightSeqNo,
+  Future<void> shcValidate() async {
+    await context.read<BuildUpCubit>().shcCodeValidate(
+         shcController.text,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

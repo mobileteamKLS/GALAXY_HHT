@@ -45,6 +45,7 @@ class CustomTextField extends StatefulWidget {
   final bool? digitsOnly;
   final bool? tempOnly;
   final bool? doubleDigitOnly;
+  final bool? textOnly;
   final TextDirection textDirection;
 
   const CustomTextField(
@@ -88,6 +89,7 @@ class CustomTextField extends StatefulWidget {
       this.digitsOnly = false,
       this.tempOnly = false,
       this.doubleDigitOnly = false,
+      this.textOnly = false,
       this.boxHeight = 30})
       : super(key: key);
 
@@ -143,6 +145,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   DecimalTextInputFormatter(maxDigitsBeforeDecimal: 7, maxDigitsAfterDecimal: 2),
                 ] : widget.tempOnly! ? <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp("[0-9-]")),
+                ] : widget.textOnly! ? <TextInputFormatter>[
+                  FilteringTextInputFormatter.allow(RegExp("[a-zA-Z]")),
                 ] : <TextInputFormatter>[
                   FilteringTextInputFormatter.allow(RegExp("[0-9a-zA-Z]")),
                 ],

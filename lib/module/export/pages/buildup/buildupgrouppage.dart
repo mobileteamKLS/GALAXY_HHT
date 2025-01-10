@@ -142,7 +142,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
         _splashDefaultData = splashDefaultData;
       });
 
-      getAWBList();
+      getGroupList();
 
       inactivityTimerManager = InactivityTimerManager(
         context: context,
@@ -370,12 +370,11 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                                         children: [
                                                                           CustomeText(
-                                                                              text: "Add to this AWB No. ",
+                                                                              text: "Add to this AWB No. ${AwbFormateNumberUtils.formatAWBNumber(widget.awbNo)}",
                                                                               fontColor: MyColor.textColorGrey2,
                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                               fontWeight: FontWeight.w500,
                                                                               textAlign: TextAlign.start),
-                                                                          ULDNumberWidget(uldNo: widget.uldNo, smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontColor: MyColor.textColorGrey3, uldType: widget.uldType),
                                                                         ],
                                                                       ),
                                                                     ),
@@ -551,6 +550,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                               awbRowId: aWBItem.expAWBRowId!,
                                                                                               pieces: aWBItem.nOP!,
                                                                                               weight: aWBItem.weightKg!,
+                                                                                              shcCodes: aWBItem.sHCCode!,
                                                                                             ),));
 
 
@@ -767,12 +767,19 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
   }
 
 
-  Future<void> getAWBList() async {
+  Future<void> getGroupList() async {
+   /* await context.read<BuildUpCubit>().getGroupList(
+        widget.flightSeqNo,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);*/
+
     await context.read<BuildUpCubit>().getAwbList(
         widget.flightSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
+
   }
 
   List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int expAwbRowId) {

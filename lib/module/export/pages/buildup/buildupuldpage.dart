@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/export/model/buildup/getuldtrolleysearchmodel.dart';
 import 'package:galaxy/module/export/pages/buildup/buildupadduldpage.dart';
 import 'package:galaxy/module/export/pages/closetrolley/closetrolleypage.dart';
 import 'package:galaxy/module/export/services/buildup/builduplogic/buildupcubit.dart';
@@ -59,6 +60,7 @@ class BuildUpULDPage extends StatefulWidget {
   int flightSeqNo;
   String flightNo;
   String flightDate;
+  String offPoint;
 
   BuildUpULDPage(
       {super.key,
@@ -71,7 +73,8 @@ class BuildUpULDPage extends StatefulWidget {
       required this.mainMenuName,
       required this.flightSeqNo,
       required this.flightNo,
-      required this.flightDate});
+      required this.flightDate,
+      required this.offPoint});
 
   @override
   State<BuildUpULDPage> createState() => _BuildUpULDPageState();
@@ -89,13 +92,9 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
   String isRequiredLocation = "Y";
 
 
- /* FlightCheckULDListModel? flightCheckULDListModel;
-  FlightCheckSummaryModel? flightCheckSummaryModel;
+  bool _isOpenULDFlagEnable = false;
 
-  List<FlightDetailList> originalFlightDetails = [];
-  List<FlightDetailList> flightDetailsList = [];
 
-  List<ButtonRight> buttonRightsList = [];*/
 
   Map<String, String>? validationMessages;
 
@@ -115,7 +114,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
 
   final List<String> _tabs = ['ULD', 'Trolley'];
 
-  final List<String> shcCodeList = ["VAL", "DGR", "GEN"];
+ // final List<String> shcCodeList = ["VAL", "DGR", "GEN"];
 
   TextEditingController locationController = TextEditingController();
   FocusNode locationFocusNode = FocusNode();
@@ -129,7 +128,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
   bool _isLocationSearchBtnEnable = false;
   bool _isvalidateLocation = false;
 
-  bool isBackPressed = false; // Track if the back button was pressed
+  bool isBackPressed = false;
+
+  GetULDTrolleySearchModel? uldTrolleyDetailModel;
+
+  List<ULDTrolleyDetailList> uLDTrolleyDetailList = []; // Track if the back button was pressed
+  List<ULDTrolleyDetailList> filteruLDTrolleyDetailList = []; // Track if the back button was pressed
+
   @override
   void initState() {
     super.initState();
@@ -144,6 +149,9 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
       begin: MyColor.shcColorList[0],
       end: Colors.transparent,
     ).animate(_blinkController); // color animation
+
+    carrierCodeController.text = "${widget.flightNo.split(" ").first}";
+
 
     // add tabs length
     _tabController = TabController(length: 3, vsync: this);
@@ -377,10 +385,12 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   locationController.clear();
                                   _tabController.animateTo(0);
                                   _pageIndex = 0;
+
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                   );
+                                  getULDTrolleySearchList();
                                   setState(() {});
                                 },
                               ),
@@ -406,10 +416,21 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         MyColor.colorRed,
                                         icon: FontAwesomeIcons.times);
                                   }else{
+
+                                    uldTrolleyDetailModel = state.getULDTrolleySearchModel;
+                                    uLDTrolleyDetailList = List.from(uldTrolleyDetailModel!.uLDTrolleyDetailList != null ? uldTrolleyDetailModel!.uLDTrolleyDetailList! : []);
+
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                     );
+
+                                    _pageIndex = 0;
+                                    _filterList();
+
+                                    setState(() {
+
+                                    });
                                   }
                                 }
                                 else if (state is GetULDTrolleySearchFailureState){
@@ -456,6 +477,22 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   SnackbarUtil.showSnackbar(
                                       context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if (state is ULDTrolleyPrioritySuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  _resumeTimerOnInteraction();
+                                  if(state.uldTrolleyPriorityUpdateModel.status == "E"){
+                                    SnackbarUtil.showSnackbar(context, state.uldTrolleyPriorityUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }else{
+                                    SnackbarUtil.showSnackbar(context, state.uldTrolleyPriorityUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    getULDTrolleySearchList();
+                                  }
+                                }
+                                else if (state is ULDTrolleyPriorityFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
 
                             },
@@ -498,7 +535,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     children: [
                                                       CustomeText(
-                                                        text: "BA 199 / 04-Dec-24",
+                                                        text: "${widget.flightNo} / ${widget.flightDate.replaceAll(" ", "-")}",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                         fontWeight: FontWeight.w600,
@@ -614,8 +651,22 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                               press: () async {
                                                                 _resumeTimerOnInteraction();
 
-                                                                await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpAddULDPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Add ULD", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: widget.flightSeqNo,),));
-
+                                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                  builder: (context) => BuildUpAddULDPage(
+                                                                    importSubMenuList: widget.importSubMenuList,
+                                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                                    title: "Add ULD", refrelCode: widget.refrelCode,
+                                                                    menuId: widget.menuId,
+                                                                    mainMenuName: widget.mainMenuName,
+                                                                    flightSeqNo: widget.flightSeqNo,
+                                                                    lableModel: lableModel,
+                                                                  offPoint: widget.offPoint,
+                                                                  ),));
+                                                                if(value == "Done"){
+                                                                  getULDTrolleySearchList();
+                                                                }else{
+                                                                  _resumeTimerOnInteraction();
+                                                                }
                                                               },
                                                             ),
                                                           ),
@@ -626,8 +677,22 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                               text: "Add Trolley",
                                                               press: () async {
                                                                 _resumeTimerOnInteraction();
-                                                                await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpAddTrolleyPage(importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Add Trolley", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: widget.flightSeqNo,),));
-
+                                                               var value =  await Navigator.push(context, CupertinoPageRoute(
+                                                                 builder: (context) => BuildUpAddTrolleyPage(
+                                                                   importSubMenuList: widget.importSubMenuList,
+                                                                   exportSubMenuList: widget.exportSubMenuList,
+                                                                   title: "Add Trolley",
+                                                                   refrelCode: widget.refrelCode,
+                                                                   menuId: widget.menuId,
+                                                                   mainMenuName: widget.mainMenuName,
+                                                                   flightSeqNo: widget.flightSeqNo,
+                                                                 offPoint: widget.offPoint,
+                                                                 ),));
+                                                               if(value == "Done"){
+                                                                 getULDTrolleySearchList();
+                                                               }else{
+                                                                 _resumeTimerOnInteraction();
+                                                               }
                                                               },
                                                             ),
                                                           ),
@@ -725,7 +790,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                             textAlign: TextAlign.start),
                                                                         SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                                         Switch(
-                                                                          value: false,
+                                                                          value: _isOpenULDFlagEnable,
                                                                           materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                                                           activeColor: MyColor.primaryColorblue,
                                                                           inactiveThumbColor: MyColor.thumbColor,
@@ -733,7 +798,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                           trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
                                                                           onChanged: (value) {
                                                                             setState(() {
-
+                                                                              _isOpenULDFlagEnable = value;
+                                                                              _filterList();
                                                                             });
 
                                                                             //call api //
@@ -789,99 +855,118 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
       return Column(
         children: [
 
-          InkWell(
-            focusNode: uldListFocusNode,
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              setState(() {
+          (uldTrolleyDetailModel != null)
+              ? (filteruLDTrolleyDetailList.isNotEmpty)
+              ? Column(
+            children: [
+              ListView.builder(
+                itemCount: (uldTrolleyDetailModel != null)
+                    ? filteruLDTrolleyDetailList.where((item) => item.type == "U").length
+                    : 0,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                controller: scrollController,
+                itemBuilder: (context, index) {
 
-              });
-            },
-            onDoubleTap: () {
+                  List<ULDTrolleyDetailList> uldList = filteruLDTrolleyDetailList.where((menu) => menu.type == "U").toList();
 
-              setState(() {
 
-              });
+                  ULDTrolleyDetailList uldTrolleyItem = uldList[index];
+                  List<String> shcCodes = uldTrolleyItem.sHCCode!.split(',');
 
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
-                color: MyColor.colorWhite,
-                borderRadius: BorderRadius.circular(8),
+                  return  InkWell(
+                    focusNode: uldListFocusNode,
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() {
 
-                boxShadow: [
-                  BoxShadow(
-                    color: MyColor.colorBlack.withOpacity(0.09),
-                    spreadRadius: 2,
-                    blurRadius: 15,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
+                      });
+                    },
+                    onDoubleTap: () {
 
-              ),
-              child: DottedBorder(
-                dashPattern: const [7, 7, 7, 7],
-                strokeWidth: 1,
-                borderType: BorderType.RRect,
-                color: shcCodeList.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                radius: const Radius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: MyColor.colorWhite,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      setState(() {
+
+                      });
+
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: MyColor.colorWhite,
+                        borderRadius: BorderRadius.circular(8),
+
+                        boxShadow: [
+                          BoxShadow(
+                            color: MyColor.colorBlack.withOpacity(0.09),
+                            spreadRadius: 2,
+                            blurRadius: 15,
+                            offset: const Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+
+                      ),
+                      child: DottedBorder(
+                        dashPattern: const [7, 7, 7, 7],
+                        strokeWidth: 1,
+                        borderType: BorderType.RRect,
+                        color: uldTrolleyItem.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                        radius: const Radius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: MyColor.colorWhite,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
                             children: [
-                              ULDNumberWidget(uldNo: "AKE 12345 AJ", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: "U"),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      CustomeText(
-                                        text: "${lableModel.status} : ",
-                                        fontColor: MyColor.textColorGrey2,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w400,
-                                        textAlign: TextAlign.start,
-                                      ),
+                                      ULDNumberWidget(uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: "${uldTrolleyItem.type}"),
                                       SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                      Container(
-                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                        decoration : BoxDecoration(
-                                            borderRadius: BorderRadius.circular(20),
-                                            color:  MyColor.flightFinalize
-                                        ),
-                                        child: CustomeText(
-                                          text: "Open",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                          fontWeight: FontWeight.w400,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
-                                  InkWell(
-                                    onTap: () async {
-                                      int? optionNo = await DialogUtils.showULDMoreOptionDialog(
-                                          context, "More Option for ULD", lableModel, "O");
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "${lableModel.status} : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                              Container(
+                                                padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                                decoration : BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(20),
+                                                    color: (uldTrolleyItem.status == "O") ? MyColor.flightFinalize :MyColor.flightNotArrived
+                                                ),
+                                                child: CustomeText(
+                                                  text: (uldTrolleyItem.status == "O") ? "Open" : "Closed",
+                                                  fontColor: MyColor.textColorGrey3,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                                  fontWeight: FontWeight.w400,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
+                                          InkWell(
+                                            onTap: () async {
+                                              int? optionNo = await DialogUtils.showULDMoreOptionDialog(
+                                                  context, "More Option for ULD", lableModel, "O");
 
-                                      print("OptionNo === ${optionNo}");
-                                      if(optionNo == null){
-                                        _resumeTimerOnInteraction();
-                                      }
-                                      else if(optionNo == 1){
-                                       /* var value = await Navigator.push(context, CupertinoPageRoute(
+                                              print("OptionNo === ${optionNo}");
+                                              if(optionNo == null){
+                                                _resumeTimerOnInteraction();
+                                              }
+                                              else if(optionNo == 1){
+                                                /* var value = await Navigator.push(context, CupertinoPageRoute(
                                           builder: (context) => CloseULDEquipmentPage(
                                             importSubMenuList: widget.importSubMenuList,
                                             exportSubMenuList: widget.exportSubMenuList,
@@ -902,10 +987,10 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         }else{
                                           _resumeTimerOnInteraction();
                                         }*/
-                                      }
-                                      else if(optionNo == 2){
+                                              }
+                                              else if(optionNo == 2){
 
-                                       /* var value = await Navigator.push(context, CupertinoPageRoute(
+                                                /* var value = await Navigator.push(context, CupertinoPageRoute(
                                           builder: (context) => ContourULDPage(
                                           importSubMenuList: widget.importSubMenuList,
                                           exportSubMenuList: widget.exportSubMenuList,
@@ -925,9 +1010,9 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                           _resumeTimerOnInteraction();
                                         }*/
 
-                                      }
-                                      else if(optionNo == 3){
-                                        /*var value = await Navigator.push(context, CupertinoPageRoute(
+                                              }
+                                              else if(optionNo == 3){
+                                                /*var value = await Navigator.push(context, CupertinoPageRoute(
                                           builder: (context) => ScaleULDPage(
                                           importSubMenuList: widget.importSubMenuList,
                                           exportSubMenuList: widget.exportSubMenuList,
@@ -946,216 +1031,240 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         }else{
                                           _resumeTimerOnInteraction();
                                         }*/
-                                      }
-                                      else if(optionNo == 4){
+                                              }
+                                              else if(optionNo == 4){
 
-                                      }
-                                      else if(optionNo == 5){
-                                        var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDPage(
-                                            importSubMenuList: widget.importSubMenuList,
-                                            exportSubMenuList: widget.exportSubMenuList,
-                                            title: "Close ULD",
-                                            refrelCode: widget.refrelCode,
-                                            menuId: widget.menuId,
-                                            mainMenuName: widget.mainMenuName,),));
+                                              }
+                                              else if(optionNo == 5){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => CloseULDPage(
+                                                  importSubMenuList: widget.importSubMenuList,
+                                                  exportSubMenuList: widget.exportSubMenuList,
+                                                  title: "Close ULD",
+                                                  refrelCode: widget.refrelCode,
+                                                  menuId: widget.menuId,
+                                                  mainMenuName: widget.mainMenuName,),));
 
-                                        if(value == "true"){
-                                          _resumeTimerOnInteraction();
-                                          getULDTrolleySearchList();
-                                        }else{
-                                          _resumeTimerOnInteraction();
-                                        }
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
 
-                                      }
-                                      else{
-                                        _resumeTimerOnInteraction();
-                                      }
+                                              }
+                                              else{
+                                                _resumeTimerOnInteraction();
+                                              }
 
 
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                      decoration: BoxDecoration(
-                                          color: MyColor.dropdownColor,
-                                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                              decoration: BoxDecoration(
+                                                  color: MyColor.dropdownColor,
+                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                              ),
+                                              child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                      child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                    ),
-                                  ),
-                                ],
-                              ),
 
-                            ],
-                          ),
-                          shcCodeList.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          shcCodeList.isNotEmpty
-                              ? Row(
-                            children:shcCodeList.asMap().entries.take(3).map((entry) {
-                              int index = entry.key; // Get the index for colorList assignment
-                              String code = entry.value.trim(); // Get the code value and trim it
-
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: AnimatedBuilder(
-                                  animation: _colorAnimation,
-                                  builder: (context, child) {
-                                    return Container(
-                                      padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                      decoration : BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                      child: CustomeText(
-                                        text: code.trim(),
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                        fontWeight: FontWeight.w500,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            }).toList(),
-                          )
-                              : const SizedBox(),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  CustomeText(
-                                    text: "Contour :",
-                                    fontColor: MyColor.textColorGrey2,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                    fontWeight: FontWeight.w500,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  CustomeText(
-                                    text: "Q1 Contour",
-                                    fontColor: MyColor.colorBlack,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                    fontWeight: FontWeight.w600,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  CustomeText(
-                                    text: "Scale Wt. :",
-                                    fontColor: MyColor.textColorGrey2,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                    fontWeight: FontWeight.w500,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  CustomeText(
-                                    text: "100.00 Kg",
-                                    fontColor: MyColor.colorBlack,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                    fontWeight: FontWeight.w600,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            children: [
-                              CustomeText(
-                                text: "Remark :",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                fontWeight: FontWeight.w500,
-                                textAlign: TextAlign.start,
-                              ),
-                              const SizedBox(width: 5),
-                              CustomeText(
-                                text: "Remark for testing",
-                                fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                ),
-                                child: InkWell(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CustomeText(
-                                          text: "P - 10",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w700,
-                                          textAlign: TextAlign.center),
-                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                      SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
                                     ],
                                   ),
-                                  onTap: () {
-                                    setState(() {
+                                  uldTrolleyItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(),
+                                  uldTrolleyItem.sHCCode!.isNotEmpty
+                                      ? Row(
+                                    children:shcCodes.asMap().entries.take(3).map((entry) {
+                                      int index = entry.key; // Get the index for colorList assignment
+                                      String code = entry.value.trim(); // Get the code value and trim it
 
-                                    });
-                                    /*openEditPriorityBottomDialog(
-                                        context,
-                                        flightDetails.uLDNo!,
-                                        "${flightDetails.bDPriority}",
-                                        index,
-                                        flightDetails,
-                                        lableModel,
-                                        textDirection);*/
-                                  },
-                                ),
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 5.0),
+                                        child: AnimatedBuilder(
+                                          animation: _colorAnimation,
+                                          builder: (context, child) {
+                                            return Container(
+                                              padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                              decoration : BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                              child: CustomeText(
+                                                text: code.trim(),
+                                                fontColor: MyColor.textColorGrey3,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                fontWeight: FontWeight.w500,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }).toList(),
+                                  )
+                                      : const SizedBox(),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CustomeText(
+                                            text: "Contour :",
+                                            fontColor: MyColor.textColorGrey2,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          CustomeText(
+                                            text: "${uldTrolleyItem.contourCode}",
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          CustomeText(
+                                            text: "Scale Wt. :",
+                                            fontColor: MyColor.textColorGrey2,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          CustomeText(
+                                            text: "${CommonUtils.formateToTwoDecimalPlacesValue(uldTrolleyItem.scaleWt!)} Kg",
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      CustomeText(
+                                        text: "Remark :",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        fontWeight: FontWeight.w500,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Flexible(
+                                        child: CustomeText(
+                                          text: "${uldTrolleyItem.remark}",
+                                          fontColor: MyColor.colorBlack,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                        decoration: BoxDecoration(
+                                            color: MyColor.dropdownColor,
+                                            borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                        ),
+                                        child: InkWell(
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              CustomeText(
+                                                  text: "P - ${uldTrolleyItem.priority}",
+                                                  fontColor: MyColor.textColorGrey3,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w700,
+                                                  textAlign: TextAlign.center),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                              SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            openEditPriorityBottomDialog(context, "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", "${uldTrolleyItem.priority!}", index, uldTrolleyItem.uLDSeqNo!, uldTrolleyItem.type!, lableModel, textDirection);
+                                          },
+                                        ),
+                                      ),
+                                      RoundedButton(text: "Next",
+                                        horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
+                                        verticalPadding: SizeConfig.blockSizeVertical,
+                                        color: MyColor.primaryColorblue,
+                                        press: () async {
+                                          inactivityTimerManager?.stopTimer();
+                                          await Navigator.push(context, CupertinoPageRoute(
+                                              builder: (context) => BuildUpAWBListPage(
+                                                  importSubMenuList: widget.importSubMenuList,
+                                                  exportSubMenuList: widget.exportSubMenuList,
+                                                  title: "AWB List",
+                                                  refrelCode: widget.refrelCode,
+                                                  menuId: widget.menuId,
+                                                  mainMenuName: widget.mainMenuName,
+                                                  lableModel: lableModel,
+                                                  flightSeqNo: widget.flightSeqNo,
+                                                  uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                  uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                  uldType: uldTrolleyItem.type!)));
+                                        },)
+
+                                    ],
+                                  ),
+
+
+                                ],
                               ),
-                              RoundedButton(text: "Next",
-                                horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
-                                verticalPadding: SizeConfig.blockSizeVertical,
-                                color: MyColor.primaryColorblue,
-                                press: () async {
-                                  inactivityTimerManager?.stopTimer();
-                                  await Navigator.push(context, CupertinoPageRoute(
-                                      builder: (context) => BuildUpAWBListPage(
-                                      importSubMenuList: widget.importSubMenuList,
-                                      exportSubMenuList: widget.exportSubMenuList,
-                                      title: "AWB List",
-                                      refrelCode: widget.refrelCode,
-                                      menuId: widget.menuId,
-                                      mainMenuName: widget.mainMenuName,
-                                      lableModel: lableModel,
-                                      flightSeqNo: 12360,
-                                      uldNo: 'AKE 12345 AJ',
-                                      uldSeqNo: 12345,
-                                      uldType: "U")));
-                              },)
 
                             ],
                           ),
-
-
-                        ],
+                        ),
                       ),
-
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-            ),
+            ],
           )
+              : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Center(
+              child: CustomeText(text: "${lableModel.recordNotFound}",
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),),
+          )
+              : Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Center(
+                  child: CustomeText(text: "${lableModel.recordNotFound}",
+                      fontColor: MyColor.textColorGrey,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.center),),
+              ),
+
+            ],
+          )
+
+
+
+
         ],
       );
 
@@ -1165,99 +1274,120 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
       return Column(
         children: [
 
-          InkWell(
-            focusNode: uldListFocusNode,
-            onTap: () {
-              FocusScope.of(context).unfocus();
-              setState(() {
+          (uldTrolleyDetailModel != null)
+              ? (filteruLDTrolleyDetailList.isNotEmpty)
+              ? Column(
+            children: [
+              ListView.builder(
+                itemCount: (uldTrolleyDetailModel != null)
+                    ? filteruLDTrolleyDetailList.where((item) => item.type == "T").length
+                    : 0,
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                controller: scrollController,
+                itemBuilder: (context, index) {
 
-              });
-            },
-            onDoubleTap: () {
 
-              setState(() {
+                  List<ULDTrolleyDetailList> trolleyList = filteruLDTrolleyDetailList.where((menu) => menu.type == "T").toList();
 
-              });
 
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 4),
-              decoration: BoxDecoration(
-                color: MyColor.colorWhite,
-                borderRadius: BorderRadius.circular(8),
+                  ULDTrolleyDetailList uldTrolleyItem = trolleyList[index];
+                  List<String> shcCodes = uldTrolleyItem.sHCCode!.split(',');
 
-                boxShadow: [
-                  BoxShadow(
-                    color: MyColor.colorBlack.withOpacity(0.09),
-                    spreadRadius: 2,
-                    blurRadius: 15,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
+                  return  InkWell(
+                    focusNode: uldListFocusNode,
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      setState(() {
 
-              ),
-              child: DottedBorder(
-                dashPattern: const [7, 7, 7, 7],
-                strokeWidth: 1,
-                borderType: BorderType.RRect,
-                color: shcCodeList.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
-                radius: const Radius.circular(8),
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: MyColor.colorWhite,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Stack(
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      });
+                    },
+                    onDoubleTap: () {
+
+                      setState(() {
+
+                      });
+
+                    },
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      decoration: BoxDecoration(
+                        color: MyColor.colorWhite,
+                        borderRadius: BorderRadius.circular(8),
+
+                        boxShadow: [
+                          BoxShadow(
+                            color: MyColor.colorBlack.withOpacity(0.09),
+                            spreadRadius: 2,
+                            blurRadius: 15,
+                            offset: const Offset(0, 3), // changes position of shadow
+                          ),
+                        ],
+
+                      ),
+                      child: DottedBorder(
+                        dashPattern: const [7, 7, 7, 7],
+                        strokeWidth: 1,
+                        borderType: BorderType.RRect,
+                        color: uldTrolleyItem.sHCCode!.contains("DGR") ? MyColor.colorRedLight : Colors.transparent,
+                        radius: const Radius.circular(8),
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: MyColor.colorWhite,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Stack(
                             children: [
-                              ULDNumberWidget(uldNo: "TTL21212", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: "T"),
-                              SizedBox(width: SizeConfig.blockSizeHorizontal),
-                              Row(
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      CustomeText(
-                                        text: "${lableModel.status} : ",
-                                        fontColor: MyColor.textColorGrey2,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                        fontWeight: FontWeight.w400,
-                                        textAlign: TextAlign.start,
-                                      ),
+                                      ULDNumberWidget(uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: "${uldTrolleyItem.type}"),
                                       SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                      Container(
-                                        padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                        decoration : BoxDecoration(
-                                            borderRadius: BorderRadius.circular(20),
-                                            color:  MyColor.flightFinalize
-                                        ),
-                                        child: CustomeText(
-                                          text: "Open",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                          fontWeight: FontWeight.w400,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
-                                  InkWell(
-                                    onTap: () async {
-                                      int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
-                                          context, "More Option for Trolley", lableModel, "O");
+                                      Row(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              CustomeText(
+                                                text: "${lableModel.status} : ",
+                                                fontColor: MyColor.textColorGrey2,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                fontWeight: FontWeight.w400,
+                                                textAlign: TextAlign.start,
+                                              ),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                              Container(
+                                                padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                                decoration : BoxDecoration(
+                                                    borderRadius: BorderRadius.circular(20),
+                                                    color: (uldTrolleyItem.status == "O") ? MyColor.flightFinalize :MyColor.flightNotArrived
+                                                ),
+                                                child: CustomeText(
+                                                  text: (uldTrolleyItem.status == "O") ? "Open" : "Closed",
+                                                  fontColor: MyColor.textColorGrey3,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
+                                                  fontWeight: FontWeight.w400,
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
 
-                                      print("OptionNo === ${optionNo}");
-                                      if(optionNo == null){
-                                        _resumeTimerOnInteraction();
-                                      }
-                                      else if(optionNo == 1){
-                                        /* var value = await Navigator.push(context, CupertinoPageRoute(
+                                          InkWell(
+                                            onTap: () async {
+                                              int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
+                                                  context, "More Option for Trolley", lableModel, "O");
+
+                                              print("OptionNo === ${optionNo}");
+                                              if(optionNo == null){
+                                                _resumeTimerOnInteraction();
+                                              }
+                                              else if(optionNo == 1){
+                                                /* var value = await Navigator.push(context, CupertinoPageRoute(
                                           builder: (context) => CloseULDEquipmentPage(
                                             importSubMenuList: widget.importSubMenuList,
                                             exportSubMenuList: widget.exportSubMenuList,
@@ -1278,9 +1408,9 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         }else{
                                           _resumeTimerOnInteraction();
                                         }*/
-                                      }
-                                      else if(optionNo == 2){
-                                      /*  var value = await Navigator.push(context, CupertinoPageRoute(
+                                              }
+                                              else if(optionNo == 2){
+                                                /*  var value = await Navigator.push(context, CupertinoPageRoute(
                                           builder: (context) => ScaleTrolleyPage(
                                           importSubMenuList: widget.importSubMenuList,
                                           exportSubMenuList: widget.exportSubMenuList,
@@ -1299,195 +1429,222 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         else{
                                           _resumeTimerOnInteraction();
                                         }*/
-                                      }
-                                      else if(optionNo == 3){
-                                        var value = await Navigator.push(context, CupertinoPageRoute(
-                                          builder: (context) => CloseTrolleyPage(
-                                          importSubMenuList: widget.importSubMenuList,
-                                          exportSubMenuList: widget.exportSubMenuList,
-                                          title: "Close ULD",
-                                          refrelCode: widget.refrelCode,
-                                          menuId: widget.menuId,
-                                          mainMenuName: widget.mainMenuName,),));
+                                              }
+                                              else if(optionNo == 3){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => CloseTrolleyPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Close ULD",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,),));
 
-                                        if(value == "true"){
-                                          _resumeTimerOnInteraction();
-                                          getULDTrolleySearchList();
-                                        }else{
-                                          _resumeTimerOnInteraction();
-                                        }
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
 
-                                      }
-                                      else{
-                                        _resumeTimerOnInteraction();
-                                      }
+                                              }
+                                              else{
+                                                _resumeTimerOnInteraction();
+                                              }
 
 
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                                      decoration: BoxDecoration(
-                                          color: MyColor.dropdownColor,
-                                          borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                                              decoration: BoxDecoration(
+                                                  color: MyColor.dropdownColor,
+                                                  borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3)
+                                              ),
+                                              child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
+                                            ),
+                                          )
+
+
+
+                                        ],
                                       ),
-                                      child: Icon(Icons.navigate_next_rounded, color: MyColor.primaryColorblue, size: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,),
-                                    ),
-                                  ),
-                                ],
-                              ),
 
-                            ],
-                          ),
-                          shcCodeList.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
-                          shcCodeList.isNotEmpty
-                              ? Row(
-                            children:shcCodeList.asMap().entries.take(3).map((entry) {
-                              int index = entry.key; // Get the index for colorList assignment
-                              String code = entry.value.trim(); // Get the code value and trim it
-
-                              return Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
-                                child: AnimatedBuilder(
-                                  animation: _colorAnimation,
-                                  builder: (context, child) {
-                                    return Container(
-                                      padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                      decoration : BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                      child: CustomeText(
-                                        text: code.trim(),
-                                        fontColor: MyColor.textColorGrey3,
-                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                        fontWeight: FontWeight.w500,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            }).toList(),
-                          )
-                              : const SizedBox(),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  CustomeText(
-                                    text: "Scale Wt. :",
-                                    fontColor: MyColor.textColorGrey2,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                    fontWeight: FontWeight.w500,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                  const SizedBox(width: 5),
-                                  CustomeText(
-                                    text: "100.00 Kg",
-                                    fontColor: MyColor.colorBlack,
-                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                    fontWeight: FontWeight.w600,
-                                    textAlign: TextAlign.start,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            children: [
-                              CustomeText(
-                                text: "Remark :",
-                                fontColor: MyColor.textColorGrey2,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                fontWeight: FontWeight.w500,
-                                textAlign: TextAlign.start,
-                              ),
-                              const SizedBox(width: 5),
-                              CustomeText(
-                                text: "Remark for testing",
-                                fontColor: MyColor.colorBlack,
-                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                fontWeight: FontWeight.w600,
-                                textAlign: TextAlign.start,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: SizeConfig.blockSizeVertical),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                                decoration: BoxDecoration(
-                                    color: MyColor.dropdownColor,
-                                    borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
-                                ),
-                                child: InkWell(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CustomeText(
-                                          text: "P - 10",
-                                          fontColor: MyColor.textColorGrey3,
-                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                          fontWeight: FontWeight.w700,
-                                          textAlign: TextAlign.center),
-                                      SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                      SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
                                     ],
                                   ),
-                                  onTap: () {
-                                    setState(() {
+                                  uldTrolleyItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(),
+                                  uldTrolleyItem.sHCCode!.isNotEmpty
+                                      ? Row(
+                                    children:shcCodes.asMap().entries.take(3).map((entry) {
+                                      int index = entry.key; // Get the index for colorList assignment
+                                      String code = entry.value.trim(); // Get the code value and trim it
 
-                                    });
-                                   /* openEditPriorityBottomDialog(
-                                        context,
-                                        flightDetails.uLDNo!,
-                                        "${flightDetails.bDPriority}",
-                                        index,
-                                        flightDetails,
-                                        lableModel,
-                                        textDirection);*/
-                                  },
-                                ),
+                                      return Padding(
+                                        padding: const EdgeInsets.only(right: 5.0),
+                                        child: AnimatedBuilder(
+                                          animation: _colorAnimation,
+                                          builder: (context, child) {
+                                            return Container(
+                                              padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                              decoration : BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                              child: CustomeText(
+                                                text: code.trim(),
+                                                fontColor: MyColor.textColorGrey3,
+                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                fontWeight: FontWeight.w500,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      );
+                                    }).toList(),
+                                  )
+                                      : const SizedBox(),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CustomeText(
+                                            text: "Scale Wt. :",
+                                            fontColor: MyColor.textColorGrey2,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          CustomeText(
+                                            text: "${CommonUtils.formateToTwoDecimalPlacesValue(uldTrolleyItem.scaleWt!)} Kg",
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      CustomeText(
+                                        text: "Remark :",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        fontWeight: FontWeight.w500,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Flexible(
+                                        child: CustomeText(
+                                          text: "${uldTrolleyItem.remark}",
+                                          fontColor: MyColor.colorBlack,
+                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                          fontWeight: FontWeight.w600,
+                                          textAlign: TextAlign.start,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                        decoration: BoxDecoration(
+                                            color: MyColor.dropdownColor,
+                                            borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
+                                        ),
+                                        child: InkWell(
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              CustomeText(
+                                                  text: "P - ${uldTrolleyItem.priority}",
+                                                  fontColor: MyColor.textColorGrey3,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                  fontWeight: FontWeight.w700,
+                                                  textAlign: TextAlign.center),
+                                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                              SvgPicture.asset(pen, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,)
+                                            ],
+                                          ),
+                                          onTap: () {
+                                            openEditPriorityBottomDialog(context, "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", "${uldTrolleyItem.priority!}", index, uldTrolleyItem.uLDSeqNo!, uldTrolleyItem.type!, lableModel, textDirection);
+                                          },
+                                        ),
+                                      ),
+                                      RoundedButton(text: "Next",
+                                        horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
+                                        verticalPadding: SizeConfig.blockSizeVertical,
+                                        color: MyColor.primaryColorblue,
+                                        press: () async {
+                                          inactivityTimerManager?.stopTimer();
+                                          await Navigator.push(context, CupertinoPageRoute(
+                                              builder: (context) => BuildUpAWBListPage(
+                                                  importSubMenuList: widget.importSubMenuList,
+                                                  exportSubMenuList: widget.exportSubMenuList,
+                                                  title: "AWB List",
+                                                  refrelCode: widget.refrelCode,
+                                                  menuId: widget.menuId,
+                                                  mainMenuName: widget.mainMenuName,
+                                                  lableModel: lableModel,
+                                                  flightSeqNo: widget.flightSeqNo,
+                                                  uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                  uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                  uldType: uldTrolleyItem.type!)));
+                                        },)
+
+                                    ],
+                                  ),
+
+
+                                ],
                               ),
-                              RoundedButton(text: "Next",
-                                horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
-                                verticalPadding: SizeConfig.blockSizeVertical,
-                                color: MyColor.primaryColorblue,
-                                press: () async {
-                                  inactivityTimerManager?.stopTimer();
-                                  await Navigator.push(context, CupertinoPageRoute(
-                                    builder: (context) => BuildUpAWBListPage(
-                                    importSubMenuList: widget.importSubMenuList,
-                                    exportSubMenuList: widget.exportSubMenuList,
-                                    title: "AWB List",
-                                    refrelCode: widget.refrelCode,
-                                    menuId: widget.menuId,
-                                    mainMenuName: widget.mainMenuName,
-                                    lableModel: lableModel,
-                                    flightSeqNo: 12360,
-                                    uldNo: 'TTL11221',
-                                    uldSeqNo: 12345,
-                                    uldType: "T"),));
-                                },)
 
                             ],
                           ),
-
-
-                        ],
+                        ),
                       ),
-
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               ),
-            ),
+            ],
           )
+              : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Center(
+              child: CustomeText(text: "${lableModel.recordNotFound}",
+                  fontColor: MyColor.textColorGrey,
+                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  fontWeight: FontWeight.w500,
+                  textAlign: TextAlign.center),),
+          )
+              : Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10.0),
+                child: Center(
+                  child: CustomeText(text: "${lableModel.recordNotFound}",
+                      fontColor: MyColor.textColorGrey,
+                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                      fontWeight: FontWeight.w500,
+                      textAlign: TextAlign.center),),
+              ),
+
+            ],
+          )
+
+
+
+
         ],
       );
 
@@ -1564,6 +1721,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
       String priority,
       int index,
       int uldSeqNo,
+      String uldType,
       LableModel lableModel,
       ui.TextDirection textDirection)
   async {
@@ -1576,20 +1734,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
         // Call your API to update the priority in the backend
         await callbdPriorityApi(
             context,
-            widget.flightSeqNo,
-            1234,
+            uldSeqNo,
             newPriority,
+            uldType,
             _user!.userProfile!.userIdentity!,
             _splashDefaultData!.companyCode!,
             widget.menuId);
 
-        /*setState(() {
-          // Update the BDPriority for the selected item
-          flightDetailsList[index].bDPriority = newPriority;
-
-          // Sort the list based on BDPriority
-          flightDetailsList.sort((a, b) => a.bDPriority!.compareTo(b.bDPriority!));
-        });*/
       } else {
         Vibration.vibrate(duration: 500);
         SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -1602,23 +1753,45 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
 
   Future<void> callbdPriorityApi(
       BuildContext context,
-      int flightSeqNo,
       int uldSeqNo,
       int bdPriority,
+      String uldType,
       int userId,
       int companyCode,
       int menuId) async {
     await context.read<BuildUpCubit>().getULDTrolleyPriorityUpdate(
-        flightSeqNo, uldSeqNo, bdPriority, userId, companyCode, menuId);
+        uldSeqNo, bdPriority, uldType, userId, companyCode, menuId);
   }
 
 
 
   Future<void> getULDTrolleySearchList() async {
     await context.read<BuildUpCubit>().getULDTrolleySearchList(
+        widget.flightSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
+  }
+
+  void _filterList() {
+
+    setState(() {
+      // Filter and sort the list based on the switch state
+      if (!_isOpenULDFlagEnable) {
+        // Filter the list to show only items where requestUser is "" or "KALE"
+
+        filteruLDTrolleyDetailList = List.from(uLDTrolleyDetailList.where((item) => (item.status == "O")));
+        filteruLDTrolleyDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
+
+
+      }
+      else {
+        // When switch is ON, restore the full list
+        filteruLDTrolleyDetailList = List.from(uLDTrolleyDetailList);
+        filteruLDTrolleyDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
+      }
+
+    });
   }
 
 

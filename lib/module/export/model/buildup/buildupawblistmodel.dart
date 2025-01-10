@@ -75,11 +75,16 @@ class BuildUpAWBDetailList {
   double? weightKg;
   String? nOG;
   String? commodity;
-  int? priority;
+  String? priority;
   String? sHCCode;
   String? aWBRemarksInd;
   String? groupBasedAcceptInd;
   int? expAWBRowId;
+  int? expShipRowId;
+  int? remainingNOP;
+  double? remainingWeightKg;
+  int? manifestedNOP;
+  double? manifestedWeightKg;
 
   BuildUpAWBDetailList(
       {this.aWBNo,
@@ -91,7 +96,12 @@ class BuildUpAWBDetailList {
         this.sHCCode,
         this.aWBRemarksInd,
         this.groupBasedAcceptInd,
-        this.expAWBRowId});
+        this.expAWBRowId,
+        this.expShipRowId,
+        this.remainingNOP,
+        this.remainingWeightKg,
+        this.manifestedNOP,
+        this.manifestedWeightKg});
 
   BuildUpAWBDetailList.fromJson(Map<String, dynamic> json) {
     aWBNo = json['AWBNo'];
@@ -104,6 +114,11 @@ class BuildUpAWBDetailList {
     aWBRemarksInd = json['AWBRemarksInd'];
     groupBasedAcceptInd = json['GroupBasedAcceptInd'];
     expAWBRowId = json['ExpAWBRowId'];
+    expShipRowId = json['ExpShipRowId'];
+    remainingNOP = json['RemainingNOP'];
+    remainingWeightKg = json['RemainingWeightKg'];
+    manifestedNOP = json['ManifestedNOP'];
+    manifestedWeightKg = json['ManifestedWeightKg'];
   }
 
   Map<String, dynamic> toJson() {
@@ -118,6 +133,11 @@ class BuildUpAWBDetailList {
     data['AWBRemarksInd'] = this.aWBRemarksInd;
     data['GroupBasedAcceptInd'] = this.groupBasedAcceptInd;
     data['ExpAWBRowId'] = this.expAWBRowId;
+    data['ExpShipRowId'] = this.expShipRowId;
+    data['RemainingNOP'] = this.remainingNOP;
+    data['RemainingWeightKg'] = this.remainingWeightKg;
+    data['ManifestedNOP'] = this.manifestedNOP;
+    data['ManifestedWeightKg'] = this.manifestedWeightKg;
     return data;
   }
 }

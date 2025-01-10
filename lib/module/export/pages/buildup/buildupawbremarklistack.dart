@@ -6,8 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
-import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckstate.dart';
 import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../core/images.dart';
@@ -36,6 +34,8 @@ import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
 import '../../model/buildup/buildupawblistmodel.dart';
+import '../../services/buildup/builduplogic/buildupcubit.dart';
+import '../../services/buildup/builduplogic/buildupstate.dart';
 
 
 class BuildUpAWBRemarkListAckPage extends StatefulWidget {
@@ -220,22 +220,25 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                         _resumeTimerOnInteraction(); // Reset the timer on scroll event
                         return true;
                       },
-                      child: BlocListener<FlightCheckCubit, FlightCheckState>(
+                      child: BlocListener<BuildUpCubit, BuildUpState>(
                         listener: (context, state) {
-                          if(state is MainLoadingState){
+                          if(state is BuildUpInitialState){
+
+                          }
+                          else if(state is BuildUpLoadingState){
                             DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                           }
-                          else if(state is AWBAcknoledgeSuccessState){
+                          else if(state is AWBAcknowledgeSuccessState){
 
                             DialogUtils.hideLoadingDialog(context);
-                            if(state.awbRemarkAcknoledgeModel.status == "E"){
+                            if(state.awbAcknowledgeUpdateModel.status == "E"){
                               Vibration.vibrate(duration: 500);
-                              SnackbarUtil.showSnackbar(context, state.awbRemarkAcknoledgeModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              SnackbarUtil.showSnackbar(context, state.awbAcknowledgeUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
-                              Navigator.pop(context, "true");
+                              Navigator.pop(context, "True");
                             }
 
-                          }else if(state is AWBAcknoledgeFailureState){
+                          }else if(state is AWBAcknowledgeFailureState){
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                           }
@@ -258,7 +261,7 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                                 titleTextColor: MyColor.colorBlack,
                                 title: lableModel!.remarkList!,
                                 onBack: () {
-                                  Navigator.pop(context, "Done");
+                                  _onWillPop();
                                 },
                                 clearText: "",
                                 //add clear text to clear all feild
@@ -549,7 +552,7 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                                         isborderButton: true,
                                         color:  MyColor.primaryColorblue,
                                         press: () async {
-                                          Navigator.pop(context, "Done");
+                                          _onWillPop();
                                         },
                                       ),
                                     ),
@@ -562,6 +565,7 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                                         text: "${lableModel.acknowledge}",
                                         color: MyColor.primaryColorblue,
                                         press: () async {
+                                          callAcknowledgeApi();
 
                                          /* if(isButtonEnabled("acknowledge", widget.buttonRightsList)){
                                             context.read<FlightCheckCubit>().aWBRemarkUpdateAcknoledge(
@@ -609,6 +613,17 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
 
     return textPainter.didExceedMaxLines;
   }
+
+
+  Future<void> callAcknowledgeApi() async {
+    await context.read<BuildUpCubit>().getAWBAcknowledge(
+        widget.aWBItem.expAWBRowId!,
+        widget.aWBItem.expShipRowId!,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
 
 /*  bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
     ButtonRight? button = buttonList.firstWhere(

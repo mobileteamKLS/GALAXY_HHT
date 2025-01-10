@@ -32,20 +32,20 @@ class BuildUpCubit extends Cubit<BuildUpState>{
     }
   }
 
-  Future<void> getULDTrolleySearchList(int userId, int companyCode, int menuId) async {
+  Future<void> getULDTrolleySearchList(int flightSeqNo, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
-      final getULDTrolleySearchModelData = await buildUpRepository.getULDTrolleySearchList(userId, companyCode, menuId);
+      final getULDTrolleySearchModelData = await buildUpRepository.getULDTrolleySearchList(flightSeqNo, userId, companyCode, menuId);
       emit(GetULDTrolleySearchSuccessState(getULDTrolleySearchModelData));
     } catch (e) {
       emit(GetULDTrolleySearchFailureState(e.toString()));
     }
   }
 
-  Future<void> getULDTrolleyPriorityUpdate(int flightSeqNo, int uldSeqNo, int priority, int userId, int companyCode, int menuId) async {
+  Future<void> getULDTrolleyPriorityUpdate(int uldSeqNo, int priority, String uldType, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
-      final uldTrolleyPriorityModelData = await buildUpRepository.uldTrolleyPriorityUpdate(flightSeqNo, uldSeqNo, priority, userId, companyCode, menuId);
+      final uldTrolleyPriorityModelData = await buildUpRepository.uldTrolleyPriorityUpdate(uldSeqNo, priority, uldType,  userId, companyCode, menuId);
       emit(ULDTrolleyPrioritySuccessState(uldTrolleyPriorityModelData));
     } catch (e) {
       emit(ULDTrolleyPriorityFailureState(e.toString()));
@@ -113,6 +113,47 @@ class BuildUpCubit extends Cubit<BuildUpState>{
     }
   }
 
+  Future<void> getAWBPriorityUpdate(int expRowId, int priority, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final awbPriorityModelData = await buildUpRepository.awbPriorityUpdate(expRowId, priority, userId, companyCode, menuId);
+      emit(AWBPrioritySuccessState(awbPriorityModelData));
+    } catch (e) {
+      emit(AWBPriorityFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getAWBAcknowledge(int expRowId, int expShipRowId, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final awbAcknowledgeModelData = await buildUpRepository.awbAcknowledgeUpdate(expRowId, expShipRowId, userId, companyCode, menuId);
+      emit(AWBAcknowledgeSuccessState(awbAcknowledgeModelData));
+    } catch (e) {
+      emit(AWBAcknowledgeFailureState(e.toString()));
+    }
+  }
+
+
+  Future<void> getGroupList(int flightSeqNo, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final getGroupModelData = await buildUpRepository.getGroupDetailList(flightSeqNo, userId, companyCode, menuId);
+      emit(BuildUpGroupDetailSuccessState(getGroupModelData));
+    } catch (e) {
+      emit(BuildUpGroupDetailFailureState(e.toString()));
+    }
+  }
+
+
+  Future<void> shcCodeValidate(String shcCode, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final shcCodeValidate = await buildUpRepository.shcValidateCode(shcCode, userId, companyCode, menuId);
+      emit(SHCValidateSuccessState(shcCodeValidate));
+    } catch (e) {
+      emit(SHCValidateFailureState(e.toString()));
+    }
+  }
 
 
   // getButtonsRoles & Rights api call repo

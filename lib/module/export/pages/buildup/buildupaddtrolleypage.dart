@@ -53,6 +53,7 @@ class BuildUpAddTrolleyPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   int flightSeqNo;
+  String offPoint;
 
   BuildUpAddTrolleyPage(
       {super.key,
@@ -63,7 +64,8 @@ class BuildUpAddTrolleyPage extends StatefulWidget {
       this.lableModel,
       required this.menuId,
       required this.mainMenuName,
-      required this.flightSeqNo});
+      required this.flightSeqNo,
+      required this.offPoint});
 
   @override
   State<BuildUpAddTrolleyPage> createState() => _BuildUpAddTrolleyPageState();
@@ -101,8 +103,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
     super.initState();
     _loadUser(); //load user data
 
-
-
+    routeController.text = widget.offPoint;
   }
 
   @override
@@ -126,7 +127,9 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
       });
     }
 
-
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(trollyTypeFocusNode);
+    });
     inactivityTimerManager = InactivityTimerManager(
       context: context,
       timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
@@ -251,6 +254,13 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  trollyTypeController.clear();
+                                  trollyNumberController.clear();
+                                  tareWeightController.clear();
+                                  priorityController.clear();
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(trollyTypeFocusNode);
+                                  });
                                   setState(() {});
                                 },
                               ),
@@ -266,7 +276,27 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
-
+                                else if (state is GetULDTrolleySaveSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.getULDTrolleySaveModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    trollyTypeController.clear();
+                                    trollyNumberController.clear();
+                                    tareWeightController.clear();
+                                    priorityController.clear();
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(trollyTypeFocusNode);
+                                    });
+                                    SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                  }
+                                }
+                                else if (state is GetULDTrolleySaveFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
 
                             },
                               child: Expanded(
@@ -397,7 +427,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Tare Weight *",
+                                                        labelText: "Tare Weight",
                                                         controller: tareWeightController,
                                                         readOnly: false,
                                                         maxLength: 10,
@@ -435,7 +465,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "${lableModel.priority}",
+                                                              labelText: "Priority",
                                                               readOnly: false,
                                                               controller: priorityController,
                                                               maxLength: 2,
@@ -482,6 +512,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                               circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                               boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
                                                               digitsOnly: false,
+                                                              textOnly: true,
                                                               validator: (value) {
                                                                 if (value!.isEmpty) {
                                                                   return "Please fill out this field";
@@ -493,7 +524,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                           ),
                                                         ],
                                                       ),
-                                                      SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+
                                                     ],
                                                   ),
                                                 ),
@@ -545,7 +576,19 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                     child: RoundedButtonBlue(
                                       text: "Save",
                                       press: () {
-                                        saveTrolley();
+                                        if(trollyTypeController.text.isNotEmpty){
+                                          if(trollyNumberController.text.isNotEmpty){
+                                            if(routeController.text.isNotEmpty){
+                                              saveTrolley();
+                                            }else{
+                                              openValidationDialog("Please enter offpoint.", routeFocusNode);
+                                            }
+                                          }else{
+                                            openValidationDialog("Please enter Trolley Number.", trollyNumberFocusNode);
+                                          }
+                                        }else{
+                                          openValidationDialog("Please enter Trolley Type.", trollyTypeFocusNode);
+                                        }
                                       },
                                     ),
                                   ),
@@ -578,10 +621,10 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
         "",
         trollyTypeController.text,
         trollyNumberController.text,
-        double.parse(tareWeightController.text),
+        (tareWeightController.text.isNotEmpty) ? double.parse(tareWeightController.text) : 0.00,
         "",
         0,
-        int.parse(priorityController.text),
+        (priorityController.text.isNotEmpty) ? int.parse(priorityController.text) : 1,
         routeController.text,
         "T",
         _user!.userProfile!.userIdentity!,

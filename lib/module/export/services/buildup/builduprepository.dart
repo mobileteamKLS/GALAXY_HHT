@@ -2,10 +2,14 @@
 import 'package:dio/dio.dart';
 import 'package:galaxy/api/api.dart';
 import 'package:galaxy/api/apilist.dart';
+import 'package:galaxy/module/export/model/buildup/shcvalidatemodel.dart';
 import 'package:galaxy/prefrence/savedprefrence.dart';
 import 'package:galaxy/utils/commonutils.dart';
 import '../../../import/model/uldacceptance/locationvalidationmodel.dart';
+import '../../model/buildup/awbacknowledgemodel.dart';
+import '../../model/buildup/awbprioritymodel.dart';
 import '../../model/buildup/buildupawblistmodel.dart';
+import '../../model/buildup/buildupgrouplistmodel.dart';
 import '../../model/buildup/flightsearchmodel.dart';
 import '../../model/buildup/getuldtrolleysavemodel.dart';
 import '../../model/buildup/getuldtrolleysearchmodel.dart';
@@ -105,12 +109,12 @@ class BuildUpRepository{
     }
   }
 
-  Future<GetULDTrolleySearchModel> getULDTrolleySearchList(int userId, int companyCode, int menuId) async {
+  Future<GetULDTrolleySearchModel> getULDTrolleySearchList(int flightSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
-
+        "FlightSeqNo" : flightSeqNo,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -192,8 +196,8 @@ class BuildUpRepository{
       print('GetULDTrolleySaveModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.get(Apilist.buildUpULDTrolleySave,
-          queryParameters: payload
+      Response response = await api.sendRequest.post(Apilist.buildUpULDTrolleySave,
+          data: payload
       );
 
       if (response.statusCode == 200) {
@@ -216,14 +220,14 @@ class BuildUpRepository{
     }
   }
 
-  Future<ULDTrolleyPriorityUpdateModel> uldTrolleyPriorityUpdate(int flightSeqNo, int uldSeqNo, int priority, int userId, int companyCode, int menuId) async {
+  Future<ULDTrolleyPriorityUpdateModel> uldTrolleyPriorityUpdate(int uldSeqNo, int priority, String uldType, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
-        "FlightSeqNo" : flightSeqNo,
-        "uldSeqNo" : uldSeqNo,
+        "SeqNo" : uldSeqNo,
         "Priority" : priority,
+        "ULDType" : uldType,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -259,7 +263,89 @@ class BuildUpRepository{
     }
   }
 
+  Future<AWBPriorityUpdateModel> awbPriorityUpdate(int expRowId, int priority, int userId, int companyCode, int menuId) async {
 
+    try {
+
+      var payload = {
+        "EXPAWBRowId" : expRowId,
+        "Priority" : priority,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('AWBPriorityUpdateModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.buildUpAWBPriorityUpdate,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        AWBPriorityUpdateModel awbPriorityUpdateModel = AWBPriorityUpdateModel.fromJson(response.data);
+        return awbPriorityUpdateModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<AWBAcknowledgeUpdateModel> awbAcknowledgeUpdate(int expRowId, int expShipRowId, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "EXPAWBRowId" : expRowId,
+        "EXPShipRowId" : expShipRowId,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('AWBAcknowledgeUpdateModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.buildUpAWBRemarkAcknoledge,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        AWBAcknowledgeUpdateModel awbAcknowledgeUpdateModel = AWBAcknowledgeUpdateModel.fromJson(response.data);
+        return awbAcknowledgeUpdateModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 
   Future<GetContourListModel> getContourList(int uldSeqNo, int userId, int companyCode, int menuId) async {
@@ -346,105 +432,12 @@ class BuildUpRepository{
     }
   }
 
-
-
-
-
-/* Future<ButtonRolesRightsModel> getButtonRolesAndRights(int menuId, int userId, int companyCode) async {
+  Future<BuildUpGroupModel> getGroupDetailList(int flightSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
-        "AirportCode": CommonUtils.airportCode,
-        "CompanyCode": companyCode,
-        "CultureCode": CommonUtils.defaultLanguageCode,
-        "UserId": userId,
-        "MenuId" : menuId
-      };
-
-      // Print payload for debugging
-      print('ButtonRolesRightsModel: $payload --- $payload');
-
-
-      Response response = await api.sendRequest.get(Apilist.getButtonRolesAndRightsApi,
-          queryParameters: payload
-      );
-
-      if (response.statusCode == 200) {
-        ButtonRolesRightsModel buttonRolesRightsModel = ButtonRolesRightsModel.fromJson(response.data);
-        return buttonRolesRightsModel;
-      } else {
-        // Handle non-200 response
-        throw DioException(
-          requestOptions: response.requestOptions,
-          response: response,
-          error: response.data['StatusMessage'] ?? 'Failed Responce',
-        );
-      }
-    } catch (e) {
-      if (e is DioError) {
-        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
-      } else {
-        throw 'An unexpected error occurred';
-      }
-    }
-  }*/
-
-
-
-  /*Future<PageLoadDefaultModel> getPageLoadDefault(int menuId, int userId, int companyCode) async {
-
-    try {
-
-      var payload = {
-        "AirportCode": CommonUtils.airportCode,
-        "CompanyCode": companyCode,
-        "CultureCode": CommonUtils.defaultLanguageCode,
-        "UserId": userId,
-        "MenuId" : menuId
-      };
-
-      // Print payload for debugging
-      print('pageLoadDefaultModel: $payload --- $payload');
-
-
-      Response response = await api.sendRequest.get(Apilist.getPageLoadApi,
-          queryParameters: payload
-      );
-
-      if (response.statusCode == 200) {
-        PageLoadDefaultModel pageLoadDefaultModel = PageLoadDefaultModel.fromJson(response.data);
-        return pageLoadDefaultModel;
-      } else {
-        // Handle non-200 response
-        throw DioException(
-          requestOptions: response.requestOptions,
-          response: response,
-          error: response.data['StatusMessage'] ?? 'Failed Responce',
-        );
-      }
-    } catch (e) {
-      if (e is DioError) {
-        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
-      } else {
-        throw 'An unexpected error occurred';
-      }
-    }
-  }*/
-
-
-
-
-
-  // call Bd Priority api call
- /* Future<BdPriorityModel> bdPriority(int flightSeqNo, int uldSeqNo, int bdPriority, int userId, int companyCode, int menuId) async {
-
-    try {
-
-      var payload = {
-        "FlightSeqNo": flightSeqNo,
-        "ULDSeqNo": uldSeqNo,
-        "BDPriority": bdPriority,
+        "FlightSeqNo" : flightSeqNo,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -453,16 +446,16 @@ class BuildUpRepository{
       };
 
       // Print payload for debugging
-      print('locationValidationModel: $payload --- $payload');
+      print('BuildUpGroupModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.post(Apilist.updateBDPriority,
-          data: payload
+      Response response = await api.sendRequest.get(Apilist.buildUpGetGroupDetails,
+          queryParameters: payload
       );
 
       if (response.statusCode == 200) {
-        BdPriorityModel bdPriorityModel = BdPriorityModel.fromJson(response.data);
-        return bdPriorityModel;
+        BuildUpGroupModel buildUpGroupModel = BuildUpGroupModel.fromJson(response.data);
+        return buildUpGroupModel;
       } else {
         // Handle non-200 response
         throw DioException(
@@ -479,17 +472,15 @@ class BuildUpRepository{
       }
     }
   }
-*/
 
-  // list AWB api call
- /* Future<AWBModel> getListOfAwb(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId, int showAll) async {
+
+
+  Future<SHCValidateModel> shcValidateCode(String shcCode, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
-        "FlightSeqNo": flightSeqNo,
-        "ULDSeqNo": uldSeqNo,
-        "ShowAll": showAll,
+        "ShcCode" : shcCode,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -498,16 +489,16 @@ class BuildUpRepository{
       };
 
       // Print payload for debugging
-      print('getListOfAwb: $payload --- $payload');
+      print('shcValidateModel: $payload --- $payload');
 
 
-      Response response = await api.sendRequest.post(Apilist.awbListApi,
-          data: payload
+      Response response = await api.sendRequest.get(Apilist.shcValidate,
+          queryParameters: payload
       );
 
       if (response.statusCode == 200) {
-        AWBModel aWBModel = AWBModel.fromJson(response.data);
-        return aWBModel;
+        SHCValidateModel shcValidateModel = SHCValidateModel.fromJson(response.data);
+        return shcValidateModel;
       } else {
         // Handle non-200 response
         throw DioException(
@@ -524,10 +515,6 @@ class BuildUpRepository{
       }
     }
   }
-*/
-
-
-
 
 
 

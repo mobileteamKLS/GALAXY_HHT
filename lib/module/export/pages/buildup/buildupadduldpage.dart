@@ -26,6 +26,7 @@ import '../../../../prefrence/savedprefrence.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/snackbarutil.dart';
+import '../../../../utils/uldvalidationutil.dart';
 import '../../../../widget/customdivider.dart';
 import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
@@ -53,6 +54,7 @@ class BuildUpAddULDPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   int flightSeqNo;
+  String offPoint;
 
   BuildUpAddULDPage(
       {super.key,
@@ -63,7 +65,8 @@ class BuildUpAddULDPage extends StatefulWidget {
       this.lableModel,
       required this.menuId,
       required this.mainMenuName,
-      required this.flightSeqNo});
+      required this.flightSeqNo,
+      required this.offPoint});
 
   @override
   State<BuildUpAddULDPage> createState() => _BuildUpAddULDPageState();
@@ -105,7 +108,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
     super.initState();
     _loadUser(); //load user data
 
-
+    routeController.text = widget.offPoint;
 
   }
 
@@ -256,6 +259,15 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                  });
+                                  scanULDController.clear();
+                                  tareWeightController.clear();
+                                  priorityController.clear();
+                                  heightController.clear();
+                                  selectedSwitchIndex = "";
+                                  uldSpecification = "LD";
                                   setState(() {});
                                 },
                               ),
@@ -279,7 +291,9 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                   }else{
 
                                     getContourListModel =  state.getContourListModel;
-                                    heightController.text = "${getContourListModel!.uLDContourDetail!.height!.toInt()}";
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                    });
                                     setState(() {
 
                                     });
@@ -297,8 +311,20 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(scanULDFocusNode);
+                                    });
+                                    scanULDController.clear();
+                                    tareWeightController.clear();
+                                    priorityController.clear();
+                                    heightController.clear();
+                                    selectedSwitchIndex = "";
+                                    uldSpecification = "LD";
+                                    setState(() {
 
+                                    });
 
+                                    SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                   }
                                 }
                                 else if (state is GetULDTrolleySaveFailureState){
@@ -453,7 +479,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Tare Weight *",
+                                                        labelText: "Tare Weight",
                                                         controller: tareWeightController,
                                                         readOnly: false,
                                                         maxLength: 10,
@@ -491,7 +517,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "${lableModel.priority}",
+                                                              labelText: "Priority",
                                                               readOnly: false,
                                                               controller: priorityController,
                                                               maxLength: 2,
@@ -538,6 +564,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                               circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
                                                               boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
                                                               digitsOnly: false,
+                                                              textOnly: true,
                                                               validator: (value) {
                                                                 if (value!.isEmpty) {
                                                                   return "Please fill out this field";
@@ -581,7 +608,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                                     hastextcolor: true,
                                                                     animatedLabel: true,
                                                                     needOutlineBorder: true,
-                                                                    labelText: "Height *",
+                                                                    labelText: "Height",
                                                                     readOnly: false,
                                                                     maxLength: 10,
                                                                     digitsOnly: false,
@@ -759,17 +786,25 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                     child: RoundedButtonBlue(
                                       text: "Save",
                                       press: () {
-                                        if(heightController.text.isNotEmpty){
-                                          if(selectedSwitchIndex.isNotEmpty){
-                                            saveULD();
+
+                                        if(scanULDController.text.isNotEmpty){
+                                          if(routeController.text.isNotEmpty){
+                                            String uldNumber = UldValidationUtil.validateUldNumberwithSpace1(scanULDController.text.toUpperCase());
+                                            if(uldNumber == "Valid"){
+                                              saveULD();
+                                            }else{
+                                              openValidationDialog("Please enter valid ULD No.", scanULDFocusNode);
+                                            }
                                           }else{
-                                            Vibration.vibrate(duration: 500);
-                                            SnackbarUtil.showSnackbar(context, "Please select 1 contour.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            openValidationDialog("Please enter offpoint.", routeFocusNode);
                                           }
                                         }else{
-                                          Vibration.vibrate(duration: 500);
-                                          SnackbarUtil.showSnackbar(context, "Please enter height.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          openValidationDialog("Please enter ULD No.", scanULDFocusNode);
                                         }
+
+
+
+
 
                                       },
                                     ),
@@ -804,18 +839,25 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
   }
 
   Future<void> saveULD() async {
+
+    String uldNumbes = CommonUtils.ULDNUMBERCEHCK;
+    List<String> parts = uldNumbes.split(' ');
+    String uldType = parts[0];
+    String uldNumber = parts[1];
+    String uldOwner = parts[2];
+
     await context.read<BuildUpCubit>().getULDTrolleySave(
         widget.flightSeqNo,
-        "AKE",
-        "12345",
-        "BA",
+        uldType,
+        uldNumber,
+        uldOwner,
         uldSpecification,
         "",
         "",
-        double.parse(tareWeightController.text),
+        (tareWeightController.text.isNotEmpty) ? double.parse(tareWeightController.text) : 0.00,
         selectedSwitchIndex,
-        int.parse(heightController.text),
-        int.parse(priorityController.text),
+        (heightController.text.isNotEmpty) ? int.parse(heightController.text) : 0,
+        (priorityController.text.isNotEmpty) ? int.parse(priorityController.text) : 1,
         routeController.text,
         "U",
         _user!.userProfile!.userIdentity!,
@@ -829,6 +871,8 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
 
   // validation dialog
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
+    Vibration.vibrate(duration: 500);
+
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
         context, message, widget.lableModel!);
 

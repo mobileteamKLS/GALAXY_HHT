@@ -155,6 +155,13 @@ class Apilist{
 
 
   static String buildUpGetAWBDetails = "/BuildUp/GetAWBDetails";
+  static String buildUpAWBPriorityUpdate = "/BuildUp/AWBPriorityUpdate";
+  static String buildUpAWBRemarkAcknoledge = "/BuildUp/AWBRemarksAcknowledge";
+
+  static String buildUpGetGroupDetails = "/BuildUp/GetGroupDetails";
+
+  static String shcValidate = "/SHC/SHCValidate";
+
 
 
 }

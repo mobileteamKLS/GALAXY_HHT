@@ -291,7 +291,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                 }
                                 else if (state is BuildUpLoadingState) {
                                   // showing loading dialog in this state
-                                  DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
+                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
                                 else if (state is BuildUpAWBDetailSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
@@ -314,6 +314,23 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
                                 }
                                 else if (state is BuildUpAWBDetailFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is AWBPrioritySuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  _resumeTimerOnInteraction();
+                                  if(state.awbPriorityUpdateModel.status == "E"){
+                                    SnackbarUtil.showSnackbar(context, state.awbPriorityUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }else{
+                                    SnackbarUtil.showSnackbar(context, state.awbPriorityUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                    getAWBList();
+                                  }
+
+                                }
+                                else if (state is AWBPriorityFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -534,10 +551,10 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
                                                                                       ],
                                                                                     ),
-                                                                                    shcCodes.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
+                                                                                    aWBItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
                                                                                     Row(
                                                                                       children: [
-                                                                                        shcCodes.isNotEmpty
+                                                                                        aWBItem.sHCCode!.isNotEmpty
                                                                                             ? Row(
                                                                                           children: shcCodes.asMap().entries.take(3).map((entry) {
                                                                                             int index = entry.key; // Get the index for colorList assignment
@@ -569,7 +586,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                             : SizedBox(),
                                                                                       ],
                                                                                     ),
-                                                                                    shcCodes.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
+                                                                                    aWBItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
                                                                                     Row(
                                                                                       children: [
                                                                                         Expanded(
@@ -652,6 +669,9 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                               borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2)
                                                                                           ),
                                                                                           child: InkWell(
+
+
+
                                                                                             child: Row(
                                                                                               mainAxisSize: MainAxisSize.min,
                                                                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -667,9 +687,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                               ],
                                                                                             ),
                                                                                             onTap: () {
-                                                                                              setState(() {
-
-                                                                                              });
+                                                                                              openEditPriorityBottomDialog(context, aWBItem.aWBNo!, "${aWBItem.priority!}", index, aWBItem.expAWBRowId!, lableModel, textDirection);
                                                                                               // call BD Priority
                                                                                             },
                                                                                           ),
@@ -690,6 +708,50 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                   mainMenuName: widget.mainMenuName,
                                                                                                   aWBRemarkList: remarkList, aWBItem: aWBItem, menuId: widget.menuId),));
 
+
+                                                                                              if(value == "True"){
+                                                                                                if(aWBItem.groupBasedAcceptInd == "Y"){
+                                                                                                  await Navigator.push(context, CupertinoPageRoute(
+                                                                                                    builder: (context) => BuildUpGroupListPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                                                                      title: "AWB Group List",
+                                                                                                      refrelCode: widget.refrelCode,
+                                                                                                      menuId: widget.menuId,
+                                                                                                      mainMenuName: widget.mainMenuName,
+                                                                                                      lableModel: lableModel,
+                                                                                                      flightSeqNo: widget.flightSeqNo,
+                                                                                                      uldNo: widget.uldNo,
+                                                                                                      uldSeqNo: widget.uldSeqNo,
+                                                                                                      awbNo: aWBItem.aWBNo!,
+                                                                                                      awbRowId: aWBItem.expAWBRowId!,
+                                                                                                      uldType: widget.uldType,
+                                                                                                    ),));
+                                                                                                }else{
+                                                                                                  await Navigator.push(context, CupertinoPageRoute(
+                                                                                                    builder: (context) => BuildUpAddShipmentPage(
+                                                                                                      importSubMenuList: widget.importSubMenuList,
+                                                                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                                                                      title: "Add Shipment",
+                                                                                                      refrelCode: widget.refrelCode,
+                                                                                                      menuId: widget.menuId,
+                                                                                                      mainMenuName: widget.mainMenuName,
+                                                                                                      lableModel: lableModel,
+                                                                                                      flightSeqNo: widget.flightSeqNo,
+                                                                                                      uldNo: widget.uldNo,
+                                                                                                      uldSeqNo: widget.uldSeqNo,
+                                                                                                      awbNo: aWBItem.aWBNo!,
+                                                                                                      awbRowId: aWBItem.expAWBRowId!,
+                                                                                                      uldType: widget.uldType,
+                                                                                                      pieces: aWBItem.nOP!,
+                                                                                                      weight: aWBItem.weightKg!,
+                                                                                                      shcCodes: aWBItem.sHCCode!,
+                                                                                                    ),));
+
+                                                                                                }
+                                                                                              }else{
+                                                                                                _resumeTimerOnInteraction();
+                                                                                              }
 
 
                                                                                               // Navigate to RemarksAck screen
@@ -735,6 +797,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 uldType: widget.uldType,
                                                                                                 pieces: aWBItem.nOP!,
                                                                                                 weight: aWBItem.weightKg!,
+                                                                                                  shcCodes: aWBItem.sHCCode!,
                                                                                                 ),));
 
 
@@ -812,50 +875,6 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
   }
 
 
-
-
-
-  // update serch list function
- /* void updateSearchList(String searchText, LableModel lableModel) {
-    setState(() {
-      _selectedIndex = -1;
-      if (searchText.isEmpty) {
-        filterAWBDetailsList = List.from(awbItemList);
-        filterAWBDetailsList.sort((a, b) => b.bDPriority!.compareTo(a.bDPriority!));
-      } else {
-        filterAWBDetailsList = List.from(awbItemList);
-        filterAWBDetailsList.sort((a, b) {
-          final aContains = a.aWBNo!
-              .replaceAll(" ", "")
-              .toLowerCase()
-              .contains(searchText.toLowerCase());
-          final bContains = b.aWBNo!
-              .replaceAll(" ", "")
-              .toLowerCase()
-              .contains(searchText.toLowerCase());
-
-          if (aContains && !bContains) {
-            return -1;
-          } else if (!aContains && bContains) {
-            return 1;
-          } else {
-            return 0;
-          }
-        });
-
-
-        
-      }
-    });
-
-    if (filterAWBDetailsList.isEmpty || !filterAWBDetailsList.any((awb) =>
-        awb.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchText.toLowerCase()))) {
-
-
-      SnackbarUtil.showSnackbar(context, "${lableModel.recordNotFound} $searchText", MyColor.colorRed, icon: FontAwesomeIcons.times);
-
-    }
-  }*/
 
   //update search
   void updateSearchList(String searchString) {
@@ -947,6 +966,42 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
     }
   }
 
+  // open dialog for chnage bdpriority
+  Future<void> openEditPriorityBottomDialog(
+      BuildContext context,
+      String awbNo,
+      String priority,
+      int index,
+      int expRowId,
+      LableModel lableModel,
+      ui.TextDirection textDirection)
+  async {
+    FocusScope.of(context).unfocus();
+    String? updatedPriority = await DialogUtils.showPriorityChangeBottomULDDialog(context, awbNo, priority, lableModel, textDirection);
+    if (updatedPriority != null) {
+      int newPriority = int.parse(updatedPriority);
+
+      if (newPriority != 0) {
+        // Call your API to update the priority in the backend
+        await callPriorityApi(
+            context,
+            expRowId,
+            newPriority,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId);
+
+      } else {
+        Vibration.vibrate(duration: 500);
+        SnackbarUtil.showSnackbar(context, "${lableModel.prioritymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+      }
+    } else {
+
+    }
+  }
+
+
+
 
   Future<void> getAWBList() async {
     await context.read<BuildUpCubit>().getAwbList(
@@ -955,6 +1010,18 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
+
+  Future<void> callPriorityApi(
+      BuildContext context,
+      int expRowId,
+      int bdPriority,
+      int userId,
+      int companyCode,
+      int menuId) async {
+    await context.read<BuildUpCubit>().getAWBPriorityUpdate(
+        expRowId, bdPriority, userId, companyCode, menuId);
+  }
+
 
   List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int expAwbRowId) {
     return awbRemarkList.where((remark) => remark.expAWBRowId == expAwbRowId).toList();
