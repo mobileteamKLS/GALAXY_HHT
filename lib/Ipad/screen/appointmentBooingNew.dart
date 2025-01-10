@@ -98,7 +98,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     });
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
@@ -198,7 +198,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     String xml = buildInputXml(
       saveList: saveList,
       companyCode: "3",
-      userId: "1",
+      userId: userId.toString(),
       airportCity: "JFK",
       mode: "S",
     );
@@ -213,7 +213,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     print("---$allFalse");
 
     print(xml);
-    return;
+
     DialogUtils.showLoadingDialog(context);
     await authService
         .postData(
@@ -1368,10 +1368,11 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       isOnList[index] = value;
       print("---$value");
       if (value !=false) {
-        // saveList.removeWhere(
-        //         (element) => element["item"] == appointBookingList[index]);
+        saveList.removeWhere(
+                (element) => element["item"] == appointBookingList[index]);
+
         saveList.add({"item": appointBookingList[index], "value": value});
-      } else if(value==true) {
+      } else if(value==null) {
         saveList.removeWhere(
                 (element) => element["item"] == appointBookingList[index]);
       }

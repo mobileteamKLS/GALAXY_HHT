@@ -732,7 +732,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
       "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${wdoDetailsList.first.impShipRowId}</IMPSHIPROWID><ROTATION_NO>${customRefController.text}</ROTATION_NO><PKG_RECD>${nopController.text}</PKG_RECD><WT_RECD>${wdoDetailsList.first.wtRec}</WT_RECD></WDOObjects></ArrayOfWDOObjects>",
       "AirportCity": "JFK",
       "CompanyCode": "3",
-      "UserId": "1"
+      "UserId": userId.toString()
     };
     DialogUtils.showLoadingDialog(context);
     await authService

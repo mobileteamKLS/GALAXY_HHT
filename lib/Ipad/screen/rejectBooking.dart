@@ -159,7 +159,7 @@ class _RejectBookingState extends State<RejectBooking> {
     totalWeight=0.00;
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService

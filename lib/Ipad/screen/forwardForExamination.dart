@@ -80,7 +80,7 @@ class _ForwardForExaminationState
       "HAWBNumber": data.houseNo,
       "ISID": data.impShipRowId,
       "CompanyCode": "3",
-      "UserID": 1,
+      "UserID": userId,
       "AirportCode": "JFK",
       "CultureCode": "en-US",
       "MenuId": 1
@@ -150,7 +150,7 @@ class _ForwardForExaminationState
       "MAWBNo": widget.shipmentListDetails.documentNo.replaceAll("-", ""),
       "HouseNo": widget.shipmentListDetails.houseNo,
       "CompanyCode": "3",
-      "UserID": 1,
+      "UserID": userId,
       "AirportCode": "JFK",
       "CultureCode": "en-US",
       "MenuId": 1

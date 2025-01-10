@@ -107,7 +107,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
       "ToDate": toDate,
       "Commodity": comm.isEmpty?"-1":comm,
       "CompanyCode": "3",
-      "UserID": 1,
+      "UserID": userId,
       "AirportCode": "JFK",
       "CultureCode": "en-US",
       "MenuId": 1
@@ -544,7 +544,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
     var queryParams = {
       "InputXML":xml,
       "CompanyCode": "3",
-      "UserID": 1,
+      "UserID": userId,
       "AirportCode": "JFK",
       "CultureCode": "en-US",
       "MenuId": 1

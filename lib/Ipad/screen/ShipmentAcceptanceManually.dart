@@ -237,7 +237,7 @@ class _ShipmentAcceptanceManuallyState
     clearFieldsOnGet();
     var queryParams = {
       "InputXML":
-          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
+          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId></Root>"
     };
 
     await authService
@@ -340,7 +340,7 @@ class _ShipmentAcceptanceManuallyState
     clearFieldsOnGet();
     var queryParams = {
       "InputXML":
-          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>1</UserId></Root>"
+          "<Root><AWBPrefix>${prefixController.text}</AWBPrefix><AWBNo>${awbController.text}</AWBNo><HAWBNO>${houseController.text}</HAWBNO><AirportCity>JFK</AirportCity><Culture>en-US</Culture><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId></Root>"
     };
 
     await authService
@@ -469,7 +469,7 @@ class _ShipmentAcceptanceManuallyState
 
     var queryParams = {
       "InputXML":
-          "<Root><Type>$shipmentType</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${groupIDController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>1</UserId><MenuId>0</MenuId></Root>"
+          "<Root><Type>$shipmentType</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${groupIDController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>${userId.toString()}</UserId><MenuId>0</MenuId></Root>"
     };
     // print(queryParams);
     // return;

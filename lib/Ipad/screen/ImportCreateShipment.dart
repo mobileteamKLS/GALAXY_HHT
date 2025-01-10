@@ -199,7 +199,7 @@ class _CreateShipmentState extends State<CreateShipment> {
       "AirportCode": "JFK",
       "CompanyCode": 3,
       "CultureCode": "en-US",
-      "UserId": 1,
+      "UserId": userId,
       "MenuId": 1
     };
     DialogUtils.showLoadingDialog(context);

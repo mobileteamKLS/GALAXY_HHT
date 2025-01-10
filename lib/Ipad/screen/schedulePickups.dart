@@ -14,6 +14,7 @@ import '../../utils/sizeutils.dart';
 import '../auth/auth.dart';
 import '../modal/CustomsOperations.dart';
 import '../modal/pickUpServices.dart';
+import '../utils/global.dart';
 import '../widget/customDialog.dart';
 import 'ImportShipmentListing.dart';
 import 'package:xml/xml.dart';
@@ -105,7 +106,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
     });
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
@@ -201,7 +202,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
     String xml = buildInputXml(
       saveList: saveList,
       companyCode: "3",
-      userId: "1",
+      userId: userId.toString(),
       airportCity: "JFK",
       mode: "S",
     );

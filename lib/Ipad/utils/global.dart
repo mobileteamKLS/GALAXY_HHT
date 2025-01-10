@@ -12,6 +12,7 @@ List<FrmAndDcpCode> dispositionCodeMaster = [];
 List<Door> doorList=[];
 Commodity? _selectedCommodity;
 bool isCES=true;
+int userId=0;
 
 // String baseUrl="https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //QA
 String baseUrl="https://galaxycesuat.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //UAT

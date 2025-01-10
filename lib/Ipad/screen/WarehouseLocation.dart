@@ -233,7 +233,7 @@ class _WarehouseLocationState
       "AirportCity": "JFK",
       "CompanyCode": "3",
       "Mode": "S",
-      "UserId": "1"
+      "UserId": userId.toString()
     };
     DialogUtils.showLoadingDialog(context);
     await authService
@@ -294,7 +294,7 @@ class _WarehouseLocationState
       "AirportCity": "JFK",
       "CompanyCode": "3",
       "Mode": "D",
-      "UserId": "1"
+      "UserId": userId.toString()
     };
     DialogUtils.showLoadingDialog(context);
     await authService

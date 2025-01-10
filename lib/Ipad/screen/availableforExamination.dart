@@ -98,7 +98,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
     appointBookingList=[];
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>C</Mode><SlotDate></SlotDate><SlotTime></SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>C</Mode><SlotDate></SlotDate><SlotTime></SlotTime></Root>"
     };
 
     await authService
@@ -562,7 +562,7 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
   endExamination(String examinationId) async {
 
     var queryParams = {
-      "InputXML": "<Root><Appointment><Appointment><MessageRowID></MessageRowID><QueueRowID></QueueRowID><ElementRowID></ElementRowID><ElementGUID></ElementGUID><Status></Status><RFEPieces></RFEPieces><Remarks></Remarks></Appointment></Appointment><ForwardExamination><ForwardExamination><ExaminationRowId>$examinationId</ExaminationRowId></ForwardExamination></ForwardExamination><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>C</Mode></Root>"
+      "InputXML": "<Root><Appointment><Appointment><MessageRowID></MessageRowID><QueueRowID></QueueRowID><ElementRowID></ElementRowID><ElementGUID></ElementGUID><Status></Status><RFEPieces></RFEPieces><Remarks></Remarks></Appointment></Appointment><ForwardExamination><ForwardExamination><ExaminationRowId>$examinationId</ExaminationRowId></ForwardExamination></ForwardExamination><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>C</Mode></Root>"
     };
     print(queryParams);
 

@@ -253,6 +253,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                     isCES=false;
                                   });
                                 }
+                                userId=user!.userProfile!.userIdentity!;
                                 Navigator.pushAndRemoveUntil(
                                   context,
                                   CupertinoPageRoute(

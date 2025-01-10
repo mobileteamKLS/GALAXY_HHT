@@ -59,7 +59,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
       "AirportCode": "JFK",
       "CompanyCode": 3,
       "CultureCode": "en-US",
-      "UserId": 1,
+      "UserId": userId,
       "MenuId": 1
     };
     await authService

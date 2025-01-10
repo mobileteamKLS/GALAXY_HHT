@@ -1185,7 +1185,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
       "AirportCode": "JFK",
       "CompanyCode": "3",
       "CultureCode": "en-US",
-      "UserId": "1",
+      "UserId": userId.toString(),
       "MenuId": "1"
     };
     await authService
@@ -1313,7 +1313,7 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
         "AirportCode": "JFK",
         "CompanyCode": 3,
         "CultureCode": "en-US",
-        "UserId": 1,
+        "UserId": userId.toString(),
         "MenuId": 1
         };
     // print(queryParams);

@@ -129,7 +129,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     remarksControllers = [];
     var queryParams = {
       "InputXml":
-          "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
+          "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
@@ -210,7 +210,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     selectedSlot="";
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime></SlotTime></Root>"
     };
 
     await authService
@@ -325,7 +325,7 @@ class _AppointmentBookingState extends State<AppointmentBooking> {
     String xml = buildInputXml(
       saveList: saveList,
       companyCode: "3",
-      userId: "1",
+      userId: userId.toString(),
       airportCity: "JFK",
       mode: "S",
     );

@@ -64,7 +64,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       "AirportCode": "BLR",
       "CompanyCode": "3",
       "CultureCode": "en-US",
-      "UserId": "1",
+      "UserId": userId.toString(),
       "MenuId": "1"
     };
     await authService
@@ -114,7 +114,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       "AirportCode": "BLR",
       "CompanyCode": "3",
       "CultureCode": "en-US",
-      "UserId": "1",
+      "UserId": userId.toString(),
       "MenuId": "1"
     };
     await authService

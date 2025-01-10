@@ -13,6 +13,7 @@ import '../../utils/sizeutils.dart';
 import '../auth/auth.dart';
 import '../modal/CustomsOperations.dart';
 import '../modal/pickUpServices.dart';
+import '../utils/global.dart';
 import '../widget/customDialog.dart';
 import 'ImportShipmentListing.dart';
 import 'package:xml/xml.dart';
@@ -104,7 +105,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     });
     var queryParams = {
       "InputXml":
-      "<Root><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
+      "<Root><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Mode>S</Mode><SlotDate>${date}</SlotDate><SlotTime>${slot}</SlotTime></Root>"
     };
 
     await authService
@@ -294,7 +295,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     String xml = buildInputXml(
       saveList: saveList,
       companyCode: "3",
-      userId: "1",
+      userId: userId.toString(),
       airportCity: "JFK",
       mode: "S",
     );
@@ -1287,6 +1288,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
   void checkboxChanged(bool value, int index) {
     setState(() {
       isOnList[index] = value;
+      print("---$value");
       if (value !=false) {
         saveList.add({"item": filteredMap[queueRowIds[index]]!.first, "value": value});
       } else {

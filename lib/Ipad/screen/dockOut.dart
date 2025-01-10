@@ -765,7 +765,7 @@ class _DockOutState extends State<DockOut> {
     vctDetailsList=[];
     doorList=[];
     var queryParams = {
-      "InputXml":"<Root><VCTNo>${vctController.text.trim()}</VCTNo><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
+      "InputXml":"<Root><VCTNo>${vctController.text.trim()}</VCTNo><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
     };
     await authService
         .sendGetWithBody(
@@ -823,7 +823,7 @@ class _DockOutState extends State<DockOut> {
     final now = DateTime.now();
     final formatter = DateFormat('MM/dd/yyyy HH:mm');
     var queryParams = {
-      "InputXml": "<Root><DockInOut>O</DockInOut><TokenNo>${vctController.text.trim()}</TokenNo><DockInDateTime>${formatter.format(now)}</DockInDateTime><IsTruckSealed>Y</IsTruckSealed><Door></Door><CompanyCode>3</CompanyCode><UserId>1</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
+      "InputXml": "<Root><DockInOut>O</DockInOut><TokenNo>${vctController.text.trim()}</TokenNo><DockInDateTime>${formatter.format(now)}</DockInDateTime><IsTruckSealed>Y</IsTruckSealed><Door></Door><CompanyCode>3</CompanyCode><UserId>${userId.toString()}</UserId><AirportCity>JFK</AirportCity><Culture>en-US</Culture></Root>"
     };
     DialogUtils.showLoadingDialog(context);
     await authService

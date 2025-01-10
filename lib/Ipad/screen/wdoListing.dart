@@ -751,7 +751,7 @@ class _WdoListingState extends State<WdoListing> {
       "isAbandon": "",
       "AirportCity": "JFK",
       "CompanyCode": "3",
-      "UserId": "1"
+      "UserId": userId.toString()
     };
     DialogUtils.showLoadingDialog(context);
     await authService
@@ -805,7 +805,7 @@ class _WdoListingState extends State<WdoListing> {
       "SHED_CODE": "KS1",
       "AirportCity": "JFK",
       "CompanyCode": "3",
-      "UserId": "1"
+      "UserId": userId.toString()
     };
     DialogUtils.showLoadingDialog(context);
     await authService
