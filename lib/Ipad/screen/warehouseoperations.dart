@@ -23,7 +23,6 @@ import '../widget/customIpadTextfield.dart';
 import 'Customsoperation.dart';
 import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
-import 'ShipmentAcceptance.dart';
 import 'ShipmentAcceptanceManually.dart';
 import 'WarehouseLocation.dart';
 import 'acceptBooking.dart';
@@ -460,7 +459,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                 RoundedIconButtonNew(
                                   icon: CupertinoIcons.cube_box,
                                   text: 'Shipment\nAcceptance',
-                                  targetPage: ShipmentAcceptanceManually(),
+                                  targetPage: ShipmentAcceptanceManually(isNavFromList: false,),
                                   containerColor: Color(0xffffd7bd),
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,

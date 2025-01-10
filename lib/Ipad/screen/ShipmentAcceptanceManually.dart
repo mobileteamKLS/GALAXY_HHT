@@ -26,7 +26,8 @@ import 'ImportShipmentListing.dart';
 
 class ShipmentAcceptanceManually extends StatefulWidget {
   final ShipmentListDetails? shipmentListDetails;
-  const ShipmentAcceptanceManually({super.key, this.shipmentListDetails});
+  final bool isNavFromList;
+  const ShipmentAcceptanceManually({super.key, this.shipmentListDetails, required this.isNavFromList});
 
   @override
   State<ShipmentAcceptanceManually> createState() =>
@@ -585,7 +586,14 @@ class _ShipmentAcceptanceManuallyState
                                   child: const Icon(Icons.arrow_back_ios,
                                       color: MyColor.primaryColorblue),
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    if(widget.isNavFromList){
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+                                    }
+                                    else{
+                                      Navigator.pop(context);
+                                    }
+
                                   },
                                 ),
                                 const Text(

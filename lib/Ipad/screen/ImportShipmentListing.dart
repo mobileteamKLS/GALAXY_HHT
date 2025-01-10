@@ -923,7 +923,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                           case 'Accept Shipment':
                                             Navigator.push(
                                               context,
-                                              MaterialPageRoute(builder: (_) => ShipmentAcceptanceManually(shipmentListDetails: shipment)),
+                                              MaterialPageRoute(builder: (_) => ShipmentAcceptanceManually(shipmentListDetails: shipment,isNavFromList: true,)),
                                             );
                                             break;
                                           case 'Forward For Exam.':
