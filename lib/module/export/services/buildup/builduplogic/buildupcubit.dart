@@ -32,10 +32,10 @@ class BuildUpCubit extends Cubit<BuildUpState>{
     }
   }
 
-  Future<void> getULDTrolleySearchList(int flightSeqNo, int userId, int companyCode, int menuId) async {
+  Future<void> getULDTrolleySearchList(int flightSeqNo, String carrierCode, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
-      final getULDTrolleySearchModelData = await buildUpRepository.getULDTrolleySearchList(flightSeqNo, userId, companyCode, menuId);
+      final getULDTrolleySearchModelData = await buildUpRepository.getULDTrolleySearchList(flightSeqNo, carrierCode, userId, companyCode, menuId);
       emit(GetULDTrolleySearchSuccessState(getULDTrolleySearchModelData));
     } catch (e) {
       emit(GetULDTrolleySearchFailureState(e.toString()));
@@ -49,6 +49,65 @@ class BuildUpCubit extends Cubit<BuildUpState>{
       emit(ULDTrolleyPrioritySuccessState(uldTrolleyPriorityModelData));
     } catch (e) {
       emit(ULDTrolleyPriorityFailureState(e.toString()));
+    }
+  }
+
+  Future<void> getAddMailView(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final addMailViewModelData = await buildUpRepository.getAddMailView(flightSeqNo, uldSeqNo,  userId, companyCode, menuId);
+      emit(AddMailViewSuccessState(addMailViewModelData));
+    } catch (e) {
+      emit(AddMailViewFailureState(e.toString()));
+    }
+  }
+
+  Future<void> saveAddMail(
+      int flightSeqNo, int uldSeqNo,
+      String av7No, String mailType, String modeOfSecurity, String origin, String destination,
+      int nop, double weight, String description,
+      int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final saveMailViewModelData = await buildUpRepository.saveMail(
+          flightSeqNo, uldSeqNo, av7No, mailType, origin, destination, nop, weight, modeOfSecurity, description, userId, companyCode, menuId);
+      emit(SaveMailViewSuccessState(saveMailViewModelData));
+    } catch (e) {
+      emit(SaveMailViewFailureState(e.toString()));
+    }
+  }
+
+  Future<void> removeAddMail(int flightSeqNo, int MMSeqNo,
+      int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final saveMailViewModelData = await buildUpRepository.removeMail(
+          flightSeqNo, MMSeqNo, userId, companyCode, menuId);
+      emit(RemoveMailViewSuccessState(saveMailViewModelData));
+    } catch (e) {
+      emit(RemoveMailViewFailureState(e.toString()));
+    }
+  }
+
+  Future<void> checkOAirportCity(String airportCity, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final airportCityModel = await buildUpRepository.checkAirportCity(airportCity, userId, companyCode, menuId);
+
+      emit(BuildUpCheckOAirportCitySuccessState(airportCityModel));
+    } catch (e) {
+      emit(BuildUpCheckOAirportCityFailureState(e.toString()));
+    }
+  }
+
+  Future<void> checkDAirportCity(String airportCity, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final airportCityModel = await buildUpRepository.checkAirportCity(airportCity, userId, companyCode, menuId);
+
+      emit(BuildUpCheckDAirportCitySuccessState(airportCityModel));
+    } catch (e) {
+      emit(BuildUpCheckDAirportCityFailureState(e.toString()));
     }
   }
 
@@ -134,10 +193,10 @@ class BuildUpCubit extends Cubit<BuildUpState>{
   }
 
 
-  Future<void> getGroupList(int flightSeqNo, int userId, int companyCode, int menuId) async {
+  Future<void> getGroupList(int awbNumber, int awbprefix, int awbExpAwbRowId, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
-      final getGroupModelData = await buildUpRepository.getGroupDetailList(flightSeqNo, userId, companyCode, menuId);
+      final getGroupModelData = await buildUpRepository.getGroupDetailList(awbNumber, awbprefix, awbExpAwbRowId, userId, companyCode, menuId);
       emit(BuildUpGroupDetailSuccessState(getGroupModelData));
     } catch (e) {
       emit(BuildUpGroupDetailFailureState(e.toString()));
@@ -155,81 +214,28 @@ class BuildUpCubit extends Cubit<BuildUpState>{
     }
   }
 
-
-  // getButtonsRoles & Rights api call repo
-/*
-  Future<void> getPageLoadDefault(int menuId, int userId, int companyCode) async {
-    emit(MainLoadingState());
+  Future<void> addShipment(
+      int flightSeqNo, int awbRowID, int awbShipmentId, int ULDSeqNo,
+      String awbPrefix, String aWBNumber,
+      int nop, double weight, String offPoint, String SHC,
+      String IsPartShipment, String DGIndicator, String ULDTrolleyType,
+      String dgType, int dgSeqNo, int dgReference,
+      int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
     try {
-      final pageLoadDefaultModelData = await flightCheckRepository.getPageLoadDefault(menuId, userId, companyCode);
-      emit(PageLoadDefaultSuccessState(pageLoadDefaultModelData));
+      final addShipment = await buildUpRepository.addShipment(
+          flightSeqNo, awbRowID, awbShipmentId, ULDSeqNo,
+          awbPrefix, aWBNumber,
+          nop, weight, offPoint, SHC,
+          IsPartShipment, DGIndicator, ULDTrolleyType,
+          dgType, dgSeqNo, dgReference,
+          userId, companyCode, menuId);
+      emit(AddShipmentSuccessState(addShipment));
     } catch (e) {
-      emit(PageLoadDefaultFailureState(e.toString()));
+      emit(AddShipmentFailureState(e.toString()));
     }
   }
 
-  // getButtonsRoles & Rights api call repo
-  Future<void> getButtonRolesAndRights(int menuId, int userId, int companyCode) async {
-    emit(MainLoadingState());
-    try {
-      final getButtonRolesAndRightsModelData = await flightCheckRepository.getButtonRolesAndRights(menuId, userId, companyCode);
-      emit(ButtonRolesAndRightsSuccessState(getButtonRolesAndRightsModelData));
-    } catch (e) {
-      emit(ButtonRolesAndRightsFailureState(e.toString()));
-    }
-  }
-
-
-  Future<void> getFlightCheckULDList(String locationCode, String scan, String flightNo, String flightDate, int userId, int companyCode, int menuId, int ULDListFlag) async {
-     emit(MainLoadingState());
-    try {
-      final flightCheckULDListModel = await flightCheckRepository.getFlightCheckULDList(locationCode, scan, flightNo, flightDate, userId, companyCode, menuId, ULDListFlag);
-
-      emit(FlightGetDetailsSuccessState(flightCheckULDListModel));
-    } catch (e) {
-      emit(FlightGetDetailsFailureState(e.toString()));
-    }
-  }
-
-
-  Future<void> bdPriority(int flightSeqNo, int uldSeqNo, int bdPriority, int userId, int companyCode, int menuId) async {
-    emit(MainLoadingState());
-    try {
-      final bdPriorityModelData = await flightCheckRepository.bdPriority(flightSeqNo, uldSeqNo, bdPriority, userId, companyCode, menuId);
-
-      emit(BDPrioritySuccessState(bdPriorityModelData));
-    } catch (e) {
-      emit(BDPriorityFailureState(e.toString()));
-    }
-  }
-
-
-
-  Future<void> getAWBList(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId, int showAll) async {
-    emit(MainLoadingState());
-    try {
-      final awbModelData = await flightCheckRepository.getListOfAwb(flightSeqNo, uldSeqNo, userId, companyCode, menuId, showAll);
-
-      emit(AWBListSuccessState(awbModelData));
-    } catch (e) {
-      emit(AWBListFailureState(e.toString()));
-    }
-  }
-
-
-  Future<void> aWBRemarkUpdateAcknoledge(int iMPAWBRowId, int iMPShipRowId, int userId, int companyCode, int menuId) async {
-    emit(MainLoadingState());
-    try {
-      final aWBAcknoledgeModel = await flightCheckRepository.getAWBAcknoledge(iMPAWBRowId, iMPShipRowId, userId, companyCode, menuId);
-
-      emit(AWBAcknoledgeSuccessState(aWBAcknoledgeModel));
-    } catch (e) {
-      emit(AWBAcknoledgeFailureState(e.toString()));
-    }
-  }
-
-
-*/
 
 
   void resetState() {

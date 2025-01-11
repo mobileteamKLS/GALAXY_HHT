@@ -47,6 +47,7 @@ class CloseTrolleyPage extends StatefulWidget {
   int menuId;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String trolleyNo;
 
   CloseTrolleyPage(
       {super.key,
@@ -56,7 +57,8 @@ class CloseTrolleyPage extends StatefulWidget {
       required this.refrelCode,
       this.lableModel,
       required this.menuId,
-      required this.mainMenuName});
+      required this.mainMenuName,
+      required this.trolleyNo});
 
   @override
   State<CloseTrolleyPage> createState() => _CloseTrolleyPageState();
@@ -97,7 +99,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
   @override
   void initState() {
     super.initState();
-
+    scanTrolleyController.text = widget.trolleyNo;
     _loadUser(); //load user data
 
     scanTrolleyFocusNode.addListener(() {
@@ -145,9 +147,17 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
       });
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
-    });
+
+    if(widget.trolleyNo.isEmpty){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
+      });
+    }else{
+      callSearchApi(scanTrolleyController.text);
+    }
+
+
+
 
     /*await context.read<EmptyULDTrolleyCubit>().emptyULDTrolleyPageLoad(
             _user!.userProfile!.userIdentity!,
@@ -198,7 +208,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
   Future<bool> _onWillPop() async {
     isBackPressed = true; // Set to true to avoid showing snackbar on back press
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+    Navigator.pop(context, "true");
     inactivityTimerManager?.stopTimer();
 
     return false; // Prevents the default back button action
@@ -954,7 +964,6 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           uldType: "T",
                                                           uldSeqNo: trolleyDetail!.trolleySeqNo!,
                                                           flightSeqNo : trolleyDetail!.flightSeqNo!,
-                                                          uldStatus: trolleyDetail!.trolleyStatus!,
                                                       ),));
 
                                                     if(value == "true"){

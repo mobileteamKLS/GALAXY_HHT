@@ -46,7 +46,6 @@ class CloseULDEquipmentPage extends StatefulWidget {
   int uldSeqNo;
   int flightSeqNo;
   String uldType;
-  String uldStatus;
 
   CloseULDEquipmentPage(
       {super.key,
@@ -60,7 +59,6 @@ class CloseULDEquipmentPage extends StatefulWidget {
       required this.uldNo,
       required this.uldSeqNo,
       required this.uldType,
-      required this.uldStatus,
       required this.flightSeqNo});
 
   @override

@@ -1,12 +1,17 @@
+import 'package:galaxy/module/export/model/buildup/addmailviewmodel.dart';
 import 'package:galaxy/module/export/model/buildup/awbacknowledgemodel.dart';
 import 'package:galaxy/module/export/model/buildup/awbprioritymodel.dart';
 import 'package:galaxy/module/export/model/buildup/flightsearchmodel.dart';
 import 'package:galaxy/module/export/model/buildup/getuldtrolleysavemodel.dart';
 import 'package:galaxy/module/export/model/buildup/getuldtrolleysearchmodel.dart';
+import 'package:galaxy/module/export/model/buildup/savemailmodel.dart';
 import 'package:galaxy/module/export/model/closetrolley/gettrolleydocumentlistmodel.dart';
+import '../../../../import/model/flightcheck/airportcitymodel.dart';
 import '../../../../import/model/uldacceptance/locationvalidationmodel.dart';
+import '../../../model/buildup/addshipmentmodel.dart';
 import '../../../model/buildup/buildupawblistmodel.dart';
 import '../../../model/buildup/buildupgrouplistmodel.dart';
+import '../../../model/buildup/removemailmodel.dart';
 import '../../../model/buildup/shcvalidatemodel.dart';
 import '../../../model/buildup/uldtrolleyprioritymodel.dart';
 import '../../../model/closetrolley/closetrolleyreopenmodel.dart';
@@ -64,7 +69,55 @@ class ULDTrolleyPriorityFailureState extends BuildUpState {
   ULDTrolleyPriorityFailureState(this.error);
 }
 
+class AddMailViewSuccessState extends BuildUpState {
+  final AddMailViewModel addMailViewModel;
+  AddMailViewSuccessState(this.addMailViewModel);
+}
 
+class AddMailViewFailureState extends BuildUpState {
+  final String error;
+  AddMailViewFailureState(this.error);
+}
+
+class SaveMailViewSuccessState extends BuildUpState {
+  final SaveMailModel saveMailModel;
+  SaveMailViewSuccessState(this.saveMailModel);
+}
+
+class SaveMailViewFailureState extends BuildUpState {
+  final String error;
+  SaveMailViewFailureState(this.error);
+}
+
+class RemoveMailViewSuccessState extends BuildUpState {
+  final RemoveMailModel removeMailModel;
+  RemoveMailViewSuccessState(this.removeMailModel);
+}
+
+class RemoveMailViewFailureState extends BuildUpState {
+  final String error;
+  RemoveMailViewFailureState(this.error);
+}
+
+class BuildUpCheckOAirportCitySuccessState extends BuildUpState {
+  final AirportCityModel airportCityModel;
+  BuildUpCheckOAirportCitySuccessState(this.airportCityModel);
+}
+
+class BuildUpCheckOAirportCityFailureState extends BuildUpState {
+  final String error;
+  BuildUpCheckOAirportCityFailureState(this.error);
+}
+
+class BuildUpCheckDAirportCitySuccessState extends BuildUpState {
+  final AirportCityModel airportCityModel;
+  BuildUpCheckDAirportCitySuccessState(this.airportCityModel);
+}
+
+class BuildUpCheckDAirportCityFailureState extends BuildUpState {
+  final String error;
+  BuildUpCheckDAirportCityFailureState(this.error);
+}
 
 class BuildUpGetContourListSuccessState extends BuildUpState {
   final GetContourListModel getContourListModel;
@@ -138,6 +191,16 @@ class SHCValidateSuccessState extends BuildUpState {
 class SHCValidateFailureState extends BuildUpState {
   final String error;
   SHCValidateFailureState(this.error);
+}
+
+class AddShipmentSuccessState extends BuildUpState {
+  final AddShipmentModel addShipmentModel;
+  AddShipmentSuccessState(this.addShipmentModel);
+}
+
+class AddShipmentFailureState extends BuildUpState {
+  final String error;
+  AddShipmentFailureState(this.error);
 }
 
 

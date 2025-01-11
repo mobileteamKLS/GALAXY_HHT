@@ -7,6 +7,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/utils/awbformatenumberutils.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+import 'package:galaxy/widget/customebuttons/roundbuttongreen.dart';
 import 'package:galaxy/widget/customedrawer/customedrawer.dart';
 import 'package:galaxy/widget/custometext.dart';
 import 'package:vibration/vibration.dart';
@@ -38,43 +39,42 @@ import '../../../onboarding/sizeconfig.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/flightcheck/awblistmodel.dart';
-import '../../model/flightcheck/maildetailmodel.dart';
-import '../../model/flightcheck/mailtypemodel.dart';
-import '../../model/uldacceptance/buttonrolesrightsmodel.dart';
-import '../../services/flightcheck/flightchecklogic/flightcheckcubit.dart';
-import '../../services/flightcheck/flightchecklogic/flightcheckstate.dart';
+import '../../model/buildup/addmailviewmodel.dart';
+import '../../services/buildup/builduplogic/buildupcubit.dart';
+import '../../services/buildup/builduplogic/buildupstate.dart';
 
-class AddMailPage extends StatefulWidget {
+class BuildUpAddMailPage extends StatefulWidget {
 
-
-  List<ButtonRight> buttonRightsList;
   LableModel? lableModel;
   int uldSeqNo;
   int flightSeqNo;
   String mainMenuName;
+  String title;
+  String refrelCode;
   int menuId;
   String uldNo;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
 
 
-  AddMailPage({super.key,
+  BuildUpAddMailPage({super.key,
     required this.importSubMenuList,
     required this.exportSubMenuList,
-    required this.buttonRightsList,
-    required this.uldNo,
     required this.mainMenuName,
-    required this.uldSeqNo,
-    required this.flightSeqNo,
+    required this.title,
+    required this.refrelCode,
     required this.menuId,
-    required this.lableModel});
+    required this.lableModel,
+    required this.flightSeqNo,
+    required this.uldSeqNo,
+    required this.uldNo,
+  });
 
   @override
-  State<AddMailPage> createState() => _AddMailPageState();
+  State<BuildUpAddMailPage> createState() => _BuildUpAddMailPageState();
 }
 
-class _AddMailPageState extends State<AddMailPage> {
+class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
 
   InactivityTimerManager? inactivityTimerManager;
 
@@ -83,10 +83,12 @@ class _AddMailPageState extends State<AddMailPage> {
   SplashDefaultModel? _splashDefaultData;
 
 
-  List<AddMailDetailsList>? addMailDetailsList = [];
+  List<AddMailViewList>? addMailDetailsList = [];
+  List<ModeOfSecurityList>? modeOfSecurityList = [];
   List<MailTypeList>? mailTypeList = [];
   //List<String> jobTypeModelList = [ "A", "B", "C", "D"];
   MailTypeList? selectedMailType;
+  ModeOfSecurityList? selectedModeOfSecurity;
 
 
 
@@ -100,7 +102,10 @@ class _AddMailPageState extends State<AddMailPage> {
 
 
   FocusNode av7NoFocusNode = FocusNode();
+
   FocusNode mailTypeFocusNode = FocusNode();
+  FocusNode modeOfSecurityFocusNode = FocusNode();
+
   FocusNode originFocusNode = FocusNode();
   FocusNode destinationFocusNode = FocusNode();
 
@@ -135,7 +140,7 @@ class _AddMailPageState extends State<AddMailPage> {
   Future<void> leaveOriginFocus() async {
     if (originController.text.isNotEmpty) {
       // call check airport api
-      context.read<FlightCheckCubit>().checkOAirportCity(originController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+      context.read<BuildUpCubit>().checkOAirportCity(originController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
     }
   }
 
@@ -148,7 +153,7 @@ class _AddMailPageState extends State<AddMailPage> {
       }
 
       // call check airport api
-      context.read<FlightCheckCubit>().checkDAirportCity(destinationController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
+      context.read<BuildUpCubit>().checkDAirportCity(destinationController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
     }
   }
 
@@ -170,10 +175,7 @@ class _AddMailPageState extends State<AddMailPage> {
         _splashDefaultData = splashDefaultData;
       });
 
-    //  context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-      context.read<FlightCheckCubit>().getMailType(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-
+      getAddMailViewList();
 
     }
 
@@ -215,7 +217,7 @@ class _AddMailPageState extends State<AddMailPage> {
     destinationController.clear();
     _isvalidateOrigin = false;
     _isvalidateDestination = false;
-    Navigator.pop(context, "Done");
+    Navigator.pop(context, "true");
     return false; // Prevents the default back button action
   }
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -292,11 +294,7 @@ class _AddMailPageState extends State<AddMailPage> {
                             title: "${lableModel!.addMail}",
                             onBack: () {
                               FocusScope.of(context).unfocus();
-                              originController.clear();
-                              destinationController.clear();
-                              _isvalidateOrigin = false;
-                              _isvalidateDestination = false;
-                              Navigator.pop(context, "Done");
+                              _onWillPop();
                             },
                             clearText: lableModel.clear,
                             onClear: () {
@@ -305,6 +303,7 @@ class _AddMailPageState extends State<AddMailPage> {
                               });
                               av7NoController.clear();
                               selectedMailType = null;
+                              selectedModeOfSecurity = null;
                               originController.clear();
                               destinationController.clear();
                               nopController.clear();
@@ -321,66 +320,52 @@ class _AddMailPageState extends State<AddMailPage> {
                           ),
                         ),
 
-                        BlocListener<FlightCheckCubit, FlightCheckState>(listener: (context, state) {
-                          if (state is MainInitialState) {
+                        BlocListener<BuildUpCubit, BuildUpState>(listener: (context, state) {
+                          if (state is BuildUpInitialState) {
                           }
-                          else if (state is MainLoadingState) {
+                          else if (state is BuildUpLoadingState) {
                             // showing loading dialog in this state
                             DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                           }
-                          else if(state is GetMailTypeSuccessState){
+                          else if (state is AddMailViewSuccessState){
 
                             DialogUtils.hideLoadingDialog(context);
-                            if(state.mailTypeModel.status == "E"){
+                            if(state.addMailViewModel.status == "E"){
                               Vibration.vibrate(duration: 500);
-                              SnackbarUtil.showSnackbar(context, state.mailTypeModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              SnackbarUtil.showSnackbar(context, state.addMailViewModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
 
-                              mailTypeList = List.from(state.mailTypeModel.mailTypeList!);
-                              context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-                              setState(() {});
-
-                            }
-
-                          }else if(state is GetMailTypeFailureState){
-                            DialogUtils.hideLoadingDialog(context);
-                            Vibration.vibrate(duration: 500);
-                            SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                          }
-                          else if (state is GetMailDetailSuccessState){
-
-                            if(state.mailDetailModel.status == "E"){
-                              DialogUtils.hideLoadingDialog(context);
-                              Vibration.vibrate(duration: 500);
-                              SnackbarUtil.showSnackbar(context, state.mailDetailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                            }else{
-                              DialogUtils.hideLoadingDialog(context);
-                              addMailDetailsList = List.from(state.mailDetailModel.addMailDetailsList!);
+                              mailTypeList = List.from(state.addMailViewModel.mailTypeList!);
+                              addMailDetailsList = List.from(state.addMailViewModel.addMailViewList!);
+                              modeOfSecurityList = List.from(state.addMailViewModel.modeOfSecurityList!);
 
                               av7NoController.clear();
                               selectedMailType = null;
+                              selectedModeOfSecurity = null;
                               originController.clear();
                               destinationController.clear();
                               nopController.clear();
                               weightController.clear();
                               descriptionController.clear();
-
                               _isvalidateOrigin = false;
                               _isvalidateDestination = false;
+
 
                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                 FocusScope.of(context).requestFocus(av7NoFocusNode);
                               },
                               );
                               setState(() {});
+
                             }
+
                           }
-                          else if (state is GetMailDetailFailureState){
+                          else if (state is AddMailViewFailureState){
                             DialogUtils.hideLoadingDialog(context);
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                           }
-                          else if (state is CheckOAirportCitySuccessState){
+                          else if (state is BuildUpCheckOAirportCitySuccessState){
                             DialogUtils.hideLoadingDialog(context);
                             if(state.airportCityModel.status == "E"){
                               Vibration.vibrate(duration: 500);
@@ -403,7 +388,7 @@ class _AddMailPageState extends State<AddMailPage> {
                               );
                             }
                           }
-                          else if(state is CheckOAirportCityFailureState){
+                          else if (state is BuildUpCheckOAirportCityFailureState){
                             DialogUtils.hideLoadingDialog(context);
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -416,7 +401,7 @@ class _AddMailPageState extends State<AddMailPage> {
                             },
                             );
                           }
-                          else if (state is CheckDAirportCitySuccessState){
+                          else if (state is BuildUpCheckDAirportCitySuccessState){
                             DialogUtils.hideLoadingDialog(context);
                             if(state.airportCityModel.status == "E"){
                               Vibration.vibrate(duration: 500);
@@ -439,7 +424,7 @@ class _AddMailPageState extends State<AddMailPage> {
                               );
                             }
                           }
-                          else if(state is CheckDAirportCityFailureState){
+                          else if (state is BuildUpCheckDAirportCityFailureState){
                             DialogUtils.hideLoadingDialog(context);
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -452,28 +437,37 @@ class _AddMailPageState extends State<AddMailPage> {
                             },
                             );
                           }
-                          else if (state is AddMailSuccessState){
+                          else if (state is SaveMailViewSuccessState){
                             DialogUtils.hideLoadingDialog(context);
-                            if(state.addMailModel.status == "E"){
-                              WidgetsBinding.instance.addPostFrameCallback((_) {
-                                FocusScope.of(context).requestFocus(av7NoFocusNode);
-                              });
+                            if(state.saveMailModel.status == "E"){
                               Vibration.vibrate(duration: 500);
-                              SnackbarUtil.showSnackbar(context, state.addMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              SnackbarUtil.showSnackbar(context, state.saveMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
-
-                              SnackbarUtil.showSnackbar(context, state.addMailModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
-
-                              context.read<FlightCheckCubit>().getMailDetail(widget.flightSeqNo, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-
+                              SnackbarUtil.showSnackbar(context, state.saveMailModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                              getAddMailViewList();
                             }
                           }
-                          else if(state is AddMAilFailureState){
+                          else if (state is SaveMailViewFailureState){
                             DialogUtils.hideLoadingDialog(context);
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                           }
+                          else if (state is RemoveMailViewSuccessState){
+                            DialogUtils.hideLoadingDialog(context);
+                            if(state.removeMailModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.removeMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else{
+                              SnackbarUtil.showSnackbar(context, state.removeMailModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                              getAddMailViewList();
+                            }
+                          }
+                          else if (state is RemoveMailViewFailureState){
+                            DialogUtils.hideLoadingDialog(context);
+                            Vibration.vibrate(duration: 500);
+                            SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                          }
+
                         },
                         child: Expanded(
                             child: SingleChildScrollView(
@@ -583,7 +577,9 @@ class _AddMailPageState extends State<AddMailPage> {
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
-                                                CustomeText(text: "${lableModel.mailType}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start),
+                                                Expanded(
+                                                    flex:1,
+                                                    child: CustomeText(text: "${lableModel.mailType}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                 Expanded(
                                                   flex : 2,
@@ -624,6 +620,69 @@ class _AddMailPageState extends State<AddMailPage> {
                                                       onChanged: (MailTypeList? value) {
                                                         setState(() {
                                                           selectedMailType = value!;
+                                                        });
+                                                      },
+                                                      underline: SizedBox(),
+                                                      isExpanded: true,
+                                                      dropdownColor: Colors.white,
+                                                      icon: Icon(Icons.arrow_drop_down, color: Colors.black45),
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+
+                                          SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                          Directionality(
+                                            textDirection: uiDirection,
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                    flex :1,
+                                                    child: CustomeText(text: "Mode Of Sec.", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                Expanded(
+                                                  flex : 2,
+                                                  child: Container(
+                                                    padding: EdgeInsets.symmetric(
+                                                      vertical: SizeConfig.blockSizeVertical * 0.1,
+                                                      horizontal: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: MyColor.colorWhite,
+                                                      border: Border.all(color: Colors.black, width: 0.1),
+                                                      borderRadius: BorderRadius.circular(
+                                                        SizeConfig.blockSizeHorizontal * SizeUtils.ICONSIZE2,
+                                                      ),
+                                                    ),
+                                                    child: DropdownButton<ModeOfSecurityList>(
+                                                      focusNode: modeOfSecurityFocusNode,
+                                                      value: selectedModeOfSecurity,
+                                                      hint: CustomeText(
+                                                        text: "Select",
+                                                        fontColor: MyColor.colorBlack,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.start,
+                                                      ),
+                                                      items: modeOfSecurityList!.map((ModeOfSecurityList item) {
+                                                        return DropdownMenuItem<ModeOfSecurityList>(
+                                                          value: item,
+                                                          child: CustomeText(
+                                                            text: item.referenceDescription!,
+                                                            fontColor: MyColor.colorBlack,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                            fontWeight: FontWeight.w500,
+                                                            textAlign: TextAlign.start,
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (ModeOfSecurityList? value) {
+                                                        setState(() {
+                                                          selectedModeOfSecurity = value!;
                                                         });
                                                       },
                                                       underline: SizedBox(),
@@ -875,6 +934,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                             flex: 1,
                                             child: RoundedButtonBlue(
                                               text: "${lableModel.back}",
+                                              isborderButton: true,
                                               press: () async {
                                                 _onWillPop();
                                               },
@@ -890,63 +950,57 @@ class _AddMailPageState extends State<AddMailPage> {
 
                                               press: () async {
 
-                                                print("MAILTYPE === ${selectedMailType}");
-
-
-                                                if(isButtonEnabled("addmailsave", widget.buttonRightsList)){
-                                                  if (av7NoController.text.isEmpty) {
-                                                    openValidationDialog("${lableModel.av7NoMsg}", av7NoFocusNode);
-                                                    return;
-                                                  }
-
-                                                  if (originController.text.isEmpty) {
-                                                    openValidationDialog("${lableModel.originMsg}", originFocusNode);
-                                                    return;
-                                                  }
-
-                                                  if (destinationController.text.isEmpty) {
-                                                    openValidationDialog("${lableModel.destinationMsg}", destinationFocusNode);
-                                                    return;
-                                                  }
-
-                                                  if (originController.text == destinationController.text) {
-                                                    openValidationDialog("${lableModel.originDestinationSameMsg}", destinationFocusNode);
-                                                    return;
-                                                  }
-
-                                                  if (nopController.text.isEmpty) {
-                                                    openValidationDialog("${lableModel.nopMsg}", nopFocusNode);
-                                                    return;
-                                                  }
-
-                                                  if (weightController.text.isEmpty) {
-                                                    openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
-                                                    return;
-                                                  }
-
-                                                  if (selectedMailType == null) {
-                                                    SnackbarUtil.showSnackbar(
-                                                      context,
-                                                      "${lableModel.mailTypeMsg}",
-                                                      MyColor.colorRed,
-                                                      icon: FontAwesomeIcons.times,
-                                                    );
-                                                    return;
-                                                  }
-
-                                                  // If all validations pass, proceed with further actions here
-                                                  // Your further logic goes here...
-
-                                                  context.read<FlightCheckCubit>().addMail(widget.flightSeqNo, widget.uldSeqNo, av7NoController.text, selectedMailType!.referenceDataIdentifier!, originController.text, destinationController.text, int.parse(nopController.text), double.parse(weightController.text), descriptionController.text,_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
-
-
-                                                }else{
-                                                  SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                  Vibration.vibrate(duration: 500);
+                                                if (av7NoController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.av7NoMsg}", av7NoFocusNode);
+                                                  return;
                                                 }
 
+                                                if (originController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.originMsg}", originFocusNode);
+                                                  return;
+                                                }
 
+                                                if (destinationController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.destinationMsg}", destinationFocusNode);
+                                                  return;
+                                                }
 
+                                                if (originController.text == destinationController.text) {
+                                                  openValidationDialog("${lableModel.originDestinationSameMsg}", destinationFocusNode);
+                                                  return;
+                                                }
+
+                                                if (nopController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.nopMsg}", nopFocusNode);
+                                                  return;
+                                                }
+
+                                                if (weightController.text.isEmpty) {
+                                                  openValidationDialog("${lableModel.weightMsg}", weightFocusNode);
+                                                  return;
+                                                }
+
+                                                if (selectedMailType == null) {
+                                                  SnackbarUtil.showSnackbar(
+                                                    context,
+                                                    "${lableModel.mailTypeMsg}",
+                                                    MyColor.colorRed,
+                                                    icon: FontAwesomeIcons.times,
+                                                  );
+                                                  return;
+                                                }
+
+                                                if (selectedModeOfSecurity == null) {
+                                                  SnackbarUtil.showSnackbar(
+                                                    context,
+                                                    "Please select mode of security",
+                                                    MyColor.colorRed,
+                                                    icon: FontAwesomeIcons.times,
+                                                  );
+                                                  return;
+                                                }
+
+                                                saveMail();
 
                                               },
                                             ),
@@ -973,7 +1027,7 @@ class _AddMailPageState extends State<AddMailPage> {
                                             shrinkWrap: true,
                                             itemCount: addMailDetailsList!.length,
                                             itemBuilder: (context, index) {
-                                              AddMailDetailsList addMailDetails = addMailDetailsList![index];
+                                              AddMailViewList addMailDetails = addMailDetailsList![index];
 
 
                                               return Padding(
@@ -1032,68 +1086,115 @@ class _AddMailPageState extends State<AddMailPage> {
                                                       SizedBox(
                                                         height: SizeConfig.blockSizeVertical,
                                                       ),
-                                                      Row(
-                                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              CustomeText(
-                                                                text: "${lableModel.nop} :",
-                                                                fontColor: MyColor.textColorGrey2,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w400,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              SizedBox(width: 5),
-                                                              CustomeText(
-                                                                text: "${addMailDetails.nOP}",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w600,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              CustomeText(
-                                                                text: "${lableModel.weight} :",
-                                                                fontColor: MyColor.textColorGrey2,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w400,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              SizedBox(width: 5),
-                                                              CustomeText(
-                                                                text: "${CommonUtils.formateToTwoDecimalPlacesValue(addMailDetails.weightKg!)}",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w600,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          Row(
-                                                            children: [
-                                                              CustomeText(
-                                                                text: "${lableModel.type} :",
-                                                                fontColor: MyColor.textColorGrey2,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w400,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                              SizedBox(width: 5),
-                                                              CustomeText(
-                                                                text: "${addMailDetails.mailType}",
-                                                                fontColor: MyColor.colorBlack,
-                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                fontWeight: FontWeight.w600,
-                                                                textAlign: TextAlign.start,
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ],
-                                                      ),
+                                                     Row(
+                                                       children: [
+                                                         Expanded(
+                                                           flex:3,
+                                                           child: Column(
+                                                             children: [
+                                                               Row(
+                                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                 children: [
+                                                                   Row(
+                                                                     children: [
+                                                                       CustomeText(
+                                                                         text: "${lableModel.nop} :",
+                                                                         fontColor: MyColor.textColorGrey2,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w400,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                       SizedBox(width: 5),
+                                                                       CustomeText(
+                                                                         text: "${addMailDetails.nOP}",
+                                                                         fontColor: MyColor.colorBlack,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w600,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                   Row(
+                                                                     children: [
+                                                                       CustomeText(
+                                                                         text: "${lableModel.weight} :",
+                                                                         fontColor: MyColor.textColorGrey2,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w400,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                       SizedBox(width: 5),
+                                                                       CustomeText(
+                                                                         text: "${CommonUtils.formateToTwoDecimalPlacesValue(addMailDetails.weightKg!)}",
+                                                                         fontColor: MyColor.colorBlack,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w600,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                     ],
+                                                                   )
+                                                                 ],
+                                                               ),
+                                                               SizedBox(
+                                                                 height: SizeConfig.blockSizeVertical,
+                                                               ),
+                                                               Row(
+                                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                 children: [
+                                                                   Row(
+                                                                     children: [
+                                                                       CustomeText(
+                                                                         text: "${lableModel.type} :",
+                                                                         fontColor: MyColor.textColorGrey2,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w400,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                       SizedBox(width: 5),
+                                                                       CustomeText(
+                                                                         text: "${addMailDetails.mailType}",
+                                                                         fontColor: MyColor.colorBlack,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w600,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                   Row(
+                                                                     children: [
+                                                                       CustomeText(
+                                                                         text: "Mode Of Sec. :",
+                                                                         fontColor: MyColor.textColorGrey2,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w400,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                       SizedBox(width: 5),
+                                                                       CustomeText(
+                                                                         text: "${addMailDetails.modeOfSecurity}",
+                                                                         fontColor: MyColor.colorBlack,
+                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                         fontWeight: FontWeight.w600,
+                                                                         textAlign: TextAlign.start,
+                                                                       ),
+                                                                     ],
+                                                                   ),
+                                                                 ],
+                                                               ),
+                                                             ],
+                                                           ),
+                                                         ),
+                                                         SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                         Expanded(
+                                                            flex:1,
+                                                            child:RoundedButtonGreen(
+                                                              text: "Remove",
+                                                              color: MyColor.colorRed,
+                                                              press: () {
+                                                                removeMail(addMailDetails.seqNo!);
+                                                        },))
+                                                       ],
+                                                     )
                                                     ],
                                                   ),
                                                 ),
@@ -1190,12 +1291,46 @@ class _AddMailPageState extends State<AddMailPage> {
     }
   }
 
+  Future<void> getAddMailViewList() async {
+    await context.read<BuildUpCubit>().getAddMailView(
+        widget.flightSeqNo,
+        widget.uldSeqNo,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
 
-  bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
+  Future<void> saveMail() async {
+    await context.read<BuildUpCubit>().saveAddMail(
+        widget.flightSeqNo,
+        widget.uldSeqNo,
+        av7NoController.text,
+        selectedMailType!.referenceDataIdentifier!,
+        selectedModeOfSecurity!.referenceDataIdentifier!,
+        originController.text,
+        destinationController.text,
+        int.parse(nopController.text),
+        double.parse(weightController.text),
+        descriptionController.text,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  Future<void> removeMail(int mMSeqNo) async {
+    await context.read<BuildUpCubit>().removeAddMail(
+        widget.flightSeqNo,
+        mMSeqNo,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+/*  bool isButtonEnabled(String buttonId, List<ButtonRight> buttonList) {
     ButtonRight? button = buttonList.firstWhere(
           (button) => button.buttonId == buttonId,
     );
     return button.isEnable == 'Y';
-  }
+  }*/
 
 }

@@ -50,6 +50,7 @@ class CloseULDPage extends StatefulWidget {
   int menuId;
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String uldNo;
 
   CloseULDPage(
       {super.key,
@@ -59,7 +60,9 @@ class CloseULDPage extends StatefulWidget {
       required this.refrelCode,
       this.lableModel,
       required this.menuId,
-      required this.mainMenuName});
+      required this.mainMenuName,
+      required this.uldNo
+      });
 
   @override
   State<CloseULDPage> createState() => _CloseULDPageState();
@@ -70,8 +73,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
 
   ULDDetailList? uldDetail;
-
-
   FocusNode equipmentBtnFocusNode = FocusNode();
   FocusNode contorBtnFocusNode = FocusNode();
   FocusNode scaleBtnFocusNode = FocusNode();
@@ -105,6 +106,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
   void initState() {
     super.initState();
 
+    scanULDController.text = widget.uldNo;
     _loadUser(); //load user data
 
     scanULDFocusNode.addListener(() {
@@ -167,9 +169,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
       });
     }
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      FocusScope.of(context).requestFocus(scanULDFocusNode);
-    });
+    if(widget.uldNo.isEmpty){
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(scanULDFocusNode);
+      });
+    }else{
+      callSearchApi(scanULDController.text);
+    }
+
 
     /*await context.read<EmptyULDTrolleyCubit>().emptyULDTrolleyPageLoad(
             _user!.userProfile!.userIdentity!,
@@ -220,7 +227,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
   Future<bool> _onWillPop() async {
     isBackPressed = true; // Set to true to avoid showing snackbar on back press
     FocusScope.of(context).unfocus();
-    Navigator.pop(context);
+    Navigator.pop(context, "true");
     inactivityTimerManager?.stopTimer();
 
     return false; // Prevents the default back button action
@@ -992,7 +999,6 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                        uldType: "U",
                                                        uldSeqNo: uldDetail!.uLDSeqNo!,
                                                        flightSeqNo : uldDetail!.flightSeqNo!,
-                                                       uldStatus: uldDetail!.uLDStatus!,
                                                      ),));
 
                                                      if(value == "true"){

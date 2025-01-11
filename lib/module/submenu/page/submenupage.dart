@@ -401,7 +401,9 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   refrelCode: refrelCode,
                                                   lableModel: lableModel,
                                                   menuId: menuId,
-                                                  mainMenuName: widget.menuName), isEnable);
+                                                  mainMenuName: widget.menuName,
+                                                  uldNo: "",
+                                              ), isEnable);
                                             }
                                             else if(refrelCode == SubMenuCodeUtils.CLOSETrolley){
                                               NextScreen(CloseTrolleyPage(
@@ -411,7 +413,9 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   refrelCode: refrelCode,
                                                   lableModel: lableModel,
                                                   menuId: menuId,
-                                                  mainMenuName: widget.menuName), isEnable);
+                                                  mainMenuName: widget.menuName,
+                                                  trolleyNo: "",
+                                              ), isEnable);
                                             }else if(refrelCode == SubMenuCodeUtils.BuildUp){
                                               NextScreen(BuildUpPage(
                                                   importSubMenuList: importSubMenuList,

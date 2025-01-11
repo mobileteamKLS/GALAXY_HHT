@@ -50,6 +50,9 @@ class ULDTrolleyDetailList {
   String? contourCode;
   String? remark;
   int? priority;
+  String? dgType;
+  int? dgSeqNo;
+  int? dgReference;
 
   ULDTrolleyDetailList(
       {this.type,
@@ -71,7 +74,11 @@ class ULDTrolleyDetailList {
         this.sHCCode,
         this.contourCode,
         this.remark,
-        this.priority});
+        this.priority,
+        this.dgType,
+        this.dgSeqNo,
+        this.dgReference,
+      });
 
   ULDTrolleyDetailList.fromJson(Map<String, dynamic> json) {
     type = json['Type'];
@@ -94,6 +101,9 @@ class ULDTrolleyDetailList {
     contourCode = json['ContourCode'];
     remark = json['Remark'];
     priority = json['Priority'];
+    dgReference = json['DGReferenceType'];
+    dgSeqNo = json['DGSeqNo'];
+    dgType = json['DGType'];
   }
 
   Map<String, dynamic> toJson() {
@@ -118,6 +128,9 @@ class ULDTrolleyDetailList {
     data['ContourCode'] = this.contourCode;
     data['Remark'] = this.remark;
     data['Priority'] = this.priority;
+    data['DGReferenceType'] = this.dgReference;
+    data['DGSeqNo'] = this.dgSeqNo;
+    data['DGType'] = this.dgType;
     return data;
   }
 }

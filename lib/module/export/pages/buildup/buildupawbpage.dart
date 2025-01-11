@@ -57,6 +57,10 @@ class BuildUpAWBListPage extends StatefulWidget {
   int uldSeqNo;
   String uldNo;
   String uldType;
+  String offPoint;
+  String dgType;
+  int dgSeqNo;
+  int dgReference;
 
   BuildUpAWBListPage({super.key,
     required this.importSubMenuList,
@@ -70,6 +74,10 @@ class BuildUpAWBListPage extends StatefulWidget {
     required this.uldSeqNo,
     required this.uldNo,
     required this.uldType,
+    required this.offPoint,
+    required this.dgType,
+    required this.dgSeqNo,
+    required this.dgReference
    });
 
   @override
@@ -113,6 +121,8 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
     super.initState();
     _loadUser(); //load user data
 
+
+    print("DG TYPE==== ${widget.dgType}");
 
     _blinkController = AnimationController(
       duration: const Duration(seconds: 1),
@@ -177,7 +187,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
 
-    Navigator.pop(context, "Done");
+    Navigator.pop(context, "true");
 
 
     return false; // Stay in the app (Cancel was clicked)
@@ -711,7 +721,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
                                                                                               if(value == "True"){
                                                                                                 if(aWBItem.groupBasedAcceptInd == "Y"){
-                                                                                                  await Navigator.push(context, CupertinoPageRoute(
+                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                     builder: (context) => BuildUpGroupListPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
@@ -725,10 +735,24 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                       uldSeqNo: widget.uldSeqNo,
                                                                                                       awbNo: aWBItem.aWBNo!,
                                                                                                       awbRowId: aWBItem.expAWBRowId!,
+                                                                                                      awbShipRowId: aWBItem.expShipRowId!,
+                                                                                                      shcCode: aWBItem.sHCCode!,
                                                                                                       uldType: widget.uldType,
+                                                                                                      offPoint: widget.offPoint,
+                                                                                                      dgType: widget.dgType,
+                                                                                                      dgReference: widget.dgReference,
+                                                                                                      dgSeqNo: widget.dgSeqNo,
                                                                                                     ),));
+
+                                                                                                  if(value == "true"){
+                                                                                                    getAWBList();
+                                                                                                  }else{
+                                                                                                    _resumeTimerOnInteraction();
+                                                                                                  }
+
+
                                                                                                 }else{
-                                                                                                  await Navigator.push(context, CupertinoPageRoute(
+                                                                                                  var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                     builder: (context) => BuildUpAddShipmentPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
@@ -742,11 +766,22 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                       uldSeqNo: widget.uldSeqNo,
                                                                                                       awbNo: aWBItem.aWBNo!,
                                                                                                       awbRowId: aWBItem.expAWBRowId!,
+                                                                                                      awbShipRowId: aWBItem.expShipRowId!,
                                                                                                       uldType: widget.uldType,
                                                                                                       pieces: aWBItem.nOP!,
                                                                                                       weight: aWBItem.weightKg!,
                                                                                                       shcCodes: aWBItem.sHCCode!,
+                                                                                                      offPoint: widget.offPoint,
+                                                                                                      dgType: widget.dgType,
+                                                                                                      dgReference: widget.dgReference,
+                                                                                                      dgSeqNo: widget.dgSeqNo,
                                                                                                     ),));
+
+                                                                                                  if(value == "true"){
+                                                                                                    getAWBList();
+                                                                                                  }else{
+                                                                                                    _resumeTimerOnInteraction();
+                                                                                                  }
 
                                                                                                 }
                                                                                               }else{
@@ -759,7 +794,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                             } else if (aWBItem.groupBasedAcceptInd == "Y") {
                                                                                               // Navigate to GroupList screen
 
-                                                                                              await Navigator.push(context, CupertinoPageRoute(
+                                                                                             var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                 builder: (context) => BuildUpGroupListPage(
                                                                                                 importSubMenuList: widget.importSubMenuList,
                                                                                                 exportSubMenuList: widget.exportSubMenuList,
@@ -773,14 +808,25 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                   uldSeqNo: widget.uldSeqNo,
                                                                                                   awbNo: aWBItem.aWBNo!,
                                                                                                   awbRowId: aWBItem.expAWBRowId!,
+                                                                                                  awbShipRowId: aWBItem.expShipRowId!,
+                                                                                                  shcCode: aWBItem.sHCCode!,
                                                                                                   uldType: widget.uldType,
+                                                                                                  offPoint: widget.offPoint,
+                                                                                                  dgType: widget.dgType,
+                                                                                                  dgReference: widget.dgReference,
+                                                                                                  dgSeqNo: widget.dgSeqNo,
                                                                                                 ),));
 
+                                                                                             if(value == "true"){
+                                                                                               getAWBList();
+                                                                                             }else{
+                                                                                               _resumeTimerOnInteraction();
+                                                                                             }
 
                                                                                             } else {
                                                                                               // Navigate to AddPieces screen
 
-                                                                                              await Navigator.push(context, CupertinoPageRoute(
+                                                                                             var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                                 builder: (context) => BuildUpAddShipmentPage(
                                                                                                 importSubMenuList: widget.importSubMenuList,
                                                                                                 exportSubMenuList: widget.exportSubMenuList,
@@ -794,12 +840,22 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 uldSeqNo: widget.uldSeqNo,
                                                                                                 awbNo: aWBItem.aWBNo!,
                                                                                                 awbRowId: aWBItem.expAWBRowId!,
+                                                                                                awbShipRowId: aWBItem.expShipRowId!,
                                                                                                 uldType: widget.uldType,
                                                                                                 pieces: aWBItem.nOP!,
                                                                                                 weight: aWBItem.weightKg!,
-                                                                                                  shcCodes: aWBItem.sHCCode!,
+                                                                                                shcCodes: aWBItem.sHCCode!,
+                                                                                                offPoint: widget.offPoint,
+                                                                                                dgType: widget.dgType,
+                                                                                                dgReference: widget.dgReference,
+                                                                                                dgSeqNo: widget.dgSeqNo,
                                                                                                 ),));
 
+                                                                                             if(value == "true"){
+                                                                                               getAWBList();
+                                                                                             }else{
+                                                                                               _resumeTimerOnInteraction();
+                                                                                             }
 
                                                                                             }
 

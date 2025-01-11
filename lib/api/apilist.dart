@@ -152,14 +152,20 @@ class Apilist{
   static String buildUpULDTrolleySave = "/BuildUp/ULDTrolleySave";
   static String buildUpULDTrolleypriorityUpdate = "/BuildUp/ULDTrolleyPriorityUpdate";
 
+  static String getExpAddMailView= "/BuildUp/GetAddMailView";
+  static String addMailSave= "/BuildUp/AddMail";
+  static String removeMailSave= "/BuildUp/RemoveMail";
+
 
 
   static String buildUpGetAWBDetails = "/BuildUp/GetAWBDetails";
   static String buildUpAWBPriorityUpdate = "/BuildUp/AWBPriorityUpdate";
   static String buildUpAWBRemarkAcknoledge = "/BuildUp/AWBRemarksAcknowledge";
 
-  static String buildUpGetGroupDetails = "/BuildUp/GetGroupDetails";
+  static String buildUpGetGroupDetails = "/BuildUp/GetAWBGroup";
 
+
+  static String addShipment = "/BuildUp/AddShipment";
   static String shcValidate = "/SHC/SHCValidate";
 
 

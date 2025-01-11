@@ -111,7 +111,7 @@ class _BuildUpPageState extends State<BuildUpPage>
 
   final List<String> _tabs = ['Flight', 'SLA'];
 
-  final List<String> shcCodeList = ["DGR", "VAL", "GEN"];
+
 
   @override
   void initState() {
@@ -617,17 +617,8 @@ class _BuildUpPageState extends State<BuildUpPage>
                                                             Expanded(
                                                                 child:  RoundedButtonBlue(text: "Start", press: () async {
                                                                   inactivityTimerManager?.stopTimer();
-                                                                  if(flightSearchModel != null){
-                                                                    await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpULDPage(
-                                                                      importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Build Up", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "", offPoint: flightSearchModel!.flightDetail!.routePoint!, lableModel: lableModel,)));
-                                                                  }else{
-                                                                    SnackbarUtil.showSnackbar(context, "Please search flight", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                    Vibration.vibrate(duration: 500);
-                                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                      FocusScope.of(context).requestFocus(flightNoFocusNode);
-                                                                    },
-                                                                    );
-                                                                  }
+                                                                  await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpULDPage(
+                                                                    importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Build Up", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "", offPoint: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.routePoint! : "", lableModel: lableModel,)));
 
                                                             },))
                                                           ],

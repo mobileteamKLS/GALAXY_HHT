@@ -1,4 +1,3 @@
-import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -9,10 +8,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
-import 'package:galaxy/widget/customdivider.dart';
-import 'package:galaxy/widget/customebuttons/roundbuttonblue.dart';
+
 import 'package:galaxy/widget/customedrawer/customedrawer.dart';
-import 'package:galaxy/widget/uldnumberwidget.dart';
+
 import 'package:vibration/vibration.dart';
 
 import '../../../../core/images.dart';
@@ -38,10 +36,9 @@ import 'dart:ui' as ui;
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
-import '../../model/buildup/buildupawblistmodel.dart';
+import '../../model/buildup/buildupgrouplistmodel.dart';
 import '../../services/buildup/builduplogic/buildupstate.dart';
 import 'buildupaddshipmentpage.dart';
-import 'buildupawbremarklistack.dart';
 
 class BuildUpGroupListPage extends StatefulWidget {
 
@@ -59,7 +56,13 @@ class BuildUpGroupListPage extends StatefulWidget {
   String uldNo;
   String awbNo;
   int awbRowId;
+  int awbShipRowId;
+  String shcCode;
   String uldType;
+  String offPoint;
+  String dgType;
+  int dgSeqNo;
+  int dgReference;
 
 
   BuildUpGroupListPage({super.key,
@@ -75,7 +78,13 @@ class BuildUpGroupListPage extends StatefulWidget {
     required this.uldNo,
     required this.awbNo,
     required this.awbRowId,
+    required this.awbShipRowId,
+    required this.shcCode,
     required this.uldType,
+    required this.offPoint,
+    required this.dgType,
+    required this.dgSeqNo,
+    required this.dgReference
    });
 
   @override
@@ -92,11 +101,11 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
 
 
 
-  List<BuildUpAWBDetailList> awbItemList = [];
-  List<BuildUpAWBDetailList> filterAWBDetailsList = [];
+  List<BuildUpAWBGroupList> awbItemList = [];
+  List<BuildUpAWBGroupList> filterAWBDetailsList = [];
 
 
-  BuildUpAWBModel? awbModel;
+  BuildUpGroupModel? awbModel;
 
   final ScrollController scrollController = ScrollController();
   //FocusNode awbFocusNode = FocusNode();
@@ -299,18 +308,17 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
-                                else if (state is BuildUpAWBDetailSuccessState){
+                                else if (state is BuildUpGroupDetailSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   _resumeTimerOnInteraction();
-                                  if(state.buildUpAWBModel.status == "E"){
-                                    SnackbarUtil.showSnackbar(context, state.buildUpAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  if(state.buildUpGroupModel.status == "E"){
+                                    SnackbarUtil.showSnackbar(context, state.buildUpGroupModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
                                   }else{
-                                    awbModel = state.buildUpAWBModel;
-                                    awbItemList = List.from(awbModel!.buildUpAWBDetailList != null ? awbModel!.buildUpAWBDetailList! : []);
+                                    awbModel = state.buildUpGroupModel;
+                                    awbItemList = List.from(awbModel!.buildUpAWBGroupList != null ? awbModel!.buildUpAWBGroupList! : []);
 
                                     filterAWBDetailsList = List.from(awbItemList);
-                                    filterAWBDetailsList.sort((a, b) => a.priority!.compareTo(b.priority!));
 
                                     setState(() {
 
@@ -319,7 +327,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
 
 
                                 }
-                                else if (state is BuildUpAWBDetailFailureState){
+                                else if (state is BuildUpGroupDetailFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -481,13 +489,13 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                           children: [
                                                             ListView.builder(
                                                               itemCount: (awbModel != null)
-                                                                  ? 1
+                                                                  ? filterAWBDetailsList.length
                                                                   : 0,
                                                               physics: NeverScrollableScrollPhysics(),
                                                               shrinkWrap: true,
                                                               controller: scrollController,
                                                               itemBuilder: (context, index) {
-                                                                BuildUpAWBDetailList aWBItem = filterAWBDetailsList![index];
+                                                                BuildUpAWBGroupList aWBItem = filterAWBDetailsList[index];
 
                                                                 return  InkWell(
                                                                     onTap: () {
@@ -526,14 +534,14 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                 children: [
                                                                                   Row(
                                                                                     children: [
-                                                                                      Expanded(child: CustomeText(text: "88888888888881", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start)),
+                                                                                      Expanded(child: CustomeText(text: aWBItem.groupId!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start)),
                                                                                       RoundedButton(text: "Next",
                                                                                         horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                                                                         verticalPadding: SizeConfig.blockSizeVertical,
                                                                                         color: MyColor.primaryColorblue,
                                                                                         press: () async {
                                                                                           inactivityTimerManager?.stopTimer();
-                                                                                          await Navigator.push(context, CupertinoPageRoute(
+                                                                                         var value = await Navigator.push(context, CupertinoPageRoute(
                                                                                             builder: (context) => BuildUpAddShipmentPage(
                                                                                               importSubMenuList: widget.importSubMenuList,
                                                                                               exportSubMenuList: widget.exportSubMenuList,
@@ -546,12 +554,23 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                               lableModel: lableModel!,
                                                                                               uldType: widget.uldType,
                                                                                               flightSeqNo: widget.flightSeqNo,
-                                                                                              awbNo: aWBItem.aWBNo!,
-                                                                                              awbRowId: aWBItem.expAWBRowId!,
-                                                                                              pieces: aWBItem.nOP!,
-                                                                                              weight: aWBItem.weightKg!,
-                                                                                              shcCodes: aWBItem.sHCCode!,
+                                                                                              awbNo: widget.awbNo,
+                                                                                              awbRowId: widget.awbRowId,
+                                                                                              awbShipRowId: widget.awbShipRowId,
+                                                                                              pieces: aWBItem.nop!,
+                                                                                              weight: aWBItem.weight!,
+                                                                                              shcCodes: widget.shcCode,
+                                                                                              offPoint: widget.offPoint,
+                                                                                              dgType: widget.dgType,
+                                                                                              dgReference: widget.dgReference,
+                                                                                              dgSeqNo: widget.dgSeqNo,
                                                                                             ),));
+
+                                                                                         if(value == "true"){
+                                                                                           Navigator.pop(context, "true");
+                                                                                         }else{
+                                                                                           _resumeTimerOnInteraction();
+                                                                                         }
 
 
                                                                                         },)
@@ -573,7 +592,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                             ),
                                                                                             SizedBox(width: 5),
                                                                                             CustomeText(
-                                                                                              text: "${aWBItem.nOP}",
+                                                                                              text: "${aWBItem.nop}",
                                                                                               fontColor: MyColor.colorBlack,
                                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                               fontWeight: FontWeight.w600,
@@ -595,7 +614,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                             ),
                                                                                             SizedBox(width: 5),
                                                                                             CustomeText(
-                                                                                              text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.weightKg!)} Kg",
+                                                                                              text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.weight!)} Kg",
                                                                                               fontColor: MyColor.colorBlack,
                                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                               fontWeight: FontWeight.w600,
@@ -687,20 +706,16 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
   }
 
   //appliying filter for sorting
-  List<BuildUpAWBDetailList> _applyFiltersAndSorting(List<BuildUpAWBDetailList> list, String searchString) {
+  List<BuildUpAWBGroupList> _applyFiltersAndSorting(List<BuildUpAWBGroupList> list, String searchString) {
     // Filter by search string
-    List<BuildUpAWBDetailList> filteredList = list.where((item) {
-      return item.aWBNo!.replaceAll(" ", "").toLowerCase().contains(searchString.toLowerCase());
+    List<BuildUpAWBGroupList> filteredList = list.where((item) {
+      return item.groupId!.replaceAll(" ", "").toLowerCase().contains(searchString.toLowerCase());
     }).toList();
 
     return filteredList;
   }
 
 
-
- /* List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int iMPAWBRowId) {
-    return awbRemarkList.where((remark) => remark.iMPAWBRowId == iMPAWBRowId).toList();
-  }*/
 
 
   Future<void> scanQR(LableModel lableModel) async {
@@ -768,22 +783,14 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
 
 
   Future<void> getGroupList() async {
-   /* await context.read<BuildUpCubit>().getGroupList(
-        widget.flightSeqNo,
-        _user!.userProfile!.userIdentity!,
-        _splashDefaultData!.companyCode!,
-        widget.menuId);*/
-
-    await context.read<BuildUpCubit>().getAwbList(
-        widget.flightSeqNo,
+    await context.read<BuildUpCubit>().getGroupList(
+        0,0,
+        widget.awbRowId,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
 
-  }
 
-  List<AWBRemarksList> filterAWBRemarksById(List<AWBRemarksList> awbRemarkList, int expAwbRowId) {
-    return awbRemarkList.where((remark) => remark.expAWBRowId == expAwbRowId).toList();
   }
 
 }
