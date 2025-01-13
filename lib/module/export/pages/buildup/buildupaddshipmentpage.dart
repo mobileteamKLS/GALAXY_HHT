@@ -56,7 +56,8 @@ class BuildUpAddShipmentPage extends StatefulWidget {
   String offPoint;
   String dgType;
   int dgSeqNo;
-  int dgReference;
+  String dgReference;
+  int groupId;
 
 
   BuildUpAddShipmentPage({
@@ -81,7 +82,9 @@ class BuildUpAddShipmentPage extends StatefulWidget {
     required this.offPoint,
     required this.dgType,
     required this.dgSeqNo,
-    required this.dgReference
+    required this.dgReference,
+    required this.groupId
+
    });
 
   @override
@@ -126,6 +129,8 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
 
   List<String> selectedShcCodes = [];
   String SHCCodes = "";
+  String destinationWarningInd = "N";
+  String shcCompibilityWarningInd = "N";
 
 
   @override
@@ -308,7 +313,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
 
                             // start api responcer
                             BlocListener<BuildUpCubit, BuildUpState>(
-                              listener: (context, state) {
+                              listener: (context, state) async {
 
                                 if (state is BuildUpInitialState) {
                                 }
@@ -367,7 +372,34 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                   } else if (state.addShipmentModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
+                                  }else if(state.addShipmentModel.status == "W"){
+                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "Confirm destination", state.addShipmentModel.statusMessage! , lableModel);
+
+                                    if(addShipmentDiffDialog == true){
+                                      destinationWarningInd = "Y";
+                                      addShipment(SHCCodes, "Y", shcCompibilityWarningInd);
+                                    }
+                                    else{
+                                      destinationWarningInd = "N";
+                                      addShipment(SHCCodes, "N", shcCompibilityWarningInd);
+                                    }
+
+
+                                  }else if(state.addShipmentModel.status == "C"){
+                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "SHC Compibility", state.addShipmentModel.statusMessage! , lableModel);
+
+                                    if(addShipmentDiffDialog == true){
+                                      shcCompibilityWarningInd = "Y";
+                                      addShipment(SHCCodes, destinationWarningInd, "Y");
+                                    }
+                                    else{
+                                      shcCompibilityWarningInd = "N";
+                                      addShipment(SHCCodes, destinationWarningInd, "N");
+                                    }
+
+
+                                  }
+                                  else{
                                     Navigator.pop(context, "true");
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
 
@@ -604,7 +636,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                         SizedBox(height: SizeConfig.blockSizeVertical ),
                                                         RoundedButtonBlue(text: "Add Shipment", press: () {
                                                           SHCCodes = selectedShcCodes.join("~");
-                                                          addShipment(SHCCodes);
+                                                          addShipment(SHCCodes, destinationWarningInd, shcCompibilityWarningInd);
                                                         },)
                                                       ],
                                                     ),
@@ -857,7 +889,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
         widget.menuId);
   }
 
-  Future<void> addShipment(String SHCCodes) async {
+  Future<void> addShipment(String SHCCodes, String warningInd, String shcWarning) async {
 
     print("DGTYPE === ${widget.dgType}");
 
@@ -872,7 +904,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
         widget.offPoint, SHCCodes,
         (differenceNop > 0) ? "Y" : "N", SHCCodes.contains("DGR") ? "Y" : "N",
         widget.uldType,
-        widget.dgType, widget.dgSeqNo, widget.dgReference,
+        widget.dgType, widget.dgSeqNo, widget.dgReference, widget.groupId, warningInd, shcWarning,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

@@ -62,7 +62,7 @@ class BuildUpGroupListPage extends StatefulWidget {
   String offPoint;
   String dgType;
   int dgSeqNo;
-  int dgReference;
+  String dgReference;
 
 
   BuildUpGroupListPage({super.key,
@@ -290,10 +290,11 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                 onBack: () {
                                   _onWillPop();
                                 },
-                                clearText: "",
+                                clearText: "${lableModel!.clear}",
                                 //add clear text to clear all feild
                                 onClear: () {
-
+                                  scanNoEditingController.clear();
+                                  updateSearchList("");
                                 },
                               ),
                             ),
@@ -424,7 +425,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                                   circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
                                                                   boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
-                                                                  isDigitsOnly: true,
+                                                                  isDigitsOnly: false,
                                                                   validator: (value) {
                                                                     if (value!.isEmpty) {
                                                                       return "Please fill out this field";
@@ -551,7 +552,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                               mainMenuName: widget.mainMenuName,
                                                                                               uldNo: widget.uldNo,
                                                                                               uldSeqNo: widget.uldSeqNo,
-                                                                                              lableModel: lableModel!,
+                                                                                              lableModel: lableModel,
                                                                                               uldType: widget.uldType,
                                                                                               flightSeqNo: widget.flightSeqNo,
                                                                                               awbNo: widget.awbNo,
@@ -564,6 +565,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                               dgType: widget.dgType,
                                                                                               dgReference: widget.dgReference,
                                                                                               dgSeqNo: widget.dgSeqNo,
+                                                                                              groupId: aWBItem.grpSeqNo!,
                                                                                             ),));
 
                                                                                          if(value == "true"){
@@ -784,7 +786,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
 
   Future<void> getGroupList() async {
     await context.read<BuildUpCubit>().getGroupList(
-        0,0,
+        "0","0",
         widget.awbRowId,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

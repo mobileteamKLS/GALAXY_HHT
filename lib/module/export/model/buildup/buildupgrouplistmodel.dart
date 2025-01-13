@@ -30,13 +30,15 @@ class BuildUpGroupModel {
 }
 
 class BuildUpAWBGroupList {
+  int? grpSeqNo;
   String? groupId;
   int? nop;
   double? weight;
 
-  BuildUpAWBGroupList({this.groupId, this.nop, this.weight});
+  BuildUpAWBGroupList({this.grpSeqNo, this.groupId, this.nop, this.weight});
 
   BuildUpAWBGroupList.fromJson(Map<String, dynamic> json) {
+    grpSeqNo = json['GroupSeqNo'];
     groupId = json['GroupId'];
     nop = json['Nop'];
     weight = json['Weight'];
@@ -44,6 +46,7 @@ class BuildUpAWBGroupList {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['GroupSeqNo'] = this.grpSeqNo;
     data['GroupId'] = this.groupId;
     data['Nop'] = this.nop;
     data['Weight'] = this.weight;

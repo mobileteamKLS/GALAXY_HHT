@@ -77,19 +77,24 @@ class DialogUtils {
           title: CustomeText(text: "${dashboardModel.logout}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${dashboardModel.logoutMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
-            InkWell(
-              onTap: () {
-                Navigator.of(context).pop(false);
-              },
-                child: CustomeText(text: "${dashboardModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.8,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: CustomeText(text: "${dashboardModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+                InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: CustomeText(text: "${dashboardModel.ok}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+              ],
+            )
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${dashboardModel.ok}",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
 
           ],
         );
@@ -112,19 +117,21 @@ class DialogUtils {
           title: CustomeText(text: "${dashboardModel.exit}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${dashboardModel.exitMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${dashboardModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
-
-            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.8,),
-
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${dashboardModel.exit}",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop(false);
+                    },
+                    child: CustomeText(text: "${dashboardModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+                InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop(true);
+                    },
+                    child: CustomeText(text: "${dashboardModel.exit}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+              ],
+            )
 
           ],
         );
@@ -5519,5 +5526,51 @@ class DialogUtils {
     );
   }
 
+
+  static Future<bool?> addShipmentDiffOffPointDialog(BuildContext context,
+      String title,
+      String message,
+      LableModel lableModel) {
+    return showDialog<bool>(
+      barrierColor: MyColor.colorBlack.withOpacity(0.5),
+      context: context,
+
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: MyColor.colorWhite,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16), // Set custom corner radius
+          ),
+          title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
+          // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+
+              CustomeText(text: message, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
+            ],
+          ),
+          actions: <Widget>[
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+
+            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+
+            InkWell(
+                onTap: () {
+                  Navigator.of(context).pop(true);
+                },
+                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+
+          ],
+        );
+      },
+    );
+  }
 
 }

@@ -528,6 +528,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                                             if (dateEditingController.text.isNotEmpty) {
                                                               // CALL API OF Flight Number and Date
                                                               _isOpenULDFlagEnable = false;
+                                                              getFlightSearchApi();
 
                                                             } else {
                                                               openValidationDialog(lableModel.enterFlightDate!, dateFocusNode);
@@ -615,7 +616,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                                             );
                                                           }),),),
                                                             Expanded(
-                                                                child:  RoundedButtonBlue(text: "Start", press: () async {
+                                                                child:  RoundedButtonBlue(text: "${lableModel.start}", press: () async {
                                                                   inactivityTimerManager?.stopTimer();
                                                                   await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpULDPage(
                                                                     importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Build Up", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "", offPoint: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.routePoint! : "", lableModel: lableModel,)));
@@ -756,7 +757,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                     flex: 1,
                     child: Container()),
                 Expanded(
-                  flex:5,
+                  flex:6,
                   child: Column(
                     children: [
                       Row(
@@ -791,7 +792,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                           ),
                           const SizedBox(width: 5),
                           CustomeText(
-                            text: (flightSearchModel != null) ? "${flightSearchModel!.flightDetail!.remainingTime! ~/ 60} min" : "-",
+                            text: (flightSearchModel != null) ? (flightSearchModel!.flightDetail!.flightStatus != "D") ? "${flightSearchModel!.flightDetail!.remainingTime!} min" : "-" : "-",
                             fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
@@ -841,7 +842,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CustomeText(text: "UWS", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : closesvg : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? closesvg : (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? MyColor.textColorGrey3 : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                     ],
                   ),
                 ),
@@ -858,7 +859,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CustomeText(text: "NTM", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : closesvg : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.nOTOCStatus! == "N") ? closesvg : (flightSearchModel!.flightStatusDetail!.nOTOCStatus! == "X") ? notApplicable : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.nOTOCStatus! == "N") ? MyColor.colorRed : (flightSearchModel!.flightStatusDetail!.nOTOCStatus! == "X") ? MyColor.textColorGrey3 : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                     ],
                   ),
                 ),
@@ -875,7 +876,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       CustomeText(text: "FFM", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_4, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
-                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? (flightSearchModel!.flightStatusDetail!.uWSStatus! == "X") ? notApplicable : closesvg : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.uWSStatus! == "N") ? MyColor.colorRed : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                      (flightSearchModel != null) ? SvgPicture.asset((flightSearchModel!.flightStatusDetail!.manifestStatus! == "N") ? closesvg : (flightSearchModel!.flightStatusDetail!.manifestStatus! == "X") ? notApplicable : donesvg, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3, color: (flightSearchModel!.flightStatusDetail!.manifestStatus! == "N") ? MyColor.colorRed : (flightSearchModel!.flightStatusDetail!.manifestStatus! == "X") ? MyColor.textColorGrey3 : MyColor.colorGreen,) :  SvgPicture.asset(notApplicable, height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                     ],
                   ),
                 ),
@@ -1160,7 +1161,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         children: [
                           CustomeText(
                             text: "Total",
-                            fontColor: MyColor.textColorGrey3,
+                            fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start,
@@ -1174,7 +1175,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         children: [
                           CustomeText(
                             text:  (flightSearchModel != null) ?  "${flightSearchModel!.flightStatusDetail!.cargoPieces! + flightSearchModel!.flightStatusDetail!.mailPieces! + flightSearchModel!.flightStatusDetail!.courierPieces!}" : "-",
-                            fontColor: MyColor.textColorGrey3,
+                            fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.end,
@@ -1189,7 +1190,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         children: [
                           CustomeText(
                             text:  (flightSearchModel != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(flightSearchModel!.flightStatusDetail!.cargoWeight! + flightSearchModel!.flightStatusDetail!.mailWeight! + flightSearchModel!.flightStatusDetail!.courierWeight!)} Kg" : "-",
-                            fontColor: MyColor.textColorGrey3,
+                            fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w600,
                             textAlign: TextAlign.start,
@@ -1260,11 +1261,11 @@ class _BuildUpPageState extends State<BuildUpPage>
       case "D":
         return MyColor.subMenuColorList[2];
       case "C":
-        return MyColor.subMenuColorList[3];
+        return MyColor.subMenuColorList[7];
       case "I":
         return MyColor.subMenuColorList[4];
       case "O":
-        return MyColor.subMenuColorList[7];
+        return MyColor.subMenuColorList[8];
       default:
         return MyColor.transparentColor;
     }

@@ -53,6 +53,7 @@ class BuildUpAWBListPage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   String title;
   String refrelCode;
+  String carrierCode;
   int flightSeqNo;
   int uldSeqNo;
   String uldNo;
@@ -60,7 +61,7 @@ class BuildUpAWBListPage extends StatefulWidget {
   String offPoint;
   String dgType;
   int dgSeqNo;
-  int dgReference;
+  String dgReference;
 
   BuildUpAWBListPage({super.key,
     required this.importSubMenuList,
@@ -70,6 +71,7 @@ class BuildUpAWBListPage extends StatefulWidget {
     required this.lableModel,
     required this.title,
     required this.refrelCode,
+    required this.carrierCode,
     required this.flightSeqNo,
     required this.uldSeqNo,
     required this.uldNo,
@@ -285,10 +287,11 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                 onBack: () {
                                   _onWillPop();
                                 },
-                                clearText: "",
+                                clearText: "${lableModel.clear}",
                                 //add clear text to clear all feild
                                 onClear: () {
-
+                                  scanNoEditingController.clear();
+                                  updateSearchList("");
                                 },
                               ),
                             ),
@@ -612,7 +615,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                               ),
                                                                                               SizedBox(width: 5),
                                                                                               CustomeText(
-                                                                                                text: "${aWBItem.nOP}",
+                                                                                                text: "${aWBItem.remainingNOP}",
                                                                                                 fontColor: MyColor.colorBlack,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w600,
@@ -634,7 +637,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                               ),
                                                                                               SizedBox(width: 5),
                                                                                               CustomeText(
-                                                                                                text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.weightKg!)} Kg",
+                                                                                                text: "${CommonUtils.formateToTwoDecimalPlacesValue(aWBItem.remainingWeightKg!)} Kg",
                                                                                                 fontColor: MyColor.colorBlack,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w600,
@@ -768,13 +771,14 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                       awbRowId: aWBItem.expAWBRowId!,
                                                                                                       awbShipRowId: aWBItem.expShipRowId!,
                                                                                                       uldType: widget.uldType,
-                                                                                                      pieces: aWBItem.nOP!,
-                                                                                                      weight: aWBItem.weightKg!,
+                                                                                                      pieces: aWBItem.remainingNOP!,
+                                                                                                      weight: aWBItem.remainingWeightKg!,
                                                                                                       shcCodes: aWBItem.sHCCode!,
                                                                                                       offPoint: widget.offPoint,
                                                                                                       dgType: widget.dgType,
                                                                                                       dgReference: widget.dgReference,
                                                                                                       dgSeqNo: widget.dgSeqNo,
+                                                                                                      groupId: 0,
                                                                                                     ),));
 
                                                                                                   if(value == "true"){
@@ -842,13 +846,14 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 awbRowId: aWBItem.expAWBRowId!,
                                                                                                 awbShipRowId: aWBItem.expShipRowId!,
                                                                                                 uldType: widget.uldType,
-                                                                                                pieces: aWBItem.nOP!,
-                                                                                                weight: aWBItem.weightKg!,
+                                                                                                pieces: aWBItem.remainingNOP!,
+                                                                                                weight: aWBItem.remainingWeightKg!,
                                                                                                 shcCodes: aWBItem.sHCCode!,
                                                                                                 offPoint: widget.offPoint,
                                                                                                 dgType: widget.dgType,
                                                                                                 dgReference: widget.dgReference,
                                                                                                 dgSeqNo: widget.dgSeqNo,
+                                                                                                groupId: 0,
                                                                                                 ),));
 
                                                                                              if(value == "true"){
@@ -1061,6 +1066,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
   Future<void> getAWBList() async {
     await context.read<BuildUpCubit>().getAwbList(
+        widget.carrierCode,
         widget.flightSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

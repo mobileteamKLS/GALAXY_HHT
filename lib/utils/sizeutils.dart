@@ -1,9 +1,7 @@
 class SizeUtils{
 
-  static double BUTTONTEXTSIZE = 1.3;
-  static double BUTTONTEXTSIZEMAX = 1.5;
+
   static double BUTTONVERTICALSIZE = 1.2;
-  static double BUTTONHORIZONTALSIZE = 1.2;
   static double CIRCULARBORDER = 1.2;
   static double CIRCULARCORNER = 3;
   static double BOXHEIGHT = 5;
@@ -11,9 +9,7 @@ class SizeUtils{
   static double HEADINGTEXTSIZE = 1.9;
   static double MAINPADDINGHORIZONTAL = 5;
   static double MAINPADDINGVERTICAL = 3;
-  static double SIZEBOXHEIGHTMAX = 5;
-  static double SIZEBOXHEIGHTMID = 3.5;
-  static double SIZEBOXHEIGHTMIN = 2;
+
 
 
   static double ICONSIZE2 = 2;

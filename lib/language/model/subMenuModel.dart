@@ -15,6 +15,7 @@ class SubMenuModelLang {
   String? HHT016;
   String? HHT017;
   String? HHT018;
+  String? HHT019;
   String? submenu;
 
   SubMenuModelLang(
@@ -35,6 +36,7 @@ class SubMenuModelLang {
         this.HHT016,
         this.HHT017,
         this.HHT018,
+        this.HHT019,
         this.submenu,
 
       });
@@ -56,6 +58,7 @@ class SubMenuModelLang {
     HHT016 = json['HHT016'];
     HHT017 = json['HHT017'];
     HHT018 = json['HHT018'];
+    HHT019 = json['HHT019'];
     submenu = json['submenu'];
   }
 
@@ -77,6 +80,7 @@ class SubMenuModelLang {
     data['HHT016'] = this.HHT016;
     data['HHT017'] = this.HHT017;
     data['HHT018'] = this.HHT018;
+    data['HHT019'] = this.HHT019;
     data['submenu'] = this.submenu;
 
 
@@ -116,6 +120,8 @@ class SubMenuModelLang {
         return HHT017;
       case 'HHT018':
         return HHT018;
+      case 'HHT019':
+        return HHT019;
       default:
         return null;
     }

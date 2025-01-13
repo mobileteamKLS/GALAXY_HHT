@@ -585,12 +585,13 @@ class BuildUpRepository{
 
 
 
-  Future<BuildUpAWBModel> getAwbDetailList(int flightSeqNo, int userId, int companyCode, int menuId) async {
+  Future<BuildUpAWBModel> getAwbDetailList(String carrierCode, int flightSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
         "FlightSeqNo" : flightSeqNo,
+        "CarrierCode" : carrierCode,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -626,7 +627,7 @@ class BuildUpRepository{
     }
   }
 
-  Future<BuildUpGroupModel> getGroupDetailList(int awbNumber, int awbprefix, int awbExpAwbRowId, int userId, int companyCode, int menuId) async {
+  Future<BuildUpGroupModel> getGroupDetailList(String awbNumber, String awbprefix, int awbExpAwbRowId, int userId, int companyCode, int menuId) async {
 
     try {
 
@@ -719,7 +720,7 @@ class BuildUpRepository{
       String awbPrefix, String aWBNumber,
       int nop, double weight, String offPoint, String SHC,
       String IsPartShipment, String DGIndicator, String ULDTrolleyType,
-      String dgType, int dgSeqNo, int dgReference,
+      String dgType, int dgSeqNo, String dgReference, int groupId, String warningInd, String shcWarning,
       int userId, int companyCode, int menuId) async {
 
     try {
@@ -738,10 +739,12 @@ class BuildUpRepository{
         "IsPartShipment" : IsPartShipment,
         "DGIndicator" : DGIndicator,
         "ULDTrolleyType" : ULDTrolleyType,
-        "WarningInd" : "N",
+        "WarningInd" : warningInd,
         "DGType" : dgType,
         "DGSeqNo" : dgSeqNo,
         "DGReference" : dgReference,
+        "GroupId" : groupId,
+        "SHCWarning" : shcWarning,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

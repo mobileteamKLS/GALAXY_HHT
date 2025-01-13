@@ -52,7 +52,7 @@ class ULDTrolleyDetailList {
   int? priority;
   String? dgType;
   int? dgSeqNo;
-  int? dgReference;
+  String? dgReference;
 
   ULDTrolleyDetailList(
       {this.type,

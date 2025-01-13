@@ -29,9 +29,9 @@ class MyColor {
   static const Color lightYeloPendingColor =Color(0xfffcdea0);
 
 
-  static const Color flightFinalize =Color(0xFFb3d8b4);
-  static const Color flightArrived =Color(0xFFccdffa);
-  static const Color flightNotArrived =Color(0xFFffd0d0);
+  static const Color flightFinalize =Color(0xffB3D8B4);
+  static const Color flightArrived =Color(0xffCCF1F6);
+  static const Color flightNotArrived =Color(0xffFFD0D0);
 
 
 

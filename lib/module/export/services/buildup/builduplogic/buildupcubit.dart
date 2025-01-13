@@ -162,10 +162,10 @@ class BuildUpCubit extends Cubit<BuildUpState>{
   }
 
 
-  Future<void> getAwbList(int flightSeqNo, int userId, int companyCode, int menuId) async {
+  Future<void> getAwbList(String carrierCode, int flightSeqNo, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
-      final getAwbModelData = await buildUpRepository.getAwbDetailList(flightSeqNo, userId, companyCode, menuId);
+      final getAwbModelData = await buildUpRepository.getAwbDetailList(carrierCode, flightSeqNo, userId, companyCode, menuId);
       emit(BuildUpAWBDetailSuccessState(getAwbModelData));
     } catch (e) {
       emit(BuildUpAWBDetailFailureState(e.toString()));
@@ -193,7 +193,7 @@ class BuildUpCubit extends Cubit<BuildUpState>{
   }
 
 
-  Future<void> getGroupList(int awbNumber, int awbprefix, int awbExpAwbRowId, int userId, int companyCode, int menuId) async {
+  Future<void> getGroupList(String awbNumber, String awbprefix, int awbExpAwbRowId, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
       final getGroupModelData = await buildUpRepository.getGroupDetailList(awbNumber, awbprefix, awbExpAwbRowId, userId, companyCode, menuId);
@@ -219,7 +219,7 @@ class BuildUpCubit extends Cubit<BuildUpState>{
       String awbPrefix, String aWBNumber,
       int nop, double weight, String offPoint, String SHC,
       String IsPartShipment, String DGIndicator, String ULDTrolleyType,
-      String dgType, int dgSeqNo, int dgReference,
+      String dgType, int dgSeqNo, String dgReference, int groupId, String warningInd, String shcWarning,
       int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
@@ -228,7 +228,7 @@ class BuildUpCubit extends Cubit<BuildUpState>{
           awbPrefix, aWBNumber,
           nop, weight, offPoint, SHC,
           IsPartShipment, DGIndicator, ULDTrolleyType,
-          dgType, dgSeqNo, dgReference,
+          dgType, dgSeqNo, dgReference, groupId, warningInd, shcWarning,
           userId, companyCode, menuId);
       emit(AddShipmentSuccessState(addShipment));
     } catch (e) {
