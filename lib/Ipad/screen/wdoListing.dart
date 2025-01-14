@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
 import 'package:intl/intl.dart';
+import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
 import '../../module/onboarding/sizeconfig.dart';
@@ -400,6 +401,7 @@ class _WdoListingState extends State<WdoListing> {
 
     setState(() {
       isLoading = true;
+      hasNoRecord=true;
     });
 
     var queryParams = {
@@ -419,12 +421,14 @@ class _WdoListingState extends State<WdoListing> {
       Map<String, dynamic> jsonData = json.decode(response.body);
       List<dynamic> resp = jsonData['WDOSearchList'];
       print(jsonData);
-      if (jsonData.isEmpty) {
+      if (resp.isEmpty) {
+        print("is empty");
         setState(() {
           hasNoRecord = true;
         });
       }
       else{
+        print("is not empty");
        setState(() {
          hasNoRecord=false;
        });
@@ -598,9 +602,12 @@ class _WdoListingState extends State<WdoListing> {
                           width: MediaQuery.of(context).size.width / 1.01,
                           child: (hasNoRecord)
                               ? Container(
-                            height: 400,
-                            child: const Center(
-                              child: Text("NO RECORD FOUND"),
+                            height:
+                            MediaQuery.of(context).size.height /
+                                1.5,
+                            child: Center(
+                              child: Lottie.asset(
+                                  'assets/images/nodata.json'),
                             ),
                           )
                               :  ListView.builder(

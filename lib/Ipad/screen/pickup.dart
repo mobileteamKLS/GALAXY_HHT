@@ -82,6 +82,9 @@ class _PickUpsState
     rcvUnitController.text = "KG";
     setDefaultRemainValues();
     print("-----${commodityListMaster.length}");
+    // if( widget.schedulePickUpData!.col3.isNotEmpty){
+    fetchMasterData();
+    // }
     awbFocusNode.addListener(
           () {
         if (!awbFocusNode.hasFocus) {
@@ -138,6 +141,11 @@ class _PickUpsState
   @override
   void dispose() {
     super.dispose();
+  }
+
+  void fetchMasterData() async {
+    await Future.delayed(Duration.zero);
+    awbSearch();
   }
 
   clearFieldsOnGet() {
@@ -234,6 +242,9 @@ class _PickUpsState
   }
 
   awbSearch() async {
+    if(awbController.text.isEmpty){
+      return;
+    }
     FocusScope.of(context).unfocus();
     DialogUtils.showLoadingDialog(context);
     // houseController.clear();
@@ -318,8 +329,8 @@ class _PickUpsState
     }
 
     var queryParams = {
-      "QueueRowID": widget.schedulePickUpData?.queueRowId??0,
-      "ElementRowID": widget.schedulePickUpData?.elementRowId??0,
+      "QueueRowID": widget.schedulePickUpData?.queueRowId??awbDataList.first.queueRowId,
+      "ElementRowID": widget.schedulePickUpData?.elementRowId??awbDataList.first.elementRowId,
       "intPcs": int.parse(rcvNOPController.text),
       "Wt": double.parse(rcvWTController.text),
       "Remark": remarksController.text,

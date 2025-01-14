@@ -11,6 +11,7 @@ const done = 'assets/images/done.webp';
 const kaleGalaxyLogo = 'assets/images/kalegalaxylogo.png';
 const kaleLogisticsLogo = 'assets/images/kalelogo.png';
 const kaleInfoLogo = 'assets/images/kaleinfo.png';
+const wfs = 'assets/images/wfs.png';
 const galaxylogo = 'assets/images/galaxylogo.png';
 
 

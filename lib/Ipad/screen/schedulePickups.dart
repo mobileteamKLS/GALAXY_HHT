@@ -888,7 +888,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                           child: Text(
                             items.first.col1,
                             style:
-                            TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(width: 16),
@@ -896,7 +896,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                           children: [
                             Text(
                               "${items.first.slot}",
-                              style: TextStyle(
+                              style: const TextStyle(
                                   color: Colors.black, fontWeight: FontWeight.bold,fontSize: 16),
                             ),
                             SizedBox(width: 8),
@@ -921,7 +921,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
+                                  const Text(
                                     " Shipment Count: ",
                                     style: TextStyle(
                                       fontSize: 16,
@@ -929,8 +929,8 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                     ),
                                   ),
                                   Text(
-                                    "${items.first.col6}",
-                                    style: TextStyle(
+                                    items.first.col6,
+                                    style: const TextStyle(
                                       color:MyColor.textColorGrey3,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -941,7 +941,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                               SizedBox(height: 8),
                               Row(
                                 children: [
-                                  Text(
+                                  const Text(
                                     " Weight: ",
                                     style: TextStyle(
                                       fontSize: 16,
@@ -949,8 +949,8 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                     ),
                                   ),
                                   Text(
-                                    "${items.first.col8}",
-                                    style: TextStyle(
+                                    items.first.col8,
+                                    style: const TextStyle(
                                       color:MyColor.textColorGrey3,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -958,7 +958,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                             ],
                           ),
                         ),
@@ -979,8 +979,8 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                     ),
                                   ),
                                   Text(
-                                    "${items.first.col7}",
-                                    style: TextStyle(
+                                    items.first.col7,
+                                    style: const TextStyle(
                                       color:MyColor.textColorGrey3,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -988,7 +988,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               const Row(
                                 children: [
                                   Text(
@@ -1021,16 +1021,16 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    " Assined To: ",
+                                  const Text(
+                                    " Assigned To: ",
                                     style: TextStyle(
                                       fontSize: 16,
                                       color: MyColor.textColorGrey2,
                                     ),
                                   ),
                                   Text(
-                                    "${items.first.col9}",
-                                    style: TextStyle(
+                                    items.first.col9,
+                                    style: const TextStyle(
                                       color:MyColor.textColorGrey3,
                                       fontWeight: FontWeight.bold,
                                       fontSize: 16,
@@ -1038,7 +1038,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
 
                             ],
                           ),
@@ -1050,7 +1050,7 @@ class _ScheduledPickupsState extends State<ScheduledPickups> {
 
               ],
             ),
-            isExpanded? SizedBox(height: 8):SizedBox(),
+            isExpanded? const SizedBox(height: 8):const SizedBox(),
             isExpanded?Container(
               width: MediaQuery.sizeOf(context).width,
               color: const Color(0xffE4E7EB),

@@ -180,7 +180,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                 ),
                  Text(
                   isCES?'  Warehouse Operations':"  Customs Operation",
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 24,color: Colors.white),
                 ),
               ],
@@ -251,16 +251,27 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                           ),
                           Row(
                             children: [
-                              // IconButton(
-                              //   icon: const Icon(
-                              //     Icons.search,
-                              //     color: MyColor.primaryColorblue,
-                              //   ),
-                              //   onPressed: () {
-                              //     print("Search button pressed");
-                              //     // showShipmentSearchDialog(context);
-                              //   },
-                              // ),
+                              Row(
+                                children: [
+                                  GestureDetector(
+                                    child: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.filter_alt_outlined,
+                                          color: MyColor.primaryColorblue,
+                                        ),
+                                        Text(
+                                          ' Filter',
+                                          style: TextStyle(fontSize: 18),
+                                        )
+                                      ],
+                                    ),
+                                    onTap: () {
+                                      showShipmentSearchBottomSheet(context);
+                                    },
+                                  ),
+                                ],
+                              )
                             ],
                           ),
                         ],
@@ -270,36 +281,56 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                   const SizedBox(height: 10,),
                   Padding(
                     padding: const EdgeInsets.only(
-                        top: 5, left: 20, right: 20, bottom: 10),
+                        top: 5, left: 20, right: 20, bottom: 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          '',
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
                         Row(
                           children: [
-                            GestureDetector(
-                              child: const Row(
-                                children: [
-                                  Icon(
-                                    Icons.filter_alt_outlined,
-                                    color: MyColor.primaryColorblue,
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration:  const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xffB3D8B4),
                                   ),
-                                  Text(
-                                    ' Filter',
-                                    style: TextStyle(fontSize: 18),
-                                  )
-                                ],
-                              ),
-                              onTap: () {
-                                showShipmentSearchBottomSheet(context);
-                              },
+                                  child:const Text("D",style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),),
+                                ),
+                                const Text("  Direct Shipment",style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),),
+
+                              ],
+                            ),
+                            SizedBox(width: 40,),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(12),
+                                  decoration:  const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xffFFD6A2),
+                                  ),
+                                  child:const Text("C",style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),),
+                                ),
+                                const Text("  Consol Shipment",style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w500,
+                                ),),
+
+                              ],
                             ),
                           ],
-                        )
+                        ),
+
                       ],
                     ),
                   ),
