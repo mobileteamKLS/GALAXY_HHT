@@ -192,6 +192,18 @@ class _WarehouseLocationState
                   TextEditingController(text: wareHouseLocationList[index].weight.toString()));
           editStates = List.generate(wareHouseLocationList.length, (_) => false);
         });
+        if((wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop)>0){
+          setState(() {
+            wareHouseLocationList.add(WarehouseLocationList(nop: (wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop), sequenceNumber: '', locCode: '', weight: calculateWeight((wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop)), whInTime: null, whOutTime: null, groupId: '', isid: 0, iwSeqNo: 0));
+            groupIdControllers.add(TextEditingController());
+            locationControllers.add(TextEditingController());
+            nopControllers.add(TextEditingController(text: (wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop).toString()));
+            double wt=calculateWeight((wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop));
+            print(wt);
+            weightControllers.add(TextEditingController(text: wt.toString()));
+            editStates.add(true);
+          });
+          }
         print("wareHouseShipmentList Length  ${wareHouseShipmentList.length}");
         print("wareHouseLocationList Length  ${wareHouseLocationList.length}");
       }
@@ -336,9 +348,9 @@ class _WarehouseLocationState
     });
   }
 
-  void addBlankRow() {
+  void addBlankRow(WarehouseLocationList data) {
     setState(() {
-      wareHouseLocationList.add(WarehouseLocationList(nop: 0, sequenceNumber: '', locCode: '', weight: 0.00, whInTime: null, whOutTime: null, groupId: '', isid: 0, iwSeqNo: 0));
+      wareHouseLocationList.add(data);
       groupIdControllers.add(TextEditingController());
       locationControllers.add(TextEditingController());
       nopControllers.add(TextEditingController());
@@ -797,7 +809,7 @@ class _WarehouseLocationState
                                         ],
                                       ),
                                       onTap: (){
-                                        addBlankRow();
+                                        addBlankRow(WarehouseLocationList(nop: 0, sequenceNumber: '', locCode: '', weight: 0.00, whInTime: null, whOutTime: null, groupId: '', isid: 0, iwSeqNo: 0));
                                       },
                                     ):SizedBox(),
                                   ],

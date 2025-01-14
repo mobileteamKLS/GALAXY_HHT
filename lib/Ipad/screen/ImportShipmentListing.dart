@@ -952,13 +952,13 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                        // Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment)));
                                         switch (Global.getStatusAction(shipment.shipmentStatus.toUpperCase())) {
                                           case 'Accept Shipment':
-                                            Navigator.push(
+                                            Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(builder: (_) => ShipmentAcceptanceManually(shipmentListDetails: shipment,isNavFromList: true,)),
                                             );
                                             break;
                                           case 'Forward For Exam.':
-                                            Navigator.push(
+                                            Navigator.pushReplacement(
                                               context,
                                               MaterialPageRoute(builder: (_) => ForwardForExamination(shipmentListDetails: shipment)), // Assuming this is your Forward Exam page
                                             );

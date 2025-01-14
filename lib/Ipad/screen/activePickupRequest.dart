@@ -98,6 +98,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     pickUpRequestList = [];
     filteredMap = <int, List<PickUpRequestData>>{};
     masterData = [];
+    saveList=[];
     totalPcs=0;
     totalWeight=0.00;
     setState(() {
@@ -1335,7 +1336,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
     final builder = XmlBuilder();
 
     builder.element('Root', nest: () {
-
+      builder.element('InitialPickUP', nest: () {
         for (var item in saveList) {
           builder.element('InitialPickUP', nest: () {
           final pickUpData = item['item'] as PickUpRequestData;
@@ -1347,7 +1348,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
             builder.element('AssignTo', nest: pickUpData.assignTo);
         });
         }
-
+      });
       builder.element('CompanyCode', nest: companyCode);
       builder.element('UserId', nest: userId);
       builder.element('AirportCity', nest: airportCity);

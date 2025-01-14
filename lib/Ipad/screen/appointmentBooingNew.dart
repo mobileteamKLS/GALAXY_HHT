@@ -91,6 +91,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
     masterData = [];
+    saveList=[];
     totalPcs=0;
     totalWeight=0.00;
     setState(() {
@@ -1370,9 +1371,9 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       if (value !=false) {
         saveList.removeWhere(
                 (element) => element["item"] == appointBookingList[index]);
-
         saveList.add({"item": appointBookingList[index], "value": value});
-      } else if(value==null) {
+      }
+      else {
         saveList.removeWhere(
                 (element) => element["item"] == appointBookingList[index]);
       }

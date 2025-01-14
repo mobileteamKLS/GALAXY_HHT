@@ -586,6 +586,7 @@ class _ShipmentAcceptanceManuallyState
                                   child: const Icon(Icons.arrow_back_ios,
                                       color: MyColor.primaryColorblue),
                                   onTap: () {
+                                    DialogUtils.hideLoadingDialog(context);
                                     if(widget.isNavFromList){
                                       Navigator.pushReplacement(context,
                                           MaterialPageRoute(builder: (context) => const ImportShipmentListing()));

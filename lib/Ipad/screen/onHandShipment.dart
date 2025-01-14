@@ -97,6 +97,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
   searchOnHandRequests(String fromDate, String toDate,String comm) async {
     DialogUtils.showLoadingDialog(context);
     appointBookingList = [];
+    saveList=[];
     totalPcs=0;
     totalWeight=0.00;
     setState(() {
