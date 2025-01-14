@@ -139,6 +139,7 @@ class _ULDCustomTextFieldState extends State<CustomeEditTextWithBorder> {
     bool obscureText = true;
     return TextFormField(
       textDirection: widget.textDirection,
+
       onTap: () {
         widget.onPress!();
       },
@@ -170,7 +171,7 @@ class _ULDCustomTextFieldState extends State<CustomeEditTextWithBorder> {
       decoration: InputDecoration(
         counterText: "",
         prefixIcon: widget.hasIcon ? Icon(widget.prefixicon, color: widget.prefixIconcolor,) : null,
-        contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
+        contentPadding: (widget.maxLines>2)?const EdgeInsets.symmetric(vertical: 10, horizontal: 10):const EdgeInsets.symmetric(vertical: 0, horizontal: 10),
         labelText: widget.labelText ?? '',
         floatingLabelBehavior: FloatingLabelBehavior.always, // Keeps the label always floating above the field
         labelStyle: GoogleFonts.roboto(textStyle: TextStyle(

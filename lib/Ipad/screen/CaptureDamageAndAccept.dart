@@ -559,6 +559,8 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                                   onPress: () {},
                                   needOutlineBorder:
                                   true,
+                                  noUpperCase: true,
+                                  isSpaceAllowed: true,
                                   labelText: "Remarks*",
                                   readOnly: false,
                                   maxLength: 500,

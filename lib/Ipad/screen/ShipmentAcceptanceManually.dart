@@ -1467,11 +1467,11 @@ class _ShipmentAcceptanceManuallyState
                                           0.42,
                                       child: OutlinedButton(
                                         style: OutlinedButton.styleFrom(
-                                          side: const BorderSide(
-                                              color: MyColor.primaryColorblue),
-                                          textStyle: const TextStyle(
+                                          side:  BorderSide(
+                                              color: acceptedPiecesList.isNotEmpty? MyColor.primaryColorblue:MyColor.textColorGrey2),
+                                          textStyle:  TextStyle(
                                             fontSize: 18,
-                                            color: MyColor.primaryColorblue,
+                                            color:acceptedPiecesList.isNotEmpty? MyColor.primaryColorblue:MyColor.textColorGrey2,
                                           ),
                                           shape: const RoundedRectangleBorder(
                                             borderRadius: BorderRadius.all(
@@ -1491,8 +1491,8 @@ class _ShipmentAcceptanceManuallyState
                                                         )));
                                           } else {}
                                         },
-                                        child: const Text(
-                                            "Capture Damage"),
+                                        child:  Text(
+                                            "Capture Damage",style: TextStyle(color: acceptedPiecesList.isNotEmpty? MyColor.primaryColorblue:MyColor.textColorGrey2),),
                                       ),
                                     ),
                                     const SizedBox(
