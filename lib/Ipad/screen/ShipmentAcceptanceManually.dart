@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import 'package:galaxy/Ipad/utils/global.dart';
 import 'package:galaxy/utils/dialogutils.dart';
 import 'package:intl/intl.dart';
@@ -330,7 +331,7 @@ class _ShipmentAcceptanceManuallyState
       }
       DialogUtils.hideLoadingDialog(context);
     }).catchError((onError) {
-      DialogUtils.hideLoadingDialog(context);
+      // DialogUtils.hideLoadingDialog(context);
       print(onError);
     });
   }
@@ -585,14 +586,17 @@ class _ShipmentAcceptanceManuallyState
                                 GestureDetector(
                                   child: const Icon(Icons.arrow_back_ios,
                                       color: MyColor.primaryColorblue),
-                                  onTap: () {
+                                  onTap: () async {
                                     DialogUtils.hideLoadingDialog(context);
                                     if(widget.isNavFromList){
+                                      await Future.delayed(Duration(milliseconds: 200));
                                       Navigator.pushReplacement(context,
                                           MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
                                     }
                                     else{
-                                      Navigator.pop(context);
+                                      await Future.delayed(Duration(milliseconds: 200));
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(builder: (context) => const WarehouseOperations()));
                                     }
 
                                   },

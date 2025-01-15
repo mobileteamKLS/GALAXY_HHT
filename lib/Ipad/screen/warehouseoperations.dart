@@ -151,9 +151,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       DialogUtils.hideLoadingDialog(context);
       print("No of customers ${customerListMaster.length}");
     }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
+
       print(onError);
     });
   }
@@ -198,9 +196,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       DialogUtils.hideLoadingDialog(context);
       print("No of origin and destination ${originDestinationMaster.length}");
     }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
+
       print(onError);
     });
   }
@@ -250,9 +246,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
       print("No of Firms Code ${firmsCodeMaster.length}");
       print("No of Disposition Code ${dispositionCodeMaster.length}");
     }).catchError((onError) {
-      setState(() {
-        isLoading = false;
-      });
+
       print(onError);
     });
   }
