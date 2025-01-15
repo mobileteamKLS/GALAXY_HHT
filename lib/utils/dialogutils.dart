@@ -5278,8 +5278,81 @@ class DialogUtils {
     );
   }
 
+  static Future<int?> showBulkMoreOptionDialog(BuildContext context, String message, LableModel lableModel) {
 
-  static Future<int?> showULDMoreOptionDialog(BuildContext context, String message, LableModel lableModel, String uldStatus) {
+
+    return showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20),
+          topRight: Radius.circular(20),
+        ),
+      ),
+      builder: (BuildContext context) {
+        return FractionallySizedBox(
+          widthFactor: 1, // Adjust the width to 90% of the screen width
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              vertical: SizeConfig.blockSizeVertical * 2,
+              horizontal: SizeConfig.blockSizeHorizontal * 4,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomeText(
+                  text: message,
+                  fontColor: MyColor.colorBlack,
+                  fontSize: SizeConfig.textMultiplier * 2.2,
+                  fontWeight: FontWeight.w400,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical ),
+
+                CustomDivider(
+                  space: 0,
+                  color: MyColor.textColorGrey,
+                  hascolor: true,
+                  thickness: 1,
+                ),
+                SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButtonBlue(
+                        isborderButton: true,
+                        text: "${lableModel.cancel}",
+                        color: MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ),
+                    SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH4,),
+                    Expanded(
+                      flex: 1,
+                      child: RoundedButton(
+                        text: "Scale",
+                        color: MyColor.primaryColorblue,
+                        press: () {
+                          Navigator.pop(context, 1);
+                        },
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  static Future<int?> showULDMoreOptionDialog(BuildContext context, String message, LableModel lableModel) {
 
 
     return showModalBottomSheet<int>(

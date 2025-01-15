@@ -240,15 +240,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
       });
 
 
-      //getPageLoad();
-      if(widget.flightSeqNo != -1){
-        getULDTrolleySearchList();
-      }else{
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          FocusScope.of(context).requestFocus(carrierCodeFocusNode);
-        },
-        );
-      }
+      getPageLoad();
+
 
     }
 
@@ -424,7 +417,16 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                     SnackbarUtil.showSnackbar(context, state.buildUpDefaultPageLoadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     isBulkLoad = state.buildUpDefaultPageLoadModel.IsBulkLoad!;
+                                   //isBulkLoad = "N";
 
+                                    if(widget.flightSeqNo != -1){
+                                      getULDTrolleySearchList();
+                                    }else{
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                      },
+                                      );
+                                    }
                                     setState(() {
 
                                     });
@@ -906,7 +908,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                       }
                                                                     }
                                                                   }else{
-
+                                                                    Vibration.vibrate(duration: 500);
+                                                                    SnackbarUtil.showSnackbar(context, "Trolley not allow", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                   }
 
 
@@ -967,9 +970,15 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                           });
                                                                         }
                                                                         else if (index == 1) {
-                                                                          setState(() {
-                                                                            _pageIndex = index;
-                                                                          });
+                                                                          if(isBulkLoad == "Y"){
+                                                                            Vibration.vibrate(duration: 500);
+                                                                            SnackbarUtil.showSnackbar(context, "Trolley not allow", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          }else{
+                                                                            setState(() {
+                                                                              _pageIndex = index;
+                                                                            });
+                                                                          }
+
                                                                         }
 
                                                                       },
@@ -1217,9 +1226,10 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       : const SizedBox(),
                                   SizedBox(height: SizeConfig.blockSizeVertical),
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    mainAxisAlignment: (uldTrolleyItem.uLDSeqNo != 0) ? MainAxisAlignment.spaceBetween : MainAxisAlignment.start,
                                     children: [
-                                      Row(
+                                      (uldTrolleyItem.uLDSeqNo != 0)
+                                          ? Row(
                                         children: [
                                           CustomeText(
                                             text: "Contour :",
@@ -1237,7 +1247,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                             textAlign: TextAlign.start,
                                           ),
                                         ],
-                                      ),
+                                      ) : SizedBox(),
                                       Row(
                                         children: [
                                           CustomeText(
@@ -1325,128 +1335,162 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                             if(locationController.text.isNotEmpty){
                                               if(_isvalidateLocation == true){
                                                 if(carrierCodeController.text.isNotEmpty){
-                                                  int? optionNo = await DialogUtils.showULDMoreOptionDialog(
-                                                      context, "More Option for ULD", lableModel, "O");
 
-                                                  print("OptionNo === ${optionNo}");
-                                                  if(optionNo == null){
-                                                    _resumeTimerOnInteraction();
-                                                  }
-                                                  else if(optionNo == 1){
-                                                    var value = await Navigator.push(context, CupertinoPageRoute(
-                                                      builder: (context) => CloseULDEquipmentPage(
-                                                        importSubMenuList: widget.importSubMenuList,
-                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Equipment",
-                                                        refrelCode: widget.refrelCode,
-                                                        menuId: widget.menuId,
-                                                        mainMenuName: widget.mainMenuName,
-                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                        uldType: "U",
-                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                        flightSeqNo : widget.flightSeqNo,
-                                                      ),));
-
-                                                    if(value == "true"){
-                                                      _resumeTimerOnInteraction();
-                                                      getULDTrolleySearchList();
-                                                    }else{
+                                                  if(uldTrolleyItem.uLDSeqNo != 0){
+                                                    int? optionNo = await DialogUtils.showULDMoreOptionDialog(
+                                                        context, "More Option for ULD", lableModel);
+                                                    if(optionNo == null){
                                                       _resumeTimerOnInteraction();
                                                     }
-                                                  }
-                                                  else if(optionNo == 2){
+                                                    else if(optionNo == 1){
+                                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                                        builder: (context) => CloseULDEquipmentPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Equipment",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                          uldType: "U",
+                                                          uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                          flightSeqNo : widget.flightSeqNo,
+                                                        ),));
 
-                                                    var value = await Navigator.push(context, CupertinoPageRoute(
-                                                      builder: (context) => ContourULDPage(
-                                                        importSubMenuList: widget.importSubMenuList,
-                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Contour",
-                                                        refrelCode: widget.refrelCode,
-                                                        menuId: widget.menuId,
-                                                        mainMenuName: widget.mainMenuName,
-                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                        flightSeqNo: widget.flightSeqNo,
-                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                      ),));
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+                                                    }
+                                                    else if(optionNo == 2){
 
-                                                    if(value == "true"){
-                                                      _resumeTimerOnInteraction();
-                                                      getULDTrolleySearchList();
-                                                    }else{
+                                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                                        builder: (context) => ContourULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Contour",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                          flightSeqNo: widget.flightSeqNo,
+                                                          uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        ),));
+
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+
+                                                    }
+                                                    else if(optionNo == 3){
+                                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                                        builder: (context) => ScaleULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Scale",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                          flightSeqNo: widget.flightSeqNo,
+                                                          uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        ),));
+
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+                                                    }
+                                                    else if(optionNo == 4){
+                                                      var value = await Navigator.push(
+                                                          context, CupertinoPageRoute(
+                                                        builder: (context) => BuildUpAddMailPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Add Mail",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          lableModel: lableModel,
+                                                          flightSeqNo: widget.flightSeqNo,
+                                                          uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                          uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        ),));
+
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+
+
+                                                    }
+                                                    else if(optionNo == 5){
+                                                      var value = await Navigator.push(
+                                                          context, CupertinoPageRoute(
+                                                        builder: (context) => CloseULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Close ULD",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
+                                                        ),));
+
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+
+                                                    }
+                                                    else{
                                                       _resumeTimerOnInteraction();
                                                     }
-
-                                                  }
-                                                  else if(optionNo == 3){
-                                                    var value = await Navigator.push(context, CupertinoPageRoute(
-                                                      builder: (context) => ScaleULDPage(
-                                                        importSubMenuList: widget.importSubMenuList,
-                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Scale",
-                                                        refrelCode: widget.refrelCode,
-                                                        menuId: widget.menuId,
-                                                        mainMenuName: widget.mainMenuName,
-                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                        flightSeqNo: widget.flightSeqNo,
-                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                      ),));
-
-                                                    if(value == "true"){
-                                                      _resumeTimerOnInteraction();
-                                                      getULDTrolleySearchList();
-                                                    }else{
-                                                      _resumeTimerOnInteraction();
-                                                    }
-                                                  }
-                                                  else if(optionNo == 4){
-                                                    var value = await Navigator.push(
-                                                        context, CupertinoPageRoute(
-                                                      builder: (context) => BuildUpAddMailPage(
-                                                        importSubMenuList: widget.importSubMenuList,
-                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Add Mail",
-                                                        refrelCode: widget.refrelCode,
-                                                        menuId: widget.menuId,
-                                                        mainMenuName: widget.mainMenuName,
-                                                        lableModel: lableModel,
-                                                        flightSeqNo: widget.flightSeqNo,
-                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                      ),));
-
-                                                    if(value == "true"){
-                                                      _resumeTimerOnInteraction();
-                                                      getULDTrolleySearchList();
-                                                    }else{
-                                                      _resumeTimerOnInteraction();
-                                                    }
-
-
-                                                  }
-                                                  else if(optionNo == 5){
-                                                    var value = await Navigator.push(
-                                                        context, CupertinoPageRoute(
-                                                      builder: (context) => CloseULDPage(
-                                                        importSubMenuList: widget.importSubMenuList,
-                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Close ULD",
-                                                        refrelCode: widget.refrelCode,
-                                                        menuId: widget.menuId,
-                                                        mainMenuName: widget.mainMenuName,
-                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
-                                                      ),));
-
-                                                    if(value == "true"){
-                                                      _resumeTimerOnInteraction();
-                                                      getULDTrolleySearchList();
-                                                    }else{
-                                                      _resumeTimerOnInteraction();
-                                                    }
-
                                                   }
                                                   else{
-                                                    _resumeTimerOnInteraction();
+                                                    int? optionNo = await DialogUtils.showBulkMoreOptionDialog(
+                                                        context, "More Option for BULK", lableModel);
+                                                    if(optionNo == null){
+                                                      _resumeTimerOnInteraction();
+                                                    }
+                                                    else if(optionNo == 1){
+                                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                                        builder: (context) => ScaleULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Scale",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                          flightSeqNo: widget.flightSeqNo,
+                                                          uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        ),));
+
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+                                                    }
+                                                    else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
                                                   }
+
+
                                                 }
                                                 else{
                                                   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -1465,128 +1509,160 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                           }
                                           else{
                                             if(carrierCodeController.text.isNotEmpty){
-                                              int? optionNo = await DialogUtils.showULDMoreOptionDialog(
-                                                  context, "More Option for ULD", lableModel, "O");
-
-                                              print("OptionNo === ${optionNo}");
-                                              if(optionNo == null){
-                                                _resumeTimerOnInteraction();
-                                              }
-                                              else if(optionNo == 1){
-                                                var value = await Navigator.push(context, CupertinoPageRoute(
-                                                  builder: (context) => CloseULDEquipmentPage(
-                                                    importSubMenuList: widget.importSubMenuList,
-                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Equipment",
-                                                    refrelCode: widget.refrelCode,
-                                                    menuId: widget.menuId,
-                                                    mainMenuName: widget.mainMenuName,
-                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                    uldType: "U",
-                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                    flightSeqNo : widget.flightSeqNo,
-                                                  ),));
-
-                                                if(value == "true"){
-                                                  _resumeTimerOnInteraction();
-                                                  getULDTrolleySearchList();
-                                                }else{
+                                              if(uldTrolleyItem.uLDSeqNo != 0){
+                                                int? optionNo = await DialogUtils.showULDMoreOptionDialog(
+                                                    context, "More Option for ULD", lableModel);
+                                                if(optionNo == null){
                                                   _resumeTimerOnInteraction();
                                                 }
-                                              }
-                                              else if(optionNo == 2){
+                                                else if(optionNo == 1){
+                                                  var value = await Navigator.push(context, CupertinoPageRoute(
+                                                    builder: (context) => CloseULDEquipmentPage(
+                                                      importSubMenuList: widget.importSubMenuList,
+                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                      title: "Equipment",
+                                                      refrelCode: widget.refrelCode,
+                                                      menuId: widget.menuId,
+                                                      mainMenuName: widget.mainMenuName,
+                                                      uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                      uldType: "U",
+                                                      uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                      flightSeqNo : widget.flightSeqNo,
+                                                    ),));
 
-                                                var value = await Navigator.push(context, CupertinoPageRoute(
-                                                  builder: (context) => ContourULDPage(
-                                                    importSubMenuList: widget.importSubMenuList,
-                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Contour",
-                                                    refrelCode: widget.refrelCode,
-                                                    menuId: widget.menuId,
-                                                    mainMenuName: widget.mainMenuName,
-                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                    flightSeqNo: widget.flightSeqNo,
-                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                  ),));
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                }
+                                                else if(optionNo == 2){
 
-                                                if(value == "true"){
-                                                  _resumeTimerOnInteraction();
-                                                  getULDTrolleySearchList();
-                                                }else{
+                                                  var value = await Navigator.push(context, CupertinoPageRoute(
+                                                    builder: (context) => ContourULDPage(
+                                                      importSubMenuList: widget.importSubMenuList,
+                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                      title: "Contour",
+                                                      refrelCode: widget.refrelCode,
+                                                      menuId: widget.menuId,
+                                                      mainMenuName: widget.mainMenuName,
+                                                      uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                      flightSeqNo: widget.flightSeqNo,
+                                                      uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    ),));
+
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+
+                                                }
+                                                else if(optionNo == 3){
+                                                  var value = await Navigator.push(context, CupertinoPageRoute(
+                                                    builder: (context) => ScaleULDPage(
+                                                      importSubMenuList: widget.importSubMenuList,
+                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                      title: "Scale",
+                                                      refrelCode: widget.refrelCode,
+                                                      menuId: widget.menuId,
+                                                      mainMenuName: widget.mainMenuName,
+                                                      uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                      flightSeqNo: widget.flightSeqNo,
+                                                      uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    ),));
+
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                }
+                                                else if(optionNo == 4){
+                                                  var value = await Navigator.push(
+                                                      context, CupertinoPageRoute(
+                                                    builder: (context) => BuildUpAddMailPage(
+                                                      importSubMenuList: widget.importSubMenuList,
+                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                      title: "Add Mail",
+                                                      refrelCode: widget.refrelCode,
+                                                      menuId: widget.menuId,
+                                                      mainMenuName: widget.mainMenuName,
+                                                      lableModel: lableModel,
+                                                      flightSeqNo: widget.flightSeqNo,
+                                                      uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                      uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    ),));
+
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+
+
+                                                }
+                                                else if(optionNo == 5){
+                                                  var value = await Navigator.push(
+                                                      context, CupertinoPageRoute(
+                                                    builder: (context) => CloseULDPage(
+                                                      importSubMenuList: widget.importSubMenuList,
+                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                      title: "Close ULD",
+                                                      refrelCode: widget.refrelCode,
+                                                      menuId: widget.menuId,
+                                                      mainMenuName: widget.mainMenuName,
+                                                      uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
+                                                    ),));
+
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+
+                                                }
+                                                else{
                                                   _resumeTimerOnInteraction();
                                                 }
-
-                                              }
-                                              else if(optionNo == 3){
-                                                var value = await Navigator.push(context, CupertinoPageRoute(
-                                                  builder: (context) => ScaleULDPage(
-                                                    importSubMenuList: widget.importSubMenuList,
-                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Scale",
-                                                    refrelCode: widget.refrelCode,
-                                                    menuId: widget.menuId,
-                                                    mainMenuName: widget.mainMenuName,
-                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                    flightSeqNo: widget.flightSeqNo,
-                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                  ),));
-
-                                                if(value == "true"){
-                                                  _resumeTimerOnInteraction();
-                                                  getULDTrolleySearchList();
-                                                }else{
-                                                  _resumeTimerOnInteraction();
-                                                }
-                                              }
-                                              else if(optionNo == 4){
-                                                var value = await Navigator.push(
-                                                    context, CupertinoPageRoute(
-                                                  builder: (context) => BuildUpAddMailPage(
-                                                    importSubMenuList: widget.importSubMenuList,
-                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Add Mail",
-                                                    refrelCode: widget.refrelCode,
-                                                    menuId: widget.menuId,
-                                                    mainMenuName: widget.mainMenuName,
-                                                    lableModel: lableModel,
-                                                    flightSeqNo: widget.flightSeqNo,
-                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                  ),));
-
-                                                if(value == "true"){
-                                                  _resumeTimerOnInteraction();
-                                                  getULDTrolleySearchList();
-                                                }else{
-                                                  _resumeTimerOnInteraction();
-                                                }
-
-
-                                              }
-                                              else if(optionNo == 5){
-                                                var value = await Navigator.push(
-                                                    context, CupertinoPageRoute(
-                                                  builder: (context) => CloseULDPage(
-                                                    importSubMenuList: widget.importSubMenuList,
-                                                    exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Close ULD",
-                                                    refrelCode: widget.refrelCode,
-                                                    menuId: widget.menuId,
-                                                    mainMenuName: widget.mainMenuName,
-                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
-                                                  ),));
-
-                                                if(value == "true"){
-                                                  _resumeTimerOnInteraction();
-                                                  getULDTrolleySearchList();
-                                                }else{
-                                                  _resumeTimerOnInteraction();
-                                                }
-
                                               }
                                               else{
-                                                _resumeTimerOnInteraction();
+                                                int? optionNo = await DialogUtils.showBulkMoreOptionDialog(
+                                                    context, "More Option for BULK", lableModel);
+                                                if(optionNo == null){
+                                                  _resumeTimerOnInteraction();
+                                                }
+                                                else if(optionNo == 1){
+                                                  var value = await Navigator.push(context, CupertinoPageRoute(
+                                                    builder: (context) => ScaleULDPage(
+                                                      importSubMenuList: widget.importSubMenuList,
+                                                      exportSubMenuList: widget.exportSubMenuList,
+                                                      title: "Scale",
+                                                      refrelCode: widget.refrelCode,
+                                                      menuId: widget.menuId,
+                                                      mainMenuName: widget.mainMenuName,
+                                                      uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                      flightSeqNo: widget.flightSeqNo,
+                                                      uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    ),));
+
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                }
+                                                else{
+                                                  _resumeTimerOnInteraction();
+                                                }
                                               }
+
                                             }
                                             else{
                                               WidgetsBinding.instance.addPostFrameCallback((_) {
