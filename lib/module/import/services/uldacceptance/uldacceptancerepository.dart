@@ -317,11 +317,10 @@ class UldAcceptanceRepository{
   }
 
   // call uld damage api call
-  Future<UldAcceptModel> uldDamage(String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
+  Future<UldAcceptModel> uldDamage(String ULDNo, int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
 
     try {
       var payload = {
-       /* "ULDNo": ULDNo,*/
         "ULDSeqNo": ULDSeqNo,
         "FlightSeqNo": flightSeqNo,
         "RefMenuCode" : menuCode,

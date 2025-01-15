@@ -3070,7 +3070,7 @@ class _FlightCheckState extends State<FlightCheck>
             ));
 
         // RETURN FROM DAMAGE SCREEN API CALL
-        if (damageOrNot == "U") {
+        if (damageOrNot == "BUS") {
           _resumeTimerOnInteraction();
           callFlightCheckULDListApi(
               context,
@@ -3082,7 +3082,7 @@ class _FlightCheckState extends State<FlightCheck>
               _splashDefaultData!.companyCode!,
               widget.menuId,
               (_isOpenULDFlagEnable == true) ? 1 : 0);
-        } else if (damageOrNot == "S") {
+        } else if (damageOrNot == "SER") {
           _resumeTimerOnInteraction();
           callFlightCheckULDListApi(
               context,

@@ -571,6 +571,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                          if(value == "true"){
                                                                                            Navigator.pop(context, "true");
                                                                                          }else{
+                                                                                           getGroupList();
                                                                                            _resumeTimerOnInteraction();
                                                                                          }
 

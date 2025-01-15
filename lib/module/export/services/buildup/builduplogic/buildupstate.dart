@@ -1,6 +1,7 @@
 import 'package:galaxy/module/export/model/buildup/addmailviewmodel.dart';
 import 'package:galaxy/module/export/model/buildup/awbacknowledgemodel.dart';
 import 'package:galaxy/module/export/model/buildup/awbprioritymodel.dart';
+import 'package:galaxy/module/export/model/buildup/buildupdefaultpageloadmodel.dart';
 import 'package:galaxy/module/export/model/buildup/flightsearchmodel.dart';
 import 'package:galaxy/module/export/model/buildup/getuldtrolleysavemodel.dart';
 import 'package:galaxy/module/export/model/buildup/getuldtrolleysearchmodel.dart';
@@ -13,6 +14,7 @@ import '../../../model/buildup/buildupawblistmodel.dart';
 import '../../../model/buildup/buildupgrouplistmodel.dart';
 import '../../../model/buildup/removemailmodel.dart';
 import '../../../model/buildup/shcvalidatemodel.dart';
+import '../../../model/buildup/ulddamagemodel.dart';
 import '../../../model/buildup/uldtrolleyprioritymodel.dart';
 import '../../../model/closetrolley/closetrolleyreopenmodel.dart';
 import '../../../model/closetrolley/closetrolleysearchmodel.dart';
@@ -26,6 +28,15 @@ class BuildUpState {}
 class BuildUpInitialState extends BuildUpState {}
 class BuildUpLoadingState extends BuildUpState {}
 
+class BuildUpDefaultPageLoadSuccessState extends BuildUpState {
+  final BuildUpDefaultPageLoadModel buildUpDefaultPageLoadModel;
+  BuildUpDefaultPageLoadSuccessState(this.buildUpDefaultPageLoadModel);
+}
+
+class BuildUpDefaultPageLoadFailureState extends BuildUpState {
+  final String error;
+  BuildUpDefaultPageLoadFailureState(this.error);
+}
 
 
 class ValidateLocationSuccessState extends BuildUpState {
@@ -192,6 +203,17 @@ class SHCValidateFailureState extends BuildUpState {
   final String error;
   SHCValidateFailureState(this.error);
 }
+
+class ULDDamageConditionCodeSuccessState extends BuildUpState {
+  final ULDDamageModel uldDamageModel;
+  ULDDamageConditionCodeSuccessState(this.uldDamageModel);
+}
+
+class ULDDamageConditionCodeFailureState extends BuildUpState {
+  final String error;
+  ULDDamageConditionCodeFailureState(this.error);
+}
+
 
 class AddShipmentSuccessState extends BuildUpState {
   final AddShipmentModel addShipmentModel;

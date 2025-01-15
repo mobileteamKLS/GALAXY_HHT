@@ -821,7 +821,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                   borderRadius: BorderRadius.circular(16),
                   currentValue: (flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.lAvsMAN! : 0,
                   displayText: '%',
-                  displayTextStyle: TextStyle(color: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5),
+                  displayTextStyle: TextStyle(color: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5),
                   progressColor: MyColor.colorGreen,
                   backgroundColor: MyColor.dropdownColor,
                 ),

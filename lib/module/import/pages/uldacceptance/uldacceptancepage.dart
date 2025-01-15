@@ -1051,7 +1051,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
 
                                           print("DMAGE_DIALOG_PAGE-----------33333 ${damageOrNot}");
 
-                                          if(damageOrNot == "U"){
+                                          if(damageOrNot == "BUS"){
                                             uldNoController.clear();
                                             _isvalidULDNo = false;
                                             _suffixIconUld = false;
@@ -1060,7 +1060,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                             },);
                                             _resumeTimerOnInteraction();
                                           }
-                                          else if(damageOrNot == "S"){
+                                          else if(damageOrNot == "SER"){
                                             uldNoController.clear();
                                             _isvalidULDNo = false;
                                             _suffixIconUld = false;
@@ -1747,14 +1747,14 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                                                               padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
                                                                                               decoration : BoxDecoration(
                                                                                                   borderRadius: BorderRadius.circular(20),
-                                                                                                 /* color: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "S" || uldModel.buttonStatus!.replaceAll(" ", "") == "0" || uldModel.buttonStatus!.replaceAll(" ", "") == "2")
+                                                                                                 /* color: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "BUS" || uldModel.buttonStatus!.replaceAll(" ", "") == "SER" || uldModel.buttonStatus!.replaceAll(" ", "") == "0" || uldModel.buttonStatus!.replaceAll(" ", "") == "2")
                                                                                                       ? MyColor.acceptedColor
                                                                                                       : MyColor.pendingColor*/
                                                                                                   color: (uldModel.buttonStatus!.replaceAll(" ", "") != "A") ? MyColor.acceptedColor : MyColor.pendingColor
 
                                                                                               ),
                                                                                               child: CustomeText(
-                                                                                                 /* text: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "S")
+                                                                                                 /* text: (uldModel.buttonStatus!.replaceAll(" ", "") == "D" || uldModel.buttonStatus!.replaceAll(" ", "") == "BUS" || uldModel.buttonStatus!.replaceAll(" ", "") == "SER")
                                                                                                       ? lableModel.accepted!.toUpperCase()
                                                                                                       : lableModel.pending!.toUpperCase(),*/
                                                                                                   text : (uldModel.buttonStatus!.replaceAll(" ", "") != "A") ? lableModel.accepted!.toUpperCase() : lableModel.pending!.toUpperCase(),
@@ -1764,9 +1764,9 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                                                                   textAlign: TextAlign.start),
                                                                                             ),
                                                                                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                                                                            (uldModel.buttonStatus == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus == "S" || uldModel.buttonStatus!.replaceAll(" ", "") == "S") ? SvgPicture.asset(damageIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,) : SizedBox(),
+                                                                                            (uldModel.buttonStatus == "BUS" || uldModel.buttonStatus!.replaceAll(" ", "") == "BUS" || uldModel.buttonStatus == "SER" || uldModel.buttonStatus!.replaceAll(" ", "") == "SER") ? SvgPicture.asset(damageIcon, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,) : SizedBox(),
                                                                                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
-                                                                                            (uldModel.buttonStatus == "U" || uldModel.buttonStatus!.replaceAll(" ", "") == "U" || uldModel.buttonStatus == "S" || uldModel.buttonStatus!.replaceAll(" ", "") == "S") ? CustomeText(text: "DMG", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start) : SizedBox()
+                                                                                            (uldModel.buttonStatus == "BUS" || uldModel.buttonStatus!.replaceAll(" ", "") == "BUS" || uldModel.buttonStatus == "SER" || uldModel.buttonStatus!.replaceAll(" ", "") == "SER") ? CustomeText(text: "DMG", fontColor: MyColor.colorRed, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w400, textAlign: TextAlign.start) : SizedBox()
                                                                                           ],
                                                                                         ),
                                                                                         SizedBox(height: SizeConfig.blockSizeVertical,),
@@ -2253,7 +2253,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
     if (actionSorting.isNotEmpty) {
       filteredList = filteredList.where((item) {
         return actionSorting == "Accepted"
-            ? (item.buttonStatus!.replaceAll(" ", "") == "D" || item.buttonStatus!.replaceAll(" ", "") == "U" || item.buttonStatus!.replaceAll(" ", "") == "S")
+            ? (item.buttonStatus!.replaceAll(" ", "") == "D" || item.buttonStatus!.replaceAll(" ", "") == "BUS" || item.buttonStatus!.replaceAll(" ", "") == "SER")
             : item.buttonStatus!.replaceAll(" ", "") == "A";
       }).toList();
     }
@@ -2600,13 +2600,13 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                 buttonRightsList: buttonRightsList,
                                               ),
                                             ));
-                                        if(damageOrNot == "U"){
-                                          _isdamageOrNot = "U";
+                                        if(damageOrNot == "BUS"){
+                                          _isdamageOrNot = "BUS";
                                           await context.read<UldAcceptanceCubit>().uldDamageAccept(CommonUtils.FLIGHTSEQUENCENUMBER, CommonUtils.ULDSEQUENCENUMBER, uldNoController.text.replaceAll(" ", ""), locationController.text, groupIdController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
                                           _resumeTimerOnInteraction();
                                         }
-                                        else if(damageOrNot == "S"){
-                                          _isdamageOrNot = "S";
+                                        else if(damageOrNot == "SER"){
+                                          _isdamageOrNot = "SER";
                                           await context.read<UldAcceptanceCubit>().uldDamageAccept(CommonUtils.FLIGHTSEQUENCENUMBER, CommonUtils.ULDSEQUENCENUMBER, uldNoController.text.replaceAll(" ", ""), locationController.text, groupIdController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
                                           _resumeTimerOnInteraction();
                                         }
@@ -2643,12 +2643,12 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                             buttonRightsList: buttonRightsList,
                                           ),
                                         ));
-                                    if(damageOrNot == "U"){
-                                      _isdamageOrNot = "U";
+                                    if(damageOrNot == "BUS"){
+                                      _isdamageOrNot = "BUS";
                                       await context.read<UldAcceptanceCubit>().uldDamageAccept(CommonUtils.FLIGHTSEQUENCENUMBER, CommonUtils.ULDSEQUENCENUMBER, uldNoController.text.replaceAll(" ", ""), locationController.text, groupIdController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
                                       _resumeTimerOnInteraction();
-                                    }else if(damageOrNot == "S"){
-                                      _isdamageOrNot = "S";
+                                    }else if(damageOrNot == "SER"){
+                                      _isdamageOrNot = "SER";
                                       await context.read<UldAcceptanceCubit>().uldDamageAccept(CommonUtils.FLIGHTSEQUENCENUMBER, CommonUtils.ULDSEQUENCENUMBER, uldNoController.text.replaceAll(" ", ""), locationController.text, groupIdController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
                                       _resumeTimerOnInteraction();
                                     }else{
@@ -3255,7 +3255,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
         );
       }
     }
-    else if(buttonStatus.replaceAll(" ", "") == "U"){
+    else if(buttonStatus.replaceAll(" ", "") == "BUS"){
       return Stack(
         children: [
           Align(
@@ -3297,7 +3297,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
         ],
       );
     }
-    else if(buttonStatus.replaceAll(" ", "") == "S"){
+    else if(buttonStatus.replaceAll(" ", "") == "SER"){
       return Stack(
         children: [
           Align(
@@ -3427,13 +3427,13 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
           print("DMAGE_DIALOG_PAGE----------- ${damageOrNot}");
 
 
-          if(damageOrNot == "U"){
-            _isdamageOrNot = "U";
+          if(damageOrNot == "BUS"){
+            _isdamageOrNot = "BUS";
             await context.read<UldAcceptanceCubit>().uldDamageAccept(CommonUtils.FLIGHTSEQUENCENUMBER, CommonUtils.ULDSEQUENCENUMBER, uldNo.replaceAll(" ", ""), locationController.text, groupIdController.text, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId);
             _resumeTimerOnInteraction();
           }
-          else if(damageOrNot == "S"){
-            _isdamageOrNot = "S";
+          else if(damageOrNot == "SER"){
+            _isdamageOrNot = "SER";
             await context.read<UldAcceptanceCubit>().uldDamageAccept(CommonUtils.FLIGHTSEQUENCENUMBER, CommonUtils.ULDSEQUENCENUMBER, uldNo.replaceAll(" ", ""), locationController.text, groupIdController.text, _user!.userProfile!.userIdentity!,  _splashDefaultData!.companyCode!, widget.menuId);
             _resumeTimerOnInteraction();
           }

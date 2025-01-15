@@ -377,29 +377,36 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
 
                                     if(addShipmentDiffDialog == true){
                                       destinationWarningInd = "Y";
-                                      addShipment(SHCCodes, "Y", shcCompibilityWarningInd);
+                                      addShipment(SHCCodes, destinationWarningInd, shcCompibilityWarningInd);
                                     }
                                     else{
-                                      destinationWarningInd = "N";
-                                      addShipment(SHCCodes, "N", shcCompibilityWarningInd);
+                                    //  destinationWarningInd = "N";
+                                    //  addShipment(SHCCodes, "N", shcCompibilityWarningInd);
                                     }
 
 
                                   }else if(state.addShipmentModel.status == "C"){
+
+                                   /* Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    */
+
                                     bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "SHC Compibility", state.addShipmentModel.statusMessage! , lableModel);
 
                                     if(addShipmentDiffDialog == true){
                                       shcCompibilityWarningInd = "Y";
-                                      addShipment(SHCCodes, destinationWarningInd, "Y");
+                                      addShipment(SHCCodes, destinationWarningInd, shcCompibilityWarningInd);
                                     }
                                     else{
-                                      shcCompibilityWarningInd = "N";
-                                      addShipment(SHCCodes, destinationWarningInd, "N");
+                                     // shcCompibilityWarningInd = "N";
+                                      //addShipment(SHCCodes, destinationWarningInd, "N");
                                     }
 
 
                                   }
                                   else{
+                                    destinationWarningInd = "N";
+                                    shcCompibilityWarningInd = "N";
                                     Navigator.pop(context, "true");
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
 

@@ -34,6 +34,7 @@ import '../../../../widget/customedrawer/customedrawer.dart';
 import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../import/pages/uldacceptance/ulddamagedpage.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -91,7 +92,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
   UserDataModel? _user;
   SplashDefaultModel? _splashDefaultData;
   final ScrollController scrollController = ScrollController();
-  String isRequiredLocation = "N";
+  String isRequiredLocation = "Y";
+  String isBulkLoad = "Y";
 
 
   bool _isOpenULDFlagEnable = false;
@@ -136,6 +138,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
 
   List<ULDTrolleyDetailList> uLDTrolleyDetailList = []; // Track if the back button was pressed
   List<ULDTrolleyDetailList> filteruLDTrolleyDetailList = []; // Track if the back button was pressed
+
+  ULDTrolleyDetailList? uldTrolleyItemCheck;
 
   @override
   void initState() {
@@ -235,6 +239,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
         _splashDefaultData = splashDefaultData;
       });
 
+
+      //getPageLoad();
       if(widget.flightSeqNo != -1){
         getULDTrolleySearchList();
       }else{
@@ -243,7 +249,6 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
         },
         );
       }
-
 
     }
 
@@ -404,12 +409,33 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                             // start api responc
 
                             BlocListener<BuildUpCubit, BuildUpState>(
-                              listener: (context, state) {
+                              listener: (context, state) async {
                                 if (state is BuildUpInitialState) {
                                 }
                                 else if (state is BuildUpLoadingState) {
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                }
+                                else if (state is BuildUpDefaultPageLoadSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+
+                                  if(state.buildUpDefaultPageLoadModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.buildUpDefaultPageLoadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    isBulkLoad = state.buildUpDefaultPageLoadModel.IsBulkLoad!;
+
+                                    setState(() {
+
+                                    });
+                                  }
+
+
+                                }
+                                else if (state is BuildUpDefaultPageLoadFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
                                 else if (state is GetULDTrolleySearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
@@ -494,6 +520,84 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   }
                                 }
                                 else if (state is ULDTrolleyPriorityFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is ULDDamageConditionCodeSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.uldDamageModel.status == "E"){
+                                    bool? damageULDCondition = await DialogUtils.damageULDExportDialog(context, "Damage ULD", state.uldDamageModel.statusMessage! , lableModel);
+                                    if(damageULDCondition == true){
+                                      String damageOrNot = await Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) => UldDamagedPage(
+                                              importSubMenuList: widget.importSubMenuList,
+                                              exportSubMenuList: widget.exportSubMenuList,
+                                              locationCode: locationController.text,
+                                              menuId: widget.menuId,
+                                              ULDNo: "${uldTrolleyItemCheck!.uLDTrolleyType} ${uldTrolleyItemCheck!.uLDTrolleyNo} ${uldTrolleyItemCheck!.uLDOwner}",
+                                              ULDSeqNo: uldTrolleyItemCheck!.uLDSeqNo!,
+                                              flightSeqNo: widget.flightSeqNo,
+                                              groupId: "",
+                                              menuCode: widget.refrelCode,
+                                              isRecordView: 2,
+                                              mainMenuName: widget.mainMenuName,
+                                              buttonRightsList: const [],
+                                            ),
+                                          ));
+
+
+                                      if(damageOrNot == "BUS"){
+                                        getULDTrolleySearchList();
+                                        _resumeTimerOnInteraction();
+                                      }
+                                      else if(damageOrNot == "SER"){
+                                        getULDTrolleySearchList();
+                                        _resumeTimerOnInteraction();
+                                      }
+                                      else{
+                                        getULDTrolleySearchList();
+                                        _resumeTimerOnInteraction();
+                                      }
+
+                                    }
+                                    else{
+
+                                    }
+                                  }
+                                  else{
+                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                        builder: (context) => BuildUpAWBListPage(
+                                          importSubMenuList: widget.importSubMenuList,
+                                          exportSubMenuList: widget.exportSubMenuList,
+                                          title: "AWB List",
+                                          refrelCode: widget.refrelCode,
+                                          menuId: widget.menuId,
+                                          mainMenuName: widget.mainMenuName,
+                                          lableModel: lableModel,
+                                          carrierCode: carrierCodeController.text,
+                                          flightSeqNo: widget.flightSeqNo,
+                                          uldNo: "${uldTrolleyItemCheck!.uLDTrolleyType} ${uldTrolleyItemCheck!.uLDTrolleyNo} ${uldTrolleyItemCheck!.uLDOwner}",
+                                          uldSeqNo: uldTrolleyItemCheck!.uLDSeqNo!,
+                                          uldType: uldTrolleyItemCheck!.type!,
+                                          offPoint: widget.offPoint,
+                                          dgType: uldTrolleyItemCheck!.dgType!,
+                                          dgSeqNo: uldTrolleyItemCheck!.dgSeqNo!,
+                                          dgReference: uldTrolleyItemCheck!.dgReference!,
+
+                                        )));
+                                    if(value == "true"){
+                                      _resumeTimerOnInteraction();
+                                      getULDTrolleySearchList();
+                                    }
+                                    else{
+                                      _resumeTimerOnInteraction();
+                                    }
+                                  }
+                                }
+                                else if (state is ULDDamageConditionCodeFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -661,41 +765,84 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                               press: () async {
                                                                 _resumeTimerOnInteraction();
 
+                                                                if(isRequiredLocation == "Y"){
+                                                                  if(locationController.text.isNotEmpty){
+                                                                    if(_isvalidateLocation == true){
+                                                                      if(carrierCodeController.text.isNotEmpty){
+                                                                        if(uldTrolleyDetailModel != null){
 
-                                                                if(carrierCodeController.text.isNotEmpty){
-                                                                  if(uldTrolleyDetailModel != null){
+                                                                          var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                            builder: (context) => BuildUpAddULDPage(
+                                                                              importSubMenuList: widget.importSubMenuList,
+                                                                              exportSubMenuList: widget.exportSubMenuList,
+                                                                              title: "Build ULD", refrelCode: widget.refrelCode,
+                                                                              menuId: widget.menuId,
+                                                                              mainMenuName: widget.mainMenuName,
+                                                                              flightSeqNo: widget.flightSeqNo,
+                                                                              lableModel: lableModel,
+                                                                              offPoint: widget.offPoint,
+                                                                            ),));
+                                                                          if(value == "Done"){
+                                                                            getULDTrolleySearchList();
+                                                                          }else{
+                                                                            _resumeTimerOnInteraction();
+                                                                          }
 
-                                                                    var value = await Navigator.push(context, CupertinoPageRoute(
-                                                                      builder: (context) => BuildUpAddULDPage(
-                                                                        importSubMenuList: widget.importSubMenuList,
-                                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                                        title: "Build ULD", refrelCode: widget.refrelCode,
-                                                                        menuId: widget.menuId,
-                                                                        mainMenuName: widget.mainMenuName,
-                                                                        flightSeqNo: widget.flightSeqNo,
-                                                                        lableModel: lableModel,
-                                                                        offPoint: widget.offPoint,
-                                                                      ),));
-                                                                    if(value == "Done"){
-                                                                      getULDTrolleySearchList();
+                                                                        }
+                                                                        else{
+                                                                          getULDTrolleySearchList();
+                                                                        }
+                                                                      }
+                                                                      else{
+                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                          FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                                                        },
+                                                                        );
+                                                                        Vibration.vibrate(duration: 500);
+                                                                        SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                      }
                                                                     }else{
-                                                                      _resumeTimerOnInteraction();
+                                                                      openValidationDialog(lableModel.validateLocation!, locationFocusNode);
                                                                     }
+                                                                  }else{
+                                                                    openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
+                                                                  }
+                                                                }
+                                                                else{
+                                                                  if(carrierCodeController.text.isNotEmpty){
+                                                                    if(uldTrolleyDetailModel != null){
 
+                                                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                                                        builder: (context) => BuildUpAddULDPage(
+                                                                          importSubMenuList: widget.importSubMenuList,
+                                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                                          title: "Build ULD", refrelCode: widget.refrelCode,
+                                                                          menuId: widget.menuId,
+                                                                          mainMenuName: widget.mainMenuName,
+                                                                          flightSeqNo: widget.flightSeqNo,
+                                                                          lableModel: lableModel,
+                                                                          offPoint: widget.offPoint,
+                                                                        ),));
+                                                                      if(value == "Done"){
+                                                                        getULDTrolleySearchList();
+                                                                      }else{
+                                                                        _resumeTimerOnInteraction();
+                                                                      }
+
+                                                                    }
+                                                                    else{
+                                                                      getULDTrolleySearchList();
+                                                                    }
                                                                   }
                                                                   else{
-                                                                    getULDTrolleySearchList();
+                                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                      FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                                                    },
+                                                                    );
+                                                                    Vibration.vibrate(duration: 500);
+                                                                    SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                   }
-                                                                }else{
-                                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                    FocusScope.of(context).requestFocus(carrierCodeFocusNode);
-                                                                  },
-                                                                  );
-                                                                  Vibration.vibrate(duration: 500);
-                                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                 }
-
-
 
                                                               },
                                                             ),
@@ -704,29 +851,65 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                           Expanded(
                                                             flex: 1,
                                                             child: RoundedButtonGreen(
-                                                              color: (widget.flightSeqNo != -1) ? MyColor.primaryColorblue : MyColor.textColorGrey.withOpacity(0.3),
+                                                              color: (widget.flightSeqNo != -1) ? (isBulkLoad == "N") ? MyColor.primaryColorblue : MyColor.textColorGrey.withOpacity(0.3) : MyColor.textColorGrey.withOpacity(0.3),
                                                               text: "Build Trolley",
                                                               press: () async {
                                                                 _resumeTimerOnInteraction();
 
                                                                 if(widget.flightSeqNo != -1){
-                                                                  var value =  await Navigator.push(context, CupertinoPageRoute(
-                                                                    builder: (context) => BuildUpAddTrolleyPage(
-                                                                      importSubMenuList: widget.importSubMenuList,
-                                                                      exportSubMenuList: widget.exportSubMenuList,
-                                                                      title: "Build Trolley",
-                                                                      refrelCode: widget.refrelCode,
-                                                                      menuId: widget.menuId,
-                                                                      mainMenuName: widget.mainMenuName,
-                                                                      flightSeqNo: widget.flightSeqNo,
-                                                                      offPoint: widget.offPoint,
-                                                                      lableModel: lableModel,
-                                                                    ),));
-                                                                  if(value == "Done"){
-                                                                    getULDTrolleySearchList();
+
+                                                                  if(isBulkLoad == "N"){
+                                                                    if(isRequiredLocation == "Y"){
+                                                                      if(locationController.text.isNotEmpty){
+                                                                        if(_isvalidateLocation == true){
+                                                                          var value =  await Navigator.push(context, CupertinoPageRoute(
+                                                                            builder: (context) => BuildUpAddTrolleyPage(
+                                                                              importSubMenuList: widget.importSubMenuList,
+                                                                              exportSubMenuList: widget.exportSubMenuList,
+                                                                              title: "Build Trolley",
+                                                                              refrelCode: widget.refrelCode,
+                                                                              menuId: widget.menuId,
+                                                                              mainMenuName: widget.mainMenuName,
+                                                                              flightSeqNo: widget.flightSeqNo,
+                                                                              offPoint: widget.offPoint,
+                                                                              lableModel: lableModel,
+                                                                            ),));
+                                                                          if(value == "Done"){
+                                                                            getULDTrolleySearchList();
+                                                                          }else{
+                                                                            _resumeTimerOnInteraction();
+                                                                          }
+                                                                        }else{
+                                                                          openValidationDialog(lableModel.validateLocation!, locationFocusNode);
+                                                                        }
+                                                                      }else{
+                                                                        openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
+                                                                      }
+                                                                    }
+                                                                    else{
+                                                                      var value =  await Navigator.push(context, CupertinoPageRoute(
+                                                                        builder: (context) => BuildUpAddTrolleyPage(
+                                                                          importSubMenuList: widget.importSubMenuList,
+                                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                                          title: "Build Trolley",
+                                                                          refrelCode: widget.refrelCode,
+                                                                          menuId: widget.menuId,
+                                                                          mainMenuName: widget.mainMenuName,
+                                                                          flightSeqNo: widget.flightSeqNo,
+                                                                          offPoint: widget.offPoint,
+                                                                          lableModel: lableModel,
+                                                                        ),));
+                                                                      if(value == "Done"){
+                                                                        getULDTrolleySearchList();
+                                                                      }else{
+                                                                        _resumeTimerOnInteraction();
+                                                                      }
+                                                                    }
                                                                   }else{
-                                                                    _resumeTimerOnInteraction();
+
                                                                   }
+
+
 
                                                                 }else{
                                                                   Vibration.vibrate(duration: 500);
@@ -1138,128 +1321,286 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         press: () async {
                                           inactivityTimerManager?.stopTimer();
 
-                                          int? optionNo = await DialogUtils.showULDMoreOptionDialog(
-                                              context, "More Option for ULD", lableModel, "O");
+                                          if(isRequiredLocation == "Y"){
+                                            if(locationController.text.isNotEmpty){
+                                              if(_isvalidateLocation == true){
+                                                if(carrierCodeController.text.isNotEmpty){
+                                                  int? optionNo = await DialogUtils.showULDMoreOptionDialog(
+                                                      context, "More Option for ULD", lableModel, "O");
 
-                                          print("OptionNo === ${optionNo}");
-                                          if(optionNo == null){
-                                            _resumeTimerOnInteraction();
-                                          }
-                                          else if(optionNo == 1){
-                                            var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => CloseULDEquipmentPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Equipment",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                uldType: "U",
-                                                uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                flightSeqNo : widget.flightSeqNo,
-                                              ),));
+                                                  print("OptionNo === ${optionNo}");
+                                                  if(optionNo == null){
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                  else if(optionNo == 1){
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => CloseULDEquipmentPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Equipment",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                        uldType: "U",
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        flightSeqNo : widget.flightSeqNo,
+                                                      ),));
 
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+                                                  }
+                                                  else if(optionNo == 2){
+
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => ContourULDPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Contour",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                        flightSeqNo: widget.flightSeqNo,
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                      ),));
+
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+
+                                                  }
+                                                  else if(optionNo == 3){
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => ScaleULDPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Scale",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                        flightSeqNo: widget.flightSeqNo,
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                      ),));
+
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+                                                  }
+                                                  else if(optionNo == 4){
+                                                    var value = await Navigator.push(
+                                                        context, CupertinoPageRoute(
+                                                      builder: (context) => BuildUpAddMailPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Add Mail",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        lableModel: lableModel,
+                                                        flightSeqNo: widget.flightSeqNo,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                      ),));
+
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+
+
+                                                  }
+                                                  else if(optionNo == 5){
+                                                    var value = await Navigator.push(
+                                                        context, CupertinoPageRoute(
+                                                      builder: (context) => CloseULDPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Close ULD",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
+                                                      ),));
+
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+
+                                                  }
+                                                  else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                }
+                                                else{
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                                  },
+                                                  );
+                                                  Vibration.vibrate(duration: 500);
+                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                }
+                                              }else{
+                                                openValidationDialog(lableModel.validateLocation!, locationFocusNode);
+                                              }
                                             }else{
-                                              _resumeTimerOnInteraction();
+                                              openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
                                             }
-                                          }
-                                          else if(optionNo == 2){
-
-                                            var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => ContourULDPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Contour",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                flightSeqNo: widget.flightSeqNo,
-                                                uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                              ),));
-
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
-                                            }else{
-                                              _resumeTimerOnInteraction();
-                                            }
-
-                                          }
-                                          else if(optionNo == 3){
-                                            var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => ScaleULDPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Scale",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                flightSeqNo: widget.flightSeqNo,
-                                                uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                              ),));
-
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
-                                            }else{
-                                              _resumeTimerOnInteraction();
-                                            }
-                                          }
-                                          else if(optionNo == 4){
-                                            var value = await Navigator.push(
-                                                context, CupertinoPageRoute(
-                                              builder: (context) => BuildUpAddMailPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Add Mail",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                lableModel: lableModel,
-                                                flightSeqNo: widget.flightSeqNo,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                              ),));
-
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
-                                            }else{
-                                              _resumeTimerOnInteraction();
-                                            }
-
-
-                                          }
-                                          else if(optionNo == 5){
-                                            var value = await Navigator.push(
-                                                context, CupertinoPageRoute(
-                                              builder: (context) => CloseULDPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Close ULD",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
-                                              ),));
-
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
-                                            }else{
-                                              _resumeTimerOnInteraction();
-                                            }
-
                                           }
                                           else{
-                                            _resumeTimerOnInteraction();
+                                            if(carrierCodeController.text.isNotEmpty){
+                                              int? optionNo = await DialogUtils.showULDMoreOptionDialog(
+                                                  context, "More Option for ULD", lableModel, "O");
+
+                                              print("OptionNo === ${optionNo}");
+                                              if(optionNo == null){
+                                                _resumeTimerOnInteraction();
+                                              }
+                                              else if(optionNo == 1){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => CloseULDEquipmentPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Equipment",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                    uldType: "U",
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    flightSeqNo : widget.flightSeqNo,
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+                                              }
+                                              else if(optionNo == 2){
+
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => ContourULDPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Contour",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                    flightSeqNo: widget.flightSeqNo,
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+
+                                              }
+                                              else if(optionNo == 3){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => ScaleULDPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Scale",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                    flightSeqNo: widget.flightSeqNo,
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+                                              }
+                                              else if(optionNo == 4){
+                                                var value = await Navigator.push(
+                                                    context, CupertinoPageRoute(
+                                                  builder: (context) => BuildUpAddMailPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Add Mail",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    lableModel: lableModel,
+                                                    flightSeqNo: widget.flightSeqNo,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+
+
+                                              }
+                                              else if(optionNo == 5){
+                                                var value = await Navigator.push(
+                                                    context, CupertinoPageRoute(
+                                                  builder: (context) => CloseULDPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Close ULD",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+
+                                              }
+                                              else{
+                                                _resumeTimerOnInteraction();
+                                              }
+                                            }
+                                            else{
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                              },
+                                              );
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            }
                                           }
+
+
+
+
 
 
                                         },),
@@ -1270,35 +1611,78 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         press: () async {
                                           inactivityTimerManager?.stopTimer();
 
+                                          uldTrolleyItemCheck = uldTrolleyItem;
+
                                           print("CHECK_DGTYPE === ${uldTrolleyItem.uLDTrolleyNo} == ${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.dgType}");
 
-                                           var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => BuildUpAWBListPage(
-                                                  importSubMenuList: widget.importSubMenuList,
-                                                  exportSubMenuList: widget.exportSubMenuList,
-                                                  title: "AWB List",
-                                                  refrelCode: widget.refrelCode,
-                                                  menuId: widget.menuId,
-                                                  mainMenuName: widget.mainMenuName,
-                                                  lableModel: lableModel,
-                                                  carrierCode: carrierCodeController.text,
-                                                  flightSeqNo: widget.flightSeqNo,
-                                                  uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                  uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                  uldType: uldTrolleyItem.type!,
-                                                  offPoint: widget.offPoint,
-                                                  dgType: uldTrolleyItem.dgType!,
-                                                  dgSeqNo: uldTrolleyItem.dgSeqNo!,
-                                                  dgReference: uldTrolleyItem.dgReference!,
+                                          if(isRequiredLocation == "Y"){
+                                            if(locationController.text.isNotEmpty){
+                                              if(_isvalidateLocation == true){
+                                                if(carrierCodeController.text.isNotEmpty){
 
-                                              )));
+                                                  // call damage code api
+                                                  callULDDamageConditionCode(uldTrolleyItem.uLDSeqNo!);
 
-                                         if(value == "true"){
-                                           _resumeTimerOnInteraction();
-                                           getULDTrolleySearchList();
-                                         }else{
-                                           _resumeTimerOnInteraction();
-                                         }
+                                                }
+                                                else{
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                                  },
+                                                  );
+                                                  Vibration.vibrate(duration: 500);
+                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                }
+                                              }else{
+                                                openValidationDialog(lableModel.validateLocation!, locationFocusNode);
+                                              }
+                                            }else{
+                                              openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
+                                            }
+                                          }
+                                          else{
+                                            if(carrierCodeController.text.isNotEmpty){
+
+                                              // call damage code api
+                                              callULDDamageConditionCode(uldTrolleyItem.uLDSeqNo!);
+                                              /*var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => BuildUpAWBListPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "AWB List",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    lableModel: lableModel,
+                                                    carrierCode: carrierCodeController.text,
+                                                    flightSeqNo: widget.flightSeqNo,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    uldType: uldTrolleyItem.type!,
+                                                    offPoint: widget.offPoint,
+                                                    dgType: uldTrolleyItem.dgType!,
+                                                    dgSeqNo: uldTrolleyItem.dgSeqNo!,
+                                                    dgReference: uldTrolleyItem.dgReference!,
+
+                                                  )));
+                                              if(value == "true"){
+                                                _resumeTimerOnInteraction();
+                                                getULDTrolleySearchList();
+                                              } else{
+                                                _resumeTimerOnInteraction();
+                                              }*/
+                                            }
+                                            else{
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                              },
+                                              );
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            }
+                                          }
+
+
+
 
 
                                         },)
@@ -1598,78 +1982,183 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         press: () async {
                                           inactivityTimerManager?.stopTimer();
 
-                                          int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
-                                              context, "More Option for Trolley", lableModel, "O");
+                                          if(isRequiredLocation == "Y"){
+                                            if(locationController.text.isNotEmpty){
+                                              if(_isvalidateLocation == true){
+                                                if(carrierCodeController.text.isNotEmpty){
+                                                  int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
+                                                      context, "More Option for Trolley", lableModel, "O");
 
-                                          print("OptionNo === ${optionNo}");
-                                          if(optionNo == null){
-                                            _resumeTimerOnInteraction();
-                                          }
-                                          else if(optionNo == 1){
-                                            var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => CloseULDEquipmentPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Equipment",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo}",
-                                                uldType: "T",
-                                                uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                flightSeqNo : widget.flightSeqNo,
-                                              ),));
+                                                  print("OptionNo === ${optionNo}");
+                                                  if(optionNo == null){
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                  else if(optionNo == 1){
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => CloseULDEquipmentPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Equipment",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo}",
+                                                        uldType: "T",
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        flightSeqNo : widget.flightSeqNo,
+                                                      ),));
 
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+                                                  }
+                                                  else if(optionNo == 2){
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => ScaleTrolleyPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Scale",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo}",
+                                                        flightSeqNo: widget.flightSeqNo,
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                      ),));
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }
+                                                    else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+                                                  }
+                                                  else if(optionNo == 3){
+                                                    var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => CloseTrolleyPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "Close Trolley",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        trolleyNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}",
+                                                      ),));
+
+                                                    if(value == "true"){
+                                                      _resumeTimerOnInteraction();
+                                                      getULDTrolleySearchList();
+                                                    }else{
+                                                      _resumeTimerOnInteraction();
+                                                    }
+
+                                                  }
+                                                  else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+                                                }
+                                                else{
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                                  },
+                                                  );
+                                                  Vibration.vibrate(duration: 500);
+                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                }
+                                              }else{
+                                                openValidationDialog(lableModel.validateLocation!, locationFocusNode);
+                                              }
                                             }else{
-                                              _resumeTimerOnInteraction();
+                                              openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
                                             }
-                                          }
-                                          else if(optionNo == 2){
-                                            var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => ScaleTrolleyPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Scale",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo}",
-                                                flightSeqNo: widget.flightSeqNo,
-                                                uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                              ),));
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
-                                            }
-                                            else{
-                                              _resumeTimerOnInteraction();
-                                            }
-                                          }
-                                          else if(optionNo == 3){
-                                            var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => CloseTrolleyPage(
-                                                importSubMenuList: widget.importSubMenuList,
-                                                exportSubMenuList: widget.exportSubMenuList,
-                                                title: "Close Trolley",
-                                                refrelCode: widget.refrelCode,
-                                                menuId: widget.menuId,
-                                                mainMenuName: widget.mainMenuName,
-                                                trolleyNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}",
-                                              ),));
-
-                                            if(value == "true"){
-                                              _resumeTimerOnInteraction();
-                                              getULDTrolleySearchList();
-                                            }else{
-                                              _resumeTimerOnInteraction();
-                                            }
-
                                           }
                                           else{
-                                            _resumeTimerOnInteraction();
+                                            if(carrierCodeController.text.isNotEmpty){
+                                              int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
+                                                  context, "More Option for Trolley", lableModel, "O");
+
+                                              print("OptionNo === ${optionNo}");
+                                              if(optionNo == null){
+                                                _resumeTimerOnInteraction();
+                                              }
+                                              else if(optionNo == 1){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => CloseULDEquipmentPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Equipment",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo}",
+                                                    uldType: "T",
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    flightSeqNo : widget.flightSeqNo,
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+                                              }
+                                              else if(optionNo == 2){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => ScaleTrolleyPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Scale",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo}",
+                                                    flightSeqNo: widget.flightSeqNo,
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                  ),));
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }
+                                                else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+                                              }
+                                              else if(optionNo == 3){
+                                                var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => CloseTrolleyPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "Close Trolley",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    trolleyNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}",
+                                                  ),));
+
+                                                if(value == "true"){
+                                                  _resumeTimerOnInteraction();
+                                                  getULDTrolleySearchList();
+                                                }else{
+                                                  _resumeTimerOnInteraction();
+                                                }
+
+                                              }
+                                              else{
+                                                _resumeTimerOnInteraction();
+                                              }
+                                            }
+                                            else{
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                              },
+                                              );
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            }
                                           }
 
                                         },
@@ -1681,32 +2170,92 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         press: () async {
                                           inactivityTimerManager?.stopTimer();
 
-                                          print("CHECK_DGTYPE === ${uldTrolleyItem}");
-                                           var value = await Navigator.push(context, CupertinoPageRoute(
-                                              builder: (context) => BuildUpAWBListPage(
-                                                  importSubMenuList: widget.importSubMenuList,
-                                                  exportSubMenuList: widget.exportSubMenuList,
-                                                  title: "AWB List",
-                                                  refrelCode: widget.refrelCode,
-                                                  menuId: widget.menuId,
-                                                  mainMenuName: widget.mainMenuName,
-                                                  lableModel: lableModel,
-                                                  carrierCode: carrierCodeController.text,
-                                                  flightSeqNo: widget.flightSeqNo,
-                                                  uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
-                                                  uldSeqNo: uldTrolleyItem.uLDSeqNo!,
-                                                  uldType: uldTrolleyItem.type!,
-                                                  offPoint: widget.offPoint,
-                                                  dgType: uldTrolleyItem.dgType!,
-                                                  dgSeqNo: uldTrolleyItem.dgSeqNo!,
-                                                  dgReference:uldTrolleyItem.dgReference!,
-                                              )));
+                                          if(isRequiredLocation == "Y"){
+                                            if(locationController.text.isNotEmpty){
+                                              if(_isvalidateLocation == true){
+                                                if(carrierCodeController.text.isNotEmpty){
 
-                                          if(value == "true"){
-                                            _resumeTimerOnInteraction();
-                                            getULDTrolleySearchList();
-                                          }else{
-                                            _resumeTimerOnInteraction();
+
+                                                   var value = await Navigator.push(context, CupertinoPageRoute(
+                                                      builder: (context) => BuildUpAWBListPage(
+                                                        importSubMenuList: widget.importSubMenuList,
+                                                        exportSubMenuList: widget.exportSubMenuList,
+                                                        title: "AWB List",
+                                                        refrelCode: widget.refrelCode,
+                                                        menuId: widget.menuId,
+                                                        mainMenuName: widget.mainMenuName,
+                                                        lableModel: lableModel,
+                                                        carrierCode: carrierCodeController.text,
+                                                        flightSeqNo: widget.flightSeqNo,
+                                                        uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                        uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                        uldType: uldTrolleyItem.type!,
+                                                        offPoint: widget.offPoint,
+                                                        dgType: uldTrolleyItem.dgType!,
+                                                        dgSeqNo: uldTrolleyItem.dgSeqNo!,
+                                                        dgReference:uldTrolleyItem.dgReference!,
+                                                      )));
+
+                                                  if(value == "true"){
+                                                    _resumeTimerOnInteraction();
+                                                    getULDTrolleySearchList();
+                                                  }else{
+                                                    _resumeTimerOnInteraction();
+                                                  }
+
+
+                                                }
+                                                else{
+                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                    FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                                  },
+                                                  );
+                                                  Vibration.vibrate(duration: 500);
+                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                }
+                                              }else{
+                                                openValidationDialog(lableModel.validateLocation!, locationFocusNode);
+                                              }
+                                            }else{
+                                              openValidationDialog(lableModel.enterLocationMsg!, locationFocusNode);
+                                            }
+                                          }
+                                          else{
+                                            if(carrierCodeController.text.isNotEmpty){
+                                              var value = await Navigator.push(context, CupertinoPageRoute(
+                                                  builder: (context) => BuildUpAWBListPage(
+                                                    importSubMenuList: widget.importSubMenuList,
+                                                    exportSubMenuList: widget.exportSubMenuList,
+                                                    title: "AWB List",
+                                                    refrelCode: widget.refrelCode,
+                                                    menuId: widget.menuId,
+                                                    mainMenuName: widget.mainMenuName,
+                                                    lableModel: lableModel,
+                                                    carrierCode: carrierCodeController.text,
+                                                    flightSeqNo: widget.flightSeqNo,
+                                                    uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                                    uldSeqNo: uldTrolleyItem.uLDSeqNo!,
+                                                    uldType: uldTrolleyItem.type!,
+                                                    offPoint: widget.offPoint,
+                                                    dgType: uldTrolleyItem.dgType!,
+                                                    dgSeqNo: uldTrolleyItem.dgSeqNo!,
+                                                    dgReference:uldTrolleyItem.dgReference!,
+                                                  )));
+                                              if(value == "true"){
+                                                _resumeTimerOnInteraction();
+                                                getULDTrolleySearchList();
+                                              }else{
+                                                _resumeTimerOnInteraction();
+                                              }
+                                            }
+                                            else{
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(carrierCodeFocusNode);
+                                              },
+                                              );
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            }
                                           }
                                         },
                                       ),
@@ -1878,6 +2427,18 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
         uldSeqNo, bdPriority, uldType, userId, companyCode, menuId);
   }
 
+  Future<void> getPageLoad() async {
+    context.read<BuildUpCubit>().getDefaultPageLoad(_user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,);
+  }
+
+
+  Future<void> callULDDamageConditionCode(int uldSeqNo) async {
+    await context.read<BuildUpCubit>().uldDamage(
+        uldSeqNo,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
 
 
   Future<void> getULDTrolleySearchList() async {

@@ -146,6 +146,8 @@ class Apilist{
   static String saveTrolleyTareWeightApi = "/CloseTrolley/TareWeightSave";
 
   //Build UP
+
+  static String buildUpPageLoad = "/BuildUp/GetPageLoad";
   static String buildUpFlightSearch = "/BuildUp/GetFlightSearch";
 
   static String buildUpULDTrolleySearch = "/BuildUp/GetULDTrolleySearch";
@@ -167,6 +169,7 @@ class Apilist{
 
   static String addShipment = "/BuildUp/AddShipment";
   static String shcValidate = "/SHC/SHCValidate";
+  static String expUldDamage = "/BuildUp/ULDConditionValidate";
 
 
 

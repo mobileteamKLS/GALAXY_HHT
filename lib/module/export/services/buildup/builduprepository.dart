@@ -12,12 +12,14 @@ import '../../model/buildup/addshipmentmodel.dart';
 import '../../model/buildup/awbacknowledgemodel.dart';
 import '../../model/buildup/awbprioritymodel.dart';
 import '../../model/buildup/buildupawblistmodel.dart';
+import '../../model/buildup/buildupdefaultpageloadmodel.dart';
 import '../../model/buildup/buildupgrouplistmodel.dart';
 import '../../model/buildup/flightsearchmodel.dart';
 import '../../model/buildup/getuldtrolleysavemodel.dart';
 import '../../model/buildup/getuldtrolleysearchmodel.dart';
 import '../../model/buildup/removemailmodel.dart';
 import '../../model/buildup/savemailmodel.dart';
+import '../../model/buildup/ulddamagemodel.dart';
 import '../../model/buildup/uldtrolleyprioritymodel.dart';
 import '../../model/closeuld/getcontourlistmodel.dart';
 
@@ -26,6 +28,48 @@ import '../../model/closeuld/getcontourlistmodel.dart';
 class BuildUpRepository{
   Api api = Api();
   SavedPrefrence savedPrefrence = SavedPrefrence();
+
+  Future<BuildUpDefaultPageLoadModel> buildUpDefaultPageLoad(int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('buildUpDefaultPageLoadModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.buildUpPageLoad,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        BuildUpDefaultPageLoadModel buildUpDefaultPageLoadModel = BuildUpDefaultPageLoadModel.fromJson(response.data);
+        return buildUpDefaultPageLoadModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
 
   Future<LocationValidationModel> locationValidate(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
 
@@ -712,6 +756,50 @@ class BuildUpRepository{
       }
     }
   }
+
+
+  Future<ULDDamageModel> uldDamageExport(int uldSeqNo, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "ULDSeqNo" : uldSeqNo,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId": menuId
+      };
+
+      // Print payload for debugging
+      print('uldDamageModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.expUldDamage,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        ULDDamageModel uldDamageModel = ULDDamageModel.fromJson(response.data);
+        return uldDamageModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
 
 
 

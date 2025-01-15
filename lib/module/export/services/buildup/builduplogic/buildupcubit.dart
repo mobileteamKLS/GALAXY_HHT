@@ -10,6 +10,17 @@ class BuildUpCubit extends Cubit<BuildUpState>{
 
   BuildUpRepository buildUpRepository = BuildUpRepository();
 
+  // pageLoad api call repo
+  Future<void> getDefaultPageLoad(int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final defaultpageLoadModelData = await buildUpRepository.buildUpDefaultPageLoad(userId, companyCode, menuId);
+      emit(BuildUpDefaultPageLoadSuccessState(defaultpageLoadModelData));
+    } catch (e) {
+      emit(BuildUpDefaultPageLoadFailureState(e.toString()));
+    }
+  }
+
   // getValidateLocation api call repo
   Future<void> getValidateLocation(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
     emit(BuildUpLoadingState());
@@ -213,6 +224,17 @@ class BuildUpCubit extends Cubit<BuildUpState>{
       emit(SHCValidateFailureState(e.toString()));
     }
   }
+
+  Future<void> uldDamage(int uldSeqNo, int userId, int companyCode, int menuId) async {
+    emit(BuildUpLoadingState());
+    try {
+      final uldDamageModel = await buildUpRepository.uldDamageExport(uldSeqNo, userId, companyCode, menuId);
+      emit(ULDDamageConditionCodeSuccessState(uldDamageModel));
+    } catch (e) {
+      emit(ULDDamageConditionCodeFailureState(e.toString()));
+    }
+  }
+
 
   Future<void> addShipment(
       int flightSeqNo, int awbRowID, int awbShipmentId, int ULDSeqNo,

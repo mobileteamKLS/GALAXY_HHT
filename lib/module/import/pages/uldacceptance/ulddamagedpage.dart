@@ -34,7 +34,6 @@ import '../../../../widget/customdivider.dart';
 import '../../../../widget/customeedittext/remarkedittextfeild.dart';
 import '../../../../widget/customeuiwidgets/enlargedbinaryimagescreen.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
-import '../../../../widget/customtextfield.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
@@ -319,9 +318,9 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                             print("widget.isRecordView === ${widget.isRecordView}");
                                             DialogUtils.hideLoadingDialog(context);
                                             if (_isUnserviceableEnable) {
-                                              unServiceableCode = "U";
+                                              unServiceableCode = "BUS";
                                             } else {
-                                              unServiceableCode = "S";
+                                              unServiceableCode = "SER";
                                             }
 
                                             showDialog(
@@ -362,9 +361,9 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                               if (result == true) {
                                                 // Pop the previous screen when result is true
                                                 if (_isUnserviceableEnable) {
-                                                  unServiceableCode = "U";
+                                                  unServiceableCode = "BUS";
                                                 } else {
-                                                  unServiceableCode = "S";
+                                                  unServiceableCode = "SER";
                                                 }
                                                 Navigator.pop(context, unServiceableCode);
                                               }
@@ -414,9 +413,9 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                 if (result == true) {
                                                   // Pop the previous screen when result is true
                                                   if(_isUnserviceableEnable){
-                                                    unServiceableCode = "U";
+                                                    unServiceableCode = "BUS";
                                                   }else{
-                                                    unServiceableCode = "S";
+                                                    unServiceableCode = "SER";
                                                   }
                                                   Navigator.pop(context, unServiceableCode);
                                                 }
@@ -465,9 +464,9 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                         press: () {
                                                           Navigator.pop(context);
                                                           if(_isUnserviceableEnable){
-                                                            unServiceableCode = "U";
+                                                            unServiceableCode = "BUS";
                                                           }else{
-                                                            unServiceableCode = "S";
+                                                            unServiceableCode = "SER";
                                                           }
                                                           Navigator.pop(context, unServiceableCode);
                                                         },
@@ -498,9 +497,9 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                             if (uldDamageUpdatetModel.uLDProblem!.uLDConditionCode != null) {
                                               // update Responce
                                               String unserviceableUld = uldDamageUpdatetModel.uLDProblem!.uLDConditionCode!;
-                                              if (unserviceableUld == "U") {
+                                              if (unserviceableUld == "BUS") {
                                                 _isUnserviceableEnable = true;
-                                              } else if (unserviceableUld == "S") {
+                                              } else if (unserviceableUld == "SER") {
                                                 _isUnserviceableEnable = false;
                                               }
 
@@ -876,8 +875,33 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                                         isborderButton: false,
                                                                         press: () async {
 
-                                                                          if(isButtonEnabled("save", widget.buttonRightsList!)){
-                                                                            String typesOfDamage = "${selectedDamageServices.join('').toString()}";
+                                                                          String typesOfDamage = selectedDamageServices.join('').toString();
+
+                                                                          if (selectedDamageServices.isNotEmpty) {
+                                                                            context.read<UldAcceptanceCubit>().uldDamage(
+                                                                                widget.ULDNo.replaceAll(" ", ""),
+                                                                                widget.ULDSeqNo,
+                                                                                widget.flightSeqNo,
+                                                                                widget.groupId,
+                                                                                _isUnserviceableEnable ? "BUS" : "SER",
+                                                                                typesOfDamage,
+                                                                                selectImageBase64List.isNotEmpty ? images : "",
+                                                                                remarkController.text,
+                                                                                _user!.userProfile!.userIdentity!,
+                                                                                _splashDefaultData!.companyCode!,
+                                                                                widget.menuCode,
+                                                                                widget.menuId);
+                                                                          }
+                                                                          else {
+                                                                            Vibration.vibrate(duration: 500);
+                                                                            SnackbarUtil.showSnackbar(
+                                                                                context,
+                                                                                lableModel.validatTypesOfDamage!,
+                                                                                MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          }
+
+                                                                          /*if(isButtonEnabled("save", widget.buttonRightsList!)){
+                                                                            String typesOfDamage = selectedDamageServices.join('').toString();
 
                                                                             if (selectedDamageServices.isNotEmpty) {
                                                                               context.read<UldAcceptanceCubit>().uldDamage(
@@ -885,7 +909,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                                                   widget.ULDSeqNo,
                                                                                   widget.flightSeqNo,
                                                                                   widget.groupId,
-                                                                                  _isUnserviceableEnable ? "U" : "S",
+                                                                                  _isUnserviceableEnable ? "BUS" : "SER",
                                                                                   typesOfDamage,
                                                                                   selectImageBase64List.isNotEmpty ? images : "",
                                                                                   remarkController.text,
@@ -904,7 +928,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                                           }else{
                                                                             SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                             Vibration.vibrate(duration: 500);
-                                                                          }
+                                                                          }*/
 
 
                                                                         },
