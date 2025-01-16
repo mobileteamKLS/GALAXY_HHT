@@ -278,11 +278,12 @@ class CloseULDRepository{
   }
 
 
-  Future<GetScaleListModel> getScaleList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+  Future<GetScaleListModel> getScaleList(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
+        "FlightSeqNo" : flightSeqNo,
         "ULDSeqNo" : uldSeqNo,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
@@ -535,11 +536,12 @@ class CloseULDRepository{
 
 
 
-  Future<CloseReopenModel> closeReopenULDModel(int uldSeqNo, String uldStatus,  int userId, int companyCode, int menuId) async {
+  Future<CloseReopenModel> closeReopenULDModel(int flightSeqNo, int uldSeqNo, String uldStatus,  int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
+        "FlightSeqNo" : flightSeqNo,
         "ULDSeqNo" : uldSeqNo,
         "ULDStatus" : uldStatus,
         "AirportCode": CommonUtils.airportCode,

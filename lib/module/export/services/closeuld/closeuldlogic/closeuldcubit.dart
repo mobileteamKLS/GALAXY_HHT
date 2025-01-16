@@ -71,10 +71,10 @@ class CloseULDCubit extends Cubit<CloseULDState>{
 
 
 
-  Future<void> getScaleList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+  Future<void> getScaleList(int flightSeqNo, int uldSeqNo, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final getScaleModelData = await closeULDRepository.getScaleList(uldSeqNo, userId, companyCode, menuId);
+      final getScaleModelData = await closeULDRepository.getScaleList(flightSeqNo, uldSeqNo, userId, companyCode, menuId);
       emit(GetScaleListSuccessState(getScaleModelData));
     } catch (e) {
       emit(GetScaleListFailureState(e.toString()));
@@ -135,10 +135,10 @@ class CloseULDCubit extends Cubit<CloseULDState>{
 
 
 
-  Future<void> closeReopenULDModel(int uldSeqNo, String uldStatus, int userId, int companyCode, int menuId) async {
+  Future<void> closeReopenULDModel(int flightSeqNo, int uldSeqNo, String uldStatus, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final closeReopenULDModelData = await closeULDRepository.closeReopenULDModel(uldSeqNo, uldStatus, userId, companyCode, menuId);
+      final closeReopenULDModelData = await closeULDRepository.closeReopenULDModel(flightSeqNo, uldSeqNo, uldStatus, userId, companyCode, menuId);
       emit(CloseReopenSuccessState(closeReopenULDModelData));
     } catch (e) {
       emit(CloseReopenFailureState(e.toString()));

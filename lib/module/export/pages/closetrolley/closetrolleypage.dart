@@ -1062,7 +1062,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                       text: "${lableModel.cancel}",
                                       isborderButton: true,
                                       press: () {
-                                        Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                        _onWillPop(); // Return null when "Cancel" is pressed
                                       },
                                     ),
                                   ),

@@ -611,13 +611,13 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                                     labelText: "Height",
                                                                     readOnly: false,
                                                                     maxLength: 10,
-                                                                    digitsOnly: false,
-                                                                    doubleDigitOnly: true,
+                                                                    digitsOnly: true,
+                                                                    doubleDigitOnly: false,
                                                                     onChanged: (value) {
 
                                                                     },
                                                                     fillColor: Colors.grey.shade100,
-                                                                    textInputType: TextInputType.text,
+                                                                    textInputType: TextInputType.number,
                                                                     inputAction: TextInputAction.next,
                                                                     hintTextcolor: Colors.black45,
                                                                     verticalPadding: 0,

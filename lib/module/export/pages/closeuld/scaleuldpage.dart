@@ -340,7 +340,10 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                   if(state.saveScaleModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.saveScaleModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
+                                  }else if(state.saveScaleModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.saveScaleModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  } else{
                                     SnackbarUtil.showSnackbar(context, state.saveScaleModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                     getScaleList();
                                   }
@@ -389,11 +392,11 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                       SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                                       SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                       ULDNumberWidget(
-                                                        uldNo: widget.uldNo,
+                                                        uldNo:  (widget.uldSeqNo != 0) ? widget.uldNo : "BULK",
                                                         smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                         fontColor: MyColor.textColorGrey2,
-                                                        uldType: "U",
+                                                        uldType: (widget.uldSeqNo != 0) ? "U" : "",
                                                       )
                                                     ],
                                                   ),
@@ -504,7 +507,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                   ],
                                                 ),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
-                                                ListView.builder(
+                                                (widget.uldSeqNo != 0) ? ListView.builder(
                                                   itemCount: scaleWeightList.length,
                                                   shrinkWrap: true,
                                                   physics: const NeverScrollableScrollPhysics(),
@@ -560,7 +563,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                       ],
                                                     );
                                                   },
-                                                ),
+                                                ) : SizedBox(),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
                                                 RoundedButtonGreen(
                                                   color: MyColor.btnColor1,
@@ -623,12 +626,17 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                       text: "Save",
                                       press: () {
                                         if(weightController.text.isNotEmpty){
-                                          if(selectedSwitchIndex.isNotEmpty){
-                                            saveScale();
+                                          if(widget.uldSeqNo != 0){
+                                            if(selectedSwitchIndex.isNotEmpty){
+                                              saveScale();
+                                            }else{
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, "Please select 1 machine.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            }
                                           }else{
-                                            Vibration.vibrate(duration: 500);
-                                            SnackbarUtil.showSnackbar(context, "Please select 1 machine.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            saveScale();
                                           }
+
                                         }else{
                                           Vibration.vibrate(duration: 500);
                                           SnackbarUtil.showSnackbar(context, "Please enter weight.", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -658,6 +666,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
 
   Future<void> getScaleList() async {
     await context.read<CloseULDCubit>().getScaleList(
+        widget.flightSeqNo,
         widget.uldSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

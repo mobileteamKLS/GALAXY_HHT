@@ -417,11 +417,11 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
 
                                                                   },
                                                                   fillColor: MyColor.colorWhite,
-                                                                  textInputType: TextInputType.number,
+                                                                  textInputType: TextInputType.text,
                                                                   inputAction: TextInputAction.next,
                                                                   hintTextcolor: MyColor.colorBlack.withOpacity(0.7),
                                                                   verticalPadding: 0,
-                                                                  maxLength: 11,
+                                                                  maxLength: 14,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                                   circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARBORDER,
                                                                   boxHeight: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT6,
@@ -438,13 +438,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                               InkWell(
                                                                 onTap: () async {
 
-                                                                  if(_isOpenULDFlagEnable == false){
-                                                                    _isOpenULDFlagEnable = true;
-                                                                   // await context.read<FlightCheckCubit>().getAWBList(widget.flightDetailSummary.flightSeqNo!, widget.uldSeqNo, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!, widget.menuId,  (_isOpenULDFlagEnable == true) ? 1 : 0);
-                                                                    scanQR(lableModel!);
-                                                                  }else{
-                                                                    scanQR(lableModel!);
-                                                                  }
+                                                                  scanQR(lableModel!);
 
 
                                                                 },
@@ -740,32 +734,19 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
       if(specialCharAllow == true){
         scanNoEditingController.clear();
         updateSearchList("");
-        SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "Invalid group id.", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanAwbFocusNode);
         });
       }else{
+        String result = barcodeScanResult.replaceAll(" ", "");
+        String truncatedResult = result.length > 14
+            ? result.substring(0, 14)
+            : result;
 
-        if (RegExp(r'[a-zA-Z]').hasMatch(barcodeScanResult)) {
-          scanNoEditingController.clear();
-          updateSearchList("");
-          // Show invalid message if alphabet characters are present
-          SnackbarUtil.showSnackbar(context, "${lableModel.invalidAWBNo}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-          Vibration.vibrate(duration: 500);
-
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            FocusScope.of(context).requestFocus(scanAwbFocusNode);
-          });
-        } else {
-          String result = barcodeScanResult.replaceAll(" ", "");
-          String truncatedResult = result.length > 11
-              ? result.substring(0, 11)
-              : result;
-
-          scanNoEditingController.text = truncatedResult.toString();
-          updateSearchList(truncatedResult);
-        }
+        scanNoEditingController.text = truncatedResult.toString();
+        updateSearchList(truncatedResult);
       }
 
 

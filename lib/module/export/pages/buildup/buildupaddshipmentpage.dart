@@ -452,9 +452,9 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                           children: [
                                                             Row(
                                                               children: [
-                                                                CustomeText(text: "ULD :", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.end),
+                                                                CustomeText(text: (widget.uldType == "U") ? (widget.uldSeqNo != 0) ? "ULD :" : "BULK" : "Trolley :", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w700, textAlign: TextAlign.end),
                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal,),
-                                                                ULDNumberWidget(uldNo: widget.uldNo, smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontColor: MyColor.textColorGrey3, uldType: "U"),
+                                                                ULDNumberWidget(uldNo: widget.uldNo, smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, fontColor: MyColor.textColorGrey3, uldType: widget.uldType),
                                                               ],
                                                             ),
                                                             Row(

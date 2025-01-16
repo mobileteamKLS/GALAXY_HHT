@@ -1190,7 +1190,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                       text: "${lableModel.cancel}",
                                       isborderButton: true,
                                       press: () {
-                                        Navigator.pop(context, null);  // Return null when "Cancel" is pressed
+                                        _onWillPop();  // Return null when "Cancel" is pressed
                                       },
                                     ),
                                   ),
@@ -1211,6 +1211,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                           if(closeReopenULD == true){
 
                                             await context.read<CloseULDCubit>().closeReopenULDModel(
+                                                uldDetail!.flightSeqNo!,
                                                 uldDetail!.uLDSeqNo!,
                                                 (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "C" : "R",
                                                 _user!.userProfile!.userIdentity!,

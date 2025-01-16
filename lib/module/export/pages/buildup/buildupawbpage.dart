@@ -394,7 +394,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                                         children: [
                                                                           CustomeText(
-                                                                              text: (widget.uldType == "U") ? "Add to this ULD No. " : "Add to this Trolley No. ",
+                                                                              text: (widget.uldType == "U") ? (widget.uldSeqNo != 0) ? "Add to this ULD No. " : "Add to this BULK" : "Add to this Trolley No. ",
                                                                               fontColor: MyColor.textColorGrey2,
                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                               fontWeight: FontWeight.w500,

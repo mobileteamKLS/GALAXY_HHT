@@ -289,7 +289,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
     }else{
       isBackPressed = true;
       locationController.clear();
-
+      _isvalidateLocation = false;
       _tabController.animateTo(0);
       _pageIndex = 0;
       Navigator.pop(context, "true");
@@ -386,6 +386,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                 //add clear text to clear all feild
                                 onClear: () {
                                   locationController.clear();
+                                  _isvalidateLocation = false;
                                   _tabController.animateTo(0);
                                   _pageIndex = 0;
 
@@ -393,7 +394,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                   );
-                                  getULDTrolleySearchList();
+                                  if(widget.flightSeqNo != -1){
+                                    getULDTrolleySearchList();
+                                  }else{
+                                    carrierCodeController.clear();
+                                    uldTrolleyDetailModel = null;
+                                  }
+
                                   setState(() {});
                                 },
                               ),
@@ -1158,7 +1165,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      ULDNumberWidget(uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: "${uldTrolleyItem.type}"),
+                                      ULDNumberWidget(uldNo: (uldTrolleyItem.uLDSeqNo == 0) ? "BULK" : "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_9, fontColor: MyColor.textColorGrey3, uldType: (uldTrolleyItem.uLDSeqNo == 0) ? "" : "${uldTrolleyItem.type}"),
                                       SizedBox(width: SizeConfig.blockSizeHorizontal),
                                       Row(
                                         children: [
@@ -1176,10 +1183,10 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                 padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
                                                 decoration : BoxDecoration(
                                                     borderRadius: BorderRadius.circular(20),
-                                                    color: (uldTrolleyItem.status == "O") ? MyColor.flightFinalize :MyColor.flightNotArrived
+                                                    color: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? MyColor.flightFinalize :MyColor.flightNotArrived
                                                 ),
                                                 child: CustomeText(
-                                                  text: (uldTrolleyItem.status == "O") ? "Open" : "Closed",
+                                                  text: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? "Open" : "Closed",
                                                   fontColor: MyColor.textColorGrey3,
                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                                   fontWeight: FontWeight.w400,
@@ -1906,10 +1913,10 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                 padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
                                                 decoration : BoxDecoration(
                                                     borderRadius: BorderRadius.circular(20),
-                                                    color: (uldTrolleyItem.status == "O") ? MyColor.flightFinalize :MyColor.flightNotArrived
+                                                    color: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? MyColor.flightFinalize :MyColor.flightNotArrived
                                                 ),
                                                 child: CustomeText(
-                                                  text: (uldTrolleyItem.status == "O") ? "Open" : "Closed",
+                                                  text: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? "Open" : "Closed",
                                                   fontColor: MyColor.textColorGrey3,
                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                                   fontWeight: FontWeight.w400,
@@ -2428,7 +2435,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
         SnackbarUtil.showSnackbar(context, widget.lableModel!.onlyAlphaNumericValueMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         locationController.clear();
-
+        _isvalidateLocation = false;
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(locationFocusNode);
         });
@@ -2533,7 +2540,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
       if (!_isOpenULDFlagEnable) {
         // Filter the list to show only items where requestUser is "" or "KALE"
 
-        filteruLDTrolleyDetailList = List.from(uLDTrolleyDetailList.where((item) => (item.status == "O")));
+        filteruLDTrolleyDetailList = List.from(uLDTrolleyDetailList.where((item) => (item.status == "O" || item.status == "R")));
         filteruLDTrolleyDetailList.sort((a, b) => a.priority!.compareTo(b.priority!));
 
 

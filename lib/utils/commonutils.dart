@@ -107,7 +107,7 @@ class CommonUtils{
 
   static bool containsSpecialCharacters(String input) {
     // Define a regular expression pattern for special characters
-    final specialCharactersRegex = RegExp(r'[!@#\$%^&*(),.?":{}|<>]');
+    final specialCharactersRegex = RegExp(r'[-!@#\$%^&*(),.?":{}|<>]');
 
     // Returns true if the input contains any special characters
     return specialCharactersRegex.hasMatch(input);
