@@ -172,5 +172,8 @@ class Apilist{
   static String expUldDamage = "/BuildUp/ULDConditionValidate";
 
 
-
+  // split group
+  static String splitGroupPageLoad = "/SplitGroup/GetPageLoad";
+  static String splitGroupDetailSearch = "/SplitGroup/GetGroupDetails";
+  static String splitGroupSave = "/SplitGroup/GroupSplit";
 }

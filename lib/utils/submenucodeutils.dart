@@ -17,6 +17,7 @@ class SubMenuCodeUtils{
   static String CLOSEULD = "HHT017";
   static String CLOSETrolley = "HHT018";
   static String BuildUp = "HHT019";
+  static String SplitGroup = "HHT020";
 
 
 }

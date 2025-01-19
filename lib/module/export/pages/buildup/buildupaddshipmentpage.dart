@@ -306,7 +306,22 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                 clearText: "${lableModel!.clear}",
                                 //add clear text to clear all feild
                                 onClear: () {
+                                  shcCodes = widget.shcCodes.trim();
 
+                                  selectedShcCodes = shcCodes.split(",");
+
+                                  totalNop = int.parse("${widget.pieces}");
+                                  totalWt = double.parse("${widget.weight}");
+
+                                  nopController.text = totalNop.toString();
+                                  weightController.text = totalWt.toStringAsFixed(2);
+
+                                  differenceNop = 0;
+                                  differenceWeight = 0.00;
+
+                                  setState(() {
+
+                                  });
                                 },
                               ),
                             ),
@@ -558,7 +573,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                                   hastextcolor: true,
                                                                   animatedLabel: true,
                                                                   needOutlineBorder: true,
-                                                                  labelText: "${lableModel!.weight}",
+                                                                  labelText: "${lableModel.weight}",
                                                                   readOnly: (differenceNop == 0) ? true : false,
                                                                   onChanged: (value) {
                                                                     if (value.isNotEmpty) {
@@ -641,10 +656,84 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                           ],
                                                         ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical ),
-                                                        RoundedButtonBlue(text: "Add Shipment", press: () {
+                                                        RoundedButtonBlue(
+                                                          text: "Add Shipment",
+                                                          press: () {
+                                                            if (nopController.text.isEmpty) {
+
+                                                              SnackbarUtil.showSnackbar(context, lableModel.piecesMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(nopFocusNode);
+                                                              });
+                                                              Vibration.vibrate(duration: 500);
+
+                                                              return;
+                                                            }
+
+                                                            if(int.parse(nopController.text) == 0){
+
+                                                              SnackbarUtil.showSnackbar(context, lableModel.enterPiecesGrtMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(nopFocusNode);
+                                                              });
+                                                              Vibration.vibrate(duration: 500);
+
+                                                              return;
+                                                            }
+
+                                                            if (weightController.text.isEmpty) {
+                                                              SnackbarUtil.showSnackbar(context, lableModel.weightMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(weightFocusNode);
+                                                              });
+                                                              Vibration.vibrate(duration: 500);
+
+                                                              return;
+                                                            }
+
+                                                            if(double.parse(weightController.text) == 0 || double.parse(weightController.text) == 0.0 || double.parse(weightController.text) == 0.00){
+                                                              SnackbarUtil.showSnackbar(context, lableModel.enterWeightGrtMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(weightFocusNode);
+                                                              });
+                                                              Vibration.vibrate(duration: 500);
+                                                              return;
+                                                            }
+
+                                                            if (int.parse(nopController.text) > totalNop) {
+                                                              // Exceeds total NOP, show an error
+                                                              SnackbarUtil.showSnackbar(context, lableModel.exceedstotalnop!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(nopFocusNode);
+                                                              });
+                                                              Vibration.vibrate(duration: 500);
+                                                              return;
+                                                            }
+
+                                                            if (double.parse(weightController.text) > totalWt) {
+                                                              // Exceeds total weight, show an error
+                                                              SnackbarUtil.showSnackbar(context, lableModel.exceedstotalWeight!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              Vibration.vibrate(duration: 500);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(weightFocusNode);
+                                                              });
+                                                              return;
+                                                            }
+
+                                                            if (differenceNop != 0 && differenceWeight == 0) {
+                                                              SnackbarUtil.showSnackbar(context, lableModel.remainingpcsavailable!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              Vibration.vibrate(duration: 500);
+                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                FocusScope.of(context).requestFocus(weightFocusNode);
+                                                              });
+
+
+                                                              return;
+                                                            }
                                                           SHCCodes = selectedShcCodes.join("~");
                                                           addShipment(SHCCodes, destinationWarningInd, shcCompibilityWarningInd);
-                                                        },)
+                                                        }
+                                                        )
                                                       ],
                                                     ),
 

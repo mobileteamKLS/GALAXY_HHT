@@ -35,6 +35,7 @@ import '../../export/pages/closeuld/closeuldpage.dart';
 import '../../export/pages/emptyuldtrolley/emptyuldtrolleypage.dart';
 import '../../export/pages/palletstatck/palletstackpage.dart';
 import '../../export/pages/retriveuld/retriveuldpage.dart';
+import '../../export/pages/splitgroup/splitgrouppage.dart';
 import '../../export/pages/uldtould/uldtouldpage.dart';
 import '../../import/pages/binning/binning.dart';
 import '../../import/pages/flightcheck/flightcheck.dart';
@@ -253,7 +254,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                   // state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1294", menuName: "Build Up", sNo: 3326, imageIcon: "closeuld", refMenuCode: "§§HHT019§§", IsEnable: "Y"));
+                                    state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1295", menuName: "Split Group", sNo: 3326, imageIcon: "buildup", refMenuCode: "§§HHT020§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
@@ -418,6 +419,15 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                               ), isEnable);
                                             }else if(refrelCode == SubMenuCodeUtils.BuildUp){
                                               NextScreen(BuildUpPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.SplitGroup){
+                                              NextScreen(SplitGroupPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,
