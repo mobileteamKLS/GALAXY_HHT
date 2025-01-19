@@ -192,7 +192,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
 
-    Navigator.pop(context, "Done");
+    Navigator.pop(context, "true");
 
 
     return false; // Stay in the app (Cancel was clicked)
