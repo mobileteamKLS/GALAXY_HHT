@@ -410,7 +410,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Height *",
+                                                        labelText: "${lableModel.height} *",
                                                         readOnly: false,
                                                         maxLength: 10,
                                                         digitsOnly: true,
@@ -582,18 +582,18 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Save",
+                                      text: "${lableModel.save}",
                                       press: () {
                                         if(heightController.text.isNotEmpty){
                                           if(selectedSwitchIndex.isNotEmpty){
                                             saveContour();
                                           }else{
                                             Vibration.vibrate(duration: 500);
-                                            SnackbarUtil.showSnackbar(context, "Please select 1 contour.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.pleaseselect1contour}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           }
                                         }else{
                                           Vibration.vibrate(duration: 500);
-                                          SnackbarUtil.showSnackbar(context, "Please enter height.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "${lableModel.pleaseenterheight}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         }
 
                                       },

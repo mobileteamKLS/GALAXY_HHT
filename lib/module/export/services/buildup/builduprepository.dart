@@ -809,6 +809,7 @@ class BuildUpRepository{
       int nop, double weight, String offPoint, String SHC,
       String IsPartShipment, String DGIndicator, String ULDTrolleyType,
       String dgType, int dgSeqNo, String dgReference, int groupId, String warningInd, String shcWarning,
+      String carrierCode,
       int userId, int companyCode, int menuId) async {
 
     try {
@@ -833,6 +834,7 @@ class BuildUpRepository{
         "DGReference" : dgReference,
         "GroupId" : groupId,
         "SHCWarning" : shcWarning,
+        "CarrierCode" : carrierCode,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

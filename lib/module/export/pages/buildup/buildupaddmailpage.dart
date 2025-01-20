@@ -642,7 +642,7 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                                               children: [
                                                 Expanded(
                                                     flex :1,
-                                                    child: CustomeText(text: "Mode Of Sec.", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
+                                                    child: CustomeText(text: "${lableModel.modeOfSecurity}", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w500, textAlign: TextAlign.start)),
                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                 Expanded(
                                                   flex : 2,
@@ -1163,7 +1163,7 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                                                                    Row(
                                                                      children: [
                                                                        CustomeText(
-                                                                         text: "Mode Of Sec. :",
+                                                                         text: "${lableModel.modeOfSecurity} :",
                                                                          fontColor: MyColor.textColorGrey2,
                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                          fontWeight: FontWeight.w400,
@@ -1188,7 +1188,7 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                                                          Expanded(
                                                             flex:1,
                                                             child:RoundedButtonGreen(
-                                                              text: "Remove",
+                                                              text: "${lableModel.remove}",
                                                               color: MyColor.colorRed,
                                                               press: () {
                                                                 removeMail(addMailDetails.seqNo!);

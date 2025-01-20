@@ -458,7 +458,7 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                                         child: Row(
                                           children: [
                                             CustomeText(
-                                              text: "NoP :",
+                                              text: "${lableModel.nop} :",
                                               fontColor: MyColor.textColorGrey2,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                               fontWeight: FontWeight.w400,
@@ -480,7 +480,7 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                                         child: Row(
                                           children: [
                                             CustomeText(
-                                              text: "Weight :",
+                                              text: "${lableModel.weight} :",
                                               fontColor: MyColor.textColorGrey2,
                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                               fontWeight: FontWeight.w400,
@@ -503,7 +503,7 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                                   Row(
                                     children: [
                                       CustomeText(
-                                        text: "NoG :",
+                                        text: "${lableModel.nog} :",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                         fontWeight: FontWeight.w400,

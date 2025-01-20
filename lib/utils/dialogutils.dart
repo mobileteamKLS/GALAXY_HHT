@@ -5101,7 +5101,7 @@ class DialogUtils {
                           hastextcolor: true,
                           animatedLabel: true,
                           needOutlineBorder: true,
-                          labelText: "Tare Weight",
+                          labelText: "${lableModel.tareWt}",
                           controller: batteryController,
                           readOnly: false,
                           maxLength: 10,
@@ -5335,7 +5335,7 @@ class DialogUtils {
                     Expanded(
                       flex: 1,
                       child: RoundedButton(
-                        text: "Scale",
+                        text: "${lableModel.scale}",
                         color: MyColor.primaryColorblue,
                         press: () {
                           Navigator.pop(context, 1);
@@ -5401,7 +5401,7 @@ class DialogUtils {
                         textColor: MyColor.textColorGrey3,
                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                         textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                        text: "Equipment",
+                        text: "${lableModel.equipment}",
                         press: () {
                           Navigator.pop(context, 1);
                         },
@@ -5415,7 +5415,7 @@ class DialogUtils {
                         textColor: MyColor.textColorGrey3,
                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                         textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                        text: "Contour",
+                        text: "${lableModel.contour}",
 
                         press: () {
                           Navigator.pop(context, 2);
@@ -5434,7 +5434,7 @@ class DialogUtils {
                         textColor: MyColor.textColorGrey3,
                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                         textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                        text: "Scale",
+                        text: "${lableModel.scale}",
 
                         press: () {
                           Navigator.pop(context, 3);
@@ -5449,7 +5449,7 @@ class DialogUtils {
                         textColor: MyColor.textColorGrey3,
                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                         textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                        text: "Add Mail",
+                        text: "${lableModel.addMail}",
                         press: () {
                           Navigator.pop(context, 4);
                         },
@@ -5475,7 +5475,7 @@ class DialogUtils {
                     Expanded(
                       flex: 1,
                       child: RoundedButton(
-                        text: "Close ULD",
+                        text: "${lableModel.closeULD}",
                         color: MyColor.primaryColorblue,
                         press: () {
                           Navigator.pop(context, 5);
@@ -5541,7 +5541,7 @@ class DialogUtils {
                         textColor: MyColor.textColorGrey3,
                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                         textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                        text: "Equipment",
+                        text: "${lableModel.equipment}",
                         press: () {
                           Navigator.pop(context, 1);
                         },
@@ -5555,7 +5555,7 @@ class DialogUtils {
                         textColor: MyColor.textColorGrey3,
                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                         textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                        text: "Scale",
+                        text: "${lableModel.scale}",
 
                         press: () {
                           Navigator.pop(context, 2);
@@ -5582,7 +5582,7 @@ class DialogUtils {
                     Expanded(
                       flex: 1,
                       child: RoundedButton(
-                        text: "Close Trolley",
+                        text: "${lableModel.closeTrolley}",
                         color: MyColor.primaryColorblue,
                         press: () {
                           Navigator.pop(context, 3);

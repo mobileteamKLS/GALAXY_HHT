@@ -389,7 +389,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "ULD No. *",
+                                                              labelText: "${lableModel.uldNo} *",
                                                               readOnly: false,
                                                               maxLength: 11,
                                                               onChanged: (value) {
@@ -479,7 +479,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Tare Weight",
+                                                        labelText: "${lableModel.tareWt}",
                                                         controller: tareWeightController,
                                                         readOnly: false,
                                                         maxLength: 10,
@@ -517,7 +517,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "Priority",
+                                                              labelText: "${lableModel.priority}",
                                                               readOnly: false,
                                                               controller: priorityController,
                                                               maxLength: 2,
@@ -550,7 +550,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "OffPoint *",
+                                                              labelText: "${lableModel.offPoint} *",
                                                               readOnly: false,
                                                               controller: routeController,
                                                               maxLength: 3,
@@ -588,7 +588,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                           crossAxisAlignment: CrossAxisAlignment.start,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Contour",
+                                                              text: "${lableModel.contour}",
                                                               fontColor: MyColor.colorBlack,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                               fontWeight: FontWeight.w600,
@@ -608,7 +608,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                                                     hastextcolor: true,
                                                                     animatedLabel: true,
                                                                     needOutlineBorder: true,
-                                                                    labelText: "Height",
+                                                                    labelText: "${lableModel.height}",
                                                                     readOnly: false,
                                                                     maxLength: 10,
                                                                     digitsOnly: true,
@@ -784,7 +784,7 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Save",
+                                      text: "${lableModel.save}",
                                       press: () {
 
                                         if(scanULDController.text.isNotEmpty){
@@ -793,13 +793,13 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                             if(uldNumber == "Valid"){
                                               saveULD();
                                             }else{
-                                              openValidationDialog("Please enter valid ULD No.", scanULDFocusNode);
+                                              openValidationDialog("${lableModel.entervalidULDNo}", scanULDFocusNode);
                                             }
                                           }else{
-                                            openValidationDialog("Please enter offpoint.", routeFocusNode);
+                                            openValidationDialog("${lableModel.pleaseEnterOffpoint}", routeFocusNode);
                                           }
                                         }else{
-                                          openValidationDialog("Please enter ULD No.", scanULDFocusNode);
+                                          openValidationDialog("${lableModel.enteruldNoMsg}", scanULDFocusNode);
                                         }
 
 

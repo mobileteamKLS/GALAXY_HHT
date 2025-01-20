@@ -547,7 +547,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                               builder: (context) => ULDDetailPage(
                                                                 importSubMenuList: widget.importSubMenuList,
                                                                 exportSubMenuList: widget.exportSubMenuList,
-                                                                title: "ULD Detail",
+                                                                title: "${lableModel.uldDetail}",
                                                                 refrelCode: widget.refrelCode,
                                                                 menuId: widget.menuId,
                                                                 mainMenuName: widget.mainMenuName,
@@ -565,7 +565,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
                                                           }else{
                                                             Vibration.vibrate(duration: 500);
-                                                            SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                            SnackbarUtil.showSnackbar(context, lableModel.pleaseScanULD!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                                               FocusScope.of(context).requestFocus(scanULDFocusNode);
                                                             });
@@ -597,7 +597,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Tare Wt. :",
+                                                            text: "${lableModel.tareWt} :",
                                                             fontColor: MyColor.textColorGrey2,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -623,7 +623,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                     textAlign: TextAlign.start,
                                                                   ),
                                                                   CustomeText(
-                                                                    text: " Kg",
+                                                                    text: " ${lableModel.kg}",
                                                                     fontColor: MyColor.colorBlack,
                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                     fontWeight: FontWeight.w700,
@@ -657,7 +657,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                 textAlign: TextAlign.start,
                                                               ),
                                                               CustomeText(
-                                                                text: " Kg",
+                                                                text: " ${lableModel.kg}",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -674,7 +674,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                 textAlign: TextAlign.start,
                                                               ),
                                                               CustomeText(
-                                                                text: " Kg",
+                                                                text: " ${lableModel.kg}",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -689,7 +689,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Net Wt. :",
+                                                            text: "${lableModel.netWt} :",
                                                             fontColor: MyColor.textColorGrey2,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -705,7 +705,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                 textAlign: TextAlign.start,
                                                               ),
                                                               CustomeText(
-                                                                text: " Kg",
+                                                                text: " ${lableModel.kg}",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -721,7 +721,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Equip Wt. :",
+                                                              text: "${lableModel.equipWt} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -737,7 +737,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: " Kg",
+                                                                  text: " ${lableModel.kg}",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -753,7 +753,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Scale Wt. :",
+                                                              text: "${lableModel.scaleWt} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -769,7 +769,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: " Kg",
+                                                                  text: " ${lableModel.kg}",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -792,7 +792,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Dev. Wt: ",
+                                                              text: "${lableModel.devWt} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -800,7 +800,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             ),
                                                             Flexible(
                                                               child: CustomeText(
-                                                                text: (uldDetail != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.deviation!)} Kg" : "-",
+                                                                text: (uldDetail != null) ? "${CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.deviation!)} ${lableModel.kg}" : "-",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -814,7 +814,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Dev. Per: ",
+                                                              text: "${lableModel.devPer}: ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -836,7 +836,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Equip. Used : ",
+                                                              text: "${lableModel.equipUsed} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -857,7 +857,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Contour : ",
+                                                              text: "${lableModel.contour} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -903,7 +903,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                               Row(
                                                 children: [
                                                   CustomeText(
-                                                    text: "Flight No. : ",
+                                                    text: "${lableModel.flightNo} :",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -924,7 +924,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                               Row(
                                                 children: [
                                                   CustomeText(
-                                                    text: "Off Point : ",
+                                                    text: "${lableModel.offPoint} :",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -946,7 +946,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   CustomeText(
-                                                    text: "Remarks : ",
+                                                    text: "${lableModel.remarks} : ",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -980,7 +980,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   color: MyColor.btnColor1,
                                                   textColor: MyColor.colorBlack,
                                                   focusNode: equipmentBtnFocusNode,
-                                                  text: "Equipment",
+                                                  text: "${lableModel.equipment}",
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   press: () async {
@@ -991,7 +991,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                        builder: (context) => CloseULDEquipmentPage(
                                                        importSubMenuList: widget.importSubMenuList,
                                                        exportSubMenuList: widget.exportSubMenuList,
-                                                       title: "Equipment",
+                                                       title: "${lableModel.equipment}",
                                                        refrelCode: widget.refrelCode,
                                                        menuId: widget.menuId,
                                                        mainMenuName: widget.mainMenuName,
@@ -1009,7 +1009,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                      }
 
                                                    }else{
-                                                     SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                     SnackbarUtil.showSnackbar(context, lableModel.pleaseScanULD!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                      Vibration.vibrate(duration: 500);
                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
                                                        FocusScope.of(context).requestFocus(scanULDFocusNode);
@@ -1028,7 +1028,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   focusNode: contorBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Contour",
+                                                  text: "${lableModel.contour}",
                                                   press: () async {
                                                     scanULDFocusNode.unfocus();
                                                     scanULDBtnFocusNode.unfocus();
@@ -1036,7 +1036,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ContourULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Contour",
+                                                          title: "${lableModel.contour}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -1053,7 +1053,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       }
 
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, lableModel.pleaseScanULD!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                       Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanULDFocusNode);
@@ -1077,7 +1077,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   focusNode: scaleBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Scale",
+                                                  text: "${lableModel.scale}",
                                                   press: () async {
                                                     scanULDFocusNode.unfocus();
                                                     scanULDBtnFocusNode.unfocus();
@@ -1085,7 +1085,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Scale", refrelCode: widget.refrelCode,
+                                                          title: "${lableModel.scale}", refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
                                                           uldNo: uldDetail!.uLDNo!,
@@ -1101,7 +1101,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       }
 
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, lableModel.pleaseScanULD!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                       Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanULDFocusNode);
@@ -1121,7 +1121,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   focusNode: remarkBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Remarks",
+                                                  text: "${lableModel.remarks}",
                                                   press: () async {
                                                     scanULDFocusNode.unfocus();
                                                     scanULDBtnFocusNode.unfocus();
@@ -1129,7 +1129,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => RemarkULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Remarks", refrelCode: widget.refrelCode,
+                                                          title: "${lableModel.remarks}", refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
                                                           uldNo: uldDetail!.uLDNo!,
@@ -1146,7 +1146,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                       }
 
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, lableModel.pleaseScanULD!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                       Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanULDFocusNode);
@@ -1198,14 +1198,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "Close" : "${lableModel.reOpen}" : "Close",
+                                      text: (uldDetail != null) ? (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel.close}" : "${lableModel.reOpen}" : "${lableModel.close}",
                                       press: () async {
                                         scanULDFocusNode.unfocus();
                                         scanULDBtnFocusNode.unfocus();
                                         if(uldDetail != null){
                                           // call api for close and re open
 
-                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel.closed} " : "Re-Open ULD", (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "Are you sure want to close this ULD ?" : "Are you sure want to re-open this ULD ?" , lableModel);
+                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel.closed} " : "${lableModel.reOpenULD}", (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? lableModel.areyousurewanttoclosethisuld! : lableModel.areyousurewanttoreopenthisuld! , lableModel);
 
 
                                           if(closeReopenULD == true){
@@ -1223,7 +1223,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
 
                                         }else{
-                                          SnackbarUtil.showSnackbar(context, "Please scan ULD.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, lableModel.pleaseScanULD!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(scanULDFocusNode);

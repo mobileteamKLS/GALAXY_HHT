@@ -411,7 +411,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "ULD Tare Weight : ",
+                                                      text: "${lableModel!.uldTareWeight} :",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -428,7 +428,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                           textAlign: TextAlign.start,
                                                         ),
                                                         CustomeText(
-                                                          text: " Kg",
+                                                          text: " ${lableModel!.kg}",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -444,7 +444,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "ULD Shipment Weight : ",
+                                                      text: "${lableModel.uldShipmentWeight} :",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -461,7 +461,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                           textAlign: TextAlign.start,
                                                         ),
                                                         CustomeText(
-                                                          text: " Kg",
+                                                          text: " ${lableModel.kg}",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -484,7 +484,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Document No.",
+                                                            text: "${lableModel.documentNo}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
@@ -498,7 +498,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         crossAxisAlignment: CrossAxisAlignment.end,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Weight",
+                                                            text: "${lableModel.weight}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
@@ -514,7 +514,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Vol. (m\u00B3)",
+                                                            text: "${lableModel.vol} (m\u00B3)",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
@@ -547,7 +547,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomeText(
-                                                    text: "Air Waybill",
+                                                    text: "${lableModel.airwaybill}",
                                                     fontColor: MyColor.textColorGrey3,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     fontWeight: FontWeight.w700,
@@ -628,7 +628,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Total",
+                                                            text: "${lableModel.total}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -691,7 +691,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomeText(
-                                                    text: "Mail",
+                                                    text: "${lableModel.mail}",
                                                     fontColor: MyColor.textColorGrey3,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     fontWeight: FontWeight.w700,
@@ -771,7 +771,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Total",
+                                                            text: "${lableModel.total}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -834,7 +834,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomeText(
-                                                    text: "Courier",
+                                                    text: "${lableModel.courier}",
                                                     fontColor: MyColor.textColorGrey3,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     fontWeight: FontWeight.w700,
@@ -914,7 +914,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Total",
+                                                            text: "${lableModel.total}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,

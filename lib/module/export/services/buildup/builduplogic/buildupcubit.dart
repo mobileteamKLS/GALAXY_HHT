@@ -242,6 +242,7 @@ class BuildUpCubit extends Cubit<BuildUpState>{
       int nop, double weight, String offPoint, String SHC,
       String IsPartShipment, String DGIndicator, String ULDTrolleyType,
       String dgType, int dgSeqNo, String dgReference, int groupId, String warningInd, String shcWarning,
+      String carrierCode,
       int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
@@ -251,6 +252,7 @@ class BuildUpCubit extends Cubit<BuildUpState>{
           nop, weight, offPoint, SHC,
           IsPartShipment, DGIndicator, ULDTrolleyType,
           dgType, dgSeqNo, dgReference, groupId, warningInd, shcWarning,
+          carrierCode,
           userId, companyCode, menuId);
       emit(AddShipmentSuccessState(addShipment));
     } catch (e) {

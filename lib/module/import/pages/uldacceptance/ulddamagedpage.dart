@@ -643,7 +643,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                                                   physics: const NeverScrollableScrollPhysics(),
                                                                   itemBuilder: (context, index) {
                                                                     ULDDamage item = damageList[index];
-                                                                    String title = "${lableModel.getValueFromKey("${item.rowId}")}";
+                                                                    String title = "${lableModel.getValueFromKey("${item.referenceDataIdentifier}")}";
                                                                     Color backgroundColor = MyColor.colorList[index % MyColor.colorList.length];
 
                                                                     String damagetext = (title != 'null') ? title : item.referenceDescription!;

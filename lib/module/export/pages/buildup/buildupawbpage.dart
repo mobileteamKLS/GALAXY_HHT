@@ -394,7 +394,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                                         children: [
                                                                           CustomeText(
-                                                                              text: (widget.uldType == "U") ? (widget.uldSeqNo != 0) ? "Add to this ULD No. " : "Add to this BULK" : "Add to this Trolley No. ",
+                                                                              text: (widget.uldType == "U") ? (widget.uldSeqNo != 0) ? "${lableModel.addtothisULDNo} " : "${lableModel.addtothisBULK} " : "${lableModel.addtothisTrolleyNo} ",
                                                                               fontColor: MyColor.textColorGrey2,
                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                               fontWeight: FontWeight.w500,
@@ -607,7 +607,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                           child: Row(
                                                                                             children: [
                                                                                               CustomeText(
-                                                                                                text: "NoP :",
+                                                                                                text: "${lableModel.nop} :",
                                                                                                 fontColor: MyColor.textColorGrey2,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w400,
@@ -629,7 +629,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                           child: Row(
                                                                                             children: [
                                                                                               CustomeText(
-                                                                                                text: "Weight :",
+                                                                                                text: "${lableModel.weight} :",
                                                                                                 fontColor: MyColor.textColorGrey2,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w400,
@@ -653,7 +653,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                     Row(
                                                                                       children: [
                                                                                         CustomeText(
-                                                                                          text: "NoG :",
+                                                                                          text: "${lableModel.nog} :",
                                                                                           fontColor: MyColor.textColorGrey2,
                                                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                           fontWeight: FontWeight.w400,
@@ -705,7 +705,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                             },
                                                                                           ),
                                                                                         ),
-                                                                                        RoundedButton(text: "Next",
+                                                                                        RoundedButton(text: "${lableModel.next}",
                                                                                           horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                                                                           verticalPadding: SizeConfig.blockSizeVertical,
                                                                                           color: MyColor.primaryColorblue,
@@ -728,7 +728,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                     builder: (context) => BuildUpGroupListPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                                                                      title: "AWB Group List",
+                                                                                                      title: "${lableModel.awbGroupList}",
                                                                                                       refrelCode: widget.refrelCode,
                                                                                                       menuId: widget.menuId,
                                                                                                       mainMenuName: widget.mainMenuName,
@@ -745,9 +745,11 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                       dgType: widget.dgType,
                                                                                                       dgReference: widget.dgReference,
                                                                                                       dgSeqNo: widget.dgSeqNo,
+                                                                                                      carrierCode: widget.carrierCode,
                                                                                                     ),));
 
                                                                                                   if(value == "true"){
+                                                                                                    scanNoEditingController.clear();
                                                                                                     getAWBList();
                                                                                                   }else{
                                                                                                     _resumeTimerOnInteraction();
@@ -759,7 +761,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                     builder: (context) => BuildUpAddShipmentPage(
                                                                                                       importSubMenuList: widget.importSubMenuList,
                                                                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                                                                      title: "Add Shipment",
+                                                                                                      title: "${lableModel.addShipment}",
                                                                                                       refrelCode: widget.refrelCode,
                                                                                                       menuId: widget.menuId,
                                                                                                       mainMenuName: widget.mainMenuName,
@@ -779,6 +781,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                       dgReference: widget.dgReference,
                                                                                                       dgSeqNo: widget.dgSeqNo,
                                                                                                       groupId: 0,
+                                                                                                      carrierCode: widget.carrierCode,
                                                                                                     ),));
 
                                                                                                   if(value == "true"){
@@ -802,7 +805,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 builder: (context) => BuildUpGroupListPage(
                                                                                                 importSubMenuList: widget.importSubMenuList,
                                                                                                 exportSubMenuList: widget.exportSubMenuList,
-                                                                                                title: "AWB Group List",
+                                                                                                title: "${lableModel.awbGroupList}",
                                                                                                 refrelCode: widget.refrelCode,
                                                                                                 menuId: widget.menuId,
                                                                                                 mainMenuName: widget.mainMenuName,
@@ -819,9 +822,11 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                   dgType: widget.dgType,
                                                                                                   dgReference: widget.dgReference,
                                                                                                   dgSeqNo: widget.dgSeqNo,
+                                                                                                  carrierCode: widget.carrierCode,
                                                                                                 ),));
 
                                                                                              if(value == "true"){
+                                                                                               scanNoEditingController.clear();
                                                                                                getAWBList();
                                                                                              }else{
                                                                                                _resumeTimerOnInteraction();
@@ -854,6 +859,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 dgReference: widget.dgReference,
                                                                                                 dgSeqNo: widget.dgSeqNo,
                                                                                                 groupId: 0,
+                                                                                                carrierCode: widget.carrierCode,
                                                                                                 ),));
 
                                                                                              if(value == "true"){

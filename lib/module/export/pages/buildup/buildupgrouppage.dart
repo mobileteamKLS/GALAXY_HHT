@@ -63,6 +63,7 @@ class BuildUpGroupListPage extends StatefulWidget {
   String dgType;
   int dgSeqNo;
   String dgReference;
+  String carrierCode;
 
 
   BuildUpGroupListPage({super.key,
@@ -84,7 +85,8 @@ class BuildUpGroupListPage extends StatefulWidget {
     required this.offPoint,
     required this.dgType,
     required this.dgSeqNo,
-    required this.dgReference
+    required this.dgReference,
+    required this.carrierCode
    });
 
   @override
@@ -379,7 +381,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                         crossAxisAlignment: CrossAxisAlignment.center,
                                                                         children: [
                                                                           CustomeText(
-                                                                              text: "Add to this AWB No. ${AwbFormateNumberUtils.formatAWBNumber(widget.awbNo)}",
+                                                                              text: "${lableModel.addtothisAWBNo} ${AwbFormateNumberUtils.formatAWBNumber(widget.awbNo)}",
                                                                               fontColor: MyColor.textColorGrey2,
                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                               fontWeight: FontWeight.w500,
@@ -410,7 +412,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                   isIcon: true,
                                                                   isSearch: true,
                                                                   prefixIconcolor: MyColor.colorBlack,
-                                                                  hintText: "Scan Group Id",
+                                                                  hintText: "${lableModel.scanGroupId}",
                                                                   readOnly: false,
                                                                   onChanged: (value) async {
                                                                     updateSearchList(value);
@@ -438,7 +440,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                               InkWell(
                                                                 onTap: () async {
 
-                                                                  scanQR(lableModel!);
+                                                                  scanQR(lableModel);
 
 
                                                                 },
@@ -530,7 +532,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                   Row(
                                                                                     children: [
                                                                                       Expanded(child: CustomeText(text: aWBItem.groupId!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start)),
-                                                                                      RoundedButton(text: "Next",
+                                                                                      RoundedButton(text: "${lableModel.next}",
                                                                                         horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                                                                         verticalPadding: SizeConfig.blockSizeVertical,
                                                                                         color: MyColor.primaryColorblue,
@@ -540,7 +542,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                             builder: (context) => BuildUpAddShipmentPage(
                                                                                               importSubMenuList: widget.importSubMenuList,
                                                                                               exportSubMenuList: widget.exportSubMenuList,
-                                                                                              title: "Add Shipment",
+                                                                                              title: "${lableModel.addShipment}",
                                                                                               refrelCode: widget.refrelCode,
                                                                                               menuId: widget.menuId,
                                                                                               mainMenuName: widget.mainMenuName,
@@ -560,6 +562,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                               dgReference: widget.dgReference,
                                                                                               dgSeqNo: widget.dgSeqNo,
                                                                                               groupId: aWBItem.grpSeqNo!,
+                                                                                              carrierCode: widget.carrierCode,
                                                                                             ),));
 
                                                                                          if(value == "true"){
@@ -581,7 +584,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                         child: Row(
                                                                                           children: [
                                                                                             CustomeText(
-                                                                                              text: "NoP :",
+                                                                                              text: "${lableModel.nop} :",
                                                                                               fontColor: MyColor.textColorGrey2,
                                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                               fontWeight: FontWeight.w400,
@@ -603,7 +606,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                                                                         child: Row(
                                                                                           children: [
                                                                                             CustomeText(
-                                                                                              text: "Weight :",
+                                                                                              text: "${lableModel.weight} :",
                                                                                               fontColor: MyColor.textColorGrey2,
                                                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                               fontWeight: FontWeight.w400,
@@ -734,7 +737,7 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
       if(specialCharAllow == true){
         scanNoEditingController.clear();
         updateSearchList("");
-        SnackbarUtil.showSnackbar(context, "Invalid group id.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+        SnackbarUtil.showSnackbar(context, "${lableModel.invalidGroupId}", MyColor.colorRed, icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         WidgetsBinding.instance.addPostFrameCallback((_) {
           FocusScope.of(context).requestFocus(scanAwbFocusNode);

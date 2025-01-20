@@ -409,7 +409,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "Trolley Tare Weight : ",
+                                                      text: "${lableModel!.trolleyTareWeight} :",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -426,7 +426,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                           textAlign: TextAlign.start,
                                                         ),
                                                         CustomeText(
-                                                          text: " Kg",
+                                                          text: " ${lableModel!.kg}",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -442,7 +442,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "Trolley Shipment Weight : ",
+                                                      text: "${lableModel.trolleyShipmentWeight} :",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -459,7 +459,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                           textAlign: TextAlign.start,
                                                         ),
                                                         CustomeText(
-                                                          text: " Kg",
+                                                          text: " ${lableModel.kg}",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -482,7 +482,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Document No.",
+                                                            text: "${lableModel.documentNo}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
@@ -496,7 +496,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                         crossAxisAlignment: CrossAxisAlignment.end,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Weight",
+                                                            text: "${lableModel.weight}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
@@ -512,7 +512,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Vol. (m\u00B3)",
+                                                            text: "${lableModel.vol} (m\u00B3)",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                             fontWeight: FontWeight.w700,
@@ -545,7 +545,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomeText(
-                                                    text: "Air Waybill",
+                                                    text: "${lableModel.airwaybill}",
                                                     fontColor: MyColor.textColorGrey3,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     fontWeight: FontWeight.w700,
@@ -626,7 +626,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Total",
+                                                            text: "${lableModel.total}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -689,7 +689,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomeText(
-                                                    text: "Mail",
+                                                    text: "${lableModel.mail}",
                                                     fontColor: MyColor.textColorGrey3,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     fontWeight: FontWeight.w700,
@@ -769,7 +769,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Total",
+                                                            text: "${lableModel.total}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -832,7 +832,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 CustomeText(
-                                                    text: "Courier",
+                                                    text: "${lableModel.close}",
                                                     fontColor: MyColor.textColorGrey3,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                     fontWeight: FontWeight.w700,
@@ -912,7 +912,7 @@ class _TrolleyDetailPageState extends State<TrolleyDetailPage>{
                                                         children: [
 
                                                           CustomeText(
-                                                            text: "Total",
+                                                            text: "${lableModel.total}",
                                                             fontColor: MyColor.textColorGrey3,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,

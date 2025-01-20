@@ -53,6 +53,10 @@ class ULDTrolleyDetailList {
   String? dgType;
   int? dgSeqNo;
   String? dgReference;
+  String? flightDate;
+  String? flightNo;
+  int? flightSeqNo;
+  String? offPoint;
 
   ULDTrolleyDetailList(
       {this.type,
@@ -78,6 +82,10 @@ class ULDTrolleyDetailList {
         this.dgType,
         this.dgSeqNo,
         this.dgReference,
+        this.flightNo,
+        this.flightDate,
+        this.flightSeqNo,
+        this.offPoint
       });
 
   ULDTrolleyDetailList.fromJson(Map<String, dynamic> json) {
@@ -104,6 +112,10 @@ class ULDTrolleyDetailList {
     dgReference = json['DGReferenceType'];
     dgSeqNo = json['DGSeqNo'];
     dgType = json['DGType'];
+    flightNo = json['FlightNo'];
+    flightDate = json['FlightDate'];
+    flightSeqNo = json['FlightSeqNo'];
+    offPoint = json['OffPoint'];
   }
 
   Map<String, dynamic> toJson() {
@@ -131,6 +143,10 @@ class ULDTrolleyDetailList {
     data['DGReferenceType'] = this.dgReference;
     data['DGSeqNo'] = this.dgSeqNo;
     data['DGType'] = this.dgType;
+    data['FlightNo'] = this.flightNo;
+    data['FlightDate'] = this.flightDate;
+    data['FlightSeqNo'] = this.flightSeqNo;
+    data['OffPoint'] = this.offPoint;
     return data;
   }
 }

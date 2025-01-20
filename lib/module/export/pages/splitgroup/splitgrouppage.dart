@@ -570,14 +570,14 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                   Row(
                                                                                     children: [
                                                                                       CustomeText(
-                                                                                        text: "House :",
+                                                                                        text: (splitGroup.acceptanceLevel == "H") ? "House :" : (splitGroup.acceptanceLevel == "S") ? "SBNo :" : (splitGroup.acceptanceLevel == "M") ? "MPS No." : (splitGroup.acceptanceLevel == "B") ? "BAG :" : "",
                                                                                         fontColor: MyColor.textColorGrey2,
                                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                         fontWeight: FontWeight.w400,
                                                                                         textAlign: TextAlign.start,
                                                                                       ),
                                                                                       CustomeText(
-                                                                                        text: (splitGroup.houseNo!.isNotEmpty) ? splitGroup.houseNo! : "-",
+                                                                                        text: (splitGroup.acceptanceLevel == "H") ? splitGroup.houseNo! : (splitGroup.acceptanceLevel == "S") ? "${splitGroup.sBNo!}" : (splitGroup.acceptanceLevel == "M") ? splitGroup.mPSNo! : (splitGroup.acceptanceLevel == "B") ? splitGroup.bAG! : "",
                                                                                         fontColor: MyColor.textColorGrey3,
                                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                         fontWeight: FontWeight.w600,
@@ -593,7 +593,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                 child: Row(
                                                                                   children: [
                                                                                     Expanded(
-                                                                                      flex: 5,
+                                                                                      flex: 6,
                                                                                       child: Column(
                                                                                         children: [
                                                                                           Row(
@@ -602,7 +602,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                               Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Pcs :",
+                                                                                                    text: "${lableModel.pieces} :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w500,
@@ -621,7 +621,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                               Row(
                                                                                                 children: [
                                                                                                   CustomeText(
-                                                                                                    text: "Wt :",
+                                                                                                    text: "${lableModel.weight} :",
                                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                     fontWeight: FontWeight.w500,
@@ -643,7 +643,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                           Row(
                                                                                             children: [
                                                                                               CustomeText(
-                                                                                                text: "Location :",
+                                                                                                text: "${lableModel.location} :",
                                                                                                 fontColor: MyColor.textColorGrey2,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w500,
@@ -663,7 +663,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                           Row(
                                                                                             children: [
                                                                                               CustomeText(
-                                                                                                text: "Group :",
+                                                                                                text: "${lableModel.group} :",
                                                                                                 fontColor: Colors.pink.shade500,
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                                 fontWeight: FontWeight.bold,
@@ -684,8 +684,8 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                     ),
                                                                                     SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                                                     Expanded(
-                                                                                      flex: 2,
-                                                                                      child: RoundedButton(text: "Split",
+                                                                                      flex: 3,
+                                                                                      child: RoundedButton(text: "${lableModel.split}",
                                                                                         color: MyColor.primaryColorblue,
                                                                                         press: () async {
                                                                                           inactivityTimerManager?.stopTimer();

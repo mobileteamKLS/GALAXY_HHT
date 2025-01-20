@@ -581,13 +581,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         builder: (context) => BuildUpAWBListPage(
                                           importSubMenuList: widget.importSubMenuList,
                                           exportSubMenuList: widget.exportSubMenuList,
-                                          title: "AWB List",
+                                          title: "${lableModel.awbListing}",
                                           refrelCode: widget.refrelCode,
                                           menuId: widget.menuId,
                                           mainMenuName: widget.mainMenuName,
                                           lableModel: lableModel,
                                           carrierCode: carrierCodeController.text,
-                                          flightSeqNo: widget.flightSeqNo,
+                                          flightSeqNo: uldTrolleyItemCheck!.flightSeqNo!,
                                           uldNo: "${uldTrolleyItemCheck!.uLDTrolleyType} ${uldTrolleyItemCheck!.uLDTrolleyNo} ${uldTrolleyItemCheck!.uLDOwner}",
                                           uldSeqNo: uldTrolleyItemCheck!.uLDSeqNo!,
                                           uldType: uldTrolleyItemCheck!.type!,
@@ -735,7 +735,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Carrier code *",
+                                                        labelText: "${lableModel.carriercode} *",
                                                         readOnly: (widget.flightSeqNo != -1) ? true : false,
                                                         maxLength: 3,
                                                         onChanged: (value) {
@@ -770,7 +770,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                           Expanded(
                                                             flex: 1,
                                                             child: RoundedButtonBlue(
-                                                              text: "Build ULD",
+                                                              text: "${lableModel.buildULD}",
                                                               press: () async {
                                                                 _resumeTimerOnInteraction();
 
@@ -784,7 +784,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                             builder: (context) => BuildUpAddULDPage(
                                                                               importSubMenuList: widget.importSubMenuList,
                                                                               exportSubMenuList: widget.exportSubMenuList,
-                                                                              title: "Build ULD", refrelCode: widget.refrelCode,
+                                                                              title: "${lableModel.buildULD}", refrelCode: widget.refrelCode,
                                                                               menuId: widget.menuId,
                                                                               mainMenuName: widget.mainMenuName,
                                                                               flightSeqNo: widget.flightSeqNo,
@@ -808,7 +808,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                         },
                                                                         );
                                                                         Vibration.vibrate(duration: 500);
-                                                                        SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                       }
                                                                     }else{
                                                                       openValidationDialog(lableModel.validateLocation!, locationFocusNode);
@@ -825,7 +825,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                         builder: (context) => BuildUpAddULDPage(
                                                                           importSubMenuList: widget.importSubMenuList,
                                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                                          title: "Build ULD", refrelCode: widget.refrelCode,
+                                                                          title: "${lableModel.buildULD}", refrelCode: widget.refrelCode,
                                                                           menuId: widget.menuId,
                                                                           mainMenuName: widget.mainMenuName,
                                                                           flightSeqNo: widget.flightSeqNo,
@@ -849,7 +849,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                     },
                                                                     );
                                                                     Vibration.vibrate(duration: 500);
-                                                                    SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                   }
                                                                 }
 
@@ -861,7 +861,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                             flex: 1,
                                                             child: RoundedButtonGreen(
                                                               color: (widget.flightSeqNo != -1) ? (isBulkLoad == "N") ? MyColor.primaryColorblue : MyColor.textColorGrey.withOpacity(0.3) : MyColor.textColorGrey.withOpacity(0.3),
-                                                              text: "Build Trolley",
+                                                              text: "${lableModel.buildTrolley}",
                                                               press: () async {
                                                                 _resumeTimerOnInteraction();
 
@@ -875,7 +875,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                             builder: (context) => BuildUpAddTrolleyPage(
                                                                               importSubMenuList: widget.importSubMenuList,
                                                                               exportSubMenuList: widget.exportSubMenuList,
-                                                                              title: "Build Trolley",
+                                                                              title: "${lableModel.buildTrolley}",
                                                                               refrelCode: widget.refrelCode,
                                                                               menuId: widget.menuId,
                                                                               mainMenuName: widget.mainMenuName,
@@ -900,7 +900,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                         builder: (context) => BuildUpAddTrolleyPage(
                                                                           importSubMenuList: widget.importSubMenuList,
                                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                                          title: "Build Trolley",
+                                                                          title: "${lableModel.buildTrolley}",
                                                                           refrelCode: widget.refrelCode,
                                                                           menuId: widget.menuId,
                                                                           mainMenuName: widget.mainMenuName,
@@ -916,14 +916,14 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                     }
                                                                   }else{
                                                                     Vibration.vibrate(duration: 500);
-                                                                    SnackbarUtil.showSnackbar(context, "Trolley not allow", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.trolleynotallow}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                   }
 
 
 
                                                                 }else{
                                                                   Vibration.vibrate(duration: 500);
-                                                                  SnackbarUtil.showSnackbar(context, "Trolley can't build without flight.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                  SnackbarUtil.showSnackbar(context, "${lableModel.trolleyBuildWithoutFlight}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                 }
 
 
@@ -979,7 +979,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                         else if (index == 1) {
                                                                           if(isBulkLoad == "Y"){
                                                                             Vibration.vibrate(duration: 500);
-                                                                            SnackbarUtil.showSnackbar(context, "Trolley not allow", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                            SnackbarUtil.showSnackbar(context, "${lableModel.trolleynotallow}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                           }else{
                                                                             setState(() {
                                                                               _pageIndex = index;
@@ -1023,7 +1023,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                                       mainAxisAlignment: MainAxisAlignment.end,
                                                                       children: [
                                                                         CustomeText(
-                                                                            text: "Show All",
+                                                                            text: "${lableModel.showAll}",
                                                                             fontColor: MyColor.textColorGrey2,
                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                             fontWeight: FontWeight.w500,
@@ -1239,7 +1239,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                           ? Row(
                                         children: [
                                           CustomeText(
-                                            text: "Contour :",
+                                            text: "${lableModel.contour} :",
                                             fontColor: MyColor.textColorGrey2,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                             fontWeight: FontWeight.w500,
@@ -1258,7 +1258,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       Row(
                                         children: [
                                           CustomeText(
-                                            text: "Scale Wt. :",
+                                            text: "${lableModel.scaleWt} :",
                                             fontColor: MyColor.textColorGrey2,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                             fontWeight: FontWeight.w500,
@@ -1331,7 +1331,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
 
-                                      RoundedButton(text: "More",
+                                      RoundedButton(text: "${lableModel.more}",
                                         horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
                                         color: MyColor.primaryColorblue,
@@ -1345,7 +1345,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
 
                                                   if(uldTrolleyItem.uLDSeqNo != 0){
                                                     int? optionNo = await DialogUtils.showULDMoreOptionDialog(
-                                                        context, "More Option for ULD", lableModel);
+                                                        context, "${lableModel.moreOptionforULD}", lableModel);
                                                     if(optionNo == null){
                                                       _resumeTimerOnInteraction();
                                                     }
@@ -1354,7 +1354,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         builder: (context) => CloseULDEquipmentPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Equipment",
+                                                          title: "${lableModel.equipment}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -1377,7 +1377,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         builder: (context) => ContourULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Contour",
+                                                          title: "${lableModel.contour}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -1399,7 +1399,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         builder: (context) => ScaleULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Scale",
+                                                          title: "${lableModel.scale}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -1421,7 +1421,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         builder: (context) => BuildUpAddMailPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Add Mail",
+                                                          title: "${lableModel.addMail}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -1476,7 +1476,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         builder: (context) => ScaleULDPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Scale",
+                                                          title: "${lableModel.scale}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -1505,7 +1505,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   },
                                                   );
                                                   Vibration.vibrate(duration: 500);
-                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                 }
                                               }else{
                                                 openValidationDialog(lableModel.validateLocation!, locationFocusNode);
@@ -1518,7 +1518,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                             if(carrierCodeController.text.isNotEmpty){
                                               if(uldTrolleyItem.uLDSeqNo != 0){
                                                 int? optionNo = await DialogUtils.showULDMoreOptionDialog(
-                                                    context, "More Option for ULD", lableModel);
+                                                    context, "${lableModel.moreOptionforULD}", lableModel);
                                                 if(optionNo == null){
                                                   _resumeTimerOnInteraction();
                                                 }
@@ -1527,7 +1527,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     builder: (context) => CloseULDEquipmentPage(
                                                       importSubMenuList: widget.importSubMenuList,
                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                      title: "Equipment",
+                                                      title: "${lableModel.equipment}",
                                                       refrelCode: widget.refrelCode,
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
@@ -1550,7 +1550,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     builder: (context) => ContourULDPage(
                                                       importSubMenuList: widget.importSubMenuList,
                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                      title: "Contour",
+                                                      title: "${lableModel.contour}",
                                                       refrelCode: widget.refrelCode,
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
@@ -1572,7 +1572,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     builder: (context) => ScaleULDPage(
                                                       importSubMenuList: widget.importSubMenuList,
                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                      title: "Scale",
+                                                      title: "${lableModel.scale}",
                                                       refrelCode: widget.refrelCode,
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
@@ -1594,7 +1594,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     builder: (context) => BuildUpAddMailPage(
                                                       importSubMenuList: widget.importSubMenuList,
                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                      title: "Add Mail",
+                                                      title: "${lableModel.addMail}",
                                                       refrelCode: widget.refrelCode,
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
@@ -1619,7 +1619,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     builder: (context) => CloseULDPage(
                                                       importSubMenuList: widget.importSubMenuList,
                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                      title: "Close ULD",
+                                                      title: "${lableModel.closeULD}",
                                                       refrelCode: widget.refrelCode,
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
@@ -1640,7 +1640,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               }
                                               else{
                                                 int? optionNo = await DialogUtils.showBulkMoreOptionDialog(
-                                                    context, "More Option for BULK", lableModel);
+                                                    context, "${lableModel.moreOptionForBULK}", lableModel);
                                                 if(optionNo == null){
                                                   _resumeTimerOnInteraction();
                                                 }
@@ -1649,7 +1649,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     builder: (context) => ScaleULDPage(
                                                       importSubMenuList: widget.importSubMenuList,
                                                       exportSubMenuList: widget.exportSubMenuList,
-                                                      title: "Scale",
+                                                      title: "${lableModel.scale}",
                                                       refrelCode: widget.refrelCode,
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
@@ -1677,7 +1677,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               },
                                               );
                                               Vibration.vibrate(duration: 500);
-                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             }
                                           }
 
@@ -1687,7 +1687,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
 
 
                                         },),
-                                      RoundedButton(text: "Next",
+                                      RoundedButton(text: "${lableModel.next}",
                                         horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
                                         color: MyColor.primaryColorblue,
@@ -1713,7 +1713,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   },
                                                   );
                                                   Vibration.vibrate(duration: 500);
-                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                 }
                                               }else{
                                                 openValidationDialog(lableModel.validateLocation!, locationFocusNode);
@@ -1760,7 +1760,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               },
                                               );
                                               Vibration.vibrate(duration: 500);
-                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              SnackbarUtil.showSnackbar(context, "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             }
                                           }
 
@@ -1916,7 +1916,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     color: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? MyColor.flightFinalize :MyColor.flightNotArrived
                                                 ),
                                                 child: CustomeText(
-                                                  text: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? "Open" : "Closed",
+                                                  text: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? "${lableModel.open}" : "${lableModel.closed}",
                                                   fontColor: MyColor.textColorGrey3,
                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
                                                   fontWeight: FontWeight.w400,
@@ -1987,7 +1987,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       Row(
                                         children: [
                                           CustomeText(
-                                            text: "Scale Wt. :",
+                                            text: "${lableModel.scaleWt} :",
                                             fontColor: MyColor.textColorGrey2,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                             fontWeight: FontWeight.w500,
@@ -2058,7 +2058,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
-                                      RoundedButton(text: "More",
+                                      RoundedButton(text: "${lableModel.more}",
                                         horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
                                         color: MyColor.primaryColorblue,
@@ -2070,7 +2070,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               if(_isvalidateLocation == true){
                                                 if(carrierCodeController.text.isNotEmpty){
                                                   int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
-                                                      context, "More Option for Trolley", lableModel, "O");
+                                                      context, "${lableModel.moreOptionForTrolley}", lableModel, "O");
 
                                                   print("OptionNo === ${optionNo}");
                                                   if(optionNo == null){
@@ -2081,7 +2081,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                       builder: (context) => CloseULDEquipmentPage(
                                                         importSubMenuList: widget.importSubMenuList,
                                                         exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Equipment",
+                                                        title: "${lableModel.equipment}",
                                                         refrelCode: widget.refrelCode,
                                                         menuId: widget.menuId,
                                                         mainMenuName: widget.mainMenuName,
@@ -2103,7 +2103,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                       builder: (context) => ScaleTrolleyPage(
                                                         importSubMenuList: widget.importSubMenuList,
                                                         exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Scale",
+                                                        title: "${lableModel.scale}",
                                                         refrelCode: widget.refrelCode,
                                                         menuId: widget.menuId,
                                                         mainMenuName: widget.mainMenuName,
@@ -2149,7 +2149,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   },
                                                   );
                                                   Vibration.vibrate(duration: 500);
-                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                 }
                                               }else{
                                                 openValidationDialog(lableModel.validateLocation!, locationFocusNode);
@@ -2161,7 +2161,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                           else{
                                             if(carrierCodeController.text.isNotEmpty){
                                               int? optionNo = await DialogUtils.showTrolleyMoreOptionDialog(
-                                                  context, "More Option for Trolley", lableModel, "O");
+                                                  context, "${lableModel.moreOptionForTrolley}", lableModel, "O");
 
                                               print("OptionNo === ${optionNo}");
                                               if(optionNo == null){
@@ -2172,7 +2172,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   builder: (context) => CloseULDEquipmentPage(
                                                     importSubMenuList: widget.importSubMenuList,
                                                     exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Equipment",
+                                                    title: "${lableModel.equipment}",
                                                     refrelCode: widget.refrelCode,
                                                     menuId: widget.menuId,
                                                     mainMenuName: widget.mainMenuName,
@@ -2194,7 +2194,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   builder: (context) => ScaleTrolleyPage(
                                                     importSubMenuList: widget.importSubMenuList,
                                                     exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Scale",
+                                                    title: "${lableModel.scale}",
                                                     refrelCode: widget.refrelCode,
                                                     menuId: widget.menuId,
                                                     mainMenuName: widget.mainMenuName,
@@ -2215,7 +2215,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   builder: (context) => CloseTrolleyPage(
                                                     importSubMenuList: widget.importSubMenuList,
                                                     exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "Close Trolley",
+                                                    title: "${lableModel.closedTrolley}",
                                                     refrelCode: widget.refrelCode,
                                                     menuId: widget.menuId,
                                                     mainMenuName: widget.mainMenuName,
@@ -2240,13 +2240,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               },
                                               );
                                               Vibration.vibrate(duration: 500);
-                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             }
                                           }
 
                                         },
                                       ),
-                                      RoundedButton(text: "Next",
+                                      RoundedButton(text: "${lableModel.next}",
                                         horizontalPadding: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,
                                         verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT_1_5,
                                         color: MyColor.primaryColorblue,
@@ -2263,13 +2263,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                       builder: (context) => BuildUpAWBListPage(
                                                         importSubMenuList: widget.importSubMenuList,
                                                         exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "AWB List",
+                                                        title: "${lableModel.awbListing}",
                                                         refrelCode: widget.refrelCode,
                                                         menuId: widget.menuId,
                                                         mainMenuName: widget.mainMenuName,
                                                         lableModel: lableModel,
                                                         carrierCode: carrierCodeController.text,
-                                                        flightSeqNo: widget.flightSeqNo,
+                                                        flightSeqNo: uldTrolleyItem.flightSeqNo!,
                                                         uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
                                                         uldSeqNo: uldTrolleyItem.uLDSeqNo!,
                                                         uldType: uldTrolleyItem.type!,
@@ -2294,7 +2294,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   },
                                                   );
                                                   Vibration.vibrate(duration: 500);
-                                                  SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                  SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                 }
                                               }else{
                                                 openValidationDialog(lableModel.validateLocation!, locationFocusNode);
@@ -2309,13 +2309,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                   builder: (context) => BuildUpAWBListPage(
                                                     importSubMenuList: widget.importSubMenuList,
                                                     exportSubMenuList: widget.exportSubMenuList,
-                                                    title: "AWB List",
+                                                    title: "${lableModel.awbListing}",
                                                     refrelCode: widget.refrelCode,
                                                     menuId: widget.menuId,
                                                     mainMenuName: widget.mainMenuName,
                                                     lableModel: lableModel,
                                                     carrierCode: carrierCodeController.text,
-                                                    flightSeqNo: widget.flightSeqNo,
+                                                    flightSeqNo: uldTrolleyItem.flightSeqNo!,
                                                     uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
                                                     uldSeqNo: uldTrolleyItem.uLDSeqNo!,
                                                     uldType: uldTrolleyItem.type!,
@@ -2337,7 +2337,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               },
                                               );
                                               Vibration.vibrate(duration: 500);
-                                              SnackbarUtil.showSnackbar(context, "Please enter carrier code", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              SnackbarUtil.showSnackbar(context,  "${lableModel.pleaseEnterCarrierCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             }
                                           }
                                         },

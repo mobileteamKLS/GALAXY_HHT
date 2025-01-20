@@ -619,7 +619,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                                                 child:  RoundedButtonBlue(text: "${lableModel.start}", press: () async {
                                                                   inactivityTimerManager?.stopTimer();
                                                                   await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpULDPage(
-                                                                    importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: "Build Up", refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "", offPoint: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.routePoint! : "", lableModel: lableModel,)));
+                                                                    importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: widget.title, refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "", offPoint: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.routePoint! : "", lableModel: lableModel,)));
 
                                                             },))
                                                           ],
@@ -784,7 +784,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CustomeText(
-                            text: "Remaining : ",
+                            text: "${lableModel.remaining} : ",
                             fontColor: MyColor.textColorGrey2,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w400,
@@ -910,7 +910,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                     color: MyColor.subMenuColorList[0]
                                 ),
                                 child: CustomeText(
-                                  text: "ULD - ${(flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.uLDCount : ""}",
+                                  text: "${lableModel.uldLable} - ${(flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.uLDCount : ""}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w600,
@@ -925,7 +925,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                                     color: MyColor.subMenuColorList[1]
                                 ),
                                 child: CustomeText(
-                                  text: "Trolley - ${ (flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.trolleyCount : ""}",
+                                  text: "${lableModel.trolley} - ${ (flightSearchModel != null) ? flightSearchModel!.flightStatusDetail!.trolleyCount : ""}",
                                   fontColor: MyColor.textColorGrey3,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w600,
@@ -942,7 +942,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           CustomeText(
-                            text: "Pieces",
+                            text: "${lableModel.pieces}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w700,
@@ -958,7 +958,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         children: [
 
                           CustomeText(
-                            text: "Weight",
+                            text: "${lableModel.weight}",
                             fontColor: MyColor.textColorGrey3,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w700,
@@ -986,7 +986,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomeText(
-                            text: "Cargo",
+                            text: "${lableModel.cargo}",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -1044,7 +1044,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomeText(
-                            text: "Mail",
+                            text: "${lableModel.mail}",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -1102,7 +1102,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomeText(
-                            text: "Courier",
+                            text: "${lableModel.courier}",
                             fontColor: MyColor.textColorGrey3.withOpacity(0.7),
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,
@@ -1160,7 +1160,7 @@ class _BuildUpPageState extends State<BuildUpPage>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CustomeText(
-                            text: "Total",
+                            text: "${lableModel.total}",
                             fontColor: MyColor.colorBlack,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                             fontWeight: FontWeight.w600,

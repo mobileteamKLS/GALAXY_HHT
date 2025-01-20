@@ -402,7 +402,7 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                     SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
                                     SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                     CustomeText(
-                                        text: "Presets Remark",
+                                        text: "Presets",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                         fontWeight: FontWeight.w700,
@@ -566,13 +566,13 @@ class _RemarkULDPageState extends State<RemarkULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Save",
+                                      text: "${lableModel.save}",
                                       press: () {
 
                                         if(remarkController.text.isNotEmpty){
                                           if(remarkController.text.length >= 53){
                                             Vibration.vibrate(duration: 500);
-                                            SnackbarUtil.showSnackbar(context, "Remarks should not be more than 53 characters.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.remarksshouldnotbemorethan53characters}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               FocusScope.of(context).requestFocus(remarkFocus);
                                             });

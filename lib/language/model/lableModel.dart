@@ -524,6 +524,107 @@ class LableModel {
   String? s2540;
   String? s2541;
 
+  String? uCB;
+  String? uCD;
+  String? uCP;
+  String? uEB;
+  String? uEP;
+  String? uFB;
+  String? uFP;
+  String? uHD;
+  String? uLD;
+  String? uPD;
+  String? uSB;
+  String? uSP;
+  String? uTB;
+  String? uTM;
+  String? uWD;
+
+  String? close;
+  String? tareWt;
+  String? netWt;
+  String? equipWt;
+  String? scaleWt;
+  String? devWt;
+  String? devPer;
+  String? equipUsed;
+  String? contour;
+  String? offPoint;
+  String? equipment;
+  String? scale;
+  String? pleaseScanULD;
+  String? reOpenULD;
+  String? areyousurewanttoclosethisuld;
+  String? areyousurewanttoreopenthisuld;
+
+  String? uldDetail;
+  String? uldTareWeight;
+  String? uldShipmentWeight;
+  String? documentNo;
+  String? vol;
+  String? airwaybill;
+  String? total;
+  String? courier;
+  String? quantity;
+  String? quantityshouldnotbeblank;
+  String? weightshouldnotbeblank;
+  String? height;
+  String? pleaseselect1machine;
+  String? pleaseenterheight;
+  String? pleaseselect1contour;
+  String? getWeight;
+  String? remarksshouldnotbemorethan53characters;
+
+  String? closedTrolley;
+  String? reOpenTrolley;
+  String? areyousurewanttoclosethistrolley;
+  String? areyousurewanttoreopenthistrolley;
+  String? pleaseScanTrolley;
+  String? trolleyDetail;
+  String? trolleyTareWeight;
+  String? trolleyShipmentWeight;
+
+
+  String? remaining;
+  String? uldLable;
+  String? trolleyLable;
+  String? carriercode;
+  String? buildULD;
+  String? pleaseEnterCarrierCode;
+  String? buildTrolley;
+  String? trolleynotallow;
+  String? trolleyBuildWithoutFlight;
+  String? showAll;
+  String? more;
+  String? moreOptionforULD;
+  String? closeULD;
+  String? moreOptionForBULK;
+  String? moreOptionForTrolley;
+  String? closeTrolley;
+  String? addtothisULDNo;
+  String? addtothisBULK;
+  String? addtothisTrolleyNo;
+  String? awbGroupList;
+  String? addShipment;
+  String? addtothisAWBNo;
+  String? scanGroupId;
+  String? invalidGroupId;
+  String? modeOfSecurity;
+  String? pleaseEnterOffpoint;
+  String? shccodealreadyinlist;
+  String? confirmDestination;
+  String? shcCompibility;
+  String? shcCodes;
+  String? noAnySHCCode;
+  String? pleaseEnterShcCode;
+  String? addOnly9ShcCode;
+
+  String? group;
+  String? split;
+  String? remainingNoPis0splitgroup;
+  String? remainingWeightis0splitgroup;
+
+
   String? removeShipment;
   String? removeforthisawbmsg;
   String? remainingNop;
@@ -1062,7 +1163,105 @@ class LableModel {
         this.create,
         this.scanuldmsg,
         this.scantrolleymsg,
-        this.currentuldownermsg
+        this.currentuldownermsg,
+
+        this.close,
+        this.tareWt,
+        this.netWt,
+        this.equipWt,
+        this.scaleWt,
+        this.devWt,
+        this.devPer,
+        this.equipUsed,
+        this.contour,
+        this.offPoint,
+        this.equipment,
+        this.scale,
+        this.pleaseScanULD,
+        this.reOpenULD,
+        this.areyousurewanttoclosethisuld,
+        this.areyousurewanttoreopenthisuld,
+        this.uldDetail,
+        this.uldTareWeight,
+        this.uldShipmentWeight,
+        this.documentNo,
+        this.vol,
+        this.airwaybill,
+        this.total,
+        this.courier,
+        this.quantity,
+        this.quantityshouldnotbeblank,
+        this.weightshouldnotbeblank,
+        this.height,
+        this.pleaseselect1machine,
+        this.pleaseenterheight,
+        this.pleaseselect1contour,
+        this.getWeight,
+        this.remarksshouldnotbemorethan53characters,
+
+        this.closedTrolley,
+        this.reOpenTrolley,
+        this.areyousurewanttoclosethistrolley,
+        this.areyousurewanttoreopenthistrolley,
+        this.pleaseScanTrolley,
+        this.trolleyDetail,
+        this.trolleyTareWeight,
+        this.trolleyShipmentWeight,
+
+        this.remaining,
+        this.uldLable,
+        this.trolleyLable,
+        this.carriercode,
+        this.buildULD,
+        this.pleaseEnterCarrierCode,
+        this.buildTrolley,
+        this.trolleynotallow,
+        this.trolleyBuildWithoutFlight,
+        this.showAll,
+        this.more,
+        this.moreOptionforULD,
+        this.closeULD,
+        this.moreOptionForBULK,
+        this.moreOptionForTrolley,
+        this.closeTrolley,
+        this.addtothisULDNo,
+        this.addtothisBULK,
+        this.addtothisTrolleyNo,
+        this.awbGroupList,
+        this.addShipment,
+        this.addtothisAWBNo,
+        this.scanGroupId,
+        this.invalidGroupId,
+        this.modeOfSecurity,
+        this.pleaseEnterOffpoint,
+        this.shccodealreadyinlist,
+        this.confirmDestination,
+        this.shcCompibility,
+        this.shcCodes,
+        this.noAnySHCCode,
+        this.pleaseEnterShcCode,
+        this.addOnly9ShcCode,
+
+        this.group,
+        this.split,
+        this.remainingNoPis0splitgroup,
+        this.remainingWeightis0splitgroup,
+
+        this.uCB,
+        this.uCD,
+        this.uCP,
+        this.uEB,
+        this.uEP,
+        this.uFB,
+        this.uFP,
+        this.uHD,
+        this.uLD,
+        this.uPD,
+        this.uSB,
+        this.uSP,
+        this.uTB,
+        this.uTM,
+        this.uWD
       });
 
   LableModel.fromJson(Map<String, dynamic> json) {
@@ -1602,6 +1801,106 @@ class LableModel {
     scanuldmsg = json['scanuldmsg'];
     scantrolleymsg = json['scantrolleymsg'];
     currentuldownermsg = json['currentuldownermsg'];
+
+    close = json['close'];
+    tareWt = json['tareWt'];
+    netWt = json['netWt'];
+    equipWt = json['equipWt'];
+    scaleWt = json['scaleWt'];
+    devWt = json['devWt'];
+    devPer = json['devPer'];
+    equipUsed = json['equipUsed'];
+    contour = json['contour'];
+    offPoint = json['offPoint'];
+    equipment = json['equipment'];
+    scale = json['scale'];
+    pleaseScanULD = json['pleaseScanULD.'];
+    reOpenULD = json['reOpenULD'];
+    areyousurewanttoclosethisuld = json['areyousurewanttoclosethisuld'];
+    areyousurewanttoreopenthisuld = json['areyousurewanttoreopenthisuld'];
+
+    uldDetail = json['uldDetail'];
+    uldTareWeight = json['uldTareWeight'];
+    uldShipmentWeight = json['uldShipmentWeight'];
+    documentNo = json['documentNo'];
+    vol = json['vol'];
+    airwaybill = json['airwaybill'];
+    total = json['total'];
+    courier = json['courier'];
+    quantity = json['quantity'];
+    quantityshouldnotbeblank = json['quantityshouldnotbeblank'];
+    weightshouldnotbeblank = json['weightshouldnotbeblank'];
+    height = json['height'];
+    pleaseselect1machine = json['pleaseselect1machine'];
+    pleaseenterheight = json['pleaseenterheight'];
+    pleaseselect1contour = json['pleaseselect1contour.'];
+    getWeight = json['getWeight'];
+    remarksshouldnotbemorethan53characters = json['remarksshouldnotbemorethan53characters'];
+
+    closedTrolley = json['closedTrolley'];
+    reOpenTrolley = json['reOpenTrolley'];
+    areyousurewanttoclosethistrolley = json['areyousurewanttoclosethistrolley'];
+    areyousurewanttoreopenthistrolley = json['areyousurewanttoreopenthistrolley'];
+    pleaseScanTrolley = json['pleaseScanTrolley.'];
+    trolleyDetail = json['trolleyDetail'];
+    trolleyTareWeight = json['trolleyTareWeight'];
+    trolleyShipmentWeight = json['trolleyShipmentWeight'];
+
+    remaining = json['Remaining'];
+    uldLable = json['uldLable'];
+    trolleyLable = json['trolleyLable'];
+    carriercode = json['carriercode'];
+    buildULD = json['buildULD'];
+    pleaseEnterCarrierCode = json['pleaseEnterCarrierCode'];
+    buildTrolley = json['buildTrolley'];
+    trolleynotallow = json['trolleynotallow'];
+    trolleyBuildWithoutFlight = json['TrolleyBuildWithoutFlight'];
+    showAll = json['showAll'];
+    more = json['more'];
+    moreOptionforULD = json['moreOptionforULD'];
+    closeULD = json['closeULD'];
+    moreOptionForBULK = json['moreOptionForBULK'];
+    moreOptionForTrolley = json['moreOptionForTrolley'];
+    closeTrolley = json['closeTrolley'];
+    addtothisULDNo = json['addtothisULDNo'];
+    addtothisBULK = json['addtothisBULK'];
+    addtothisTrolleyNo = json['addtothisTrolleyNo'];
+    awbGroupList = json['awbGroupList'];
+    addShipment = json['addShipment'];
+    addtothisAWBNo = json['addtothisAWBNo'];
+    scanGroupId = json['scanGroupId'];
+    invalidGroupId = json['invalidGroupId'];
+    modeOfSecurity = json['modeOfSecurity'];
+    pleaseEnterOffpoint = json['pleaseEnterOffpoint.'];
+    shccodealreadyinlist = json['shccodealreadyinlist'];
+    confirmDestination = json['confirmDestination'];
+    shcCompibility = json['shcCompibility'];
+    shcCodes = json['shcCodes'];
+    noAnySHCCode = json['noAnySHCCode'];
+    pleaseEnterShcCode = json['pleaseEnterShcCode'];
+    addOnly9ShcCode = json['addOnly9ShcCode'];
+
+    group = json['group'];
+    split = json['split'];
+    remainingNoPis0splitgroup = json['RemainingNoPis0splitgroup'];
+    remainingWeightis0splitgroup = json['RemainingWeightis0splitgroup'];
+
+
+    uCB = json['UCB'];
+    uCD = json['UCD'];
+    uCP = json['UCP'];
+    uEB = json['UEB'];
+    uEP = json['UEP'];
+    uFB = json['UFB'];
+    uFP = json['UFP'];
+    uHD = json['UHD'];
+    uLD = json['ULD'];
+    uPD = json['UPD'];
+    uSB = json['USB'];
+    uSP = json['USP'];
+    uTB = json['UTB'];
+    uTM = json['UTM'];
+    uWD = json['UWD'];
   }
 
   Map<String, dynamic> toJson() {
@@ -2139,6 +2438,107 @@ class LableModel {
     data['scantrolleymsg'] = this.scantrolleymsg;
     data['currentuldownermsg'] = this.currentuldownermsg;
 
+    data['close'] = this.close;
+    data['tareWt'] = this.tareWt;
+    data['netWt'] = this.netWt;
+    data['equipWt'] = this.equipWt;
+    data['scaleWt'] = this.scaleWt;
+    data['devWt'] = this.devWt;
+    data['devPer'] = this.devPer;
+    data['equipUsed'] = this.equipUsed;
+    data['contour'] = this.contour;
+    data['offPoint'] = this.offPoint;
+    data['equipment'] = this.equipment;
+    data['scale'] = this.scale;
+    data['pleaseScanULD.'] = this.pleaseScanULD;
+    data['reOpenULD'] = this.reOpenULD;
+    data['areyousurewanttoclosethisuld'] = this.areyousurewanttoclosethisuld;
+    data['areyousurewanttoreopenthisuld'] = this.areyousurewanttoreopenthisuld;
+
+    data['uldDetail'] = this.uldDetail;
+    data['uldTareWeight'] = this.uldTareWeight;
+    data['uldShipmentWeight'] = this.uldShipmentWeight;
+    data['documentNo'] = this.documentNo;
+    data['vol'] = this.vol;
+    data['airwaybill'] = this.airwaybill;
+    data['total'] = this.total;
+    data['courier'] = this.courier;
+    data['quantity'] = this.quantity;
+    data['quantityshouldnotbeblank'] = this.quantityshouldnotbeblank;
+    data['weightshouldnotbeblank'] = this.weightshouldnotbeblank;
+    data['height'] = this.height;
+    data['pleaseselect1machine'] = this.pleaseselect1machine;
+    data['pleaseenterheight'] = this.pleaseenterheight;
+    data['pleaseselect1contour.'] = this.pleaseselect1contour;
+    data['getWeight'] = this.getWeight;
+    data['remarksshouldnotbemorethan53characters'] = this.remarksshouldnotbemorethan53characters;
+
+    data['closedTrolley'] = this.closedTrolley;
+    data['reOpenTrolley'] = this.reOpenTrolley;
+    data['areyousurewanttoclosethistrolley'] = this.areyousurewanttoclosethistrolley;
+    data['areyousurewanttoreopenthistrolley'] = this.areyousurewanttoreopenthistrolley;
+    data['pleaseScanTrolley.'] = this.pleaseScanTrolley;
+    data['trolleyDetail'] = this.trolleyDetail;
+    data['trolleyTareWeight'] = this.trolleyTareWeight;
+    data['trolleyShipmentWeight'] = this.trolleyShipmentWeight;
+
+
+    data['Remaining'] = this.remaining;
+    data['uldLable'] = this.uldLable;
+    data['trolleyLable'] = this.trolleyLable;
+    data['carriercode'] = this.carriercode;
+    data['buildULD'] = this.buildULD;
+    data['pleaseEnterCarrierCode'] = this.pleaseEnterCarrierCode;
+    data['buildTrolley'] = this.buildTrolley;
+    data['trolleynotallow'] = this.trolleynotallow;
+    data['TrolleyBuildWithoutFlight'] = this.trolleyBuildWithoutFlight;
+    data['showAll'] = this.showAll;
+    data['more'] = this.more;
+    data['moreOptionforULD'] = this.moreOptionforULD;
+    data['closeULD'] = this.closeULD;
+    data['moreOptionForBULK'] = this.moreOptionForBULK;
+    data['moreOptionForTrolley'] = this.moreOptionForTrolley;
+    data['closeTrolley'] = this.closeTrolley;
+    data['addtothisULDNo'] = this.addtothisULDNo;
+    data['addtothisBULK'] = this.addtothisBULK;
+    data['addtothisTrolleyNo'] = this.addtothisTrolleyNo;
+    data['awbGroupList'] = this.awbGroupList;
+    data['addShipment'] = this.addShipment;
+    data['addtothisAWBNo'] = this.addtothisAWBNo;
+    data['scanGroupId'] = this.scanGroupId;
+    data['invalidGroupId'] = this.invalidGroupId;
+    data['modeOfSecurity'] = this.modeOfSecurity;
+    data['pleaseEnterOffpoint.'] = this.pleaseEnterOffpoint;
+    data['shccodealreadyinlist'] = this.shccodealreadyinlist;
+    data['confirmDestination'] = this.confirmDestination;
+    data['shcCompibility'] = this.shcCompibility;
+    data['shcCodes'] = this.shcCodes;
+    data['noAnySHCCode'] = this.noAnySHCCode;
+    data['pleaseEnterShcCode'] = this.pleaseEnterShcCode;
+    data['addOnly9ShcCode'] = this.addOnly9ShcCode;
+
+
+    data['group'] = this.group;
+    data['split'] = this.split;
+    data['RemainingNoPis0splitgroup'] = this.remainingNoPis0splitgroup;
+    data['RemainingWeightis0splitgroup'] = this.remainingWeightis0splitgroup;
+
+    data['UCB'] = this.uCB;
+    data['UCD'] = this.uCD;
+    data['UCP'] = this.uCP;
+    data['UEB'] = this.uEB;
+    data['UEP'] = this.uEP;
+    data['UFB'] = this.uFB;
+    data['UFP'] = this.uFP;
+    data['UHD'] = this.uHD;
+    data['ULD'] = this.uLD;
+    data['UPD'] = this.uPD;
+    data['USB'] = this.uSB;
+    data['USP'] = this.uSP;
+    data['UTB'] = this.uTB;
+    data['UTM'] = this.uTM;
+    data['UWD'] = this.uWD;
+
     return data;
   }
 
@@ -2147,6 +2547,36 @@ class LableModel {
     switch(key){
       case 'HS00001':
         return HS00001;
+      case 'UCB' :
+        return uCB;
+      case 'UCD' :
+        return uCD;
+      case 'UCP' :
+        return uCP;
+      case 'UEB' :
+        return uEB;
+      case 'UEP' :
+        return uEP;
+      case 'UFB' :
+        return uFB;
+      case 'UFP' :
+        return uFP;
+      case 'UHD' :
+        return uHD;
+      case 'ULD' :
+        return uLD;
+      case 'UPD' :
+        return uPD;
+      case 'USB' :
+        return uSB;
+      case 'USP' :
+        return uSP;
+      case 'UTB' :
+        return uTB;
+      case 'UTM' :
+        return uTM;
+      case 'UWD' :
+        return uWD;
       case '654':
         return s654;
       case '655':

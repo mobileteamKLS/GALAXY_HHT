@@ -427,7 +427,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Tare Weight",
+                                                        labelText: "${lableModel.tareWt}",
                                                         controller: tareWeightController,
                                                         readOnly: false,
                                                         maxLength: 10,
@@ -465,7 +465,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "Priority",
+                                                              labelText: "${lableModel.priority}",
                                                               readOnly: false,
                                                               controller: priorityController,
                                                               maxLength: 2,
@@ -498,7 +498,7 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                                               hastextcolor: true,
                                                               animatedLabel: true,
                                                               needOutlineBorder: true,
-                                                              labelText: "OffPoint *",
+                                                              labelText: "${lableModel.offPoint} *",
                                                               readOnly: false,
                                                               controller: routeController,
                                                               maxLength: 3,
@@ -574,20 +574,20 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Save",
+                                      text: "${lableModel.save}",
                                       press: () {
                                         if(trollyTypeController.text.isNotEmpty){
                                           if(trollyNumberController.text.isNotEmpty){
                                             if(routeController.text.isNotEmpty){
                                               saveTrolley();
                                             }else{
-                                              openValidationDialog("Please enter offpoint.", routeFocusNode);
+                                              openValidationDialog("${lableModel.pleaseEnterOffpoint}", routeFocusNode);
                                             }
                                           }else{
-                                            openValidationDialog("Please enter Trolley Number.", trollyNumberFocusNode);
+                                            openValidationDialog("${lableModel.entertrollyNumberMsg}", trollyNumberFocusNode);
                                           }
                                         }else{
-                                          openValidationDialog("Please enter Trolley Type.", trollyTypeFocusNode);
+                                          openValidationDialog("${lableModel.entertrollyTypeMsg}", trollyTypeFocusNode);
                                         }
                                       },
                                     ),

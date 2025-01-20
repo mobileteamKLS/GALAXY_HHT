@@ -522,7 +522,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                               builder: (context) => TrolleyDetailPage(
                                                                 importSubMenuList: widget.importSubMenuList,
                                                                 exportSubMenuList: widget.exportSubMenuList,
-                                                                title: "Trolley Detail",
+                                                                title: lableModel.trolleyDetail!,
                                                                 refrelCode: widget.refrelCode,
                                                                 menuId: widget.menuId,
                                                                 mainMenuName: widget.mainMenuName,
@@ -538,7 +538,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                             }
 
                                                           }else{
-                                                            SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                            SnackbarUtil.showSnackbar(context, lableModel.pleaseScanTrolley!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                             Vibration.vibrate(duration: 500);
                                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                                               FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
@@ -572,7 +572,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Tare Wt. :",
+                                                              text: "${lableModel.tareWt} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -598,7 +598,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                                       textAlign: TextAlign.start,
                                                                     ),
                                                                     CustomeText(
-                                                                      text: " Kg",
+                                                                      text: " ${lableModel.kg}",
                                                                       fontColor: MyColor.colorBlack,
                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                       fontWeight: FontWeight.w700,
@@ -632,7 +632,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: " Kg",
+                                                                  text: " ${lableModel.kg}",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -649,7 +649,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: " Kg",
+                                                                  text: " ${lableModel.kg}",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -664,7 +664,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                         children: [
                                                           CustomeText(
-                                                            text: "Net Wt. : ",
+                                                            text: "${lableModel.netWt} : ",
                                                             fontColor: MyColor.textColorGrey2,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                             fontWeight: FontWeight.w500,
@@ -681,7 +681,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                                 textAlign: TextAlign.start,
                                                               ),
                                                               CustomeText(
-                                                                text: " Kg",
+                                                                text: " ${lableModel.kg}",
                                                                 fontColor: MyColor.colorBlack,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w700,
@@ -697,7 +697,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Equip Wt. : ",
+                                                              text: "${lableModel.equipWt} : ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -714,7 +714,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: " Kg",
+                                                                  text: " ${lableModel.kg}",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -730,7 +730,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Scale Wt. : ",
+                                                              text: "${lableModel.scaleWt} : ",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -747,7 +747,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: " Kg",
+                                                                  text: " ${lableModel.kg}",
                                                                   fontColor: MyColor.colorBlack,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w700,
@@ -770,7 +770,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Dev. Wt: ",
+                                                              text: "${lableModel.devWt} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -792,7 +792,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Dev. Per: ",
+                                                              text: "${lableModel.devPer} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -814,7 +814,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                           mainAxisAlignment:MainAxisAlignment.spaceBetween,
                                                           children: [
                                                             CustomeText(
-                                                              text: "Equip. Used : ",
+                                                              text: "${lableModel.equipUsed} :",
                                                               fontColor: MyColor.textColorGrey2,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                               fontWeight: FontWeight.w500,
@@ -888,7 +888,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                               Row(
                                                 children: [
                                                   CustomeText(
-                                                    text: "Flight No. : ",
+                                                    text: "${lableModel.flightNo} :",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -910,7 +910,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                               Row(
                                                 children: [
                                                   CustomeText(
-                                                    text: "Off Point : ",
+                                                    text: "${lableModel.offPoint} :",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -945,7 +945,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                   color: MyColor.btnColor1,
                                                   textColor: MyColor.colorBlack,
                                                   focusNode: equipmentBtnFocusNode,
-                                                  text: "Equipment",
+                                                  text: "${lableModel.equipment}",
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                   press: () async {
@@ -956,7 +956,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                       builder: (context) => CloseULDEquipmentPage(
                                                           importSubMenuList: widget.importSubMenuList,
                                                           exportSubMenuList: widget.exportSubMenuList,
-                                                          title: "Equipment",
+                                                          title: "${lableModel.equipment}",
                                                           refrelCode: widget.refrelCode,
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
@@ -975,7 +975,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
 
 
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, lableModel.pleaseScanTrolley!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                       Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
@@ -994,7 +994,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                   focusNode: scaleBtnFocusNode,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Scale",
+                                                  text: "${lableModel.scale}",
                                                   press: () async {
                                                     scanTrolleyFocusNode.unfocus();
                                                     scanTrolleyBtnFocusNode.unfocus();
@@ -1002,7 +1002,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                       var value = await Navigator.push(context, CupertinoPageRoute(builder: (context) => ScaleTrolleyPage(
                                                         importSubMenuList: widget.importSubMenuList,
                                                         exportSubMenuList: widget.exportSubMenuList,
-                                                        title: "Scale", refrelCode: widget.refrelCode,
+                                                        title: "${lableModel.scale}", refrelCode: widget.refrelCode,
                                                         menuId: widget.menuId,
                                                         mainMenuName: widget.mainMenuName,
                                                         uldNo: trolleyDetail!.trolleyNo!,
@@ -1017,7 +1017,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                                         _resumeTimerOnInteraction();
                                                       }
                                                     }else{
-                                                      SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                      SnackbarUtil.showSnackbar(context, lableModel.pleaseScanTrolley! , MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                       Vibration.vibrate(duration: 500);
                                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                                         FocusScope.of(context).requestFocus(scanTrolleyFocusNode);
@@ -1070,7 +1070,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: (trolleyDetail != null) ? (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "Close" : "Re-Open" : "Close",
+                                      text: (trolleyDetail != null) ? (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "${lableModel.close}" : "${lableModel.reOpen}" : "${lableModel.close}",
                                       press: () async {
                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                           FocusScope.of(context).requestFocus(scanTrolleyBtnFocusNode);
@@ -1078,7 +1078,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                         if(trolleyDetail != null){
                                           // call api for close and re open
 
-                                          bool? closeReopenTrolley = await DialogUtils.closeReopenULDDialog(context, trolleyDetail!.trolleyNo!, (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "Closed Trolley" : "Re-Open Trolley", (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? "Are you sure want to close this Trolley ?" : "Are you sure want to re-open this Trolley ?" , lableModel);
+                                          bool? closeReopenTrolley = await DialogUtils.closeReopenULDDialog(context, trolleyDetail!.trolleyNo!, (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? lableModel.closedTrolley! : lableModel.reOpenTrolley!, (trolleyDetail!.trolleyStatus == "O" || trolleyDetail!.trolleyStatus == "R") ? lableModel.areyousurewanttoclosethistrolley! : lableModel.areyousurewanttoreopenthistrolley! , lableModel);
 
 
                                           if(closeReopenTrolley == true){
@@ -1095,7 +1095,7 @@ class _CloseTrolleyPageState extends State<CloseTrolleyPage>{
                                           }
                                         }
                                         else{
-                                          SnackbarUtil.showSnackbar(context, "Please scan Trolley.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, lableModel.pleaseScanTrolley!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(scanTrolleyFocusNode);

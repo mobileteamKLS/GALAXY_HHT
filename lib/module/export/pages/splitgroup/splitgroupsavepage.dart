@@ -452,14 +452,14 @@ class _SplitGroupSavePageState extends State<SplitGroupSavePage>{
                                                             Row(
                                                               children: [
                                                                 CustomeText(
-                                                                  text: "House :",
+                                                                  text: (widget.splitGroup.acceptanceLevel == "H") ? "House :" : (widget.splitGroup.acceptanceLevel == "S") ? "SBNo :" : (widget.splitGroup.acceptanceLevel == "M") ? "MPS No." : (widget.splitGroup.acceptanceLevel == "B") ? "BAG :" : "",
                                                                   fontColor: MyColor.textColorGrey2,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                   fontWeight: FontWeight.w400,
                                                                   textAlign: TextAlign.start,
                                                                 ),
                                                                 CustomeText(
-                                                                  text: (widget.splitGroup.houseNo!.isNotEmpty) ? widget.splitGroup.houseNo! : "-",
+                                                                  text: (widget.splitGroup.acceptanceLevel == "H") ? widget.splitGroup.houseNo! : (widget.splitGroup.acceptanceLevel == "S") ? "${widget.splitGroup.sBNo!}" : (widget.splitGroup.acceptanceLevel == "M") ? widget.splitGroup.mPSNo! : (widget.splitGroup.acceptanceLevel == "B") ? widget.splitGroup.bAG! : "",
                                                                   fontColor: MyColor.textColorGrey3,
                                                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                   fontWeight: FontWeight.w600,
@@ -473,7 +473,7 @@ class _SplitGroupSavePageState extends State<SplitGroupSavePage>{
                                                         Row(
                                                           children: [
                                                             CustomeText(
-                                                              text: "Group :",
+                                                              text: "${lableModel.group} :",
                                                               fontColor: Colors.pink.shade500,
                                                               fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                               fontWeight: FontWeight.bold,
@@ -530,7 +530,7 @@ class _SplitGroupSavePageState extends State<SplitGroupSavePage>{
                                                             hastextcolor: true,
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
-                                                            labelText: "NoP",
+                                                            labelText: "${lableModel.nop}",
                                                             readOnly: false,
                                                             onChanged: (value) {
                                                               if (value.isNotEmpty) {
@@ -805,7 +805,7 @@ class _SplitGroupSavePageState extends State<SplitGroupSavePage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Split",
+                                      text: "${lableModel.split}",
                                       press: () {
 
                                         if (nopController.text.isEmpty) {
@@ -881,7 +881,7 @@ class _SplitGroupSavePageState extends State<SplitGroupSavePage>{
                                         }
 
                                         if (differenceNop == 0) {
-                                          SnackbarUtil.showSnackbar(context, "Remaining NoP is 0 can't split group", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "${lableModel.remainingNoPis0splitgroup}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(nopFocusNode);
@@ -892,7 +892,7 @@ class _SplitGroupSavePageState extends State<SplitGroupSavePage>{
                                         }
 
                                         if (differenceWeight == 0.00) {
-                                          SnackbarUtil.showSnackbar(context, "Remaining weight is 0 can't split group", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "${lableModel.remainingWeightis0splitgroup}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           Vibration.vibrate(duration: 500);
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
                                             FocusScope.of(context).requestFocus(weightFocusNode);

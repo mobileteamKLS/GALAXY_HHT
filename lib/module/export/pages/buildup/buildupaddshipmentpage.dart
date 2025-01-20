@@ -57,6 +57,7 @@ class BuildUpAddShipmentPage extends StatefulWidget {
   String dgType;
   int dgSeqNo;
   String dgReference;
+  String carrierCode;
   int groupId;
 
 
@@ -83,7 +84,8 @@ class BuildUpAddShipmentPage extends StatefulWidget {
     required this.dgType,
     required this.dgSeqNo,
     required this.dgReference,
-    required this.groupId
+    required this.groupId,
+    required this.carrierCode
 
    });
 
@@ -365,7 +367,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
 
                                     } else {
 
-                                      SnackbarUtil.showSnackbar(context, "SHC code already exists in the list.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      SnackbarUtil.showSnackbar(context, "${lableModel.shccodealreadyinlist}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                       Vibration.vibrate(duration: 500);
 
                                     }
@@ -388,7 +390,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else if(state.addShipmentModel.status == "W"){
-                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "Confirm destination", state.addShipmentModel.statusMessage! , lableModel);
+                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "${lableModel.confirmDestination}", state.addShipmentModel.statusMessage! , lableModel);
 
                                     if(addShipmentDiffDialog == true){
                                       destinationWarningInd = "Y";
@@ -406,7 +408,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     */
 
-                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "SHC Compibility", state.addShipmentModel.statusMessage! , lableModel);
+                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "${lableModel.shcCompibility}", state.addShipmentModel.statusMessage! , lableModel);
 
                                     if(addShipmentDiffDialog == true){
                                       shcCompibilityWarningInd = "Y";
@@ -498,7 +500,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                                     hastextcolor: true,
                                                                     animatedLabel: true,
                                                                     needOutlineBorder: true,
-                                                                    labelText: "NoP",
+                                                                    labelText: "${lableModel.nop}",
                                                                     readOnly: false,
                                                                     onChanged: (value) {
                                                                       if (value.isNotEmpty) {
@@ -657,7 +659,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                         ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical ),
                                                         RoundedButtonBlue(
-                                                          text: "Add Shipment",
+                                                          text: "${lableModel.addShipment}",
                                                           press: () {
                                                             if (nopController.text.isEmpty) {
 
@@ -763,7 +765,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
 
-                                                        CustomeText(text: "SHC Codes", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.end),
+                                                        CustomeText(text: "${lableModel.shcCodes}", fontColor: MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.end),
                                                         SizedBox(height: SizeConfig.blockSizeVertical,),
                                                         (shcCodes.isNotEmpty)
                                                             ? ListView.builder(
@@ -850,7 +852,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                                             :  Padding(
                                                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                                                           child: Center(
-                                                            child: CustomeText(text: "No Any SHC code",
+                                                            child: CustomeText(text: "${lableModel.noAnySHCCode}",
                                                                 fontColor: MyColor.textColorGrey,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
                                                                 fontWeight: FontWeight.w500,
@@ -926,18 +928,18 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Add to list",
+                                      text: "${lableModel.addToList}",
                                       press: () {
 
                                         if(shcCodes.split(",").length < 9){
                                           if(shcController.text.isNotEmpty){
                                             shcValidate();
                                           }else{
-                                            SnackbarUtil.showSnackbar(context, "Please enter SHC code.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.pleaseEnterShcCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             Vibration.vibrate(duration: 500);
                                           }
                                         }else{
-                                          SnackbarUtil.showSnackbar(context, "Add Only 9 SHC codes", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "${lableModel.addOnly9ShcCode}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                           Vibration.vibrate(duration: 500);
                                         }
 
@@ -1001,6 +1003,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
         (differenceNop > 0) ? "Y" : "N", SHCCodes.contains("DGR") ? "Y" : "N",
         widget.uldType,
         widget.dgType, widget.dgSeqNo, widget.dgReference, widget.groupId, warningInd, shcWarning,
+        widget.carrierCode,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

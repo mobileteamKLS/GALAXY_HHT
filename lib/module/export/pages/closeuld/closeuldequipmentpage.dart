@@ -507,7 +507,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                                                     hastextcolor: true,
                                                                     animatedLabel: true,
                                                                     needOutlineBorder: true,
-                                                                    labelText: "Quantity",
+                                                                    labelText: "${lableModel.quantity}",
                                                                     readOnly: false,
                                                                     onChanged: (value) {
                                                                       setState(() {
@@ -656,7 +656,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: [
                                       CustomeText(
-                                        text: "Total Weight : ",
+                                        text: "${lableModel.total} ${lableModel.weight} : ",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                         fontWeight: FontWeight.w700,
@@ -672,7 +672,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                             textAlign: TextAlign.start,
                                           ),
                                           CustomeText(
-                                            text: " Kg",
+                                            text: " ${lableModel.kg}",
                                             fontColor: MyColor.colorBlack,
                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                             fontWeight: FontWeight.w700,
@@ -689,7 +689,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                       Expanded(
                                         flex: 1,
                                         child: RoundedButtonBlue(
-                                          text: "${lableModel!.cancel}",
+                                          text: "${lableModel.cancel}",
                                           isborderButton: true,
                                           press: () {
                                             _onWillPop();  // Return null when "Cancel" is pressed
@@ -701,7 +701,7 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                         flex: 1,
                                         child: RoundedButtonGreen(
                                           color: MyColor.primaryColorblue,
-                                          text: "Save",
+                                          text: "${lableModel.save}",
                                           press: () async {
 
                                             bool isValid = true;
@@ -713,14 +713,14 @@ class _CloseULDEquipmentPageState extends State<CloseULDEquipmentPage>{
                                               if ((quantity == "" || quantity == "0" || quantity!.isEmpty) && (weight! > 0)) {
                                                 // Show validation message for quantity
                                                 Vibration.vibrate(duration: 500);
-                                                SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} quantity should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} ${lableModel.quantityshouldnotbeblank}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                 FocusScope.of(context).requestFocus(volumeFocusNodes[i]);
                                                 isValid = false;
                                                 break;
                                               } else if ((weight == null || weight == 0) && (quantity != null && quantity != "0" && quantity.isNotEmpty)) {
                                                 // Show validation message for weight
                                                 Vibration.vibrate(duration: 500);
-                                                SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} weight should not be blank.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                SnackbarUtil.showSnackbar(context, "${equipmentList[i].referenceDescription} ${lableModel.weightshouldnotbeblank}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                 FocusScope.of(context).requestFocus(weightFocusNodes[i]);
                                                 isValid = false;
                                                 break;

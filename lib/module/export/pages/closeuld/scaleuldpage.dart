@@ -570,7 +570,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                                   textColor: MyColor.colorBlack,
                                                   verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE_2_5,
                                                   textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
-                                                  text: "Get Weight",
+                                                  text: "${lableModel.getWeight}",
                                                   press: () async {
                                                     bool? closeReopenTrolley = await DialogUtils.commingSoonDialog(context, "Coming soon..." , lableModel);
 
@@ -623,7 +623,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Save",
+                                      text: "${lableModel.save}",
                                       press: () {
                                         if(weightController.text.isNotEmpty){
                                           if(widget.uldSeqNo != 0){
@@ -631,7 +631,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
                                               saveScale();
                                             }else{
                                               Vibration.vibrate(duration: 500);
-                                              SnackbarUtil.showSnackbar(context, "Please select 1 machine.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              SnackbarUtil.showSnackbar(context, "${lableModel.pleaseselect1machine}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             }
                                           }else{
                                             saveScale();
@@ -639,7 +639,7 @@ class _ScaleULDPageState extends State<ScaleULDPage>{
 
                                         }else{
                                           Vibration.vibrate(duration: 500);
-                                          SnackbarUtil.showSnackbar(context, "Please enter weight.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          SnackbarUtil.showSnackbar(context, "${lableModel.weightMsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                         }
 
                                       },

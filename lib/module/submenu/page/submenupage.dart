@@ -254,7 +254,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                    state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1295", menuName: "Split Group", sNo: 3326, imageIcon: "buildup", refMenuCode: "§§HHT020§§", IsEnable: "Y"));
+                                  //  state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1295", menuName: "Split Group", sNo: 3326, imageIcon: "buildup", refMenuCode: "§§HHT020§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
