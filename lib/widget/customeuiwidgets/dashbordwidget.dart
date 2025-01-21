@@ -12,7 +12,15 @@ class DashboardCustomeWidget extends StatefulWidget {
   String title;
   String imageUrl;
   VoidCallback onClick;
-  DashboardCustomeWidget({super.key, required this.title, required this.imageUrl, required this.onClick});
+  Color bgColor;
+
+  DashboardCustomeWidget({
+    super.key,
+    required this.title,
+    required this.imageUrl,
+    required this.onClick,
+    required this.bgColor
+  });
 
   @override
   State<DashboardCustomeWidget> createState() => _DashboardCustomeWidgetState();
@@ -39,7 +47,7 @@ class _DashboardCustomeWidgetState extends State<DashboardCustomeWidget> {
           borderRadius: BorderRadius.circular(SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER),
         ),
 
-        color: MyColor.colorBlueWhite,
+        color: widget.bgColor,
         elevation: 5,
         child: Container(
           decoration: BoxDecoration(

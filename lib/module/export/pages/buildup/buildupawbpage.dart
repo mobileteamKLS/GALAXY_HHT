@@ -148,7 +148,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
         _splashDefaultData = splashDefaultData;
       });
 
-      getAWBList();
+      getAWBList(widget.flightSeqNo);
 
       inactivityTimerManager = InactivityTimerManager(
         context: context,
@@ -312,6 +312,9 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                   if(state.buildUpAWBModel.status == "E"){
                                     SnackbarUtil.showSnackbar(context, state.buildUpAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
+                                  }else if(state.buildUpAWBModel.status == "V"){
+                                    SnackbarUtil.showSnackbar(context, state.buildUpAWBModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
                                   }else{
                                     awbModel = state.buildUpAWBModel;
                                     awbItemList = List.from(awbModel!.buildUpAWBDetailList != null ? awbModel!.buildUpAWBDetailList! : []);
@@ -337,9 +340,16 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                   if(state.awbPriorityUpdateModel.status == "E"){
                                     SnackbarUtil.showSnackbar(context, state.awbPriorityUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
+                                  }else if(state.awbPriorityUpdateModel.status == "V"){
+                                    SnackbarUtil.showSnackbar(context, state.awbPriorityUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
                                   }else{
                                     SnackbarUtil.showSnackbar(context, state.awbPriorityUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
-                                    getAWBList();
+                                    if(_isOpenULDFlagEnable == true){
+                                      getAWBList(-1);
+                                    }else{
+                                      getAWBList(widget.flightSeqNo);
+                                    }
                                   }
 
                                 }
@@ -500,6 +510,46 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                     child: Column(
                                                       children: [
 
+                                                        Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                SvgPicture.asset(info, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,),
+                                                                SizedBox(
+                                                                  width: SizeConfig.blockSizeHorizontal,
+                                                                ),
+                                                                CustomeText(
+                                                                    text: "Show all shipments",
+                                                                    fontColor: MyColor.textColorGrey2,
+                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                    fontWeight: FontWeight.w500,
+                                                                    textAlign: TextAlign.start)
+                                                              ],
+                                                            ),
+                                                            Switch(
+                                                              value: _isOpenULDFlagEnable,
+                                                              materialTapTargetSize:
+                                                              MaterialTapTargetSize.shrinkWrap,
+                                                              activeColor: MyColor.primaryColorblue,
+                                                              inactiveThumbColor: MyColor.thumbColor,
+                                                              inactiveTrackColor: MyColor.textColorGrey2,
+                                                              trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                              onChanged: (value) {
+                                                                setState(() {
+                                                                  _isOpenULDFlagEnable = value;
+                                                                });
+
+                                                                if(_isOpenULDFlagEnable == true){
+                                                                  getAWBList(-1);
+                                                                }else{
+                                                                  getAWBList(widget.flightSeqNo);
+                                                                }
+                                                              },
+                                                            )
+                                                          ],
+                                                        ),
+
                                                         (awbModel != null)
                                                             ? (filterAWBDetailsList.isNotEmpty)
                                                             ? Column(
@@ -561,7 +611,6 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                     Row(
                                                                                       children: [
                                                                                         CustomeText(text: AwbFormateNumberUtils.formatAWBNumber(aWBItem.aWBNo!), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, fontWeight: FontWeight.w600, textAlign: TextAlign.start),
-
                                                                                       ],
                                                                                     ),
                                                                                     aWBItem.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
@@ -620,7 +669,7 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                                 fontWeight: FontWeight.w600,
                                                                                                 textAlign: TextAlign.start,
-                                                                                              ),
+                                                                                              )
                                                                                             ],
                                                                                           ),
                                                                                         ),
@@ -750,7 +799,12 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
                                                                                                   if(value == "true"){
                                                                                                     scanNoEditingController.clear();
-                                                                                                    getAWBList();
+                                                                                                    if(_isOpenULDFlagEnable == true){
+                                                                                                      getAWBList(-1);
+                                                                                                    }else{
+                                                                                                      getAWBList(widget.flightSeqNo);
+                                                                                                    }
+
                                                                                                   }else{
                                                                                                     _resumeTimerOnInteraction();
                                                                                                   }
@@ -785,7 +839,12 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                     ),));
 
                                                                                                   if(value == "true"){
-                                                                                                    getAWBList();
+                                                                                                    if(_isOpenULDFlagEnable == true){
+                                                                                                      getAWBList(-1);
+                                                                                                    }else{
+                                                                                                      getAWBList(widget.flightSeqNo);
+                                                                                                    }
+
                                                                                                   }else{
                                                                                                     _resumeTimerOnInteraction();
                                                                                                   }
@@ -827,7 +886,11 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
                                                                                              if(value == "true"){
                                                                                                scanNoEditingController.clear();
-                                                                                               getAWBList();
+                                                                                               if(_isOpenULDFlagEnable == true){
+                                                                                                 getAWBList(-1);
+                                                                                               }else{
+                                                                                                 getAWBList(widget.flightSeqNo);
+                                                                                               }
                                                                                              }else{
                                                                                                _resumeTimerOnInteraction();
                                                                                              }
@@ -863,7 +926,11 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
                                                                                                 ),));
 
                                                                                              if(value == "true"){
-                                                                                               getAWBList();
+                                                                                               if(_isOpenULDFlagEnable == true){
+                                                                                                 getAWBList(-1);
+                                                                                               }else{
+                                                                                                 getAWBList(widget.flightSeqNo);
+                                                                                               }
                                                                                              }else{
                                                                                                _resumeTimerOnInteraction();
                                                                                              }
@@ -1070,10 +1137,10 @@ class _BuildUpAWBListPageState extends State<BuildUpAWBListPage> with SingleTick
 
 
 
-  Future<void> getAWBList() async {
+  Future<void> getAWBList(int flightSeqNo) async {
     await context.read<BuildUpCubit>().getAwbList(
         widget.carrierCode,
-        widget.flightSeqNo,
+        flightSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

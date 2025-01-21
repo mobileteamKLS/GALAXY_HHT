@@ -281,6 +281,9 @@ class _BuildUpAddTrolleyPageState extends State<BuildUpAddTrolleyPage> {
                                   if(state.getULDTrolleySaveModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else if(state.getULDTrolleySaveModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     trollyTypeController.clear();
                                     trollyNumberController.clear();

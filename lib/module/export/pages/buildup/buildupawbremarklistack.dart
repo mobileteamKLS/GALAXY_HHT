@@ -234,6 +234,9 @@ class _BuildUpAWBRemarkListAckPageState extends State<BuildUpAWBRemarkListAckPag
                             if(state.awbAcknowledgeUpdateModel.status == "E"){
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.awbAcknowledgeUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else if(state.awbAcknowledgeUpdateModel.status == "V"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.awbAcknowledgeUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
                               Navigator.pop(context, "True");
                             }

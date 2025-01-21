@@ -333,6 +333,9 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                             if(state.addMailViewModel.status == "E"){
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.addMailViewModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else if(state.addMailViewModel.status == "V"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.addMailViewModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
 
                               mailTypeList = List.from(state.addMailViewModel.mailTypeList!);
@@ -368,6 +371,18 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                           else if (state is BuildUpCheckOAirportCitySuccessState){
                             DialogUtils.hideLoadingDialog(context);
                             if(state.airportCityModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              setState(() {
+                                _isvalidateOrigin = false;
+                              });
+
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(originFocusNode);
+                              },
+                              );
+
+                            }else if(state.airportCityModel.status == "V"){
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                               setState(() {
@@ -415,7 +430,19 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                               },
                               );
 
-                            }else{
+                            }else if(state.airportCityModel.status == "V"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.airportCityModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                              setState(() {
+                                _isvalidateDestination = false;
+                              });
+
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                FocusScope.of(context).requestFocus(destinationFocusNode);
+                              },
+                              );
+
+                            } else{
                               _isvalidateDestination = true;
                               setState(() {});
                               WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -442,12 +469,15 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                             if(state.saveMailModel.status == "E"){
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.saveMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else if(state.saveMailModel.status == "V"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.saveMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{
                               SnackbarUtil.showSnackbar(context, state.saveMailModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                               getAddMailViewList();
                             }
                           }
-                          else if (state is SaveMailViewFailureState){
+                          else if(state is SaveMailViewFailureState){
                             DialogUtils.hideLoadingDialog(context);
                             Vibration.vibrate(duration: 500);
                             SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -455,6 +485,9 @@ class _BuildUpAddMailPageState extends State<BuildUpAddMailPage> {
                           else if (state is RemoveMailViewSuccessState){
                             DialogUtils.hideLoadingDialog(context);
                             if(state.removeMailModel.status == "E"){
+                              Vibration.vibrate(duration: 500);
+                              SnackbarUtil.showSnackbar(context, state.removeMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                            }else if(state.removeMailModel.status == "V"){
                               Vibration.vibrate(duration: 500);
                               SnackbarUtil.showSnackbar(context, state.removeMailModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                             }else{

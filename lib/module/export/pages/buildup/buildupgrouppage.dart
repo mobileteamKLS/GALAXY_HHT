@@ -317,6 +317,9 @@ class _BuildUpGroupListPageState extends State<BuildUpGroupListPage> with Single
                                   if(state.buildUpGroupModel.status == "E"){
                                     SnackbarUtil.showSnackbar(context, state.buildUpGroupModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
+                                  }else if(state.buildUpGroupModel.status == "V"){
+                                    SnackbarUtil.showSnackbar(context, state.buildUpGroupModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
                                   }else{
                                     awbModel = state.buildUpGroupModel;
                                     awbItemList = List.from(awbModel!.buildUpAWBGroupList != null ? awbModel!.buildUpAWBGroupList! : []);

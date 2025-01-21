@@ -373,6 +373,9 @@ class _BuildUpPageState extends State<BuildUpPage>
                                   if(state.flightSearchModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.flightSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else if(state.flightSearchModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.flightSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     flightSearchModel = state.flightSearchModel;
                                     setState(() {});

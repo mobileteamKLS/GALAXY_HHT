@@ -310,6 +310,9 @@ class _BuildUpAddULDPageState extends State<BuildUpAddULDPage> {
                                   if(state.getULDTrolleySaveModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else if(state.getULDTrolleySaveModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.getULDTrolleySaveModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(scanULDFocusNode);

@@ -422,6 +422,9 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   if(state.buildUpDefaultPageLoadModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.buildUpDefaultPageLoadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else if(state.buildUpDefaultPageLoadModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.buildUpDefaultPageLoadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     isBulkLoad = state.buildUpDefaultPageLoadModel.IsBulkLoad!;
                                    //isBulkLoad = "N";
@@ -449,6 +452,13 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                 else if (state is GetULDTrolleySearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.getULDTrolleySearchModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.getULDTrolleySearchModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+                                  } else if(state.getULDTrolleySearchModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(
                                         context,
@@ -497,6 +507,21 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                     );
+                                  }else if (state.validateLocationModel.status == "V") {
+                                    setState(() {
+                                      _isvalidateLocation = false;
+                                    });
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(
+                                        context,
+                                        state.validateLocationModel.statusMessage!,
+                                        MyColor.colorRed,
+                                        icon: FontAwesomeIcons.times);
+
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(locationFocusNode);
+                                    },
+                                    );
                                   } else {
                                     // DialogUtils.hideLoadingDialog(context);
                                     _isvalidateLocation = true;
@@ -521,6 +546,9 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                   DialogUtils.hideLoadingDialog(context);
                                   _resumeTimerOnInteraction();
                                   if(state.uldTrolleyPriorityUpdateModel.status == "E"){
+                                    SnackbarUtil.showSnackbar(context, state.uldTrolleyPriorityUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }else if(state.uldTrolleyPriorityUpdateModel.status == "V"){
                                     SnackbarUtil.showSnackbar(context, state.uldTrolleyPriorityUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     Vibration.vibrate(duration: 500);
                                   }else{
@@ -591,7 +619,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                           uldNo: "${uldTrolleyItemCheck!.uLDTrolleyType} ${uldTrolleyItemCheck!.uLDTrolleyNo} ${uldTrolleyItemCheck!.uLDOwner}",
                                           uldSeqNo: uldTrolleyItemCheck!.uLDSeqNo!,
                                           uldType: uldTrolleyItemCheck!.type!,
-                                          offPoint: widget.offPoint,
+                                          offPoint:uldTrolleyItemCheck!.offPoint!,
                                           dgType: uldTrolleyItemCheck!.dgType!,
                                           dgSeqNo: uldTrolleyItemCheck!.dgSeqNo!,
                                           dgReference: uldTrolleyItemCheck!.dgReference!,
@@ -2273,7 +2301,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                         uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
                                                         uldSeqNo: uldTrolleyItem.uLDSeqNo!,
                                                         uldType: uldTrolleyItem.type!,
-                                                        offPoint: widget.offPoint,
+                                                        offPoint: uldTrolleyItem.offPoint!,
                                                         dgType: uldTrolleyItem.dgType!,
                                                         dgSeqNo: uldTrolleyItem.dgSeqNo!,
                                                         dgReference:uldTrolleyItem.dgReference!,
@@ -2319,7 +2347,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                     uldNo: "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
                                                     uldSeqNo: uldTrolleyItem.uLDSeqNo!,
                                                     uldType: uldTrolleyItem.type!,
-                                                    offPoint: widget.offPoint,
+                                                    offPoint: uldTrolleyItem.offPoint!,
                                                     dgType: uldTrolleyItem.dgType!,
                                                     dgSeqNo: uldTrolleyItem.dgSeqNo!,
                                                     dgReference:uldTrolleyItem.dgReference!,

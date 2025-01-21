@@ -343,6 +343,9 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                   if(state.shcValidateModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.shcValidateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else if(state.shcValidateModel.status == "V"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.shcValidateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }
                                   else{
 
