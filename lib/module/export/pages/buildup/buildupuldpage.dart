@@ -1216,8 +1216,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                 child: CustomeText(
                                                   text: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? "Open" : "Closed",
                                                   fontColor: MyColor.textColorGrey3,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                  fontWeight: FontWeight.bold,
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -1327,7 +1327,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         ],
                                       ),
                                       onTap: () {
-                                        openEditPriorityBottomDialog(context, "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", "${uldTrolleyItem.priority!}", index, uldTrolleyItem.uLDSeqNo!, uldTrolleyItem.type!, lableModel, textDirection);
+                                        openEditPriorityBottomDialog(context, "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", uldTrolleyItem.flightSeqNo!, "${uldTrolleyItem.priority!}", index, uldTrolleyItem.uLDSeqNo!, uldTrolleyItem.type!, lableModel, textDirection);
                                       },
                                     ),
                                   ),
@@ -1479,6 +1479,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                           menuId: widget.menuId,
                                                           mainMenuName: widget.mainMenuName,
                                                           uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
+                                                          flightSeqNo: uldTrolleyItem.flightSeqNo!,
+                                                          lableModel: lableModel,
                                                         ),));
 
                                                       if(value == "true"){
@@ -1519,6 +1521,29 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                       }else{
                                                         _resumeTimerOnInteraction();
                                                       }
+                                                    }
+                                                    else if(optionNo == 2){
+                                                      var value = await Navigator.push(
+                                                          context, CupertinoPageRoute(
+                                                        builder: (context) => CloseULDPage(
+                                                          importSubMenuList: widget.importSubMenuList,
+                                                          exportSubMenuList: widget.exportSubMenuList,
+                                                          title: "Close BULK",
+                                                          refrelCode: widget.refrelCode,
+                                                          menuId: widget.menuId,
+                                                          mainMenuName: widget.mainMenuName,
+                                                          uldNo: "BULK",
+                                                          flightSeqNo: uldTrolleyItem.flightSeqNo!,
+                                                          lableModel: lableModel,
+                                                        ),));
+
+                                                      if(value == "true"){
+                                                        _resumeTimerOnInteraction();
+                                                        getULDTrolleySearchList();
+                                                      }else{
+                                                        _resumeTimerOnInteraction();
+                                                      }
+
                                                     }
                                                     else{
                                                       _resumeTimerOnInteraction();
@@ -1652,6 +1677,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                       menuId: widget.menuId,
                                                       mainMenuName: widget.mainMenuName,
                                                       uldNo: "${uldTrolleyItem.uLDTrolleyType}${uldTrolleyItem.uLDTrolleyNo}${uldTrolleyItem.uLDOwner}",
+                                                      flightSeqNo: uldTrolleyItem.flightSeqNo!,
+                                                      lableModel: lableModel,
                                                     ),));
 
                                                   if(value == "true"){
@@ -1946,8 +1973,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                                 child: CustomeText(
                                                   text: (uldTrolleyItem.status == "O" || uldTrolleyItem.status == "R") ? "${lableModel.open}" : "${lableModel.closed}",
                                                   fontColor: MyColor.textColorGrey3,
-                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_35,
-                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                  fontWeight: FontWeight.bold,
                                                   textAlign: TextAlign.center,
                                                 ),
                                               ),
@@ -1956,10 +1983,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                           SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2),
 
                                           InkWell(
-                                            onTap: () async {
-
-
-                                            },
+                                            onTap: () async {},
                                             child: Container(
                                               padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
                                               decoration: BoxDecoration(
@@ -2056,7 +2080,10 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                         ],
                                       ),
                                       onTap: () {
-                                        openEditPriorityBottomDialog(context, "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}", "${uldTrolleyItem.priority!}", index, uldTrolleyItem.uLDSeqNo!, uldTrolleyItem.type!, lableModel, textDirection);
+                                        openEditPriorityBottomDialog(context,
+                                            "${uldTrolleyItem.uLDTrolleyType} ${uldTrolleyItem.uLDTrolleyNo} ${uldTrolleyItem.uLDOwner}",
+                                            uldTrolleyItem.flightSeqNo!,
+                                            "${uldTrolleyItem.priority!}", index, uldTrolleyItem.uLDSeqNo!, uldTrolleyItem.type!, lableModel, textDirection);
                                       },
                                     ),
                                   ),
@@ -2493,6 +2520,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
   Future<void> openEditPriorityBottomDialog(
       BuildContext context,
       String uldNo,
+      int flightSeqNo,
       String priority,
       int index,
       int uldSeqNo,
@@ -2510,6 +2538,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
         await callbdPriorityApi(
             context,
             uldSeqNo,
+            flightSeqNo,
             newPriority,
             uldType,
             _user!.userProfile!.userIdentity!,
@@ -2529,13 +2558,14 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
   Future<void> callbdPriorityApi(
       BuildContext context,
       int uldSeqNo,
+      int flightSeqNo,
       int bdPriority,
       String uldType,
       int userId,
       int companyCode,
       int menuId) async {
     await context.read<BuildUpCubit>().getULDTrolleyPriorityUpdate(
-        uldSeqNo, bdPriority, uldType, userId, companyCode, menuId);
+        uldSeqNo,flightSeqNo, bdPriority, uldType, userId, companyCode, menuId);
   }
 
   Future<void> getPageLoad() async {

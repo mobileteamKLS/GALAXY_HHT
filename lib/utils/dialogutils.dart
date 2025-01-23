@@ -884,6 +884,8 @@ class DialogUtils {
 
 
   static Future<String?> showPriorityChangeBottomULDDialog(BuildContext context, String uldNo, String priority, LableModel lableModel, ui.TextDirection textDirection) {
+
+    print("CHECK_ULD NO === ${uldNo}");
     TextEditingController priorityController = TextEditingController();
     FocusNode priorityFocusNode = FocusNode();
     priorityController.text = priority;
@@ -947,7 +949,7 @@ class DialogUtils {
                           width: SizeConfig.blockSizeHorizontal,
                         ),
                         CustomeText(
-                            text: "${lableModel.changePriorityMSG} ${uldNo}",
+                            text: (uldNo.replaceAll(" ", "").trim().isEmpty) ? "Changing priority of BULK" : "${lableModel.changePriorityMSG} ${uldNo}" ,
                             fontColor: MyColor.textColorGrey2,
                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                             fontWeight: FontWeight.w400,
@@ -5317,6 +5319,19 @@ class DialogUtils {
                   hascolor: true,
                   thickness: 1,
                 ),
+
+                RoundedButtonGreen(
+                  color: MyColor.btnColor3,
+                  textColor: MyColor.textColorGrey3,
+                  verticalPadding: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,
+                  textSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                  text: "${lableModel.scale}",
+
+                  press: () {
+                    Navigator.pop(context, 1);
+                  },
+                ),
+
                 SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
                 Row(
                   children: [
@@ -5335,10 +5350,10 @@ class DialogUtils {
                     Expanded(
                       flex: 1,
                       child: RoundedButton(
-                        text: "${lableModel.scale}",
+                        text: "Close BULK",
                         color: MyColor.primaryColorblue,
                         press: () {
-                          Navigator.pop(context, 1);
+                          Navigator.pop(context, 2);
                         },
                       ),
                     ),

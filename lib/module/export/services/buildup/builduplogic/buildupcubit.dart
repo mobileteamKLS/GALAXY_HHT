@@ -53,10 +53,10 @@ class BuildUpCubit extends Cubit<BuildUpState>{
     }
   }
 
-  Future<void> getULDTrolleyPriorityUpdate(int uldSeqNo, int priority, String uldType, int userId, int companyCode, int menuId) async {
+  Future<void> getULDTrolleyPriorityUpdate(int uldSeqNo, int flightSeqNo, int priority, String uldType, int userId, int companyCode, int menuId) async {
     emit(BuildUpLoadingState());
     try {
-      final uldTrolleyPriorityModelData = await buildUpRepository.uldTrolleyPriorityUpdate(uldSeqNo, priority, uldType,  userId, companyCode, menuId);
+      final uldTrolleyPriorityModelData = await buildUpRepository.uldTrolleyPriorityUpdate(uldSeqNo, flightSeqNo,  priority, uldType,  userId, companyCode, menuId);
       emit(ULDTrolleyPrioritySuccessState(uldTrolleyPriorityModelData));
     } catch (e) {
       emit(ULDTrolleyPriorityFailureState(e.toString()));

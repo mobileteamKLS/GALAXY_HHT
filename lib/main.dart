@@ -18,6 +18,7 @@ import 'module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'module/export/services/closetrolley/closetrolleylogic/closetrolleycubit.dart';
 import 'module/export/services/closeuld/closeuldlogic/closeuldcubit.dart';
 import 'module/export/services/emptyuldtrolley/emptyuldtrolleylogic/emptyuldtrolleycubit.dart';
+import 'module/export/services/move/movelogic/movecubit.dart';
 import 'module/export/services/palletstack/palletstacklogic/palletstackcubit.dart';
 import 'module/export/services/retriveuld/retriveuldlogic/retriveuldcubit.dart';
 import 'module/export/services/uldtould/uldtouldlogic/uldtouldcubit.dart';
@@ -99,9 +100,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => CloseTrolleyCubit(),),
         BlocProvider(create: (context) => BuildUpCubit(),),
         BlocProvider(create: (context) => SplitGroupCubit(),),
+        BlocProvider(create: (context) => MoveCubit(),),
       ],
       child: MaterialApp(
-
         title: 'Galaxy',
         locale: locale ?? const Locale('en'),  // Add Default Language
         localizationsDelegates: const [

@@ -51,6 +51,7 @@ class CloseULDPage extends StatefulWidget {
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
+  int flightSeqNo;
 
   CloseULDPage(
       {super.key,
@@ -61,7 +62,8 @@ class CloseULDPage extends StatefulWidget {
       this.lableModel,
       required this.menuId,
       required this.mainMenuName,
-      required this.uldNo
+      required this.uldNo,
+      required this.flightSeqNo
       });
 
   @override
@@ -322,7 +324,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                 onBack: () {
                                   _onWillPop();
                                 },
-                                clearText: lableModel!.clear,
+                                clearText: (widget.uldNo != "BULK") ? lableModel!.clear : "",
                                 //add clear text to clear all feild
                                 onClear: () {
                                   scanULDController.clear();
@@ -344,7 +346,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                 }
                                 else if (state is CloseULDLoadingState) {
                                   // showing loading dialog in this state
-                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
+                                  DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
                                 }
                                 else if (state is CloseULDSearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
@@ -447,8 +449,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "${lableModel.scanuld} *",
-                                                        readOnly: false,
+                                                        labelText: (widget.uldNo != "BULK") ? "${lableModel!.scanuld} *" : "Scan BULK *",
+                                                        readOnly: (widget.uldNo != "BULK") ? false : true,
                                                         maxLength: 11,
                                                         onChanged: (value) {
                                                           uldDetail = null;
@@ -476,11 +478,11 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         },
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                    (widget.uldNo != "BULK") ? SizedBox(
                                                       width: SizeConfig.blockSizeHorizontal,
-                                                    ),
+                                                    ) : SizedBox(),
                                                     // click search button to validate location
-                                                    InkWell(
+                                                    (widget.uldNo != "BULK") ? InkWell(
                                                       focusNode: scanULDBtnFocusNode,
                                                       onTap: () {
                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -492,7 +494,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                         child: SvgPicture.asset(search, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3,),
                                                       ),
 
-                                                    )
+                                                    ) : SizedBox()
                                                   ],
                                                 ),
                                               ),
@@ -508,7 +510,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                           smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                           fontColor: MyColor.textColorGrey3,
-                                                          uldType: "U",
+                                                          uldType: (widget.uldNo != "BULK") ? "U" : "",
                                                       )
                                                       //CustomeText(text: (uldDetail != null) ? uldDetail!.uLDNo! : "-", fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w700, textAlign: TextAlign.start),
                                                     ],
@@ -516,7 +518,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   Row(
                                                     children: [
                                                       CustomeText(
-                                                        text: "${lableModel.status} : ",
+                                                        text: "${lableModel!.status} : ",
                                                         fontColor: MyColor.textColorGrey2,
                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         fontWeight: FontWeight.w400,
@@ -530,7 +532,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                             color: (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? MyColor.flightFinalize : MyColor.flightNotArrived
                                                         ),
                                                         child: CustomeText(
-                                                          text: (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel!.open}" : "${lableModel!.closed}",
+                                                          text: (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel.open}" : "${lableModel!.closed}",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                           fontWeight: FontWeight.bold,
@@ -547,13 +549,14 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                               builder: (context) => ULDDetailPage(
                                                                 importSubMenuList: widget.importSubMenuList,
                                                                 exportSubMenuList: widget.exportSubMenuList,
-                                                                title: "${lableModel.uldDetail}",
+                                                                title: (widget.uldNo != "BULK") ? "${lableModel.uldDetail}" : "BULK Detail",
                                                                 refrelCode: widget.refrelCode,
                                                                 menuId: widget.menuId,
                                                                 mainMenuName: widget.mainMenuName,
-                                                                uldNo: uldDetail!.uLDNo!,
+                                                                uldNo: (widget.uldNo != "BULK") ? uldDetail!.uLDNo! : "BULK",
                                                                 uldType: "U",
                                                                 uldSeqNo: uldDetail!.uLDSeqNo!,
+                                                                flightSeqNo: uldDetail!.flightSeqNo!,
                                                               ),));
 
                                                             if(value == "true"){
@@ -606,7 +609,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
 
                                                           (uldDetail != null) ? (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R")
-                                                              ? Container(
+                                                              ? (widget.uldNo != "BULK") ? Container(
                                                             padding: const EdgeInsets.only(left: 2,),
                                                             decoration: BoxDecoration(
                                                                 color: MyColor.dropdownColor,
@@ -646,8 +649,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                     textDirection);
                                                               },
                                                             ),
-                                                          )
-                                                              : Row(
+                                                          ) : SizedBox()
+                                                              : (widget.uldNo != "BULK") ? Row(
                                                             children: [
                                                               CustomeText(
                                                                 text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
@@ -664,7 +667,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                 textAlign: TextAlign.start,
                                                               ),
                                                             ],
-                                                          ) : Row(
+                                                          ) : SizedBox()
+                                                              : (widget.uldNo != "BULK") ? Row(
                                                             children: [
                                                               CustomeText(
                                                                 text: (uldDetail != null) ? CommonUtils.formateToTwoDecimalPlacesValue(uldDetail!.tareWeight!): "-",
@@ -681,7 +685,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                                 textAlign: TextAlign.start,
                                                               ),
                                                             ],
-                                                          ),
+                                                          ) : SizedBox(),
                                                         ],
                                                       ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical),
@@ -946,7 +950,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
                                                   CustomeText(
-                                                    text: "${lableModel.remarks} : ",
+                                                    text: "${lableModel.remark} : ",
                                                     fontColor: MyColor.textColorGrey2,
                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                     fontWeight: FontWeight.w500,
@@ -970,7 +974,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                         ),
 
                                         SizedBox(height: SizeConfig.blockSizeVertical),
-                                        Padding(
+                                        (widget.uldNo != "BULK") ? Padding(
                                           padding: const EdgeInsets.only(top: 10, right:0, left: 0, bottom: 0),
                                           child: Row(
                                             children: [
@@ -1064,7 +1068,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                               ),
                                             ],
                                           ),
-                                        ),
+                                        ) : SizedBox(),
                                         Padding(
                                           padding: const EdgeInsets.only(top: 12, right:0, left:0, bottom: 0),
                                           child: Row(
@@ -1112,8 +1116,8 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                                   },
                                                 ),
                                               ),
-                                              SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
-                                              Expanded(
+                                              (widget.uldNo != "BULK") ? SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,) : SizedBox(),
+                                              (widget.uldNo != "BULK") ? Expanded(
                                                 flex: 1,
                                                 child: RoundedButtonGreen(
                                                   color: MyColor.btnColor4,
@@ -1155,7 +1159,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
 
                                                   },
                                                 ),
-                                              ),
+                                              ) : SizedBox(),
                                             ],
                                           ),
                                         ),
@@ -1205,7 +1209,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
                                         if(uldDetail != null){
                                           // call api for close and re open
 
-                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? "${lableModel.closed} " : "${lableModel.reOpenULD}", (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? lableModel.areyousurewanttoclosethisuld! : lableModel.areyousurewanttoreopenthisuld! , lableModel);
+                                          bool? closeReopenULD = await DialogUtils.closeReopenULDDialog(context, uldDetail!.uLDNo!, (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? (widget.uldNo != "BULK") ? "Close ULD" : "Close BULK" : (widget.uldNo != "BULK") ? "${lableModel.reOpenULD}" : "Re-Open BULK", (uldDetail!.uLDStatus == "O" || uldDetail!.uLDStatus == "R") ? (widget.uldNo != "BULK") ? lableModel.areyousurewanttoclosethisuld! : "Are you sure want to close this BULK ?" : (widget.uldNo != "BULK") ? lableModel.areyousurewanttoreopenthisuld! : "Are you sure want to re-open this BULK ?" , lableModel);
 
 
                                           if(closeReopenULD == true){
@@ -1331,6 +1335,7 @@ class _CloseULDPageState extends State<CloseULDPage>{
   Future<void> callSearchApi(String scanNo) async {
     await context.read<CloseULDCubit>().closeULDSearchModel(
         scanNo,
+        widget.flightSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

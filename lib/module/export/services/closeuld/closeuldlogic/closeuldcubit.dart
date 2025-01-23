@@ -19,10 +19,10 @@ class CloseULDCubit extends Cubit<CloseULDState>{
   }
 */
 
-  Future<void> closeULDSearchModel(String scan, int userId, int companyCode, int menuId) async {
+  Future<void> closeULDSearchModel(String scan, int flightSeqNo, int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final closeULDSearchModelData = await closeULDRepository.closeULDSearchModel(scan, userId, companyCode, menuId);
+      final closeULDSearchModelData = await closeULDRepository.closeULDSearchModel(scan, flightSeqNo, userId, companyCode, menuId);
       emit(CloseULDSearchSuccessState(closeULDSearchModelData));
     } catch (e) {
       emit(CloseULDSearchFailureState(e.toString()));
@@ -123,10 +123,10 @@ class CloseULDCubit extends Cubit<CloseULDState>{
     }
   }
 
-  Future<void> getDocumentList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+  Future<void> getDocumentList(int uldSeqNo, int flightSeqNo,  int userId, int companyCode, int menuId) async {
     emit(CloseULDLoadingState());
     try {
-      final getDocumentModelData = await closeULDRepository.getDocumentList(uldSeqNo, userId, companyCode, menuId);
+      final getDocumentModelData = await closeULDRepository.getDocumentList(uldSeqNo, flightSeqNo, userId, companyCode, menuId);
       emit(GetDocumentListSuccessState(getDocumentModelData));
     } catch (e) {
       emit(GetDocumentListFailureState(e.toString()));

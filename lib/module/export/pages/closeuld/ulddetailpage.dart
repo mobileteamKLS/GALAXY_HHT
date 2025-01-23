@@ -45,6 +45,7 @@ class ULDDetailPage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   String uldNo;
   int uldSeqNo;
+  int flightSeqNo;
   String uldType;
 
   ULDDetailPage(
@@ -58,6 +59,7 @@ class ULDDetailPage extends StatefulWidget {
       required this.mainMenuName,
         required this.uldNo,
         required this.uldSeqNo,
+        required this.flightSeqNo,
         required this.uldType
       });
 
@@ -314,9 +316,9 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                   }else{
 
                                     getDocumentListModel = state.getDocumentListModel;
-                                    airWaybillDetail = getDocumentListModel!.airWaybillDetail!;
-                                    mailDetail = getDocumentListModel!.mailDetail!;
-                                    courierDetail = getDocumentListModel!.courierDetail!;
+                                    airWaybillDetail = (getDocumentListModel!.airWaybillDetail != null) ? getDocumentListModel!.airWaybillDetail! : [];
+                                    mailDetail = (getDocumentListModel!.mailDetail != null) ? getDocumentListModel!.mailDetail! : [];
+                                    courierDetail = (getDocumentListModel!.courierDetail != null) ? getDocumentListModel!.courierDetail! : [];
 
 
                                     totalAirwayBillWeight = airWaybillDetail.fold(0.0, (sum, item) {
@@ -401,13 +403,13 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                         smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                         bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                         fontColor: MyColor.textColorGrey2,
-                                                        uldType: "U",
+                                                        uldType: (widget.uldNo != "BULK") ? "U" : "",
                                                       )
                                                     ],
                                                   ),
                                                 ),
                                                 SizedBox(height: SizeConfig.blockSizeVertical),
-                                                Row(
+                                                (widget.uldNo != "BULK") ? Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
@@ -421,7 +423,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                     Row(
                                                       children: [
                                                         CustomeText(
-                                                          text: (getDocumentListModel != null) ? getDocumentListModel!.uLDDetails![0].uLDTareWeight! : "-",
+                                                          text: (getDocumentListModel != null) ? (getDocumentListModel!.uLDDetails != null) ? getDocumentListModel!.uLDDetails![0].uLDTareWeight! : "-" : "-",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -438,13 +440,13 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                     )
 
                                                   ],
-                                                ),
-                                                SizedBox(height: SizeConfig.blockSizeVertical),
+                                                ) : SizedBox(),
+                                                (widget.uldNo != "BULK") ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(),
                                                 Row(
                                                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                   children: [
                                                     CustomeText(
-                                                      text: "${lableModel.uldShipmentWeight} :",
+                                                      text: (widget.uldNo != "BULK") ? "${lableModel!.uldShipmentWeight} :" : "BULK Shipment Weight",
                                                       fontColor: MyColor.textColorGrey2,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                       fontWeight: FontWeight.w500,
@@ -461,7 +463,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
                                                           textAlign: TextAlign.start,
                                                         ),
                                                         CustomeText(
-                                                          text: " ${lableModel.kg}",
+                                                          text: " ${lableModel!.kg}",
                                                           fontColor: MyColor.colorBlack,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                           fontWeight: FontWeight.w700,
@@ -984,6 +986,7 @@ class _ULDDetailPageState extends State<ULDDetailPage>{
   Future<void> getDocumentList() async {
     await context.read<CloseULDCubit>().getDocumentList(
         widget.uldSeqNo,
+        widget.flightSeqNo,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

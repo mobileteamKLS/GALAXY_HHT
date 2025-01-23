@@ -273,12 +273,13 @@ class BuildUpRepository{
     }
   }
 
-  Future<ULDTrolleyPriorityUpdateModel> uldTrolleyPriorityUpdate(int uldSeqNo, int priority, String uldType, int userId, int companyCode, int menuId) async {
+  Future<ULDTrolleyPriorityUpdateModel> uldTrolleyPriorityUpdate(int uldSeqNo, int flightSeqNo, int priority, String uldType, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
         "SeqNo" : uldSeqNo,
+        "FlightSeqNo" : flightSeqNo,
         "Priority" : priority,
         "ULDType" : uldType,
         "AirportCode": CommonUtils.airportCode,

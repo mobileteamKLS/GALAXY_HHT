@@ -623,6 +623,12 @@ class _BuildUpPageState extends State<BuildUpPage>
                                                                   inactivityTimerManager?.stopTimer();
                                                                   await Navigator.push(context, CupertinoPageRoute(builder: (context) => BuildUpULDPage(
                                                                     importSubMenuList: widget.importSubMenuList, exportSubMenuList: widget.exportSubMenuList, title: widget.title, refrelCode: widget.refrelCode, menuId: widget.menuId, mainMenuName: widget.mainMenuName, flightSeqNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightSeqNo! : -1, flightNo: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightNo! : "", flightDate: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.flightDate! : "", offPoint: (flightSearchModel != null) ? flightSearchModel!.flightDetail!.routePoint! : "", lableModel: lableModel,)));
+                                                                  if(flightNoEditingController.text.isNotEmpty){
+                                                                    getFlightSearchApi();
+                                                                  }else{
+
+                                                                  }
+
 
                                                             },))
                                                           ],
@@ -729,7 +735,7 @@ class _BuildUpPageState extends State<BuildUpPage>
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  flex: 3,
+                  flex: 4,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -1277,13 +1283,13 @@ class _BuildUpPageState extends State<BuildUpPage>
   String getFlightStatusText(String? status) {
     switch (status) {
       case "F":
-        return "Finalize";
+        return "Finalized";
       case "D":
         return "Departed";
       case "C":
         return "Closed";
       case "I":
-        return "Inprogress";
+        return "In-Progress";
       case "O":
         return "Open";
       default:

@@ -176,4 +176,10 @@ class Apilist{
   static String splitGroupPageLoad = "/SplitGroup/GetPageLoad";
   static String splitGroupDetailSearch = "/SplitGroup/GetGroupDetails";
   static String splitGroupSave = "/SplitGroup/GroupSplit";
+
+
+  // move
+  static String moveLocation = "/Move/MoveLocation";
+
+
 }

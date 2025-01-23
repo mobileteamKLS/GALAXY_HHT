@@ -1322,7 +1322,16 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                   text: "${lableModel.save}",
                                   press: () {
 
-                                    if(isButtonEnabled("save", buttonRightsList)){
+
+                                    CommonUtils.SELECTEDIMAGELIST = imageList;
+                                    String images = "${generateImageXMLData(imageList)}";
+                                    String count = imageList.length.toString();
+                                    Navigator.pop(context, {
+                                      "images" : images,
+                                      "imageCount" : count
+                                    });
+
+                                   /* if(isButtonEnabled("save", buttonRightsList)){
                                       CommonUtils.SELECTEDIMAGELIST = imageList;
                                       String images = "${generateImageXMLData(imageList)}";
                                       String count = imageList.length.toString();
@@ -1333,7 +1342,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
                                     }else{
                                       SnackbarUtil.showSnackbar(context, ValidationMessageCodeUtils.AuthorisedRolesAndRightsMsg, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                       Vibration.vibrate(duration: 500);
-                                    }
+                                    }*/
 
 
                                   },

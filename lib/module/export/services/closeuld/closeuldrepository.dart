@@ -64,12 +64,13 @@ class CloseULDRepository{
   }
 */
 
-  Future<CloseULDSearchModel> closeULDSearchModel(String scan, int userId, int companyCode, int menuId) async {
+  Future<CloseULDSearchModel> closeULDSearchModel(String scan, int flightSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
         "Scan" : scan,
+        "FlightSeqNo" : flightSeqNo,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -493,12 +494,13 @@ class CloseULDRepository{
   }
 
 
-  Future<GetDocumentListModel> getDocumentList(int uldSeqNo, int userId, int companyCode, int menuId) async {
+  Future<GetDocumentListModel> getDocumentList(int uldSeqNo, int flightSeqNo, int userId, int companyCode, int menuId) async {
 
     try {
 
       var payload = {
         "ULDSeqNo" : uldSeqNo,
+        "FlightSeqNo" : flightSeqNo,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
