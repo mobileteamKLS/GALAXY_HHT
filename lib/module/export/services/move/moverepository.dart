@@ -22,7 +22,9 @@ import '../../model/buildup/savemailmodel.dart';
 import '../../model/buildup/ulddamagemodel.dart';
 import '../../model/buildup/uldtrolleyprioritymodel.dart';
 import '../../model/closeuld/getcontourlistmodel.dart';
+import '../../model/move/getmovesearch.dart';
 import '../../model/move/movelocationmodel.dart';
+import '../../model/move/removemovementmodel.dart';
 import '../../model/splitgroup/splitgroupdefaultpageloadmodel.dart';
 import '../../model/splitgroup/splitgroupdetailsearchmodel.dart';
 import '../../model/splitgroup/splitgroupsavemodel.dart';
@@ -84,6 +86,167 @@ class MoveRepository{
     }
   }
 
+  Future<GetMoveSearchModel> getMoveSearch(
+      String scanNo,
+      String scanType,
+      int containerItemCount,
+      String containerItemType, int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "Scan" : scanNo,
+        "ScanType" : scanType,
+        "ContainerItemCount" : containerItemCount,
+        "ContainerItemType" : containerItemType,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('getMoveSearchModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.getMoveSearch,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        GetMoveSearchModel getMoveSearchModel = GetMoveSearchModel.fromJson(response.data);
+        return getMoveSearchModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+  Future<AddShipmentModel> addShipment(
+      int flightSeqNo, int awbRowID, int awbShipmentId, int ULDSeqNo,
+      String awbPrefix, String aWBNumber,
+      int nop, double weight, String offPoint, String SHC,
+      String IsPartShipment, String DGIndicator, String ULDTrolleyType,
+      String dgType, int dgSeqNo, String dgReference, int groupId, String warningInd, String shcWarning,
+      String carrierCode,
+      int userId, int companyCode, int menuId) async {
+
+    try {
+
+      var payload = {
+        "FlightSeqNo" : flightSeqNo,
+        "AWBId" : awbRowID,
+        "ShipmentId" : awbShipmentId,
+        "AWBPrefix" : awbPrefix,
+        "AWBNumber" : aWBNumber,
+        "NOP" : nop,
+        "Weight" : weight,
+        "OffPoint" : offPoint,
+        "ULDSeqNo" : ULDSeqNo,
+        "SHC" : SHC,
+        "IsPartShipment" : IsPartShipment,
+        "DGIndicator" : DGIndicator,
+        "ULDTrolleyType" : ULDTrolleyType,
+        "WarningInd" : warningInd,
+        "DGType" : dgType,
+        "DGSeqNo" : dgSeqNo,
+        "DGReference" : dgReference,
+        "GroupId" : groupId,
+        "SHCWarning" : shcWarning,
+        "CarrierCode" : carrierCode,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('AddShipmentModel: $payload --- $payload');
+
+      Response response = await api.sendRequest.post(Apilist.addShipment,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        AddShipmentModel addShipmentModel = AddShipmentModel.fromJson(response.data);
+        return addShipmentModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
+
+
+  Future<RemoveMovementModel> removeMovement(
+      int sequenceNo,
+      String type,
+      int userId,
+      int companyCode,
+      int menuId) async {
+
+    try {
+
+      var payload = {
+        "SeqNo" : sequenceNo,
+        "Type" : type,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('RemoveMovementModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.post(Apilist.removeMovement,
+          data: payload
+      );
+
+      if (response.statusCode == 200) {
+        RemoveMovementModel removeMovementModel = RemoveMovementModel.fromJson(response.data);
+        return removeMovementModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 
 /*  Future<SplitGroupDefaultPageLoadModel> splitgroupDefaultPageLoad(int userId, int companyCode, int menuId) async {

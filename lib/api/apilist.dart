@@ -180,6 +180,8 @@ class Apilist{
 
   // move
   static String moveLocation = "/Move/MoveLocation";
+  static String getMoveSearch = "/Move/GetMoveSearch";
+  static String removeMovement = "/Move/RemoveMovement";
 
 
 }

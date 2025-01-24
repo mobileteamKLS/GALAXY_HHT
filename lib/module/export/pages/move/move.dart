@@ -7,10 +7,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/core/mycolor.dart';
+import 'package:galaxy/module/export/model/buildup/getuldtrolleysearchmodel.dart';
 import 'package:galaxy/module/export/services/move/movelogic/movecubit.dart';
 import 'package:galaxy/module/export/services/move/movelogic/movestate.dart';
 import 'package:galaxy/utils/sizeutils.dart';
 import 'package:galaxy/utils/snackbarutil.dart';
+import 'package:galaxy/widget/uldnumberwidget.dart';
 import 'package:vibration/vibration.dart';
 import '../../../../../../widget/customeuiwidgets/header.dart';
 import '../../../../core/images.dart';
@@ -18,6 +20,7 @@ import '../../../../language/appLocalizations.dart';
 import '../../../../language/model/lableModel.dart';
 import '../../../../manager/timermanager.dart';
 import '../../../../prefrence/savedprefrence.dart';
+import '../../../../utils/awbformatenumberutils.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../widget/customebuttons/roundbuttonblue.dart';
@@ -34,6 +37,7 @@ import 'dart:ui' as ui;
 
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/move/getmovesearch.dart';
 
 class MovePage extends StatefulWidget {
   String mainMenuName;
@@ -60,7 +64,8 @@ class MovePage extends StatefulWidget {
 
 class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin{
 
-
+  String destinationWarningInd = "Y";
+  String shcCompibilityWarningInd = "Y";
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
@@ -70,13 +75,18 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
   TextEditingController groupIdController = TextEditingController();
 
   FocusNode groupIdFocusNode = FocusNode();
-  bool _isOpenULDFlagEnable = false;
+  FocusNode scanBtnFocusNode = FocusNode();
+  FocusNode removeGroupBtnFocusNode = FocusNode();
+  FocusNode clearBtnFocusNode = FocusNode();
+  FocusNode moveBtnFocusNode = FocusNode();
+
 
   bool isBackPressed = false; // Track if the back button was pressed
 
- // BinningDetailListModel? binningDetailListModel;
 
-
+  GetMoveSearchModel? getMoveSearchModel;
+  List<GroupDetailList>? getGroupDetailList = [];
+  List<ULDTrolleyDetailsList>? getULDTrolleyDetailsList = [];
 
 
   late AnimationController _blinkController;
@@ -84,23 +94,25 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
   String selectedType = "G";
   String pickType = "";
   String dropLocation = "";
+  String dropLocationType = "";
+  ULDTrolleyDetailsList? uldTrolleyForDrop;
+  bool addShipmentComplete = false;
+  int groupSelectIndex = 0;
+  int uldTrolleySelectIndex = 0;
 
 
-  String sourceSelection = "G";
-  String targetSelection = "G";
-  String countingSearchFlag = "F";
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
 
-  List<String> listValue = ["A", "B" , "C", "D", "E"]; // Example list of values
-  List<bool> switchStates = []; // Track switch states
-  bool _isSelectAll = false; // "Select All" switch state
-  List<String> selectedValues = []; // List of selected values
+  Map<GroupDetailList, bool> groupSwitchStates = {}; // For GroupDetailList
+  Map<ULDTrolleyDetailsList, bool> uldTrolleySwitchStates = {}; // For ULDTrolleyDetailsList
+  bool _isSelectAll = false;
+
 
   @override
   void initState() {
     super.initState();
-    switchStates = List<bool>.filled(listValue.length, false);
+  //  switchStates = List<bool>.filled(listValue.length, false);
 
     _loadUser(); //load user data
 
@@ -126,7 +138,31 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
   }
 
-  void _toggleSelectAll(bool value) {
+
+  void toggleGroupSwitch(GroupDetailList id, bool value) {
+    setState(() {
+      groupSwitchStates[id] = value;
+    });
+  }
+
+  void toggleTrolleySwitch(ULDTrolleyDetailsList id, bool value) {
+    setState(() {
+      uldTrolleySwitchStates[id] = value;
+    });
+  }
+  void toggleSelectAll(bool value) {
+    setState(() {
+      _isSelectAll = value;
+
+      // Update all group switch states
+      groupSwitchStates.updateAll((key, _) => value);
+
+      // Update all ULD trolley switch states
+      uldTrolleySwitchStates.updateAll((key, _) => value);
+    });
+  }
+
+ /* void _toggleSelectAll(bool value) {
     setState(() {
       _isSelectAll = value;
       switchStates = List<bool>.filled(listValue.length, value);
@@ -145,7 +181,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
       // Update "Select All" state
       _isSelectAll = switchStates.every((state) => state);
     });
-  }
+  }*/
 
 
   Future<void> leaveGroupIdFocus() async {
@@ -154,21 +190,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
     if (isInactivityDialogOpen) return;
 
     if (groupIdController.text.isNotEmpty) {
-
-
-      // call binning details api
-    /*  await context.read<BinningCubit>().getBinningDetailListApi(
-          groupIdController.text,
-          _user!.userProfile!.userIdentity!,
-          _splashDefaultData!.companyCode!,
-          widget.menuId);*/
+      getMoveSearch();
     }else{
-      FocusScope.of(context).requestFocus(groupIdFocusNode);
-      SnackbarUtil.showSnackbar(context, widget.lableModel!.enterGropIdMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-     // binningDetailListModel = null;
-      setState(() {
 
-      });
     }
   }
 
@@ -194,8 +218,6 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
   Future<void> _loadUser() async {
 
-
-
     final user = await savedPrefrence.getUserData();
     final splashDefaultData = await savedPrefrence.getSplashDefaultData();
     if (user != null && splashDefaultData != null) {
@@ -204,6 +226,10 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
         _splashDefaultData = splashDefaultData;
       });
     }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(groupIdFocusNode);
+    });
 
     //context.read<BinningCubit>().getPageLoadDefault(widget.menuId, _user!.userProfile!.userIdentity!, _splashDefaultData!.companyCode!);
 
@@ -354,15 +380,25 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                 clearText: lableModel!.clear,
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  //binningDetailListModel = null;
                                   groupIdController.clear();
+                                  pickType = "";
+                                  dropLocationType = "";
+                                  dropLocation = "";
+                                  selectedType = "G";
+                                  _isSelectAll = false;
+                                  getGroupDetailList!.clear();
+                                  getULDTrolleyDetailsList!.clear();
+                                  addShipmentComplete = false;
+                                  uldTrolleyForDrop = null;
+                                  // Clear all switch states
+                                  groupSwitchStates.clear();
+                                  uldTrolleySwitchStates.clear();
+
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                  },
-                                  );
-                                  setState(() {
-
                                   });
+                                  // Reset UI
+                                  setState(() {});
                                 },
                               ),
                             ),
@@ -376,6 +412,77 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                   // showing loading dialog in this state
                                   DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
+                                else if (state is GetMoveSearchSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.getMoveSearchModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.getMoveSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }
+                                  else{
+                                    getMoveSearchModel = state.getMoveSearchModel;
+                                    List<GroupDetailList>? newGroupDetailList = getMoveSearchModel!.groupDetailList;
+                                    List<ULDTrolleyDetailsList>? newULDTrolleyDetailsList = getMoveSearchModel!.uLDTrolleyDetailsList;
+
+
+                                    if(selectedType == "G"){
+                                      if (newGroupDetailList != null) {
+                                        for (var group in newGroupDetailList) {
+                                          if(group.groupSeqNo == -1){
+                                            dropLocation = group.dropLocation!;
+                                            dropLocationType = "G";
+                                          }else{
+                                            pickType = selectedType;
+                                            bool exists = getGroupDetailList!.any((existingGroup) => existingGroup.groupSeqNo == group.groupSeqNo);
+                                            if (!exists) {
+                                              getGroupDetailList!.add(group);
+                                              groupSwitchStates[group] = true; // Initialize switch state
+                                            }
+                                          }
+                                        }
+                                      }
+                                    }else{
+                                      // Update ULDTrolleyDetailsList without duplicates
+                                      if (newULDTrolleyDetailsList != null) {
+                                        for (var trolley in newULDTrolleyDetailsList) {
+                                          if(trolley.uLDTrolleySeqNo == -1){
+                                            dropLocation = trolley.dropLocation!;
+                                            dropLocationType = "G";
+                                          }else{
+                                            if(pickType == "G"){
+                                              uldTrolleyForDrop = trolley;
+                                              dropLocation = "${trolley.uLDTrolleyType} ${trolley.uLDTrolleyNo} ${trolley.uLDOwner}";
+                                              if(pickType == "G" && selectedType == "U"){
+                                                dropLocationType = "U";
+                                              }else{
+                                                dropLocationType = "T";
+                                              }
+
+                                            }else{
+                                              pickType = selectedType;
+                                              bool exists = getULDTrolleyDetailsList!.any((existingTrolley) => existingTrolley.uLDTrolleySeqNo == trolley.uLDTrolleySeqNo);
+                                              if (!exists) {
+                                                getULDTrolleyDetailsList!.add(trolley);
+                                                uldTrolleySwitchStates[trolley] = true; // Initialize switch state
+                                              }
+                                            }
+
+                                          }
+                                        }
+                                      }
+                                    }
+
+
+                                    setState(() {
+
+                                    });
+                                  }
+
+                                }
+                                else if (state is GetMoveSearchFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
                                 else if(state is MoveLocationSuccessState){
                                  DialogUtils.hideLoadingDialog(context);
                                  if(state.moveLocationModel.status == "E"){
@@ -385,6 +492,26 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                    Vibration.vibrate(duration: 500);
                                    SnackbarUtil.showSnackbar(context, state.moveLocationModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                  }else{
+
+                                   if(pickType == "G"){
+                                     getSelectedGroupIds().forEach((selectedGroup) {
+                                       getGroupDetailList!.remove(selectedGroup); // Remove from the main list
+                                       groupSwitchStates.remove(selectedGroup);   // Remove from switch states
+                                     });
+                                   }else{
+                                     // Remove selected items from ULDTrolleyDetailsList
+                                     getSelectedTrolleyIds().forEach((selectedTrolley) {
+                                       getULDTrolleyDetailsList!.remove(selectedTrolley); // Remove from the main list
+                                       uldTrolleySwitchStates.remove(selectedTrolley);    // Remove from switch states
+                                     });
+
+                                   }
+
+
+
+
+                                   setState(() {});
+
                                    SnackbarUtil.showSnackbar(context, state.moveLocationModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                  }
 
@@ -394,8 +521,50 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
+                                else if(state is AddShipmentMoveSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.addShipmentModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    if(addShipmentComplete == true){
+                                      SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
+                                      getSelectedGroupIds().forEach((selectedGroup) {
+                                        getGroupDetailList!.remove(selectedGroup); // Remove from the main list
+                                        groupSwitchStates.remove(selectedGroup);   // Remove from switch states
+                                      });
+                                    }
+                                  }
+                                }
+                                else if(state is AddShipmentMoveFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                               /* else if(state is RemoveMovementSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.removeMovementModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.removeMovementModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    if(pickType == "G"){
+                                      GroupDetailList removedGroup = getGroupDetailList!.removeAt(groupSelectIndex);
+                                      // Remove the corresponding entry from the switch states
+                                      groupSwitchStates.remove(removedGroup);
+                                      setState(() {
 
+                                      });
+                                    }else{
+                                      ULDTrolleyDetailsList removedGroup = getULDTrolleyDetailsList!.removeAt(groupSelectIndex);
+                                      // Remove the corresponding entry from the switch states
+                                      groupSwitchStates.remove(removedGroup);
+                                      setState(() {
 
+                                      });
+                                    }
+                                  }
+                                }
+                                else if(state is RemoveMovementFailureState){}*/
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -469,6 +638,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                     ),
                                                     // click search button to validate location
                                                     InkWell(
+                                                      focusNode: scanBtnFocusNode,
                                                       onTap: () {
                                                         scanGroupQR();
                                                       },
@@ -484,43 +654,49 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                               Row(
                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                 children: [
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Pick :",
-                                                        fontColor: MyColor.textColorGrey3,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: (pickType == "G") ? "Group" : (pickType == "U") ? "ULD" : (pickType == "T") ? "Trolley" : "",
-                                                        fontColor: Colors.pink.shade500,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                        fontWeight: FontWeight.bold,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Row(
+                                                      children: [
+                                                        CustomeText(
+                                                          text: "Pick :",
+                                                          fontColor: MyColor.textColorGrey3,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                          fontWeight: FontWeight.w600,
+                                                          textAlign: TextAlign.start,
+                                                        ),
+                                                        const SizedBox(width: 5),
+                                                        CustomeText(
+                                                          text: (pickType == "G") ? "Group" : (pickType == "U") ? "ULD" : (pickType == "T") ? "Trolley" : "",
+                                                          fontColor: Colors.pink.shade500,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                          fontWeight: FontWeight.bold,
+                                                          textAlign: TextAlign.start,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                  Row(
-                                                    children: [
-                                                      CustomeText(
-                                                        text: "Drop :",
-                                                        fontColor: MyColor.textColorGrey3,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                        fontWeight: FontWeight.w600,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                      const SizedBox(width: 5),
-                                                      CustomeText(
-                                                        text: "AKE 12345 AJ",
-                                                        fontColor: MyColor.colorGreen,
-                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                        fontWeight: FontWeight.bold,
-                                                        textAlign: TextAlign.start,
-                                                      ),
-                                                    ],
+                                                  Expanded(
+                                                    flex: 2,
+                                                    child: Row(
+                                                      children: [
+                                                        CustomeText(
+                                                          text: "Drop :",
+                                                          fontColor: MyColor.textColorGrey3,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                          fontWeight: FontWeight.w600,
+                                                          textAlign: TextAlign.start,
+                                                        ),
+                                                        const SizedBox(width: 5),
+                                                        CustomeText(
+                                                          text: dropLocation,
+                                                          fontColor: MyColor.colorGreen,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                          fontWeight: FontWeight.bold,
+                                                          textAlign: TextAlign.start,
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -538,8 +714,37 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                               text: "Clear",
                                                               isOutlined: true,
                                                               isborderButton: true,
+                                                              focusNode: clearBtnFocusNode,
                                                               press: () async {
-                                                                _onWillPop();
+                                                                FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                                inactivityTimerManager?.stopTimer();
+                                                                bool? removeDialog = await DialogUtils.commonDialogforWarning(context, (pickType == "G") ? "Clear group list" : (pickType == "U") ? "Clear ULD list" : "Clear Trolley list", (pickType == "G") ? "Are you sure you want to clear group list ?" : (pickType == "U") ? "Are you sure you want to clear ULD list ?" : "Are you sure you want to clear Trolley list ?" , lableModel);
+
+                                                                if(removeDialog == true){
+                                                                  groupIdController.clear();
+                                                                  pickType = "";
+                                                                  dropLocationType = "";
+                                                                  dropLocation = "";
+                                                                  selectedType = "G";
+                                                                  _isSelectAll = false;
+                                                                  getGroupDetailList!.clear();
+                                                                  getULDTrolleyDetailsList!.clear();
+                                                                  addShipmentComplete = false;
+                                                                  uldTrolleyForDrop = null;
+                                                                  // Clear all switch states
+                                                                  groupSwitchStates.clear();
+                                                                  uldTrolleySwitchStates.clear();
+
+                                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                    FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                  });
+                                                                  // Reset UI
+                                                                  setState(() {});
+                                                                }else{
+
+                                                                }
+
+                                                                setState(() {});
                                                               },
                                                             ),
                                                             SizedBox(height: SizeConfig.blockSizeVertical,),
@@ -553,7 +758,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                   inactiveThumbColor: MyColor.thumbColor,
                                                                   inactiveTrackColor: MyColor.textColorGrey2,
                                                                   trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                                  onChanged: _toggleSelectAll,
+                                                                  onChanged: (value) => toggleSelectAll(value),
                                                                 ),
                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                                 CustomeText(
@@ -576,14 +781,73 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                           height: double.infinity,
                                                           child: RoundedButton(
                                                             color:  MyColor.primaryColorblue,
+                                                            focusNode: moveBtnFocusNode,
                                                             text: "${lableModel.move}",
                                                             press: () async {
-                                                              if (selectedValues.isEmpty) {
+                                                              FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                              inactivityTimerManager?.stopTimer();
+                                                              if(dropLocation.isNotEmpty){
+                                                                if(dropLocationType == "G"){
+                                                                  if(pickType == "G"){
+                                                                    moveLocation();
+                                                                    //call move serch api data will be selected group
+                                                                  }else{
+                                                                    moveLocation();
+                                                                    //call move serch api data will be selected uld/trolley
+                                                                  }
+                                                                }else{
+
+                                                                  List<GroupDetailList> selectedGroups = getSelectedGroupIds();
+                                                                  int processedCount = 0;
+
+
+                                                                  for (var selectedGroup in selectedGroups) {
+                                                                    addShipment(
+                                                                      selectedGroup.aWBPrefix!,
+                                                                      selectedGroup.aWBNo!,
+                                                                      selectedGroup.eXPAWBRowId!,
+                                                                      selectedGroup.eXPShipRowId!,
+                                                                      selectedGroup.nOP!,
+                                                                      selectedGroup.weight!,
+                                                                      selectedGroup.groupSeqNo!,
+                                                                      destinationWarningInd,
+                                                                      shcCompibilityWarningInd,
+                                                                    );
+
+                                                                    processedCount++;
+                                                                    if (processedCount == selectedGroups.length) {
+                                                                      // All items have been processed
+
+                                                                      addShipmentComplete = true;
+                                                                      setState(() {
+
+                                                                      });
+
+                                                                      print("All selected groups processed successfully.");
+                                                                    }
+                                                                  }
+
+
+
+/*
+                                                                  getSelectedGroupIds().forEach((selectedGroup) {
+                                                                    addShipment(selectedGroup.aWBPrefix!, selectedGroup.aWBNo!, selectedGroup.eXPAWBRowId!, selectedGroup.eXPShipRowId!, selectedGroup.nOP!, selectedGroup.weight!, selectedGroup.groupSeqNo!, destinationWarningInd, shcCompibilityWarningInd);   // Remove from switch states
+                                                                  });*/
+
+
+                                                                  // call add shipment api
+                                                                }
+                                                              }else{
+                                                                SnackbarUtil.showSnackbar(context, "Please location search", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                Vibration.vibrate(duration: 500);
+                                                              }
+
+                                                              /*if (selectedValues.isEmpty) {
                                                                 print("No items selected");
                                                                 return;
                                                               }
                                                               String xmlData = generateImageXMLData(selectedValues);
-                                                              print("Generated XML:$xmlData");
+                                                              print("Generated XML:$xmlData");*/
 
                                                             },
                                                           ),
@@ -612,19 +876,20 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                   ),
                                                 ],
                                               ),
-                                              child: Padding(
+                                              child: (pickType == "G")
+                                                  ? Padding(
                                                 padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                child: (listValue.isNotEmpty)
+                                                child: (getGroupDetailList!.isNotEmpty)
                                                     ? Column(
                                                   children: [
 
                                                     ListView.builder(
-                                                      itemCount: listValue.length,
+                                                      itemCount: (getGroupDetailList!.isNotEmpty) ?  getGroupDetailList!.length : 0,
                                                       physics: NeverScrollableScrollPhysics(),
                                                       shrinkWrap: true,
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {
-                                                        String value = listValue[index];
+                                                        GroupDetailList groupDetailView = getGroupDetailList![index];
 
                                                         return InkWell(
                                                             onTap: () {
@@ -664,34 +929,156 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                                         children: [
                                                                           Row(
+                                                                            children: [
+                                                                              Switch(
+                                                                                value: groupSwitchStates[groupDetailView]!,
+                                                                                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                activeColor: MyColor.primaryColorblue,
+                                                                                inactiveThumbColor: MyColor.thumbColor,
+                                                                                inactiveTrackColor: MyColor.textColorGrey2,
+                                                                                trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                                                onChanged:  (value) => toggleGroupSwitch(groupDetailView, value),
+                                                                              ),
+                                                                              SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                              CustomeText(
+                                                                                text: AwbFormateNumberUtils.formatAWBNumber("${groupDetailView.aWBPrefix}${groupDetailView.aWBNo}"),
+                                                                                fontColor: MyColor.textColorGrey3,
+                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                textAlign: TextAlign.start,
+                                                                              ),
+                                                                              const SizedBox(width: 5),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(height: SizeConfig.blockSizeVertical ),
+                                                                          Row(
                                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             children: [
                                                                               Row(
                                                                                 children: [
-                                                                                  Switch(
-                                                                                    value: switchStates[index],
-                                                                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                                                                    activeColor: MyColor.primaryColorblue,
-                                                                                    inactiveThumbColor: MyColor.thumbColor,
-                                                                                    inactiveTrackColor: MyColor.textColorGrey2,
-                                                                                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
-                                                                                    onChanged:  (value) => _toggleSwitch(index, value),
-                                                                                  ),
                                                                                   CustomeText(
-                                                                                    text: "${value}",
-                                                                                    fontColor: MyColor.colorBlack,
+                                                                                    text: "${lableModel.pieces} :",
+                                                                                    fontColor: MyColor.textColorGrey2,
                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w600,
+                                                                                    fontWeight: FontWeight.w500,
                                                                                     textAlign: TextAlign.start,
                                                                                   ),
                                                                                   const SizedBox(width: 5),
+                                                                                  CustomeText(
+                                                                                    text: "${groupDetailView.nOP}",
+                                                                                    fontColor: MyColor.colorBlack,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
                                                                                 ],
                                                                               ),
-
+                                                                              Row(
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                    text: "${lableModel.weight} :",
+                                                                                    fontColor: MyColor.textColorGrey2,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                  const SizedBox(width: 5),
+                                                                                  CustomeText(
+                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(groupDetailView.weight!)} Kg",
+                                                                                    fontColor: MyColor.colorBlack,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(height: SizeConfig.blockSizeVertical * 0.5,),
+                                                                          SizedBox(height: SizeConfig.blockSizeVertical),
+                                                                          IntrinsicHeight(
+                                                                            child: Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  flex: 6,
+                                                                                  child: Column(
+                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                    children: [
+                                                                                      Row(
+                                                                                        children: [
+                                                                                          CustomeText(
+                                                                                            text: "${lableModel.group} :",
+                                                                                            fontColor: Colors.pink.shade500,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                          const SizedBox(width: 5),
+                                                                                          CustomeText(
+                                                                                            text: "${groupDetailView.groupId}",
+                                                                                            fontColor: Colors.pink.shade500,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                            fontWeight: FontWeight.bold,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(height: SizeConfig.blockSizeVertical),
+                                                                                      Row(
+                                                                                        children: [
+                                                                                          CustomeText(
+                                                                                            text: "${lableModel.currentLocation} :",
+                                                                                            fontColor: MyColor.textColorGrey2,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                            fontWeight: FontWeight.w500,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                          const SizedBox(width: 5),
+                                                                                          CustomeText(
+                                                                                            text: "${groupDetailView.curentLocation}",
+                                                                                            fontColor: MyColor.colorBlack,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                                                Expanded(
+                                                                                  flex: 3,
+                                                                                  child: RoundedButton(text: "Remove",
+                                                                                    color: MyColor.colorRed,
+                                                                                    focusNode: removeGroupBtnFocusNode,
+                                                                                    press: () async {
 
+                                                                                      FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                                                      inactivityTimerManager?.stopTimer();
+                                                                                      bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
+
+                                                                                      if(removeDialog == true){
+
+                                                                                        groupSelectIndex = index;
+                                                                                        removeMovement(groupDetailView.groupSeqNo!, pickType);
+
+/*
+                                                                                        GroupDetailList removedGroup = getGroupDetailList!.removeAt(index);
+
+                                                                                        // Remove the corresponding entry from the switch states
+                                                                                        groupSwitchStates.remove(removedGroup);
+                                                                                        setState(() {
+
+                                                                                        });*/
+                                                                                      }else{
+
+                                                                                      }
+
+                                                                                    },),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
 
                                                                         ],
                                                                       ),
@@ -714,7 +1101,233 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                         textAlign: TextAlign.center),),
                                                 ),
 
-                                              ),
+                                              )
+                                                  : Padding(
+                                                padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
+                                                child: (getULDTrolleyDetailsList!.isNotEmpty)
+                                                    ? Column(
+                                                  children: [
+
+                                                    ListView.builder(
+                                                      itemCount: getULDTrolleyDetailsList!.length,
+                                                      physics: NeverScrollableScrollPhysics(),
+                                                      shrinkWrap: true,
+                                                      controller: scrollController,
+                                                      itemBuilder: (context, index) {
+                                                        ULDTrolleyDetailsList uldTrolleyDetailView = getULDTrolleyDetailsList![index];
+
+                                                        return InkWell(
+                                                            onTap: () {
+                                                              FocusScope.of(context).unfocus();
+                                                            },
+                                                            onDoubleTap: () async {
+
+                                                            },
+                                                            child: Container(
+                                                                margin: EdgeInsets.symmetric(vertical: 4),
+                                                                decoration: BoxDecoration(
+                                                                  color: MyColor.colorWhite,
+                                                                  borderRadius: BorderRadius.circular(8),
+
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: MyColor.colorBlack.withOpacity(0.09),
+                                                                      spreadRadius: 2,
+                                                                      blurRadius: 15,
+                                                                      offset: Offset(0, 3), // changes position of shadow
+                                                                    ),
+                                                                  ],
+
+                                                                ),
+                                                                child: Container(
+                                                                  padding: EdgeInsets.all(8),
+                                                                  decoration: BoxDecoration(
+                                                                    color: MyColor.colorWhite,
+                                                                    borderRadius: BorderRadius.circular(8),
+                                                                  ),
+                                                                  child: Stack(
+                                                                    children: [
+                                                                      Column(
+                                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  Switch(
+                                                                                    value: uldTrolleySwitchStates[uldTrolleyDetailView]!,
+                                                                                    materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                                                                    activeColor: MyColor.primaryColorblue,
+                                                                                    inactiveThumbColor: MyColor.thumbColor,
+                                                                                    inactiveTrackColor: MyColor.textColorGrey2,
+                                                                                    trackOutlineColor: WidgetStateProperty.all(Colors.transparent),
+                                                                                    onChanged:  (value) => toggleTrolleySwitch(uldTrolleyDetailView, value),
+                                                                                  ),
+                                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal,),
+                                                                                  ULDNumberWidget(uldNo: "${uldTrolleyDetailView.uLDTrolleyType} ${uldTrolleyDetailView.uLDTrolleyNo} ${uldTrolleyDetailView.uLDOwner}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: selectedType),
+
+                                                                                ],
+                                                                              ),
+                                                                              Row(
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                    text: "${lableModel.status} : ",
+                                                                                    fontColor: MyColor.textColorGrey2,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                    fontWeight: FontWeight.w400,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal),
+                                                                                  Container(
+                                                                                    padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
+                                                                                    decoration : BoxDecoration(
+                                                                                        borderRadius: BorderRadius.circular(20),
+                                                                                        color: (uldTrolleyDetailView.uLDTrolleyStatus == "O" || uldTrolleyDetailView.uLDTrolleyStatus == "R") ? MyColor.flightFinalize :MyColor.flightNotArrived
+                                                                                    ),
+                                                                                    child: CustomeText(
+                                                                                      text: (uldTrolleyDetailView.uLDTrolleyStatus == "O" || uldTrolleyDetailView.uLDTrolleyStatus == "R") ? "Open" : "Closed",
+                                                                                      fontColor: MyColor.textColorGrey3,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                      fontWeight: FontWeight.bold,
+                                                                                      textAlign: TextAlign.center,
+                                                                                    ),
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(height: SizeConfig.blockSizeVertical ),
+                                                                          Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                            children: [
+                                                                              Row(
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                    text: "${lableModel.scaleWt} :",
+                                                                                    fontColor: MyColor.textColorGrey2,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                  const SizedBox(width: 5),
+                                                                                  CustomeText(
+                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(uldTrolleyDetailView.scaleWeight!)} Kg",
+                                                                                    fontColor: MyColor.colorBlack,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                              Row(
+                                                                                children: [
+                                                                                  CustomeText(
+                                                                                    text: "${lableModel.offPoint} :",
+                                                                                    fontColor: MyColor.textColorGrey2,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                    fontWeight: FontWeight.w500,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                  const SizedBox(width: 5),
+                                                                                  CustomeText(
+                                                                                    text: uldTrolleyDetailView.offPoint!,
+                                                                                    fontColor: MyColor.colorBlack,
+                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                    textAlign: TextAlign.start,
+                                                                                  ),
+                                                                                ],
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                          SizedBox(height: SizeConfig.blockSizeVertical),
+                                                                          IntrinsicHeight(
+                                                                            child: Row(
+                                                                              children: [
+                                                                                Expanded(
+                                                                                  flex: 6,
+                                                                                  child: Column(
+                                                                                    mainAxisAlignment: MainAxisAlignment.center,
+                                                                                    children: [
+
+                                                                                      Row(
+                                                                                        children: [
+                                                                                          CustomeText(
+                                                                                            text: "${lableModel.currentLocation} :",
+                                                                                            fontColor: MyColor.textColorGrey2,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                            fontWeight: FontWeight.w500,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                          const SizedBox(width: 5),
+                                                                                          CustomeText(
+                                                                                            text: "${uldTrolleyDetailView.curentLocation}",
+                                                                                            fontColor: MyColor.colorBlack,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                            fontWeight: FontWeight.w600,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                    ],
+                                                                                  ),
+                                                                                ),
+                                                                                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                                                Expanded(
+                                                                                  flex: 3,
+                                                                                  child: RoundedButton(text: "Remove",
+                                                                                    color: MyColor.colorRed,
+                                                                                    focusNode: removeGroupBtnFocusNode,
+                                                                                    press: () async {
+                                                                                      FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                                                      inactivityTimerManager?.stopTimer();
+                                                                                      bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
+                                                                                      if(removeDialog == true){
+                                                                                        uldTrolleySelectIndex = index;
+                                                                                        removeMovement(uldTrolleyDetailView.uLDTrolleySeqNo!, pickType);
+
+
+
+                                                                                       /* ULDTrolleyDetailsList removedGroup = getULDTrolleyDetailsList!.removeAt(index);
+                                                                                        // Remove the corresponding entry from the switch states
+                                                                                        uldTrolleySwitchStates.remove(removedGroup);
+
+                                                                                        setState(() {
+
+                                                                                        });*/
+                                                                                      }else{
+
+                                                                                      }
+
+                                                                                    },),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+
+                                                                        ],
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                )
+                                                            )
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
+                                                )
+                                                    : Padding(
+                                                  padding: const EdgeInsets.symmetric(vertical: 10.0),
+                                                  child: Center(
+                                                    child: CustomeText(text: "${lableModel.recordNotFound}",
+                                                        fontColor: MyColor.textColorGrey,
+                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_0,
+                                                        fontWeight: FontWeight.w500,
+                                                        textAlign: TextAlign.center),),
+                                                ),
+
+                                              )
                                             )),
 
 
@@ -744,6 +1357,10 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                               });
                                             }
 
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                            });
+
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
@@ -772,6 +1389,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                               });
                                             }
 
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                            });
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
@@ -796,7 +1416,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                 selectedType = "T";
                                               });
                                             }
-
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                            });
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
@@ -881,32 +1503,107 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
   }
 
-  String generateImageXMLData(List<String> selectList) {
+  Future<void> getMoveSearch() async {
+
+    print("moveLocation Payload === ${pickType} == ${dropLocation}");
+
+
+    await context.read<MoveCubit>().getMoveSearch(
+        groupIdController.text,
+        selectedType,
+        (selectedType == "G") ? getGroupDetailList!.length : getULDTrolleyDetailsList!.length,
+        pickType,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  Future<void> moveLocation() async {
+
+    print("CHECK_LOCATION === ${pickType} == ${dropLocation} == ${selectedType} == ${generateImageXMLDataGroup(getSelectedGroupIds())} == ${generateImageXMLDataULDTrolley(getSelectedTrolleyIds())}" );
+
+
+    await context.read<MoveCubit>().moveLocation(
+        pickType,
+        dropLocation,
+        (selectedType == "G") ? generateImageXMLDataGroup(getSelectedGroupIds()) : generateImageXMLDataULDTrolley(getSelectedTrolleyIds()),
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  Future<void> removeMovement(int seqNo, String type) async {
+
+    print("CHECK_LOCATION === ${pickType} == ${dropLocation} == ${selectedType} == ${generateImageXMLDataGroup(getSelectedGroupIds())} == ${generateImageXMLDataULDTrolley(getSelectedTrolleyIds())}" );
+
+
+    /*await context.read<MoveCubit>().removeMovement(
+        seqNo,
+        type,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);*/
+  }
+
+
+
+  String generateImageXMLDataGroup(List<GroupDetailList> selectList) {
     StringBuffer xmlBuffer = StringBuffer();
     xmlBuffer.write('<Root>');
-    for (String value in selectList) {
+    for (GroupDetailList value in selectList) {
       xmlBuffer.write('<Move>');
-      xmlBuffer.write('<SeqNo>$value</SeqNo>');
+      xmlBuffer.write('<SeqNo>${value.groupSeqNo}</SeqNo>');
       xmlBuffer.write('</Move>');
     }
     xmlBuffer.write('</Root>');
     return xmlBuffer.toString();
   }
 
+  String generateImageXMLDataULDTrolley(List<ULDTrolleyDetailsList> selectList) {
+    StringBuffer xmlBuffer = StringBuffer();
+    xmlBuffer.write('<Root>');
+    for (ULDTrolleyDetailsList value in selectList) {
+      xmlBuffer.write('<Move>');
+      xmlBuffer.write('<SeqNo>${value.uLDTrolleySeqNo}</SeqNo>');
+      xmlBuffer.write('</Move>');
+    }
+    xmlBuffer.write('</Root>');
+    return xmlBuffer.toString();
+  }
 
-  Future<void> moveLocation() async {
+  List<GroupDetailList> getSelectedGroupIds() {
+    return groupSwitchStates.entries
+        .where((entry) => entry.value) // Only include selected items
+        .map((entry) => entry.key) // Return their IDs
+        .toList();
+  }
 
-    print("moveLocation Payload === ${pickType} == ${dropLocation} == ${generateImageXMLData(selectedValues)}");
+  List<ULDTrolleyDetailsList> getSelectedTrolleyIds() {
+    return uldTrolleySwitchStates.entries
+        .where((entry) => entry.value)
+        .map((entry) => entry.key)
+        .toList();
+  }
 
+  Future<void> addShipment(String awbPrefix, String awbNumber, int awbRowId, int awbShipRowId, int nop, double weight, int groupSeqNo, String warningInd, String shcWarning) async {
 
-    await context.read<MoveCubit>().moveLocation(
-        pickType,
-        dropLocation,
-        generateImageXMLData(selectedValues),
+    print("AWB NO ==== > ${awbPrefix} == ${awbNumber} == ${groupSeqNo}");
+
+    await context.read<MoveCubit>().addShipment(
+        uldTrolleyForDrop!.flightSeqNo!,
+        awbRowId, awbShipRowId, uldTrolleyForDrop!.uLDTrolleySeqNo!,
+        awbPrefix , awbNumber.replaceAll(" ", ""), nop, weight,
+        uldTrolleyForDrop!.offPoint!, uldTrolleyForDrop!.sHCCode!,
+        "Y", uldTrolleyForDrop!.sHCCode!.contains("DGR") ? "Y" : "N",
+        dropLocationType,
+        "", 0, "", groupSeqNo, warningInd, shcWarning,
+        uldTrolleyForDrop!.carriarCode!,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
   }
+
+
 
 }
 

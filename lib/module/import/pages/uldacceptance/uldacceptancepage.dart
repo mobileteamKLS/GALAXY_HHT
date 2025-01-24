@@ -1045,6 +1045,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                   isRecordView: 0,
                                                   mainMenuName: widget.mainMenuName,
                                                   buttonRightsList: buttonRightsList,
+                                                  flightType: "I",
                                                 ),
                                               ));
 
@@ -2598,6 +2599,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                                 isRecordView:  2,
                                                 mainMenuName: widget.mainMenuName,
                                                 buttonRightsList: buttonRightsList,
+                                                flightType: "I",
                                               ),
                                             ));
                                         if(damageOrNot == "BUS"){
@@ -2641,6 +2643,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                                             isRecordView: 2,
                                             mainMenuName: widget.mainMenuName,
                                             buttonRightsList: buttonRightsList,
+                                            flightType: "I",
                                           ),
                                         ));
                                     if(damageOrNot == "BUS"){
@@ -3279,6 +3282,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                           isRecordView: 2,
                           mainMenuName: widget.mainMenuName,
                           buttonRightsList: buttonRightsList,
+                          flightType: "I",
                         ),
                       ));
 
@@ -3321,6 +3325,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                           isRecordView: 2,
                           mainMenuName: widget.mainMenuName,
                           buttonRightsList: buttonRightsList,
+                          flightType: "I",
                         ),
                       ));
 
@@ -3421,6 +3426,7 @@ class _UldAcceptancePageState extends State<UldAcceptancePage> with SingleTicker
                   isRecordView:  0,
                   mainMenuName: widget.mainMenuName,
                   buttonRightsList: buttonRightsList,
+                  flightType: "I",
                 ),
               ));
 

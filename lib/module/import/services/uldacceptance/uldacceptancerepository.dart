@@ -317,10 +317,11 @@ class UldAcceptanceRepository{
   }
 
   // call uld damage api call
-  Future<UldAcceptModel> uldDamage(String ULDNo, int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
+  Future<UldAcceptModel> uldDamage(String flightType, String ULDNo, int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
 
     try {
       var payload = {
+        "FlightType" : flightType,
         "ULDSeqNo": ULDSeqNo,
         "FlightSeqNo": flightSeqNo,
         "RefMenuCode" : menuCode,
@@ -485,11 +486,12 @@ class UldAcceptanceRepository{
   }
 
   // call uld UCR damage api call
-  Future<UldAcceptModel> uldUCRDamage(String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
+  Future<UldAcceptModel> uldUCRDamage(String flightType, String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
 
     try {
       var payload = {
         /* "ULDNo": ULDNo,*/
+        "FlightType" : flightType,
         "ULDSeqNo": ULDSeqNo,
         "FlightSeqNo": flightSeqNo,
         "RefMenuCode" : menuCode,

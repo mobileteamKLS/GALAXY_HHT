@@ -3066,6 +3066,7 @@ class _FlightCheckState extends State<FlightCheck>
                 isRecordView: flightDetails.damageNOP == 0 ? flightDetails.damageConditionCode!.isEmpty ? 0 : 2 : 2,
                 mainMenuName: widget.mainMenuName,
                 buttonRightsList: buttonRightsList,
+                flightType: "I",
               ),
             ));
 

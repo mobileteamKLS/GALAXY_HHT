@@ -96,10 +96,10 @@ class UldAcceptanceCubit extends Cubit<UldAcceptanceState>{
 
 
   // uldDamage api call repo
-  Future<void> uldDamage(String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
+  Future<void> uldDamage(String flightType, String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
     emit(MainLoadingState());
     try {
-      final uldAcceptModelData = await uldAcceptanceRepository.uldDamage(ULDNo, ULDSeqNo, flightSeqNo, groupId, conditionCode, typeOfDamage, images, remarks, userId, companyCode, menuCode, menuId);
+      final uldAcceptModelData = await uldAcceptanceRepository.uldDamage(flightType, ULDNo, ULDSeqNo, flightSeqNo, groupId, conditionCode, typeOfDamage, images, remarks, userId, companyCode, menuCode, menuId);
 
       emit(UldDamageSuccessState(uldAcceptModelData));
     } catch (e) {
@@ -153,10 +153,10 @@ class UldAcceptanceCubit extends Cubit<UldAcceptanceState>{
 
 
   // uldDamage api call repo
-  Future<void> uldUCRDamage(String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
+  Future<void> uldUCRDamage(String flightType, String ULDNo,int ULDSeqNo, int flightSeqNo, String groupId, String conditionCode, String typeOfDamage, String images, String remarks, int userId, int companyCode, String menuCode, int menuId) async {
     emit(MainLoadingState());
     try {
-      final uldAcceptModelData = await uldAcceptanceRepository.uldUCRDamage(ULDNo, ULDSeqNo, flightSeqNo, groupId, conditionCode, typeOfDamage, images, remarks, userId, companyCode, menuCode, menuId);
+      final uldAcceptModelData = await uldAcceptanceRepository.uldUCRDamage(flightType, ULDNo, ULDSeqNo, flightSeqNo, groupId, conditionCode, typeOfDamage, images, remarks, userId, companyCode, menuCode, menuId);
       emit(UldUCRDamageSuccessState(uldAcceptModelData));
     } catch (e) {
       emit(UldUCRDamageFailureState(e.toString()));

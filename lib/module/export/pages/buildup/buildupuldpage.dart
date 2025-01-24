@@ -582,6 +582,7 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                               isRecordView: 2,
                                               mainMenuName: widget.mainMenuName,
                                               buttonRightsList: const [],
+                                              flightType: "E",
                                             ),
                                           ));
 

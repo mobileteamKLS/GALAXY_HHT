@@ -60,6 +60,7 @@ class UldDamagedPage extends StatefulWidget {
   List<ButtonRight>? buttonRightsList = [];
   List<SubMenuName> importSubMenuList = [];
   List<SubMenuName> exportSubMenuList = [];
+  String flightType;
 
   UldDamagedPage(
       {super.key,
@@ -73,8 +74,11 @@ class UldDamagedPage extends StatefulWidget {
       required this.groupId,
       required this.menuCode,
       required this.isRecordView,
+      required this.flightType,
       this.mainMenuName,
-      this.buttonRightsList});
+      this.buttonRightsList,
+
+      });
 
   @override
   State<UldDamagedPage> createState() => _UldDamagedPageState();
@@ -879,6 +883,7 @@ class _UldDamagedPageState extends State<UldDamagedPage> {
 
                                                                           if (selectedDamageServices.isNotEmpty) {
                                                                             context.read<UldAcceptanceCubit>().uldDamage(
+                                                                                widget.flightType,
                                                                                 widget.ULDNo.replaceAll(" ", ""),
                                                                                 widget.ULDSeqNo,
                                                                                 widget.flightSeqNo,

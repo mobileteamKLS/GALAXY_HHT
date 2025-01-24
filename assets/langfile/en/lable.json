@@ -548,10 +548,10 @@
 
     "removeShipment" : "Remove Shipment",
     "removeforthisawbmsg" : "Remove for this AWB",
-    "RemainingNop" : "Rem. NOP",
+    "RemainingNop" : "Rem. NoP",
     "RemainingWeight" : "Rem. Weight",
 
-    "exceedstotalnop"  : "Exceeds total NOP",
+    "exceedstotalnop"  : "Exceeds total NoP",
     "exceedstotalWeight"  : "Exceeds total Weight",
     "remainingpcsavailable" : "Remaining pieces available, weight cannot be 0.",
 
