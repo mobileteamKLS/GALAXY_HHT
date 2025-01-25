@@ -44,7 +44,7 @@ class AddShipmentMoveFailureState extends MoveState {
   AddShipmentMoveFailureState(this.error);
 }
 
-/*class RemoveMovementSuccessState extends MoveState {
+class RemoveMovementSuccessState extends MoveState {
   final RemoveMovementModel removeMovementModel;
   RemoveMovementSuccessState(this.removeMovementModel);
 }
@@ -52,7 +52,7 @@ class AddShipmentMoveFailureState extends MoveState {
 class RemoveMovementFailureState extends MoveState {
   final String error;
   RemoveMovementFailureState(this.error);
-}*/
+}
 
 /*class SplitGroupDefaultPageLoadSuccessState extends SplitGroupState {
   final SplitGroupDefaultPageLoadModel splitGroupDefaultPageLoadModel;

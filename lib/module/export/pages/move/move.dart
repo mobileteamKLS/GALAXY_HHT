@@ -77,6 +77,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
   FocusNode groupIdFocusNode = FocusNode();
   FocusNode scanBtnFocusNode = FocusNode();
   FocusNode removeGroupBtnFocusNode = FocusNode();
+  FocusNode removeULDTrolleyBtnFocusNode = FocusNode();
   FocusNode clearBtnFocusNode = FocusNode();
   FocusNode moveBtnFocusNode = FocusNode();
 
@@ -162,32 +163,24 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
     });
   }
 
- /* void _toggleSelectAll(bool value) {
-    setState(() {
-      _isSelectAll = value;
-      switchStates = List<bool>.filled(listValue.length, value);
-      selectedValues = value ? List<String>.from(listValue) : [];
-    });
-  }
-
-  void _toggleSwitch(int index, bool value) {
-    setState(() {
-      switchStates[index] = value;
-      if (value) {
-        selectedValues.add(listValue[index]);
-      } else {
-        selectedValues.remove(listValue[index]);
-      }
-      // Update "Select All" state
-      _isSelectAll = switchStates.every((state) => state);
-    });
-  }*/
 
 
   Future<void> leaveGroupIdFocus() async {
 
     // Skip the focus leave logic if inactivity dialog is open
     if (isInactivityDialogOpen) return;
+
+
+    // Skip focus leave logic if "Clear" button is clicked
+    if (clearBtnFocusNode.hasFocus) return;
+
+    // Skip focus leave logic if "Clear" button is clicked
+    if (moveBtnFocusNode.hasFocus) return;
+
+    // Skip focus leave logic if "Clear" button is clicked
+    if (removeGroupBtnFocusNode.hasFocus) return;
+
+    if (removeULDTrolleyBtnFocusNode.hasFocus) return;
 
     if (groupIdController.text.isNotEmpty) {
       getMoveSearch();
@@ -417,8 +410,18 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                   if(state.getMoveSearchModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getMoveSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
                                   }
                                   else{
+
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
+
                                     getMoveSearchModel = state.getMoveSearchModel;
                                     List<GroupDetailList>? newGroupDetailList = getMoveSearchModel!.groupDetailList;
                                     List<ULDTrolleyDetailsList>? newULDTrolleyDetailsList = getMoveSearchModel!.uLDTrolleyDetailsList;
@@ -479,6 +482,10 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                 }
                                 else if (state is GetMoveSearchFailureState){
+                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                    FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                  },
+                                  );
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -488,11 +495,23 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                  if(state.moveLocationModel.status == "E"){
                                    Vibration.vibrate(duration: 500);
                                    SnackbarUtil.showSnackbar(context, state.moveLocationModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                   },
+                                   );
                                  }else if(state.moveLocationModel.status == "V"){
                                    Vibration.vibrate(duration: 500);
                                    SnackbarUtil.showSnackbar(context, state.moveLocationModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                   },
+                                   );
                                  }else{
-
+                                   WidgetsBinding.instance.addPostFrameCallback((_) {
+                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                   },
+                                   );
+                                   groupIdController.clear();
                                    if(pickType == "G"){
                                      getSelectedGroupIds().forEach((selectedGroup) {
                                        getGroupDetailList!.remove(selectedGroup); // Remove from the main list
@@ -524,10 +543,20 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                 else if(state is AddShipmentMoveSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.addShipmentModel.status == "E"){
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
+
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     if(addShipmentComplete == true){
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                      },
+                                      );
+                                      groupIdController.clear();
                                       SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                       getSelectedGroupIds().forEach((selectedGroup) {
                                         getGroupDetailList!.remove(selectedGroup); // Remove from the main list
@@ -539,14 +568,26 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                 else if(state is AddShipmentMoveFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
-                                  SnackbarUtil.showSnackbar(context, state.error!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                               /* else if(state is RemoveMovementSuccessState){
+                                else if(state is RemoveMovementSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.removeMovementModel.status == "E"){
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
+                                    groupIdController.clear();
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.removeMovementModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    },
+                                    );
+
+                                    groupIdController.clear();
+
                                     if(pickType == "G"){
                                       GroupDetailList removedGroup = getGroupDetailList!.removeAt(groupSelectIndex);
                                       // Remove the corresponding entry from the switch states
@@ -555,7 +596,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                       });
                                     }else{
-                                      ULDTrolleyDetailsList removedGroup = getULDTrolleyDetailsList!.removeAt(groupSelectIndex);
+                                      ULDTrolleyDetailsList removedGroup = getULDTrolleyDetailsList!.removeAt(uldTrolleySelectIndex);
                                       // Remove the corresponding entry from the switch states
                                       groupSwitchStates.remove(removedGroup);
                                       setState(() {
@@ -564,7 +605,11 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                     }
                                   }
                                 }
-                                else if(state is RemoveMovementFailureState){}*/
+                                else if(state is RemoveMovementFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
                               },
                               child: Expanded(
                                 child: SingleChildScrollView(
@@ -716,7 +761,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                               isborderButton: true,
                                                               focusNode: clearBtnFocusNode,
                                                               press: () async {
-                                                                FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                                FocusScope.of(context).requestFocus(clearBtnFocusNode);
                                                                 inactivityTimerManager?.stopTimer();
                                                                 bool? removeDialog = await DialogUtils.commonDialogforWarning(context, (pickType == "G") ? "Clear group list" : (pickType == "U") ? "Clear ULD list" : "Clear Trolley list", (pickType == "G") ? "Are you sure you want to clear group list ?" : (pickType == "U") ? "Are you sure you want to clear ULD list ?" : "Are you sure you want to clear Trolley list ?" , lableModel);
 
@@ -735,13 +780,13 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                   groupSwitchStates.clear();
                                                                   uldTrolleySwitchStates.clear();
 
-                                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                                                                    FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                                                  });
+
                                                                   // Reset UI
                                                                   setState(() {});
                                                                 }else{
-
+                                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                    FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                  });
                                                                 }
 
                                                                 setState(() {});
@@ -784,7 +829,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                             focusNode: moveBtnFocusNode,
                                                             text: "${lableModel.move}",
                                                             press: () async {
-                                                              FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                              FocusScope.of(context).requestFocus(moveBtnFocusNode);
                                                               inactivityTimerManager?.stopTimer();
                                                               if(dropLocation.isNotEmpty){
                                                                 if(dropLocationType == "G"){
@@ -795,7 +840,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                     moveLocation();
                                                                     //call move serch api data will be selected uld/trolley
                                                                   }
-                                                                }else{
+                                                                }
+                                                                else{
 
                                                                   List<GroupDetailList> selectedGroups = getSelectedGroupIds();
                                                                   int processedCount = 0;
@@ -840,6 +886,10 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                               }else{
                                                                 SnackbarUtil.showSnackbar(context, "Please location search", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                 Vibration.vibrate(duration: 500);
+                                                                WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                  FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                });
+                                                                groupIdController.clear();
                                                               }
 
                                                               /*if (selectedValues.isEmpty) {
@@ -954,43 +1004,49 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                           Row(
                                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             children: [
-                                                                              Row(
-                                                                                children: [
-                                                                                  CustomeText(
-                                                                                    text: "${lableModel.pieces} :",
-                                                                                    fontColor: MyColor.textColorGrey2,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                  const SizedBox(width: 5),
-                                                                                  CustomeText(
-                                                                                    text: "${groupDetailView.nOP}",
-                                                                                    fontColor: MyColor.colorBlack,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                ],
+                                                                              Expanded(
+                                                                                flex: 1,
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    CustomeText(
+                                                                                      text: "${lableModel.pieces} :",
+                                                                                      fontColor: MyColor.textColorGrey2,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                    const SizedBox(width: 5),
+                                                                                    CustomeText(
+                                                                                      text: "${groupDetailView.nOP}",
+                                                                                      fontColor: MyColor.colorBlack,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                              Row(
-                                                                                children: [
-                                                                                  CustomeText(
-                                                                                    text: "${lableModel.weight} :",
-                                                                                    fontColor: MyColor.textColorGrey2,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                  const SizedBox(width: 5),
-                                                                                  CustomeText(
-                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(groupDetailView.weight!)} Kg",
-                                                                                    fontColor: MyColor.colorBlack,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                ],
+                                                                              Expanded(
+                                                                                flex: 1,
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    CustomeText(
+                                                                                      text: "${lableModel.weight} :",
+                                                                                      fontColor: MyColor.textColorGrey2,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                    const SizedBox(width: 5),
+                                                                                    CustomeText(
+                                                                                      text: "${CommonUtils.formateToTwoDecimalPlacesValue(groupDetailView.weight!)} Kg",
+                                                                                      fontColor: MyColor.colorBlack,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
                                                                             ],
                                                                           ),
@@ -1052,8 +1108,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                     color: MyColor.colorRed,
                                                                                     focusNode: removeGroupBtnFocusNode,
                                                                                     press: () async {
-
-                                                                                      FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                                                      FocusScope.of(context).requestFocus(removeGroupBtnFocusNode);
                                                                                       inactivityTimerManager?.stopTimer();
                                                                                       bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
 
@@ -1071,7 +1126,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                                                                         });*/
                                                                                       }else{
-
+                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                                        });
                                                                                       }
 
                                                                                     },),
@@ -1110,7 +1167,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                                     ListView.builder(
                                                       itemCount: getULDTrolleyDetailsList!.length,
-                                                      physics: NeverScrollableScrollPhysics(),
+                                                      physics: const NeverScrollableScrollPhysics(),
                                                       shrinkWrap: true,
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {
@@ -1201,43 +1258,49 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                           Row(
                                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             children: [
-                                                                              Row(
-                                                                                children: [
-                                                                                  CustomeText(
-                                                                                    text: "${lableModel.scaleWt} :",
-                                                                                    fontColor: MyColor.textColorGrey2,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                  const SizedBox(width: 5),
-                                                                                  CustomeText(
-                                                                                    text: "${CommonUtils.formateToTwoDecimalPlacesValue(uldTrolleyDetailView.scaleWeight!)} Kg",
-                                                                                    fontColor: MyColor.colorBlack,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                ],
+                                                                              Expanded(
+                                                                                flex: 1,
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    CustomeText(
+                                                                                      text: "${lableModel.scaleWt} :",
+                                                                                      fontColor: MyColor.textColorGrey2,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                    const SizedBox(width: 5),
+                                                                                    CustomeText(
+                                                                                      text: "${CommonUtils.formateToTwoDecimalPlacesValue(uldTrolleyDetailView.scaleWeight!)} Kg",
+                                                                                      fontColor: MyColor.colorBlack,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
-                                                                              Row(
-                                                                                children: [
-                                                                                  CustomeText(
-                                                                                    text: "${lableModel.offPoint} :",
-                                                                                    fontColor: MyColor.textColorGrey2,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w500,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                  const SizedBox(width: 5),
-                                                                                  CustomeText(
-                                                                                    text: uldTrolleyDetailView.offPoint!,
-                                                                                    fontColor: MyColor.colorBlack,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                    fontWeight: FontWeight.w600,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                ],
+                                                                              Expanded(
+                                                                                flex: 1,
+                                                                                child: Row(
+                                                                                  children: [
+                                                                                    CustomeText(
+                                                                                      text: "${lableModel.offPoint} :",
+                                                                                      fontColor: MyColor.textColorGrey2,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                    const SizedBox(width: 5),
+                                                                                    CustomeText(
+                                                                                      text: uldTrolleyDetailView.offPoint!,
+                                                                                      fontColor: MyColor.colorBlack,
+                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                      textAlign: TextAlign.start,
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
                                                                             ],
                                                                           ),
@@ -1278,9 +1341,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                   flex: 3,
                                                                                   child: RoundedButton(text: "Remove",
                                                                                     color: MyColor.colorRed,
-                                                                                    focusNode: removeGroupBtnFocusNode,
+                                                                                    focusNode: removeULDTrolleyBtnFocusNode,
                                                                                     press: () async {
-                                                                                      FocusScope.of(context).requestFocus(scanBtnFocusNode);
+                                                                                      FocusScope.of(context).requestFocus(removeULDTrolleyBtnFocusNode);
                                                                                       inactivityTimerManager?.stopTimer();
                                                                                       bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
                                                                                       if(removeDialog == true){
@@ -1297,7 +1360,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                                                                         });*/
                                                                                       }else{
-
+                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                                        });
                                                                                       }
 
                                                                                     },),
@@ -1355,11 +1420,14 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                               setState(() {
                                                 selectedType = "U";
                                               });
+
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              groupIdController.clear();
                                             }
 
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                            });
+
 
                                           },
                                           child: Container(
@@ -1387,11 +1455,13 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                               setState(() {
                                                 selectedType = "G";
                                               });
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              groupIdController.clear();
                                             }
 
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                            });
+
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
@@ -1415,10 +1485,13 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                               setState(() {
                                                 selectedType = "T";
                                               });
+
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              groupIdController.clear();
                                             }
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                            });
+
                                           },
                                           child: Container(
                                             decoration: BoxDecoration(
@@ -1480,12 +1553,27 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
       }else{
 
         String result = groupcodeScanResult.replaceAll(" ", "");
+        String truncatedResult = "";
+        if(selectedType == "G"){
+          truncatedResult = result.length > 14
+              ? result.substring(0, 14)
+              : result;
+        }else if(selectedType == "U"){
+          truncatedResult = result.length > 11
+              ? result.substring(0, 11)
+              : result;
+        }else{
+          truncatedResult = result.length > 20
+              ? result.substring(0, 20)
+              : result;
+        }
 
-        String truncatedResult = result.length > 15
-            ? result.substring(0, 15)
-            : result;
+
 
         groupIdController.text = truncatedResult;
+
+        getMoveSearch();
+
         // Call searchLocation api to validate or not
         // call binning details api
 
@@ -1532,19 +1620,17 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
         widget.menuId);
   }
 
+
   Future<void> removeMovement(int seqNo, String type) async {
 
-    print("CHECK_LOCATION === ${pickType} == ${dropLocation} == ${selectedType} == ${generateImageXMLDataGroup(getSelectedGroupIds())} == ${generateImageXMLDataULDTrolley(getSelectedTrolleyIds())}" );
 
-
-    /*await context.read<MoveCubit>().removeMovement(
+    await context.read<MoveCubit>().removeMovement(
         seqNo,
         type,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);*/
+        widget.menuId);
   }
-
 
 
   String generateImageXMLDataGroup(List<GroupDetailList> selectList) {

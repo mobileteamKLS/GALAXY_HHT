@@ -78,7 +78,7 @@ class MoveCubit extends Cubit<MoveState>{
   }
 
 
- /* Future<void> removeMovement(
+  Future<void> removeMovement(
       int sequenceNo,
       String type,
       int userId,
@@ -95,7 +95,7 @@ class MoveCubit extends Cubit<MoveState>{
     } catch (e) {
       emit(RemoveMovementFailureState(e.toString()));
     }
-  }*/
+  }
 
 
 

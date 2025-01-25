@@ -570,7 +570,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                                   Row(
                                                                                     children: [
                                                                                       CustomeText(
-                                                                                        text: (splitGroup.acceptanceLevel == "H") ? "House :" : (splitGroup.acceptanceLevel == "S") ? "SBNo. :" : (splitGroup.acceptanceLevel == "M") ? "MPS No." : (splitGroup.acceptanceLevel == "B") ? "BAG :" : "",
+                                                                                        text: (splitGroup.acceptanceLevel == "H") ? "House : " : (splitGroup.acceptanceLevel == "S") ? "SB No. : " : (splitGroup.acceptanceLevel == "M") ? "MPS No. : " : (splitGroup.acceptanceLevel == "B") ? "BAG : " : "",
                                                                                         fontColor: MyColor.textColorGrey2,
                                                                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                         fontWeight: FontWeight.w400,
@@ -592,43 +592,49 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                               Row(
                                                                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                                 children: [
-                                                                                  Row(
-                                                                                    children: [
-                                                                                      CustomeText(
-                                                                                        text: "${lableModel.pieces} :",
-                                                                                        fontColor: MyColor.textColorGrey2,
-                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                        textAlign: TextAlign.start,
-                                                                                      ),
-                                                                                      const SizedBox(width: 5),
-                                                                                      CustomeText(
-                                                                                        text: "${splitGroup.nOP}",
-                                                                                        fontColor: MyColor.colorBlack,
-                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                        textAlign: TextAlign.start,
-                                                                                      ),
-                                                                                    ],
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "${lableModel.pieces} :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        const SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${splitGroup.nOP}",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
                                                                                   ),
-                                                                                  Row(
-                                                                                    children: [
-                                                                                      CustomeText(
-                                                                                        text: "${lableModel.weight} :",
-                                                                                        fontColor: MyColor.textColorGrey2,
-                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                        textAlign: TextAlign.start,
-                                                                                      ),
-                                                                                      const SizedBox(width: 5),
-                                                                                      CustomeText(
-                                                                                        text: "${CommonUtils.formateToTwoDecimalPlacesValue(splitGroup.weight!)} Kg",
-                                                                                        fontColor: MyColor.colorBlack,
-                                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                        fontWeight: FontWeight.w600,
-                                                                                        textAlign: TextAlign.start,
-                                                                                      ),
-                                                                                    ],
+                                                                                  Expanded(
+                                                                                    flex: 1,
+                                                                                    child: Row(
+                                                                                      children: [
+                                                                                        CustomeText(
+                                                                                          text: "${lableModel.weight} :",
+                                                                                          fontColor: MyColor.textColorGrey2,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                          fontWeight: FontWeight.w500,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                        const SizedBox(width: 5),
+                                                                                        CustomeText(
+                                                                                          text: "${CommonUtils.formateToTwoDecimalPlacesValue(splitGroup.weight!)} Kg",
+                                                                                          fontColor: MyColor.colorBlack,
+                                                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                          fontWeight: FontWeight.w600,
+                                                                                          textAlign: TextAlign.start,
+                                                                                        ),
+                                                                                      ],
+                                                                                    ),
                                                                                   ),
                                                                                 ],
                                                                               ),
