@@ -170,7 +170,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const RoundedIconButtonNew(
-                          icon: Icons.warehouse_outlined,
+                          icon: warehouse,
                           text: 'Warehouse\nOperations',
                           targetPage: WarehouseOperations(),
                           containerColor: Color(0xffD1E2FB),
@@ -179,7 +179,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                         ),
 
                         const RoundedIconButtonNew(
-                          icon: Icons.fire_truck_outlined,
+                          icon: pick_up,
                           text: 'Pickup\nServices',
                           targetPage: PickupServices(),
                           containerColor: Color(0xffDFD6EF),
@@ -188,7 +188,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                         ),
 
                         RoundedIconButtonNew(
-                          icon: Icons.local_shipping_outlined,
+                          icon: vehicle_track,
                           text: 'Vehicle\nTrack',
                           targetPage: VehicleTrackingOperations(),
                           containerColor: Color(0xffCCF1F6),
@@ -206,7 +206,7 @@ class _IpadDashboardState extends State<IpadDashboard> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                        RoundedIconButtonNew(
-                          icon: Icons.list_alt_outlined,
+                          icon: custom_operation,
                           text: 'Customs\nOperations',
                           targetPage: WarehouseOperations(),
                           containerColor: Color(0xffD1E2FB),

@@ -8,29 +8,13 @@ import 'package:galaxy/Ipad/screen/wdoListing.dart';
 import 'package:galaxy/module/login/pages/loginscreen.dart';
 import '../../core/images.dart';
 import '../../core/mycolor.dart';
-import '../../language/model/dashboardModel.dart';
 import '../../module/onboarding/sizeconfig.dart';
-import '../../utils/dialogutils.dart';
 import '../../utils/sizeutils.dart';
-import '../../widget/custometext.dart';
-import '../auth/auth.dart';
-import '../modal/ShipmentAcceptanceModal.dart';
 import '../utils/global.dart';
-import '../widget/customDialog.dart';
 import '../widget/customIpadTextfield.dart';
-import 'Customsoperation.dart';
-import 'ImportCreateShipment.dart';
 import 'ImportShipmentListing.dart';
-import 'ShipmentAcceptanceManually.dart';
-import 'WarehouseLocation.dart';
-import 'acceptBooking.dart';
-import 'appointmentBooingNew.dart';
-import 'appointmentBooking.dart';
-import 'availableforExamination.dart';
 import 'dockIn.dart';
 import 'dockOut.dart';
-import 'gateIn.dart';
-import 'gateOut.dart';
 
 class VehicleTrackingOperations extends StatefulWidget {
   const VehicleTrackingOperations({super.key});
@@ -144,7 +128,7 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                           // ),
                           // SizedBox(width: 40,),
                           RoundedIconButtonNew(
-                            icon: Icons.local_shipping_outlined,
+                            icon: dock_in,
                             text: 'Dock In',
                             targetPage: DockIn(),
                             containerColor: Color(0xffD1E2FB),
@@ -153,7 +137,7 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                           ),
                           SizedBox(width: 40,),
                           RoundedIconButtonNew(
-                            icon: Icons.local_shipping_outlined,
+                            icon:dock_out,
                             text: 'Dock Out',
                             targetPage: DockOut(),
                             containerColor: Color(0xffFFD0D0),

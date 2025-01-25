@@ -13,6 +13,7 @@ import 'package:galaxy/utils/sizeutils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../Ipad/screen/ImportShipmentListing.dart';
 import '../../../Ipad/screen/IpadDashBoard.dart';
+import '../../../Ipad/screen/home_page.dart';
 import '../../login/pages/loginscreen.dart';
 import '../../login/pages/signinscreenmethods.dart';
 import '../model/splashdefaultmodel.dart';
@@ -56,14 +57,15 @@ class _SplashScreenState extends State<SplashScreen> {
   }
   void _navigateToLogin() {
     Future.delayed(const Duration(seconds: 3), () {
-      Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(
-          builder: (BuildContext context) => const LogInScreen(
-            isMPinEnable: false,
-            authFlag: "P",
-          ),
-        ),
-      );
+      // Navigator.of(context).pushReplacement(
+      //   CupertinoPageRoute(
+      //     builder: (BuildContext context) => const LogInScreen(
+      //       isMPinEnable: false,
+      //       authFlag: "P",
+      //     ),
+      //   ),
+      // );
+      Navigator.push(context, MaterialPageRoute(builder: (_)=>const HomeScreen()));
     });
   }
 

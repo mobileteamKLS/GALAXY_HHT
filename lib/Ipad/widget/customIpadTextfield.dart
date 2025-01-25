@@ -197,7 +197,7 @@ class RoundedIconButton extends StatelessWidget {
   }
 }
 class RoundedIconButtonNew extends StatelessWidget {
-  final IconData icon;
+  final String icon;
   final String text;
   final Widget targetPage;
   final Color containerColor;
@@ -254,16 +254,16 @@ class RoundedIconButtonNew extends StatelessWidget {
                 shape: BoxShape.circle,
                 color: containerColor,
               ),
-              child: Icon(
+              child: SvgPicture.asset(
                 icon,
-                color: iconColor,
-                size: 64,
+
+                height: 64,
               ),
             ),
             const SizedBox(height: 10),
             Text(
               text,
-              style: TextStyle(color: textColor, fontSize: 24),
+              style: TextStyle(color: textColor, fontSize: 24,fontWeight: FontWeight.w500),
               textAlign: TextAlign.center,
             ),
           ],

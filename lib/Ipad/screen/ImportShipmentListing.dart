@@ -914,7 +914,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                               ],
                             ),
                           ),
-                          (Global.getStatusAction(shipment.shipmentStatus.toUpperCase())!="")?SizedBox(
+                          (Utils.getStatusAction(shipment.shipmentStatus.toUpperCase())!="")?SizedBox(
                             width: MediaQuery.sizeOf(context).width*0.22,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -943,14 +943,14 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                                               shadowColor: Colors.transparent),
                                           onPressed: null,
                                           child:  Text(
-                                            '${Global.getStatusAction(shipment.shipmentStatus.toUpperCase())}',
+                                            '${Utils.getStatusAction(shipment.shipmentStatus.toUpperCase())}',
                                             style: TextStyle(color: Colors.white),
                                           ),
                                         ),
                                       ),
                                       onTap: (){
                                        // Navigator.push(context, MaterialPageRoute(builder: (_)=>ShipmentAcceptanceManually(shipmentListDetails:shipment)));
-                                        switch (Global.getStatusAction(shipment.shipmentStatus.toUpperCase())) {
+                                        switch (Utils.getStatusAction(shipment.shipmentStatus.toUpperCase())) {
                                           case 'Accept Shipment':
                                             Navigator.pushReplacement(
                                               context,
@@ -1467,7 +1467,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
       decoration: BoxDecoration(
-        color:isBorder ? color.withOpacity(0.2):Global.getStatusColor(text),
+        color:isBorder ? color.withOpacity(0.2):Utils.getStatusColor(text),
         borderRadius: BorderRadius.circular(radius),
         border: isBorder ? Border.all(color: borderColor, width: borderWidth) : null,
       ),

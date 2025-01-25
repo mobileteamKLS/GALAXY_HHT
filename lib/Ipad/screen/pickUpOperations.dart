@@ -183,7 +183,7 @@ class _PickupServicesState extends State<PickupServices> {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           RoundedIconButtonNew(
-                            icon: CupertinoIcons.doc,
+                            icon: active_pickup,
                             text: 'Active Pickup\nRequests',
                             targetPage: ActivePickupRequest(),
                             containerColor: Color(0xfffcedcf),
@@ -192,7 +192,7 @@ class _PickupServicesState extends State<PickupServices> {
                           ),
                           // SizedBox(width: 40,),
                           RoundedIconButtonNew(
-                            icon: CupertinoIcons.cube_box,
+                            icon: scheduled_picks,
                             text: 'Scheduled\nPickups',
                             targetPage: ScheduledPickups(),
                             containerColor: Color(0xffD1E2FB),
@@ -200,7 +200,7 @@ class _PickupServicesState extends State<PickupServices> {
                             textColor: MyColor.textColorGrey3,
                           ),
                           RoundedIconButtonNew(
-                            icon: Icons.fire_truck_outlined,
+                            icon: pick_ups,
                             text: 'Pickups\n',
                             targetPage: PickUps(),
                             containerColor: Color(0xffFFD0D0),

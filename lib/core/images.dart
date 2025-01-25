@@ -93,6 +93,29 @@ const arrowUp = 'assets/svgImages/arrowup.svg';
 const arrowDown = 'assets/svgImages/arrowdown.svg';
 const map = 'assets/svgImages/map.svg';
 
+const acp_booking = 'assets/svgImages/acp_bookings.svg';
+const active_pickup = 'assets/svgImages/active_pickup.svg';
+const appo_booking = 'assets/svgImages/app_booking.svg';
+const avail_exam = 'assets/svgImages/avail_exam.svg';
+const custom_operation = 'assets/svgImages/customs_op.svg';
+const dock_in = 'assets/svgImages/dock_in.svg';
+const dock_out = 'assets/svgImages/dock_out.svg';
+const on_hand = 'assets/svgImages/on_hand.svg';
+const pick_up = 'assets/svgImages/pick_up.svg';
+const pick_ups = 'assets/svgImages/pick_ups.svg';
+const scheduled_picks = 'assets/svgImages/schedule_pickup.svg';
+const shipment_acc = 'assets/svgImages/shipment_acc.svg';
+const shipment_create = 'assets/svgImages/shipment_create.svg';
+const shipment_list = 'assets/svgImages/shipment_list.svg';
+const warehouse_loc = 'assets/svgImages/ware_loc.svg';
+const warehouse = 'assets/svgImages/warehouse.svg';
+const vehicle_track = 'assets/svgImages/vehicle_track.svg';
+const wdo = 'assets/svgImages/wdo.svg';
+const checkin= 'assets/svgImages/check_in.svg';
+const scan = 'assets/svgImages/scan.svg';
+const log_in = 'assets/svgImages/log_in.svg';
+const welcometruck = 'assets/images/WelcomeScreen.png';
+
 
 
 const loginBg = 'assets/images/loginBg.webp';

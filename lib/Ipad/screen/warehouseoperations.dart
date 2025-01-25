@@ -382,7 +382,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   Navigator.pop(context);
                                 },
                               ),
-                               Text(
+                              Text(
                                 isCES? '  Warehouse Operations':'  Customs Operation',
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -422,10 +422,10 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                       ),
                     ),
                     isCES
-                        ? SizedBox(
+                        ? const SizedBox(
                             height: 20,
                           )
-                        : SizedBox(),
+                        : const SizedBox(),
                     isCES
                         ? const Padding(
                             padding: EdgeInsets.only(
@@ -434,7 +434,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 RoundedIconButtonNew(
-                                  icon: CupertinoIcons.doc,
+                                  icon: shipment_list,
                                   text: 'Shipments\nList',
                                   targetPage: ImportShipmentListing(),
                                   containerColor: Color(0xfffcedcf),
@@ -443,7 +443,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                 ),
                                 // SizedBox(width: 40,),
                                 RoundedIconButtonNew(
-                                  icon: CupertinoIcons.add,
+                                  icon: shipment_create,
                                   text: 'Create\nShipment',
                                   targetPage: CreateShipment(),
                                   containerColor: Color(0xffD1E2FB),
@@ -451,7 +451,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                 RoundedIconButtonNew(
-                                  icon: CupertinoIcons.cube_box,
+                                  icon: shipment_acc,
                                   text: 'Shipment\nAcceptance',
                                   targetPage: ShipmentAcceptanceManually(isNavFromList: false,),
                                   containerColor: Color(0xffffd7bd),
@@ -475,7 +475,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 RoundedIconButtonNew(
-                                  icon: Icons.trolley,
+                                  icon: warehouse_loc,
                                   text: 'Warehouse\nLocation',
                                   targetPage: WarehouseLocation(),
                                   containerColor: Color(0xffffd1d1),
@@ -484,7 +484,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                 ),
                                 SizedBox(width: 40,),
                                 RoundedIconButtonNew(
-                                  icon: Icons.local_shipping_outlined,
+                                  icon: wdo,
                                   text: 'Warehouse\nDelivery Order',
                                   targetPage: WdoListing(),
                                   containerColor: Color(0xffb4d9b5),
@@ -510,7 +510,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 RoundedIconButtonNew(
-                                  icon: CupertinoIcons.doc,
+                                  icon:appo_booking,
                                   text: 'Appointment\nBookings',
                                   targetPage: AppointmentBookingNew(),
                                   containerColor: Color(0xfffcedcf),
@@ -519,7 +519,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                 ),
                                 // SizedBox(width: 40,),
                                 RoundedIconButtonNew(
-                                  icon: Icons.check_circle_outline,
+                                  icon: acp_booking,
                                   text: 'Accepted\nBookings',
                                   targetPage: AcceptBooking(),
                                   containerColor: Color(0xffb4d9b5),
@@ -527,7 +527,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                 RoundedIconButtonNew(
-                                  icon: Icons.cancel_outlined,
+                                  icon: acp_booking,
                                   text: 'Rejected\nBookings',
                                   targetPage: RejectBooking(),
                                   containerColor: Color(0xffffd1d1),
@@ -551,7 +551,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 RoundedIconButtonNew(
-                                  icon: Icons.search,
+                                  icon: avail_exam,
                                   text: 'Available For\nExamination',
                                   targetPage: AvailableForExamination(),
                                   containerColor: Color(0xffe1d8f0),
@@ -560,7 +560,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                 ),
                                  SizedBox(width: 40,),
                                 RoundedIconButtonNew(
-                                  icon: CupertinoIcons.cube_box,
+                                  icon: on_hand,
                                   text: 'On Hand\nShipment',
                                   targetPage: OnHandShipment(),
                                   containerColor: Color(0xffFFD7BC),

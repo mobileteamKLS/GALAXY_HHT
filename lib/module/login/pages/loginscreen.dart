@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galaxy/Ipad/screen/home_page.dart';
 import 'package:galaxy/core/images.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/language/appLocalizations.dart';
@@ -222,12 +223,18 @@ class _LogInScreenState extends State<LogInScreen> {
                         children: [
                           Row(
                             children: [
-                              // InkWell(
-                              //   onTap: () {
-                              //     Navigator.pop(context);
-                              //   },
-                              //   child: SvgPicture.asset(back, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3)
-                              // ),
+                              InkWell(
+                                onTap: () {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) =>const HomeScreen(),// WarehouseOperations(),
+                                    ),
+                                        (route) => false,
+                                  );
+                                },
+                                child: SvgPicture.asset(back, height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE3)
+                              ),
                               SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                               CustomeText(
                                   text: "${loginModel.login}",
