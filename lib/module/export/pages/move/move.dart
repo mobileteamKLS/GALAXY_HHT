@@ -64,8 +64,8 @@ class MovePage extends StatefulWidget {
 
 class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin{
 
-  String destinationWarningInd = "Y";
-  String shcCompibilityWarningInd = "Y";
+  String destinationWarningInd = "N";
+  String shcCompibilityWarningInd = "N";
   InactivityTimerManager? inactivityTimerManager;
   final SavedPrefrence savedPrefrence = SavedPrefrence();
   UserDataModel? _user;
@@ -443,7 +443,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                           }
                                         }
                                       }
-                                    }else{
+                                    }
+                                    else{
                                       // Update ULDTrolleyDetailsList without duplicates
                                       if (newULDTrolleyDetailsList != null) {
                                         for (var trolley in newULDTrolleyDetailsList) {
@@ -490,7 +491,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                                else if(state is MoveLocationSuccessState){
+                                else if (state is MoveLocationSuccessState){
                                  DialogUtils.hideLoadingDialog(context);
                                  if(state.moveLocationModel.status == "E"){
                                    Vibration.vibrate(duration: 500);
@@ -523,24 +524,19 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                        getULDTrolleyDetailsList!.remove(selectedTrolley); // Remove from the main list
                                        uldTrolleySwitchStates.remove(selectedTrolley);    // Remove from switch states
                                      });
-
                                    }
-
-
-
-
                                    setState(() {});
 
                                    SnackbarUtil.showSnackbar(context, state.moveLocationModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                  }
 
                                 }
-                                else if(state is MoveLocationFailureState){
+                                else if (state is MoveLocationFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                                else if(state is AddShipmentMoveSuccessState){
+                                else if (state is AddShipmentMoveSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.addShipmentModel.status == "E"){
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -550,8 +546,123 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
+                                  }
+                                  else if(state.addShipmentModel.status == "W"){
+                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "${lableModel.confirmDestination}", state.addShipmentModel.statusMessage! , lableModel);
+
+                                    if(addShipmentDiffDialog == true){
+                                      destinationWarningInd = "Y";
+                                      List<GroupDetailList> selectedGroups = getSelectedGroupIds();
+                                      int processedCount = 0;
+
+                                      if(selectedGroups.length != 1){
+                                        String warningMessage = selectedGroups.isEmpty
+                                            ? "Please select 1 group."
+                                            : "You can only select 1 group at a time.";
+
+                                        // Display the warning message (you can use any method depending on your UI framework)
+                                        Vibration.vibrate(duration: 500);
+                                        SnackbarUtil.showSnackbar(context, warningMessage, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                      }
+                                      else{
+                                        for (var selectedGroup in selectedGroups) {
+                                          addShipment(
+                                            selectedGroup.aWBPrefix!,
+                                            selectedGroup.aWBNo!,
+                                            selectedGroup.eXPAWBRowId!,
+                                            selectedGroup.eXPShipRowId!,
+                                            selectedGroup.nOP!,
+                                            selectedGroup.weight!,
+                                            selectedGroup.groupSeqNo!,
+                                            destinationWarningInd,
+                                            shcCompibilityWarningInd,
+                                          );
+
+                                          processedCount++;
+                                          if (processedCount == selectedGroups.length) {
+                                            // All items have been processed
+
+                                            addShipmentComplete = true;
+                                            setState(() {
+
+                                            });
+
+                                            print("All selected groups processed successfully.");
+                                          }
+                                        }
+
+
+                                      }
+                                    }
+                                    else{
+
+                                    }
+
+
+                                  }
+                                  else if(state.addShipmentModel.status == "C"){
+
+
+                                    bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "${lableModel.shcCompibility}", state.addShipmentModel.statusMessage! , lableModel);
+
+                                    if(addShipmentDiffDialog == true){
+                                      shcCompibilityWarningInd = "Y";
+                                      List<GroupDetailList> selectedGroups = getSelectedGroupIds();
+                                      int processedCount = 0;
+
+                                      if(selectedGroups.length != 1){
+                                        String warningMessage = selectedGroups.isEmpty
+                                            ? "Please select 1 group."
+                                            : "You can only select 1 group at a time.";
+
+                                        // Display the warning message (you can use any method depending on your UI framework)
+                                        Vibration.vibrate(duration: 500);
+                                        SnackbarUtil.showSnackbar(context, warningMessage, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                      }
+                                      else{
+                                        for (var selectedGroup in selectedGroups) {
+                                          addShipment(
+                                            selectedGroup.aWBPrefix!,
+                                            selectedGroup.aWBNo!,
+                                            selectedGroup.eXPAWBRowId!,
+                                            selectedGroup.eXPShipRowId!,
+                                            selectedGroup.nOP!,
+                                            selectedGroup.weight!,
+                                            selectedGroup.groupSeqNo!,
+                                            destinationWarningInd,
+                                            shcCompibilityWarningInd,
+                                          );
+
+                                          processedCount++;
+                                          if (processedCount == selectedGroups.length) {
+                                            // All items have been processed
+
+                                            addShipmentComplete = true;
+                                            setState(() {
+
+                                            });
+
+                                            print("All selected groups processed successfully.");
+                                          }
+                                        }
+
+
+                                      }
+                                    }
+                                    else{
+
+                                    }
+
+
+                                  }
+
+                                  else{
+
                                     if(addShipmentComplete == true){
+                                      destinationWarningInd = "N";
+                                      shcCompibilityWarningInd = "N";
                                       WidgetsBinding.instance.addPostFrameCallback((_) {
                                         FocusScope.of(context).requestFocus(groupIdFocusNode);
                                       },
@@ -565,12 +676,12 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                     }
                                   }
                                 }
-                                else if(state is AddShipmentMoveFailureState){
+                                else if (state is AddShipmentMoveFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
-                                else if(state is RemoveMovementSuccessState){
+                                else if (state is RemoveMovementSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.removeMovementModel.status == "E"){
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -605,7 +716,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                     }
                                   }
                                 }
-                                else if(state is RemoveMovementFailureState){
+                                else if (state is RemoveMovementFailureState){
                                   DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -843,42 +954,53 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                 }
                                                                 else{
 
+
+
                                                                   List<GroupDetailList> selectedGroups = getSelectedGroupIds();
                                                                   int processedCount = 0;
 
+                                                                  if(selectedGroups.length != 1){
 
-                                                                  for (var selectedGroup in selectedGroups) {
-                                                                    addShipment(
-                                                                      selectedGroup.aWBPrefix!,
-                                                                      selectedGroup.aWBNo!,
-                                                                      selectedGroup.eXPAWBRowId!,
-                                                                      selectedGroup.eXPShipRowId!,
-                                                                      selectedGroup.nOP!,
-                                                                      selectedGroup.weight!,
-                                                                      selectedGroup.groupSeqNo!,
-                                                                      destinationWarningInd,
-                                                                      shcCompibilityWarningInd,
-                                                                    );
 
-                                                                    processedCount++;
-                                                                    if (processedCount == selectedGroups.length) {
-                                                                      // All items have been processed
+                                                                    String warningMessage = selectedGroups.isEmpty
+                                                                        ? "Please select 1 group."
+                                                                        : "You can only select 1 group at a time.";
 
-                                                                      addShipmentComplete = true;
-                                                                      setState(() {
+                                                                    // Display the warning message (you can use any method depending on your UI framework)
+                                                                    Vibration.vibrate(duration: 500);
+                                                                    SnackbarUtil.showSnackbar(context, warningMessage, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                                                      });
+                                                                  }
+                                                                  else{
+                                                                    for (var selectedGroup in selectedGroups) {
+                                                                      addShipment(
+                                                                        selectedGroup.aWBPrefix!,
+                                                                        selectedGroup.aWBNo!,
+                                                                        selectedGroup.eXPAWBRowId!,
+                                                                        selectedGroup.eXPShipRowId!,
+                                                                        selectedGroup.nOP!,
+                                                                        selectedGroup.weight!,
+                                                                        selectedGroup.groupSeqNo!,
+                                                                        destinationWarningInd,
+                                                                        shcCompibilityWarningInd,
+                                                                      );
 
-                                                                      print("All selected groups processed successfully.");
+                                                                      processedCount++;
+                                                                      if (processedCount == selectedGroups.length) {
+                                                                        // All items have been processed
+
+                                                                        addShipmentComplete = true;
+                                                                        setState(() {
+
+                                                                        });
+
+                                                                        print("All selected groups processed successfully.");
+                                                                      }
                                                                     }
+
+
                                                                   }
 
-
-
-/*
-                                                                  getSelectedGroupIds().forEach((selectedGroup) {
-                                                                    addShipment(selectedGroup.aWBPrefix!, selectedGroup.aWBNo!, selectedGroup.eXPAWBRowId!, selectedGroup.eXPShipRowId!, selectedGroup.nOP!, selectedGroup.weight!, selectedGroup.groupSeqNo!, destinationWarningInd, shcCompibilityWarningInd);   // Remove from switch states
-                                                                  });*/
 
 
                                                                   // call add shipment api
@@ -1113,18 +1235,9 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                       bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
 
                                                                                       if(removeDialog == true){
-
                                                                                         groupSelectIndex = index;
                                                                                         removeMovement(groupDetailView.groupSeqNo!, pickType);
 
-/*
-                                                                                        GroupDetailList removedGroup = getGroupDetailList!.removeAt(index);
-
-                                                                                        // Remove the corresponding entry from the switch states
-                                                                                        groupSwitchStates.remove(removedGroup);
-                                                                                        setState(() {
-
-                                                                                        });*/
                                                                                       }else{
                                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
@@ -1680,7 +1793,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
         awbRowId, awbShipRowId, uldTrolleyForDrop!.uLDTrolleySeqNo!,
         awbPrefix , awbNumber.replaceAll(" ", ""), nop, weight,
         uldTrolleyForDrop!.offPoint!, uldTrolleyForDrop!.sHCCode!,
-        "Y", uldTrolleyForDrop!.sHCCode!.contains("DGR") ? "Y" : "N",
+        "N", uldTrolleyForDrop!.sHCCode!.contains("DGR") ? "Y" : "N",
         dropLocationType,
         "", 0, "", groupSeqNo, warningInd, shcWarning,
         uldTrolleyForDrop!.carriarCode!,

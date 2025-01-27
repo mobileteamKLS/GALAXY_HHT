@@ -392,7 +392,8 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                   } else if (state.addShipmentModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else if(state.addShipmentModel.status == "W"){
+                                  }
+                                  else if(state.addShipmentModel.status == "W"){
                                     bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "${lableModel.confirmDestination}", state.addShipmentModel.statusMessage! , lableModel);
 
                                     if(addShipmentDiffDialog == true){
@@ -400,16 +401,13 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                       addShipment(SHCCodes, destinationWarningInd, shcCompibilityWarningInd);
                                     }
                                     else{
-                                    //  destinationWarningInd = "N";
-                                    //  addShipment(SHCCodes, "N", shcCompibilityWarningInd);
+
                                     }
 
 
-                                  }else if(state.addShipmentModel.status == "C"){
+                                  }
+                                  else if(state.addShipmentModel.status == "C"){
 
-                                   /* Vibration.vibrate(duration: 500);
-                                    SnackbarUtil.showSnackbar(context, state.addShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                    */
 
                                     bool? addShipmentDiffDialog = await DialogUtils.addShipmentDiffOffPointDialog(context, "${lableModel.shcCompibility}", state.addShipmentModel.statusMessage! , lableModel);
 
@@ -418,8 +416,7 @@ class _BuildUpAddShipmentPageState extends State<BuildUpAddShipmentPage>{
                                       addShipment(SHCCodes, destinationWarningInd, shcCompibilityWarningInd);
                                     }
                                     else{
-                                     // shcCompibilityWarningInd = "N";
-                                      //addShipment(SHCCodes, destinationWarningInd, "N");
+
                                     }
 
 
