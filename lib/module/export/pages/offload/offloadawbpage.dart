@@ -31,6 +31,7 @@ import 'dart:ui' as ui;
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/offload/getoffloadsearchmodel.dart';
 import '../../model/offload/offloadgetpageload.dart';
 
 class OffloadAWBPage extends StatefulWidget {
@@ -48,7 +49,7 @@ class OffloadAWBPage extends StatefulWidget {
   String isGroupBasedAcceptChar;
   int isGroupBasedAcceptNumber;
   List<OffloadReasonList> offloadReasonList;
-
+  OffloadAWBDetailsList offloadAwbDetail;
 
   OffloadAWBPage({
     super.key,
@@ -62,6 +63,7 @@ class OffloadAWBPage extends StatefulWidget {
     required this.isGroupBasedAcceptChar,
     required this.isGroupBasedAcceptNumber,
     required this.offloadReasonList,
+    required this.offloadAwbDetail
     //required this.splitGroup
    });
 
@@ -116,11 +118,13 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
     super.initState();
 
 
-    totalNop = int.parse("10");
-    totalWt = double.parse("100.00");
+    totalNop = int.parse("${widget.offloadAwbDetail.nOP!}");
+    totalWt = double.parse("${widget.offloadAwbDetail.weightKg!}");
 
     nopController.text = totalNop.toString();
     weightController.text = totalWt.toStringAsFixed(2);
+
+    groupIdController.text = widget.offloadAwbDetail.groupId!;
 
     _loadUser(); //load user data
 
@@ -135,6 +139,10 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
       setState(() {
         _user = user;
         _splashDefaultData = splashDefaultData;
+      });
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(nopFocusNode);
       });
 
       inactivityTimerManager = InactivityTimerManager(
@@ -281,13 +289,17 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                 //add clear text to clear all feild
                                 onClear: () {
                                   groupIdController.clear();
-                                 /* totalNop = int.parse("${widget.splitGroup.nOP}");
-                                  totalWt = double.parse("${widget.splitGroup.weight}");*/
+                                  totalNop = int.parse("${widget.offloadAwbDetail.nOP}");
+                                  totalWt = double.parse("${widget.offloadAwbDetail.weightKg}");
+
 
                                   nopController.text = totalNop.toString();
                                   weightController.text = totalWt.toStringAsFixed(2);
+                                  groupIdController.text = widget.offloadAwbDetail.groupId!;
                                   differenceNop = 0;
                                   differenceWeight = 0.00;
+                                  selectedSwitchIndex = "";
+                                  reasonController.text = "";
                                   setState(() {
 
                                   });
@@ -316,7 +328,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                   }
                                   else{
                                     if(btnclick == "O"){
-                                      _onWillPop();
+                                      Navigator.pop(context, "true");
                                     }else{
                                       // call damage screen
                                     }
@@ -356,7 +368,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
                                                     child: CustomeText(
-                                                      text: AwbFormateNumberUtils.formatAWBNumber("12581818181"),
+                                                      text: AwbFormateNumberUtils.formatAWBNumber("${widget.offloadAwbDetail.aWBNo}"),
                                                       fontColor: MyColor.textColorGrey3,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                       fontWeight: FontWeight.w600,
@@ -605,7 +617,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
                                                             labelText:  "Reason for Offload",
-                                                            readOnly: false,
+                                                            readOnly: true,
                                                             onChanged: (value) {},
                                                             fillColor: Colors.grey.shade100,
                                                             textInputType: TextInputType.text,
@@ -667,6 +679,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                                         onChanged: (value) {
                                                                           setState(() {
                                                                             selectedSwitchIndex = value ? content.referenceDataIdentifier! : "";
+                                                                            reasonController.text = value ? content.referenceDescription! : "";
                                                                           });
                                                                         },
                                                                       )
@@ -821,6 +834,15 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
 
                                         }
 
+                                        if (selectedSwitchIndex == "") {
+                                          SnackbarUtil.showSnackbar(context, "Select any one reason for offload.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
+
+                                          return;
+                                        }
+
+
+
                                         offloadShipmentSave();  // Return null when "Cancel" is pressed
                                       },
                                     ),
@@ -932,9 +954,12 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
 
                                         }
 
+                                        if (selectedSwitchIndex == "") {
+                                          SnackbarUtil.showSnackbar(context, "Select any one reason for offload.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
 
-
-
+                                          return;
+                                        }
 
 
                                         offloadShipmentSave();
@@ -984,6 +1009,17 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
 
 
     await context.read<OffloadCubit>().offloadAWBSave(
+        widget.offloadAwbDetail.flightSeqNo!,
+        widget.offloadAwbDetail.expAWBRowId!,
+        widget.offloadAwbDetail.expShipRowId!,
+        widget.offloadAwbDetail.uLDTrolleySeqNo!,
+        widget.offloadAwbDetail.eMISeqNo!,
+        widget.offloadAwbDetail.uLDTrolleyType!,
+        int.parse(nopController.text),
+        double.parse(weightController.text),
+        groupIdController.text,
+        widget.offloadAwbDetail.offPoint!,
+        selectedSwitchIndex,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

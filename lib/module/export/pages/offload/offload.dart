@@ -93,7 +93,6 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
   FocusNode nextBtnFocusNode = FocusNode();
   FocusNode nextULDBtnFocusNode = FocusNode();
 
-  List<String> shcCodeList = ["DGR", "GEN", "VAL"];
 
 
   int isGroupIdLength = 1;
@@ -700,239 +699,20 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                   ),
                                                 ],
                                               ),
-                                              child: Container(
-                                                  margin: EdgeInsets.symmetric(vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color: MyColor.colorWhite,
-                                                    borderRadius: BorderRadius.circular(8),
-
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: MyColor.colorBlack.withOpacity(0.09),
-                                                        spreadRadius: 2,
-                                                        blurRadius: 15,
-                                                        offset: Offset(0, 3), // changes position of shadow
-                                                      ),
-                                                    ],
-
-                                                  ),
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      color: MyColor.colorWhite,
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                    child: Stack(
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                CustomeText(
-                                                                  text: AwbFormateNumberUtils.formatAWBNumber("12591919191"),
-                                                                  fontColor: MyColor.textColorGrey3,
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                  fontWeight: FontWeight.w600,
-                                                                  textAlign: TextAlign.start,
-                                                                ),
-                                                                const SizedBox(width: 5),
-                                                                CustomeText(
-                                                                  text: "BA 303 / 14-Jan-24",
-                                                                  fontColor: MyColor.textColorGrey3,
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                  fontWeight: FontWeight.w600,
-                                                                  textAlign: TextAlign.start,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            shcCodeList.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
-                                                            Row(
-                                                              children: [
-                                                                shcCodeList.isNotEmpty
-                                                                    ? Row(
-                                                                  children: shcCodeList.asMap().entries.take(3).map((entry) {
-                                                                    int index = entry.key; // Get the index for colorList assignment
-                                                                    String code = entry.value.trim(); // Get the code value and trim it
-
-                                                                    return Padding(
-                                                                      padding: EdgeInsets.only(right: 5.0),
-                                                                      child: AnimatedBuilder(
-                                                                        animation: _colorAnimation,
-                                                                        builder: (context, child) {
-                                                                          return Container(
-                                                                            padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                                                            decoration : BoxDecoration(
-                                                                              borderRadius: BorderRadius.circular(5),
-                                                                              color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                                                            child: CustomeText(
-                                                                              text: code.trim(),
-                                                                              fontColor: MyColor.textColorGrey3,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                              fontWeight: FontWeight.w500,
-                                                                              textAlign: TextAlign.center,
-                                                                            ),
-                                                                          );
-                                                                        },
-                                                                      ),
-                                                                    );
-                                                                  }).toList(),
-                                                                )
-                                                                    : SizedBox(),
-                                                              ],
-                                                            ),
-                                                            shcCodeList.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                Expanded(
-                                                                  flex: 1,
-                                                                  child: Row(
-                                                                    children: [
-                                                                      CustomeText(
-                                                                        text: "${lableModel.pieces} :",
-                                                                        fontColor: MyColor.textColorGrey2,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                        fontWeight: FontWeight.w500,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                      const SizedBox(width: 5),
-                                                                      CustomeText(
-                                                                        text: "10",
-                                                                        fontColor: MyColor.colorBlack,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                                Expanded(
-                                                                  flex: 1,
-                                                                  child: Row(
-                                                                    children: [
-                                                                      CustomeText(
-                                                                        text: "${lableModel.weight} :",
-                                                                        fontColor: MyColor.textColorGrey2,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                        fontWeight: FontWeight.w500,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                      const SizedBox(width: 5),
-                                                                      CustomeText(
-                                                                        text: "${CommonUtils.formateToTwoDecimalPlacesValue(100)} Kg",
-                                                                        fontColor: MyColor.colorBlack,
-                                                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                        fontWeight: FontWeight.w600,
-                                                                        textAlign: TextAlign.start,
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            SizedBox(height: SizeConfig.blockSizeVertical),
-                                                            IntrinsicHeight(
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    flex: 6,
-                                                                    child: Column(
-                                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                                      children: [
-                                                                        Row(
-                                                                          children: [
-                                                                            CustomeText(
-                                                                              text: "ULD :",
-                                                                              fontColor: MyColor.textColorGrey2,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                              fontWeight:  FontWeight.w500,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            CustomeText(
-                                                                              text: "AKE 12345 AJ",
-                                                                              fontColor: MyColor.textColorGrey3,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                              fontWeight:  FontWeight.w600,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                        SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                                        Row(
-                                                                          children: [
-                                                                            CustomeText(
-                                                                              text: "${lableModel.group} :",
-                                                                              fontColor: Colors.pink.shade500,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            CustomeText(
-                                                                              text: "81818181818181",
-                                                                              fontColor: Colors.pink.shade500,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
-                                                                  Expanded(
-                                                                    flex: 3,
-                                                                    child: RoundedButtonBlue(text: "Next",
-                                                                      focusNode: nextBtnFocusNode,
-                                                                      press: () async {
-                                                                        FocusScope.of(context).requestFocus(nextBtnFocusNode);
-                                                                        inactivityTimerManager?.resetTimer();
-
-                                                                        String value = await Navigator.push(context, CupertinoPageRoute(
-                                                                            builder: (context) => OffloadAWBPage(
-                                                                            importSubMenuList: widget.importSubMenuList,
-                                                                            exportSubMenuList: widget.exportSubMenuList,
-                                                                            mainMenuName: widget.mainMenuName,
-                                                                            menuId: widget.menuId,
-                                                                            lableModel: lableModel,
-                                                                            title: "Offload AWB",
-                                                                            refrelCode: widget.refrelCode,
-                                                                            isGroupBasedAcceptChar: isRequiredGroupForAWB,
-                                                                            isGroupBasedAcceptNumber: isGroupIdLength,
-                                                                            offloadReasonList: offloadReasonList,
-                                                                            )));
-
-                                                                      },),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                              ),
-                                              /*child: (selectedType == "U")
+                                              child: (selectedType == "U")
                                                   ? Padding(
                                                 padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                child: (getULDTrolleyDetailsList!.isNotEmpty)
+                                                child: (offloadULDDetailsList!.isNotEmpty)
                                                     ? Column(
                                                   children: [
 
                                                     ListView.builder(
-                                                      itemCount: getULDTrolleyDetailsList!.length,
+                                                      itemCount: (offloadULDDetailsList!.isNotEmpty) ?  offloadULDDetailsList!.length : 0,
                                                       physics: const NeverScrollableScrollPhysics(),
                                                       shrinkWrap: true,
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {
-                                                        ULDTrolleyDetailsList uldTrolleyDetailView = getULDTrolleyDetailsList![index];
+                                                        OffloadULDDetailsList offloadULDDetail = offloadULDDetailsList![index];
 
                                                         return InkWell(
                                                             onTap: () {
@@ -971,86 +751,18 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                           Row(
                                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             children: [
-                                                                              ULDNumberWidget(uldNo: "${uldTrolleyDetailView.uLDTrolleyType} ${uldTrolleyDetailView.uLDTrolleyNo} ${uldTrolleyDetailView.uLDOwner}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: selectedType),
-                                                                              Row(
-                                                                                children: [
-                                                                                  CustomeText(
-                                                                                    text: "${lableModel.status} : ",
-                                                                                    fontColor: MyColor.textColorGrey2,
-                                                                                    fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                    fontWeight: FontWeight.w400,
-                                                                                    textAlign: TextAlign.start,
-                                                                                  ),
-                                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal),
-                                                                                  Container(
-                                                                                    padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 2.5, vertical: SizeConfig.blockSizeVertical * 0.1),
-                                                                                    decoration : BoxDecoration(
-                                                                                        borderRadius: BorderRadius.circular(20),
-                                                                                        color: (uldTrolleyDetailView.uLDTrolleyStatus == "O" || uldTrolleyDetailView.uLDTrolleyStatus == "R") ? MyColor.flightFinalize :MyColor.flightNotArrived
-                                                                                    ),
-                                                                                    child: CustomeText(
-                                                                                      text: (uldTrolleyDetailView.uLDTrolleyStatus == "O" || uldTrolleyDetailView.uLDTrolleyStatus == "R") ? "Open" : "Closed",
-                                                                                      fontColor: MyColor.textColorGrey3,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                      fontWeight: FontWeight.bold,
-                                                                                      textAlign: TextAlign.center,
-                                                                                    ),
-                                                                                  ),
-                                                                                ],
+                                                                              ULDNumberWidget(uldNo: "${offloadULDDetail.uLDNo}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "U"),
+                                                                              const SizedBox(width: 5),
+                                                                              CustomeText(
+                                                                                text: "${offloadULDDetail.flightNo} / ${offloadULDDetail.flightDate}",
+                                                                                fontColor: MyColor.textColorGrey3,
+                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                textAlign: TextAlign.start,
                                                                               ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(height: SizeConfig.blockSizeVertical ),
-                                                                          Row(
-                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                                            children: [
-                                                                              Expanded(
-                                                                                flex: 1,
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "${lableModel.scaleWt} :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    const SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: "${CommonUtils.formateToTwoDecimalPlacesValue(uldTrolleyDetailView.scaleWeight!)} Kg",
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                              Expanded(
-                                                                                flex: 1,
-                                                                                child: Row(
-                                                                                  children: [
-                                                                                    CustomeText(
-                                                                                      text: "${lableModel.offPoint} :",
-                                                                                      fontColor: MyColor.textColorGrey2,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                      fontWeight: FontWeight.w500,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                    const SizedBox(width: 5),
-                                                                                    CustomeText(
-                                                                                      text: uldTrolleyDetailView.offPoint!,
-                                                                                      fontColor: MyColor.colorBlack,
-                                                                                      fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                      textAlign: TextAlign.start,
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                          SizedBox(height: SizeConfig.blockSizeVertical),
+                                                                          SizedBox(height: SizeConfig.blockSizeVertical,),
                                                                           IntrinsicHeight(
                                                                             child: Row(
                                                                               children: [
@@ -1059,26 +771,27 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                   child: Column(
                                                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                                                     children: [
-
                                                                                       Row(
                                                                                         children: [
                                                                                           CustomeText(
-                                                                                            text: "${lableModel.currentLocation} :",
+                                                                                            text: "Destination :",
                                                                                             fontColor: MyColor.textColorGrey2,
-                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                            fontWeight: FontWeight.w500,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                            fontWeight:  FontWeight.w500,
                                                                                             textAlign: TextAlign.start,
                                                                                           ),
                                                                                           const SizedBox(width: 5),
                                                                                           CustomeText(
-                                                                                            text: "${uldTrolleyDetailView.curentLocation}",
-                                                                                            fontColor: MyColor.colorBlack,
-                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                            fontWeight: FontWeight.w600,
+                                                                                            text: "${offloadULDDetail.destination}",
+                                                                                            fontColor: MyColor.textColorGrey3,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                            fontWeight:  FontWeight.w600,
                                                                                             textAlign: TextAlign.start,
                                                                                           ),
                                                                                         ],
                                                                                       ),
+
+
                                                                                     ],
                                                                                   ),
                                                                                 ),
@@ -1086,9 +799,31 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                 Expanded(
                                                                                   flex: 3,
                                                                                   child: RoundedButtonBlue(text: "Next",
-                                                                                    focusNode: removeULDTrolleyBtnFocusNode,
+                                                                                    focusNode: nextULDBtnFocusNode,
                                                                                     press: () async {
+                                                                                      FocusScope.of(context).requestFocus(nextULDBtnFocusNode);
 
+                                                                                      inactivityTimerManager?.resetTimer();
+                                                                                      String value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                          builder: (context) => OffloadULDPage(
+                                                                                            importSubMenuList: widget.importSubMenuList,
+                                                                                            exportSubMenuList: widget.exportSubMenuList,
+                                                                                            mainMenuName: widget.mainMenuName,
+                                                                                            menuId: widget.menuId,
+                                                                                            lableModel: lableModel,
+                                                                                            title: "Offload ULD",
+                                                                                            refrelCode: widget.refrelCode,
+                                                                                            isGroupBasedAcceptChar: isRequiredGroupForULD,
+                                                                                            isGroupBasedAcceptNumber: isGroupIdLength,
+                                                                                            offloadReasonList: offloadReasonList,
+                                                                                            offloadULDDetail: offloadULDDetail,
+                                                                                          )));
+
+                                                                                      if(value == "true"){
+                                                                                        getOffloadSearch();
+                                                                                      }else{
+                                                                                        inactivityTimerManager?.resetTimer();
+                                                                                      }
 
                                                                                     },),
                                                                                 ),
@@ -1120,17 +855,18 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                               )
                                                   : Padding(
                                                 padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                child: (getGroupDetailList!.isNotEmpty)
+                                                child: (offloadAWBDetailsList!.isNotEmpty)
                                                     ? Column(
                                                   children: [
 
                                                     ListView.builder(
-                                                      itemCount: (getGroupDetailList!.isNotEmpty) ?  getGroupDetailList!.length : 0,
+                                                      itemCount: (offloadAWBDetailsList!.isNotEmpty) ?  offloadAWBDetailsList!.length : 0,
                                                       physics: NeverScrollableScrollPhysics(),
                                                       shrinkWrap: true,
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {
-                                                        GroupDetailList groupDetailView = getGroupDetailList![index];
+                                                        OffloadAWBDetailsList offloadAwbDetail = offloadAWBDetailsList![index];
+                                                        List<String> shcCodes = offloadAwbDetail.sHCCode!.split(',');
 
                                                         return InkWell(
                                                             onTap: () {
@@ -1170,19 +906,61 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                                         children: [
                                                                           Row(
+                                                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             children: [
-
                                                                               CustomeText(
-                                                                                text: AwbFormateNumberUtils.formatAWBNumber("${groupDetailView.aWBPrefix}${groupDetailView.aWBNo}"),
+                                                                                text: AwbFormateNumberUtils.formatAWBNumber("${offloadAwbDetail.aWBNo}"),
                                                                                 fontColor: MyColor.textColorGrey3,
                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                 fontWeight: FontWeight.w600,
                                                                                 textAlign: TextAlign.start,
                                                                               ),
                                                                               const SizedBox(width: 5),
+                                                                              CustomeText(
+                                                                                text: "${offloadAwbDetail.flightNo} / ${offloadAwbDetail.flightDate}",
+                                                                                fontColor: MyColor.textColorGrey3,
+                                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                textAlign: TextAlign.start,
+                                                                              ),
                                                                             ],
                                                                           ),
-                                                                          SizedBox(height: SizeConfig.blockSizeVertical ),
+                                                                          offloadAwbDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
+                                                                          Row(
+                                                                            children: [
+                                                                              offloadAwbDetail.sHCCode!.isNotEmpty
+                                                                                  ? Row(
+                                                                                children: shcCodes.asMap().entries.take(3).map((entry) {
+                                                                                  int index = entry.key; // Get the index for colorList assignment
+                                                                                  String code = entry.value.trim(); // Get the code value and trim it
+
+                                                                                  return Padding(
+                                                                                    padding: EdgeInsets.only(right: 5.0),
+                                                                                    child: AnimatedBuilder(
+                                                                                      animation: _colorAnimation,
+                                                                                      builder: (context, child) {
+                                                                                        return Container(
+                                                                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
+                                                                                          decoration : BoxDecoration(
+                                                                                            borderRadius: BorderRadius.circular(5),
+                                                                                            color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
+                                                                                          child: CustomeText(
+                                                                                            text: code.trim(),
+                                                                                            fontColor: MyColor.textColorGrey3,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
+                                                                                            fontWeight: FontWeight.w500,
+                                                                                            textAlign: TextAlign.center,
+                                                                                          ),
+                                                                                        );
+                                                                                      },
+                                                                                    ),
+                                                                                  );
+                                                                                }).toList(),
+                                                                              )
+                                                                                  : SizedBox(),
+                                                                            ],
+                                                                          ),
+                                                                          offloadAwbDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),
                                                                           Row(
                                                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                                                             children: [
@@ -1199,7 +977,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                     ),
                                                                                     const SizedBox(width: 5),
                                                                                     CustomeText(
-                                                                                      text: "${groupDetailView.nOP}",
+                                                                                      text: "${offloadAwbDetail.nOP}",
                                                                                       fontColor: MyColor.colorBlack,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                                       fontWeight: FontWeight.w600,
@@ -1221,7 +999,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                     ),
                                                                                     const SizedBox(width: 5),
                                                                                     CustomeText(
-                                                                                      text: "${CommonUtils.formateToTwoDecimalPlacesValue(groupDetailView.weight!)} Kg",
+                                                                                      text: "${CommonUtils.formateToTwoDecimalPlacesValue(offloadAwbDetail.weightKg!)} Kg",
                                                                                       fontColor: MyColor.colorBlack,
                                                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                                       fontWeight: FontWeight.w600,
@@ -1244,6 +1022,26 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                       Row(
                                                                                         children: [
                                                                                           CustomeText(
+                                                                                            text: (offloadAwbDetail.uLDTrolleyType == "U") ? "ULD :" : "Trolley :",
+                                                                                            fontColor: MyColor.textColorGrey2,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                                            fontWeight:  FontWeight.w500,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                          const SizedBox(width: 5),
+                                                                                          CustomeText(
+                                                                                            text: "${offloadAwbDetail.uLDTrolleyNo}",
+                                                                                            fontColor: MyColor.textColorGrey3,
+                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                                                                            fontWeight:  FontWeight.w600,
+                                                                                            textAlign: TextAlign.start,
+                                                                                          ),
+                                                                                        ],
+                                                                                      ),
+                                                                                      SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                                      Row(
+                                                                                        children: [
+                                                                                          CustomeText(
                                                                                             text: "${lableModel.group} :",
                                                                                             fontColor: Colors.pink.shade500,
                                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
@@ -1252,7 +1050,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                           ),
                                                                                           const SizedBox(width: 5),
                                                                                           CustomeText(
-                                                                                            text: "${groupDetailView.groupId}",
+                                                                                            text: (offloadAwbDetail.groupId!.isNotEmpty) ? "${offloadAwbDetail.groupId}" : "-",
                                                                                             fontColor: Colors.pink.shade500,
                                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                             fontWeight: FontWeight.bold,
@@ -1260,26 +1058,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      SizedBox(height: SizeConfig.blockSizeVertical),
-                                                                                      Row(
-                                                                                        children: [
-                                                                                          CustomeText(
-                                                                                            text: "${lableModel.currentLocation} :",
-                                                                                            fontColor: MyColor.textColorGrey2,
-                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                                                            fontWeight: FontWeight.w500,
-                                                                                            textAlign: TextAlign.start,
-                                                                                          ),
-                                                                                          const SizedBox(width: 5),
-                                                                                          CustomeText(
-                                                                                            text: "${groupDetailView.curentLocation}",
-                                                                                            fontColor: MyColor.colorBlack,
-                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                                            fontWeight: FontWeight.w600,
-                                                                                            textAlign: TextAlign.start,
-                                                                                          ),
-                                                                                        ],
-                                                                                      ),
+
                                                                                     ],
                                                                                   ),
                                                                                 ),
@@ -1287,11 +1066,31 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                 Expanded(
                                                                                   flex: 3,
                                                                                   child: RoundedButtonBlue(text: "Next",
-                                                                                    focusNode: removeGroupBtnFocusNode,
+                                                                                    focusNode: nextBtnFocusNode,
                                                                                     press: () async {
-                                                                                      FocusScope.of(context).requestFocus(removeGroupBtnFocusNode);
-
+                                                                                      FocusScope.of(context).requestFocus(nextBtnFocusNode);
                                                                                       inactivityTimerManager?.resetTimer();
+
+                                                                                      String value = await Navigator.push(context, CupertinoPageRoute(
+                                                                                          builder: (context) => OffloadAWBPage(
+                                                                                            importSubMenuList: widget.importSubMenuList,
+                                                                                            exportSubMenuList: widget.exportSubMenuList,
+                                                                                            mainMenuName: widget.mainMenuName,
+                                                                                            menuId: widget.menuId,
+                                                                                            lableModel: lableModel,
+                                                                                            title: "Offload AWB",
+                                                                                            refrelCode: widget.refrelCode,
+                                                                                            isGroupBasedAcceptChar: isRequiredGroupForAWB,
+                                                                                            isGroupBasedAcceptNumber: isGroupIdLength,
+                                                                                            offloadReasonList: offloadReasonList,
+                                                                                            offloadAwbDetail: offloadAwbDetail,
+                                                                                          )));
+
+                                                                                      if(value == "true"){
+                                                                                        getOffloadSearch();
+                                                                                      }else{
+                                                                                        inactivityTimerManager?.resetTimer();
+                                                                                      }
 
 
                                                                                     },),
@@ -1321,133 +1120,10 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                         textAlign: TextAlign.center),),
                                                 ),
 
-                                              )*/
+                                              )
                                             )),
                                         SizedBox(height: SizeConfig.blockSizeVertical),
-                                        Directionality(textDirection: textDirection,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: MyColor.colorWhite,
-                                                borderRadius: BorderRadius.circular(8),
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: MyColor.colorBlack.withOpacity(0.09),
-                                                    spreadRadius: 2,
-                                                    blurRadius: 15,
-                                                    offset: Offset(0, 3), // changes position of shadow
-                                                  ),
-                                                ],
-                                              ),
-                                              child: Container(
-                                                  margin: EdgeInsets.symmetric(vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color: MyColor.colorWhite,
-                                                    borderRadius: BorderRadius.circular(8),
 
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: MyColor.colorBlack.withOpacity(0.09),
-                                                        spreadRadius: 2,
-                                                        blurRadius: 15,
-                                                        offset: Offset(0, 3), // changes position of shadow
-                                                      ),
-                                                    ],
-
-                                                  ),
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(8),
-                                                    decoration: BoxDecoration(
-                                                      color: MyColor.colorWhite,
-                                                      borderRadius: BorderRadius.circular(8),
-                                                    ),
-                                                    child: Stack(
-                                                      children: [
-                                                        Column(
-                                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                              children: [
-                                                                ULDNumberWidget(uldNo: "AKE 12345 AJ", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "U"),
-                                                                const SizedBox(width: 5),
-                                                                CustomeText(
-                                                                  text: "BA 303 / 14-Jan-24",
-                                                                  fontColor: MyColor.textColorGrey3,
-                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                  fontWeight: FontWeight.w600,
-                                                                  textAlign: TextAlign.start,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                           SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                            IntrinsicHeight(
-                                                              child: Row(
-                                                                children: [
-                                                                  Expanded(
-                                                                    flex: 6,
-                                                                    child: Column(
-                                                                      mainAxisAlignment: MainAxisAlignment.center,
-                                                                      children: [
-                                                                        Row(
-                                                                          children: [
-                                                                            CustomeText(
-                                                                              text: "Destination :",
-                                                                              fontColor: MyColor.textColorGrey2,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                                                              fontWeight:  FontWeight.w500,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                            const SizedBox(width: 5),
-                                                                            CustomeText(
-                                                                              text: "E001",
-                                                                              fontColor: MyColor.textColorGrey3,
-                                                                              fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                                              fontWeight:  FontWeight.w600,
-                                                                              textAlign: TextAlign.start,
-                                                                            ),
-                                                                          ],
-                                                                        ),
-
-
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
-                                                                  Expanded(
-                                                                    flex: 3,
-                                                                    child: RoundedButtonBlue(text: "Next",
-                                                                      focusNode: nextULDBtnFocusNode,
-                                                                      press: () async {
-                                                                        FocusScope.of(context).requestFocus(nextULDBtnFocusNode);
-
-                                                                        inactivityTimerManager?.resetTimer();
-                                                                        String value = await Navigator.push(context, CupertinoPageRoute(
-                                                                            builder: (context) => OffloadULDPage(
-                                                                              importSubMenuList: widget.importSubMenuList,
-                                                                              exportSubMenuList: widget.exportSubMenuList,
-                                                                              mainMenuName: widget.mainMenuName,
-                                                                              menuId: widget.menuId,
-                                                                              lableModel: lableModel,
-                                                                              title: "Offload ULD",
-                                                                              refrelCode: widget.refrelCode,
-                                                                              isGroupBasedAcceptChar: isRequiredGroupForULD,
-                                                                              isGroupBasedAcceptNumber: isGroupIdLength,
-                                                                              offloadReasonList: offloadReasonList,
-                                                                            )));
-
-                                                                      },),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  )
-                                              ),
-                                            )),
 
                                       ],
                                     ),
@@ -1472,7 +1148,8 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                             setState(() {
                                               selectedType = "G";
                                             });
-
+                                            offloadAWBDetailsList!.clear();
+                                            offloadULDDetailsList!.clear();
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               FocusScope.of(context).requestFocus(groupIdFocusNode);
                                             });
@@ -1504,6 +1181,8 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                             setState(() {
                                               selectedType = "A";
                                             });
+                                            offloadAWBDetailsList!.clear();
+                                            offloadULDDetailsList!.clear();
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               FocusScope.of(context).requestFocus(groupIdFocusNode);
                                             });
@@ -1530,8 +1209,10 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                           onTap: () {
                                             setState(() {
                                               selectedType = "U";
-                                            });
 
+                                            });
+                                            offloadAWBDetailsList!.clear();
+                                            offloadULDDetailsList!.clear();
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               FocusScope.of(context).requestFocus(groupIdFocusNode);
                                             });

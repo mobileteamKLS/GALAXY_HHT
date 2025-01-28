@@ -187,7 +187,7 @@ class Apilist{
   // offload
   static String getPageLoad = "/Offload/GetPageLoad";
   static String getOffloadSearch = "/Offload/GetOffloadSearch";
-  static String offloadAWBSave = "/Offload/AWBSave";
+  static String offloadAWBSave = "/Offload/ShipmentOffload";
   static String offloadULDSave = "/Offload/ULDSave";
 
 }

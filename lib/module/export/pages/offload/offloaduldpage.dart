@@ -32,6 +32,7 @@ import 'dart:ui' as ui;
 import '../../../profile/page/profilepagescreen.dart';
 import '../../../splash/model/splashdefaultmodel.dart';
 import '../../../submenu/model/submenumodel.dart';
+import '../../model/offload/getoffloadsearchmodel.dart';
 import '../../model/offload/offloadgetpageload.dart';
 
 class OffloadULDPage extends StatefulWidget {
@@ -49,6 +50,7 @@ class OffloadULDPage extends StatefulWidget {
   String isGroupBasedAcceptChar;
   int isGroupBasedAcceptNumber;
   List<OffloadReasonList> offloadReasonList;
+  OffloadULDDetailsList offloadULDDetail;
 
 
   OffloadULDPage({
@@ -63,7 +65,7 @@ class OffloadULDPage extends StatefulWidget {
     required this.isGroupBasedAcceptChar,
     required this.isGroupBasedAcceptNumber,
     required this.offloadReasonList,
-    //required this.splitGroup
+    required this.offloadULDDetail
    });
 
   @override
@@ -124,7 +126,9 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
         _user = user;
         _splashDefaultData = splashDefaultData;
       });
-
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(tempretureFocusNode);
+      });
       inactivityTimerManager = InactivityTimerManager(
         context: context,
         timeoutMinutes: _splashDefaultData!.activeLoginTime!,  // Set the desired inactivity time here
@@ -163,7 +167,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
   Future<bool> _onWillPop() async {
     FocusScope.of(context).unfocus();
 
-    Navigator.pop(context, "true");
+    Navigator.pop(context, "Done");
 
 
     return false; // Stay in the app (Cancel was clicked)
@@ -269,6 +273,11 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                 //add clear text to clear all feild
                                 onClear: () {
                                   groupIdController.clear();
+                                  tempretureController.clear();
+                                  batteryController.clear();
+                                  reasonController.clear();
+                                  selectedSwitchIndex = "";
+                                  tUnit = "C";
                                   setState(() {
 
                                   });
@@ -297,7 +306,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                   }
                                   else{
                                     if(btnClick == "O"){
-                                      _onWillPop();
+                                      Navigator.pop(context, "true");
                                     }else{
                                       // call damage screen
                                     }
@@ -321,7 +330,6 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                             padding: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 8),
                                             child: Directionality(textDirection: textDirection,
                                                 child: Container(
-                                                  width: double.infinity,
                                                   decoration: BoxDecoration(
                                                     color: MyColor.colorWhite,
                                                     borderRadius: BorderRadius.circular(8),
@@ -336,7 +344,12 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                                   ),
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                    child: ULDNumberWidget(uldNo: "AKE 12345 AJ", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "U"),
+                                                    child: Row(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        ULDNumberWidget(uldNo: "${widget.offloadULDDetail.uLDNo}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "U"),
+                                                      ],
+                                                    ),
 
                                                   ),
                                                 )),
@@ -617,6 +630,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                                                         onChanged: (value) {
                                                                           setState(() {
                                                                             selectedSwitchIndex = value ? content.referenceDataIdentifier! : "";
+                                                                            reasonController.text = value ? content.referenceDescription! : "";
                                                                           });
                                                                         },
                                                                       )
@@ -745,7 +759,12 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                         }
 
 
+                                        if (selectedSwitchIndex == "") {
+                                          SnackbarUtil.showSnackbar(context, "Select any one reason for offload.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
 
+                                          return;
+                                        }
 
 
 
@@ -834,7 +853,12 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                         }
 
 
+                                        if (selectedSwitchIndex == "") {
+                                          SnackbarUtil.showSnackbar(context, "Select any one reason for offload.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          Vibration.vibrate(duration: 500);
 
+                                          return;
+                                        }
 
 
 

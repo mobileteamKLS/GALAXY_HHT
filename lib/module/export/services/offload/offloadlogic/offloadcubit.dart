@@ -48,10 +48,33 @@ class OffloadCubit extends Cubit<OffloadState>{
   }
 
 
-  Future<void> offloadAWBSave(int userId, int companyCode, int menuId) async {
+  Future<void> offloadAWBSave(
+      int flightSeqNo,
+      int expAWBRowId,
+      int expShipRowId,
+      int uLDTrolleySeqNo,
+      int manifestSeqNo,
+      String uLDTrolleyType,
+      int nop,
+      double weight,
+      String groupId,
+      String offPoint,
+      String reason, int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
     try {
-      final offloadSaveAWBModelData = await offloadRepository.offloadAWBSave(userId, companyCode, menuId);
+      final offloadSaveAWBModelData = await offloadRepository.offloadAWBSave(
+          flightSeqNo,
+          expAWBRowId,
+          expShipRowId,
+          uLDTrolleySeqNo,
+          manifestSeqNo,
+          uLDTrolleyType,
+          nop,
+          weight,
+          groupId,
+          offPoint,
+          reason,
+          userId, companyCode, menuId);
       emit(OffloadAWBSaveSuccessState(offloadSaveAWBModelData));
     } catch (e) {
       emit(OffloadAWBSaveFailureState(e.toString()));

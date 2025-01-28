@@ -177,6 +177,17 @@ class OffloadRepository{
 
 
   Future<OffloadShipmentModel> offloadAWBSave(
+      int flightSeqNo,
+      int expAWBRowId,
+      int expShipRowId,
+      int uLDTrolleySeqNo,
+      int manifestSeqNo,
+      String uLDTrolleyType,
+      int nop,
+      double weight,
+      String groupId,
+      String offPoint,
+      String reason,
       int userId,
       int companyCode,
       int menuId) async {
@@ -184,6 +195,18 @@ class OffloadRepository{
     try {
 
       var payload = {
+        "FlightSeqNo" : flightSeqNo,
+        "ExpAWBRowId" : expAWBRowId,
+        "ExpShipRowId" : expShipRowId,
+        "ULDTrolleySeqNo" : uLDTrolleySeqNo,
+        "ManifestSeqNo" : manifestSeqNo,
+        "ULDTrolleyType" : uLDTrolleyType,
+        "NOP" : nop,
+        "Weight" : weight,
+        "GroupId" : groupId,
+        "StockRowId" : 0,
+        "OffPoint" : offPoint,
+        "Reason" : reason,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
