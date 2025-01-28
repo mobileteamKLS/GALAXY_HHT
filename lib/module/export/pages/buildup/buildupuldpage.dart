@@ -507,7 +507,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                     );
-                                  }else if (state.validateLocationModel.status == "V") {
+                                  }
+                                  else if (state.validateLocationModel.status == "V") {
                                     setState(() {
                                       _isvalidateLocation = false;
                                     });
@@ -522,7 +523,8 @@ class _BuildUpULDPageState extends State<BuildUpULDPage>
                                       FocusScope.of(context).requestFocus(locationFocusNode);
                                     },
                                     );
-                                  } else {
+                                  }
+                                  else {
                                     // DialogUtils.hideLoadingDialog(context);
                                     _isvalidateLocation = true;
                                     setState(() {});

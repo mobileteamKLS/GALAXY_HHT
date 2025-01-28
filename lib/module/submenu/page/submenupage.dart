@@ -7,6 +7,7 @@ import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/language/model/subMenuModel.dart';
 import 'package:galaxy/module/export/pages/move/move.dart';
 import 'package:galaxy/module/export/pages/airsiderelease/airsiderelease.dart';
+import 'package:galaxy/module/export/pages/offload/offload.dart';
 import 'package:galaxy/module/export/pages/unloaduld/unloaduldpage.dart';
 import 'package:galaxy/module/profile/page/profilepagescreen.dart';
 import 'package:galaxy/module/submenu/service/subMenuLogic/submenucubit.dart';
@@ -439,6 +440,15 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   mainMenuName: widget.menuName), isEnable);
                                             }else if(refrelCode == SubMenuCodeUtils.Move){
                                               NextScreen(MovePage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.Offload){
+                                              NextScreen(OffloadPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

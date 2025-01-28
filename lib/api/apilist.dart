@@ -184,4 +184,10 @@ class Apilist{
   static String removeMovement = "/Move/RemoveMovement";
 
 
+  // offload
+  static String getPageLoad = "/Offload/GetPageLoad";
+  static String getOffloadSearch = "/Offload/GetOffloadSearch";
+  static String offloadAWBSave = "/Offload/AWBSave";
+  static String offloadULDSave = "/Offload/ULDSave";
+
 }

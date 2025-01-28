@@ -182,6 +182,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
     if (removeULDTrolleyBtnFocusNode.hasFocus) return;
 
+    print("CHECK_GROUP_ID==== ${groupIdController.text}");
+
     if (groupIdController.text.isNotEmpty) {
       getMoveSearch();
     }else{
@@ -417,6 +419,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                   }
                                   else{
 
+                                    groupIdController.clear();
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(groupIdFocusNode);
                                     },
@@ -691,29 +694,41 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                     groupIdController.clear();
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.removeMovementModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
-                                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                    },
-                                    );
+                                  }
+                                  else{
 
                                     groupIdController.clear();
 
                                     if(pickType == "G"){
                                       GroupDetailList removedGroup = getGroupDetailList!.removeAt(groupSelectIndex);
-                                      // Remove the corresponding entry from the switch states
                                       groupSwitchStates.remove(removedGroup);
-                                      setState(() {
 
-                                      });
-                                    }else{
-                                      ULDTrolleyDetailsList removedGroup = getULDTrolleyDetailsList!.removeAt(uldTrolleySelectIndex);
-                                      // Remove the corresponding entry from the switch states
-                                      groupSwitchStates.remove(removedGroup);
-                                      setState(() {
+                                      if(getGroupDetailList!.isEmpty){
+                                        pickType = "";
+                                        dropLocationType = "";
+                                        dropLocation = "";
+                                      }
 
-                                      });
                                     }
+                                    else{
+                                      ULDTrolleyDetailsList removedULDTrolley = getULDTrolleyDetailsList!.removeAt(uldTrolleySelectIndex);
+                                      // Remove the corresponding entry from the switch states
+                                      uldTrolleySwitchStates.remove(removedULDTrolley);
+
+                                      if(getULDTrolleyDetailsList!.isEmpty){
+                                        pickType = "";
+                                        dropLocationType = "";
+                                        dropLocation = "";
+                                      }
+
+                                    }
+
+                                    setState(() {
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                      });
+                                    });
+
                                   }
                                 }
                                 else if (state is RemoveMovementFailureState){
@@ -754,7 +769,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                 child: Row(
                                                   children: [
                                                     Expanded(
-                                                      flex :1,
+                                                      flex : 1,
                                                       child: CustomTextField(
                                                         textDirection: textDirection,
                                                         controller: groupIdController,
@@ -768,9 +783,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                         readOnly: false,
                                                         maxLength: (selectedType == "G") ? 14 : (selectedType == "U") ? 11 : 15,
                                                         onChanged: (value) {
-                                                          setState(() {
 
-                                                          });
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
@@ -873,34 +886,53 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                               focusNode: clearBtnFocusNode,
                                                               press: () async {
                                                                 FocusScope.of(context).requestFocus(clearBtnFocusNode);
-                                                                inactivityTimerManager?.stopTimer();
-                                                                bool? removeDialog = await DialogUtils.commonDialogforWarning(context, (pickType == "G") ? "Clear group list" : (pickType == "U") ? "Clear ULD list" : "Clear Trolley list", (pickType == "G") ? "Are you sure you want to clear group list ?" : (pickType == "U") ? "Are you sure you want to clear ULD list ?" : "Are you sure you want to clear Trolley list ?" , lableModel);
+                                                                inactivityTimerManager?.resetTimer();
+                                                                if(pickType.isNotEmpty){
 
-                                                                if(removeDialog == true){
-                                                                  groupIdController.clear();
-                                                                  pickType = "";
-                                                                  dropLocationType = "";
-                                                                  dropLocation = "";
-                                                                  selectedType = "G";
-                                                                  _isSelectAll = false;
-                                                                  getGroupDetailList!.clear();
-                                                                  getULDTrolleyDetailsList!.clear();
-                                                                  addShipmentComplete = false;
-                                                                  uldTrolleyForDrop = null;
-                                                                  // Clear all switch states
-                                                                  groupSwitchStates.clear();
-                                                                  uldTrolleySwitchStates.clear();
+                                                                  if(pickType == "G" || pickType == "U" || pickType == "T"){
+                                                                    bool? removeDialog = await DialogUtils.commonDialogforWarning(context, (pickType == "G") ? "Clear group list" : (pickType == "U") ? "Clear ULD list" : "Clear Trolley list", (pickType == "G") ? "Are you sure you want to clear group list ?" : (pickType == "U") ? "Are you sure you want to clear ULD list ?" : "Are you sure you want to clear Trolley list ?" , lableModel);
+
+                                                                    if(removeDialog == true){
+                                                                      groupIdController.clear();
+                                                                      pickType = "";
+                                                                      dropLocationType = "";
+                                                                      dropLocation = "";
+                                                                      selectedType = "G";
+                                                                      _isSelectAll = false;
+                                                                      getGroupDetailList!.clear();
+                                                                      getULDTrolleyDetailsList!.clear();
+                                                                      addShipmentComplete = false;
+                                                                      uldTrolleyForDrop = null;
+                                                                      // Clear all switch states
+                                                                      groupSwitchStates.clear();
+                                                                      uldTrolleySwitchStates.clear();
 
 
-                                                                  // Reset UI
-                                                                  setState(() {});
+                                                                      // Reset UI
+                                                                      setState(() {});
+                                                                    }
+                                                                    else{
+                                                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                        FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                      });
+                                                                    }
+
+                                                                  }else{
+                                                                    Vibration.vibrate(duration: 500);
+                                                                    SnackbarUtil.showSnackbar(context, "data not found.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                    });
+                                                                  }
+
+
+
                                                                 }else{
                                                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                   });
                                                                 }
 
-                                                                setState(() {});
                                                               },
                                                             ),
                                                             SizedBox(height: SizeConfig.blockSizeVertical,),
@@ -941,78 +973,109 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                             text: "${lableModel.move}",
                                                             press: () async {
                                                               FocusScope.of(context).requestFocus(moveBtnFocusNode);
-                                                              inactivityTimerManager?.stopTimer();
-                                                              if(dropLocation.isNotEmpty){
-                                                                if(dropLocationType == "G"){
-                                                                  if(pickType == "G"){
-                                                                    moveLocation();
-                                                                    //call move serch api data will be selected group
-                                                                  }else{
-                                                                    moveLocation();
-                                                                    //call move serch api data will be selected uld/trolley
-                                                                  }
-                                                                }
-                                                                else{
-
-
-
-                                                                  List<GroupDetailList> selectedGroups = getSelectedGroupIds();
-                                                                  int processedCount = 0;
-
-                                                                  if(selectedGroups.length != 1){
-
-
-                                                                    String warningMessage = selectedGroups.isEmpty
-                                                                        ? "Please select 1 group."
-                                                                        : "You can only select 1 group at a time.";
-
-                                                                    // Display the warning message (you can use any method depending on your UI framework)
-                                                                    Vibration.vibrate(duration: 500);
-                                                                    SnackbarUtil.showSnackbar(context, warningMessage, MyColor.colorRed, icon: FontAwesomeIcons.times);
-
-                                                                  }
-                                                                  else{
-                                                                    for (var selectedGroup in selectedGroups) {
-                                                                      addShipment(
-                                                                        selectedGroup.aWBPrefix!,
-                                                                        selectedGroup.aWBNo!,
-                                                                        selectedGroup.eXPAWBRowId!,
-                                                                        selectedGroup.eXPShipRowId!,
-                                                                        selectedGroup.nOP!,
-                                                                        selectedGroup.weight!,
-                                                                        selectedGroup.groupSeqNo!,
-                                                                        destinationWarningInd,
-                                                                        shcCompibilityWarningInd,
-                                                                      );
-
-                                                                      processedCount++;
-                                                                      if (processedCount == selectedGroups.length) {
-                                                                        // All items have been processed
-
-                                                                        addShipmentComplete = true;
-                                                                        setState(() {
-
-                                                                        });
-
-                                                                        print("All selected groups processed successfully.");
-                                                                      }
-                                                                    }
-
-
-                                                                  }
-
-
-
-                                                                  // call add shipment api
-                                                                }
-                                                              }else{
-                                                                SnackbarUtil.showSnackbar(context, "Please location search", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                              inactivityTimerManager?.resetTimer();
+                                                              if(pickType == ""){
                                                                 Vibration.vibrate(duration: 500);
+                                                                SnackbarUtil.showSnackbar(context, "Please search source.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                 WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                   FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                 });
-                                                                groupIdController.clear();
+                                                              }else{
+                                                                if(dropLocation.isNotEmpty){
+                                                                  if(dropLocationType == "G"){
+                                                                    if(pickType == "G"){
+                                                                      List<GroupDetailList> selectedGroups = getSelectedGroupIds();
+                                                                      if(selectedGroups.isNotEmpty){
+                                                                        moveLocation();
+                                                                      }else{
+                                                                        Vibration.vibrate(duration: 500);
+                                                                        SnackbarUtil.showSnackbar(context, "No any group found or selected.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                        });
+                                                                      }
+
+                                                                      //call move serch api data will be selected group
+                                                                    }else{
+                                                                      List<ULDTrolleyDetailsList> selectedULDTrolley = getSelectedTrolleyIds();
+                                                                      if(selectedULDTrolley.isNotEmpty){
+                                                                        moveLocation();
+                                                                      }else{
+                                                                        Vibration.vibrate(duration: 500);
+                                                                        SnackbarUtil.showSnackbar(context, "No any ULD/Trolley found or selected.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                        });
+                                                                      }
+
+                                                                      //call move serch api data will be selected uld/trolley
+                                                                    }
+                                                                  }
+                                                                  else{
+
+
+
+                                                                    List<GroupDetailList> selectedGroups = getSelectedGroupIds();
+                                                                    int processedCount = 0;
+
+                                                                    if(selectedGroups.length != 1){
+
+
+                                                                      String warningMessage = selectedGroups.isEmpty
+                                                                          ? "Please select 1 group."
+                                                                          : "You can only select 1 group at a time.";
+
+                                                                      // Display the warning message (you can use any method depending on your UI framework)
+                                                                      Vibration.vibrate(duration: 500);
+                                                                      SnackbarUtil.showSnackbar(context, warningMessage, MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                                                    }
+                                                                    else{
+                                                                      for (var selectedGroup in selectedGroups) {
+                                                                        addShipment(
+                                                                          selectedGroup.aWBPrefix!,
+                                                                          selectedGroup.aWBNo!,
+                                                                          selectedGroup.eXPAWBRowId!,
+                                                                          selectedGroup.eXPShipRowId!,
+                                                                          selectedGroup.nOP!,
+                                                                          selectedGroup.weight!,
+                                                                          selectedGroup.groupSeqNo!,
+                                                                          destinationWarningInd,
+                                                                          shcCompibilityWarningInd,
+                                                                        );
+
+                                                                        processedCount++;
+                                                                        if (processedCount == selectedGroups.length) {
+                                                                          // All items have been processed
+
+                                                                          addShipmentComplete = true;
+                                                                          setState(() {
+
+                                                                          });
+
+                                                                          print("All selected groups processed successfully.");
+                                                                        }
+                                                                      }
+
+
+                                                                    }
+
+
+
+                                                                    // call add shipment api
+                                                                  }
+                                                                }
+                                                                else{
+                                                                  SnackbarUtil.showSnackbar(context, "Please search target", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                  Vibration.vibrate(duration: 500);
+                                                                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                    FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                  });
+                                                                  groupIdController.clear();
+                                                                }
                                                               }
+
+
 
                                                               /*if (selectedValues.isEmpty) {
                                                                 print("No items selected");
@@ -1230,14 +1293,14 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                     color: MyColor.colorRed,
                                                                                     focusNode: removeGroupBtnFocusNode,
                                                                                     press: () async {
-                                                                                      FocusScope.of(context).requestFocus(removeGroupBtnFocusNode);
-                                                                                      inactivityTimerManager?.stopTimer();
+                                                                                      //FocusScope.of(context).requestFocus(removeGroupBtnFocusNode);
+
+                                                                                      inactivityTimerManager?.resetTimer();
                                                                                       bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
 
                                                                                       if(removeDialog == true){
                                                                                         groupSelectIndex = index;
                                                                                         removeMovement(groupDetailView.groupSeqNo!, pickType);
-
                                                                                       }else{
                                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
@@ -1456,22 +1519,15 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                     color: MyColor.colorRed,
                                                                                     focusNode: removeULDTrolleyBtnFocusNode,
                                                                                     press: () async {
-                                                                                      FocusScope.of(context).requestFocus(removeULDTrolleyBtnFocusNode);
-                                                                                      inactivityTimerManager?.stopTimer();
+                                                                                     // FocusScope.of(context).requestFocus(removeULDTrolleyBtnFocusNode);
+                                                                                      inactivityTimerManager?.resetTimer();
                                                                                       bool? removeDialog = await DialogUtils.commonDialogforWarning(context, "${lableModel.remove}", (pickType == "G") ? "Are you sure you want to remove this group ?" : (pickType == "U") ? "Are you sure you want to remove this ULD ?" : "Are you sure you want to remove this Trolley ?" , lableModel);
                                                                                       if(removeDialog == true){
                                                                                         uldTrolleySelectIndex = index;
                                                                                         removeMovement(uldTrolleyDetailView.uLDTrolleySeqNo!, pickType);
-
-
-
-                                                                                       /* ULDTrolleyDetailsList removedGroup = getULDTrolleyDetailsList!.removeAt(index);
-                                                                                        // Remove the corresponding entry from the switch states
-                                                                                        uldTrolleySwitchStates.remove(removedGroup);
-
-                                                                                        setState(() {
-
-                                                                                        });*/
+                                                                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                                          FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                                                                        });
                                                                                       }else{
                                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);

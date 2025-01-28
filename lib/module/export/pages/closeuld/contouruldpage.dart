@@ -498,7 +498,7 @@ class _ContourULDPageState extends State<ContourULDPage>{
                                                                       backgroundColor: backgroundColor,
                                                                       child: CustomeText(text: "${content.referenceDescription}".substring(0, 2).toUpperCase(), fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontWeight: FontWeight.w500, textAlign: TextAlign.center),
                                                                     ),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                       width: 15,
                                                                     ),
                                                                     Flexible(child: CustomeText(text: content.referenceDescription!, fontColor: MyColor.colorBlack, fontSize: SizeConfig.textMultiplier * 1.5, fontWeight: FontWeight.w400, textAlign: TextAlign.start)),

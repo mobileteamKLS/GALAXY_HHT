@@ -19,6 +19,7 @@ class SubMenuCodeUtils{
   static String BuildUp = "HHT019";
   static String SplitGroup = "HHT020";
   static String Move = "HHT021";
+  static String Offload = "HHT022";
 
 
 }
