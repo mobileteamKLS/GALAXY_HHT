@@ -212,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               SizedBox(width: 40,),
                               RoundedIconButtonNew(
                                 icon: log_in,
-                                text: 'Ground Handler\nLogin',
+                                text: 'Login\n',
                                 targetPage: LogInScreen(
                                   isMPinEnable: false,
                                   authFlag: "P",

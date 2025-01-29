@@ -391,7 +391,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                               ],
                                             ),
                                             const SizedBox(
-                                              width: 80,
+                                              width: 50,
                                             ),
                                             Column(
                                               crossAxisAlignment:
@@ -406,7 +406,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                               ],
                                             ),
                                             const SizedBox(
-                                              width: 80,
+                                              width: 50,
                                             ),
                                             Column(
                                               crossAxisAlignment:
@@ -417,21 +417,21 @@ class _CreateNewDOState extends State<CreateNewDO> {
                                                     wdoDetailsList.isNotEmpty ?wdoDetailsList[0].pfdDateTime.isEmpty?"": formatDate(wdoDetailsList[0].pfdDateTime) ?? "" : ""),
                                                 SizedBox(height: 20),
                                                 _buildDetailColumn(
-                                                    'Released', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].releasedDateTime ?? "" : ""),
+                                                    'Released', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].releasedDateTime.isEmpty ?"": formatDate(wdoDetailsList[0].releasedDateTime) ?? "" : ""),
                                               ],
                                             ),
                                             SizedBox(
-                                              width: 80,
+                                              width: 50,
                                             ),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 _buildDetailColumn(
-                                                    'Out of Warehouse', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].outWhDateTime ?? "" : ""),
+                                                    'Out of Warehouse', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].outWhDateTime.isEmpty ?"": formatDate(wdoDetailsList[0].outWhDateTime) ?? "" : ""),
                                                 SizedBox(height: 20),
                                                 _buildDetailColumn(
-                                                    'Re-warehouse', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].reWhDateTime ?? "" : ""),
+                                                    'Re-warehouse', wdoDetailsList.isNotEmpty ? wdoDetailsList[0].reWhDateTime.isEmpty ?"": formatDate(wdoDetailsList[0].reWhDateTime) ?? "" : ""),
                                               ],
                                             ),
                                           ],
