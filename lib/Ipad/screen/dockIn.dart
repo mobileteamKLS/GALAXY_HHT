@@ -1009,6 +1009,7 @@ class _DockInState extends State<DockIn> {
             ),
           );
           if(isTrue){
+            searchVCTDetails();
             // Navigator.pushReplacement(context,
             //     MaterialPageRoute(builder: (context) => const WdoListing()));
           }

@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../auth/auth.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
 import '../modal/VehicleTrack.dart';
+import '../modal/forwardForExam.dart';
 import '../modal/yard_checkin_modal.dart';
 
 List<Commodity> commodityListMaster = [];
@@ -12,6 +13,7 @@ List<Customer> customerListMaster = [];
 List<OriginDestination> originDestinationMaster = [];
 List<FrmAndDcpCode> firmsCodeMaster = [];
 List<FrmAndDcpCode> dispositionCodeMaster = [];
+List<RemarksData> remarksList = [];
 List<Door> doorList=[];
 Commodity? _selectedCommodity;
 bool isCES=true;
@@ -25,9 +27,9 @@ String selectedBaseStation = "Select";
 int selectedBaseStationBranchID = 0;
 int selectedBaseStationID = 0;
 int selectedTerminalID = 0;
-// String galaxyBaseUrl="https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //QA
-//String galaxyBaseUrl="https://galaxycesuat.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //UAT
-String galaxyBaseUrl="http://cesops.jfkces.com/GalaxyHHTIPADAPI/api/"; //UAT
+ //String galaxyBaseUrl="https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //QA
+String galaxyBaseUrl="https://galaxycesuat.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //UAT
+//String galaxyBaseUrl="https://cesops.jfkces.com/GalaxyHHTIPADAPI/api/"; //UAT
 
 String acsBaseUrl="https://acs2devapi.azurewebsites.net/api_tsm/SrvMobile/"; //UAT
 // String acsBaseUrl="https://acs2usaapigateway.azurewebsites.net/GalaxyHHTIPADAPI/api/"; //UAT
@@ -36,21 +38,21 @@ class Utils{
   static Color getStatusColor(String status) {
     switch (status) {
       case 'CREATED':
-        return Color(0xffCCDFFA);
+        return const Color(0xffCCDFFA);
       case 'ACCEPTED':
-        return Color(0xffB3D8B4);
+        return const Color(0xffB3D8B4);
       case 'REQUESTED FOR EXAMINATION':
-        return Color(0xffFFD0D0);
+        return const Color(0xffFFD0D0);
       case 'FORWARDED FOR EXAMINATION':
-        return Color(0xffFCDEA0);
+        return const Color(0xffFCDEA0);
       case 'EXAMINATION MARKED COMPLETED':
-        return Color(0xffB3D8B4);
+        return const Color(0xffB3D8B4);
       case 'BACK TO STORAGE':
-        return Color(0xffFFD7BC);
+        return const Color(0xffFFD7BC);
       case 'DELIVERED':
-        return Color(0xffCCF1F6);
+        return const Color(0xffCCF1F6);
       default:
-        return Color(0xffFCDEA0);
+        return const Color(0xffFCDEA0);
     }
   }
   static String getStatusAction(String status) {

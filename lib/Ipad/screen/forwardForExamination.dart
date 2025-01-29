@@ -737,7 +737,7 @@ class _ForwardForExaminationState
     String formattedCustomRefDate="";
     if(customRefDateController.text.isNotEmpty){
       customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
-       formattedCustomRefDate = DateFormat('MM/dd/yyyy').format(customRefDate);
+       formattedCustomRefDate = DateFormat('dd/MM/yyyy').format(customRefDate);
     }
 
     builder.element('ROOT', nest: () {
@@ -767,7 +767,6 @@ class _ForwardForExaminationState
     DateTime customRefDate;
     String formattedCustomRefDate = "";
 
-    // Check if the date controller has a value and format it
     if (customRefDateController.text.isNotEmpty) {
       customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
       formattedCustomRefDate = DateFormat('MM/dd/yyyy').format(customRefDate);

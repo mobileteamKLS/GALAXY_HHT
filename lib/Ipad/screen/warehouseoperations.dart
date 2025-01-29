@@ -527,10 +527,10 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                                   textColor: MyColor.textColorGrey3,
                                 ),
                                 RoundedIconButtonNew(
-                                  icon: acp_booking,
-                                  text: 'Rejected\nBookings',
-                                  targetPage: RejectBooking(),
-                                  containerColor: Color(0xffffd1d1),
+                                  icon: avail_exam,
+                                  text: 'Available For\nExamination',
+                                  targetPage: AvailableForExamination(),
+                                  containerColor: Color(0xffe1d8f0),
                                   iconColor: MyColor.textColorGrey3,
                                   textColor: MyColor.textColorGrey3,
                                 ),
@@ -550,15 +550,7 @@ class _WarehouseOperationsState extends State<WarehouseOperations> {
                             child: Row(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                RoundedIconButtonNew(
-                                  icon: avail_exam,
-                                  text: 'Available For\nExamination',
-                                  targetPage: AvailableForExamination(),
-                                  containerColor: Color(0xffe1d8f0),
-                                  iconColor: MyColor.textColorGrey3,
-                                  textColor: MyColor.textColorGrey3,
-                                ),
-                                 SizedBox(width: 40,),
+
                                 RoundedIconButtonNew(
                                   icon: on_hand,
                                   text: 'On Hand\nShipment',

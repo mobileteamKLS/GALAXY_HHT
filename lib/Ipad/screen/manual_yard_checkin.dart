@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_barcode_scanner/flutter_barcode_scanner.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:galaxy/Ipad/modal/yard_checkin_modal.dart';
 import 'package:intl/intl.dart';
 import 'package:vibration/vibration.dart';
 import '../../core/images.dart';
@@ -36,8 +37,8 @@ import 'package:xml/xml.dart';
 class _ManualYardCheckInState
     extends State<ManualYardCheckIn> {
   TextEditingController prefixController = TextEditingController();
-  TextEditingController awbController = TextEditingController();
-  TextEditingController hawbController = TextEditingController();
+  TextEditingController vehicleNoController = TextEditingController();
+  TextEditingController vtNoController = TextEditingController();
   final AuthService authService = AuthService();
   List<WarehouseLocationShipmentList> wareHouseShipmentList=[];
   List<WarehouseLocationList> wareHouseLocationList=[];
@@ -45,11 +46,97 @@ class _ManualYardCheckInState
   List<TextEditingController> locationControllers = [];
   List<TextEditingController> nopControllers = [];
   List<TextEditingController> weightControllers = [];
+  List<VtDetails>vehicleTokensListDetails=[];
   List<bool> editStates = [];
   bool? isOn=false;
+  List<bool?> isOnList = [];
   @override
   void initState() {
     super.initState();
+  }
+
+  void checkboxChanged(bool? value, int index) {
+    setState(() {
+      isOnList[index] = value;
+      // if (value !=false) {
+      //   saveList.removeWhere(
+      //           (element) => element["item"] == forwardExamData[index]);
+      //   saveList.add({"item": forwardExamData[index], "value": value});
+      // } else {
+      //   saveList.removeWhere(
+      //           (element) => element["item"] == forwardExamData[index]);
+      // }
+    });
+  }
+
+  getTokenDetailsByVTNO() async {
+    DialogUtils.showLoadingDialog(context);
+    vehicleTokensListDetails = [];
+
+
+    var queryParams = {
+      "OperationType": vtNoController.text.startsWith("I") ? "2" : "1", // modeType.toString(),
+      "TokenNo": vtNoController.text.trim(),
+      "OrganizationBranchId":"11239"
+    };
+    await Global()
+        .getData(
+      'submitVehicleTokenNo',
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      print(json.decode(response.body)['ResponseObject']);
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> responseObjectList = jsonResponse['ResponseObject'];
+      if(responseObjectList.first["errorMsg"]!=null){
+        showDataNotFoundDialog(context, responseObjectList.first["errorMsg"]);
+        DialogUtils.hideLoadingDialog(context);
+        return;
+      }
+      setState(() {
+        vehicleTokensListDetails = responseObjectList.map((e) => VtDetails.fromJson(e)).toList();
+        print(
+            "length  = ${vehicleTokensListDetails.length}");
+
+      });
+      DialogUtils.hideLoadingDialog(context);
+    }).catchError((onError) {
+      setState(() {
+        DialogUtils.hideLoadingDialog(context);
+      });
+      print(onError);
+    });
+  }
+
+  getTokenDetailsByVehicleNo() async {
+      DialogUtils.showLoadingDialog(context);
+    vehicleTokensListDetails = [];
+    var queryParams = {
+      "OperationType": "1",
+      "VehicleNo": vehicleNoController.text.trim(),
+      "OrganizationBranchId":"11239"
+    };
+    await Global()
+        .getData(
+      'submitVehicleNo',
+      queryParams,
+    )
+        .then((response) {
+      print("data received ");
+      print(json.decode(response.body)['ResponseObject']);
+      Map<String, dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> responseObjectList = jsonResponse['ResponseObject'];
+      setState(() {
+        vehicleTokensListDetails = responseObjectList.map((e) => VtDetails.fromJson(e)).toList();
+        print(
+            "length  = ${vehicleTokensListDetails.length}");
+        DialogUtils.hideLoadingDialog(context);
+      });
+    }).catchError((onError) {
+      DialogUtils.hideLoadingDialog(context);
+      print(onError);
+    });
   }
 
   String buildInputXmlSaveUpdate({
@@ -81,45 +168,6 @@ class _ManualYardCheckInState
   }
 
 
-
-  // String generateDynamicXml({
-  //   required List<WarehouseLocationList> wareHouseLocationList,
-  //   required String isid,
-  //   required String airportCity,
-  //   required String companyCode,
-  //   required String mode,
-  //   required String userId,
-  // }) {
-  //
-  //   final filteredList =
-  //   wareHouseLocationList.where((item) => item.iwSeqNo == 0).toList();
-  //
-  //   final locElements = filteredList.map((item) {
-  //     return '''
-  //   <LOC>
-  //     <LocCode>${item.locCode}</LocCode>
-  //     <NOP>${item.nop}</NOP>
-  //     <Weight>${item.weight}</Weight>
-  //     <Volume>0</Volume>
-  //     <GroupId>${item.groupId}</GroupId>
-  //   </LOC>
-  //   ''';
-  //   }).join();
-  //
-  //   final locXml = '<LOCS>$locElements</LOCS>';
-  //
-  //   final data = {
-  //     "LocXML": locXml,
-  //     "ISID": isid,
-  //     "IWSeqNo": "",
-  //     "AirportCity": airportCity,
-  //     "CompanyCode": companyCode,
-  //     "Mode": mode,
-  //     "UserId": userId,
-  //   };
-  //   return jsonEncode(data);
-  // }
-
   void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
     showDialog(
       context: context,
@@ -132,259 +180,25 @@ class _ManualYardCheckInState
     );
   }
 
-  searchWarehouseLocationDetails() async{
-    print("API call");
-    if(prefixController.text.isEmpty){
+  searchVehicleDetails(){
+    if(vehicleNoController.text.isEmpty && vtNoController.text.isEmpty){
+      showDataNotFoundDialog(context, "Please enter Vehicle No. or VT No.");
       return;
     }
-    if(awbController.text.isEmpty){
-      return;
-    }
-    DialogUtils.showLoadingDialog(context);
-    wareHouseLocationList=[];
-    wareHouseShipmentList=[];
-    editStates=[];
-    var queryParams = {
-      "AWBPrefix":"${prefixController.text}",
-      "AWBNo": "${awbController.text}",
-      "HAWBNO": "${hawbController.text}"
-    };
-    await authService
-        .sendGetWithBody(
-      "WarehouseLocation/WarehouseLocationSearch",
-      queryParams,
-    )
-        .then((response) {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-      List<dynamic> wlShipmentResp = jsonData['WarehouseLocationShipmentList'];
-      List<dynamic> wlLocationResp = jsonData['WarehouseCurrentLocationList'];
-      print(jsonData);
-
-      String status = jsonData['Status'];
-      String statusMessage = jsonData['StatusMessage']??"";
-      if (status != 'S') {
-        print("Error: $statusMessage");
-        DialogUtils.hideLoadingDialog(context);
-        showDataNotFoundDialog(context, statusMessage);
-        return;
-      }
-      else{
-        setState(() {
-          wareHouseShipmentList=wlShipmentResp.map((json) => WarehouseLocationShipmentList.fromJson(json)).toList();
-          wareHouseLocationList=wlLocationResp.map((json) => WarehouseLocationList.fromJson(json)).toList();
-        });
-        setState(() {
-          groupIdControllers = List.generate(
-              wareHouseLocationList.length,
-                  (index) =>
-                  TextEditingController(text: wareHouseLocationList[index].groupId));
-          locationControllers = List.generate(
-              wareHouseLocationList.length,
-                  (index) =>
-                  TextEditingController(text: wareHouseLocationList[index].locCode));
-          nopControllers = List.generate(
-              wareHouseLocationList.length,
-                  (index) =>
-                  TextEditingController(text: wareHouseLocationList[index].nop.toString()));
-          weightControllers = List.generate(
-              wareHouseLocationList.length,
-                  (index) =>
-                  TextEditingController(text: wareHouseLocationList[index].weight.toString()));
-          editStates = List.generate(wareHouseLocationList.length, (_) => false);
-        });
-        if((wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop)>0){
-          setState(() {
-            wareHouseLocationList.add(WarehouseLocationList(nop: (wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop), sequenceNumber: '', locCode: '', weight: calculateWeight((wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop)), whInTime: null, whOutTime: null, groupId: '', isid: 0, iwSeqNo: 0));
-            groupIdControllers.add(TextEditingController());
-            locationControllers.add(TextEditingController());
-            nopControllers.add(TextEditingController(text: (wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop).toString()));
-            double wt=calculateWeight((wareHouseShipmentList.first.npr-wareHouseShipmentList.first.inWhnop));
-            print(wt);
-            weightControllers.add(TextEditingController(text: wt.toString()));
-            editStates.add(true);
-          });
-        }
-        print("wareHouseShipmentList Length  ${wareHouseShipmentList.length}");
-        print("wareHouseLocationList Length  ${wareHouseLocationList.length}");
-      }
-      DialogUtils.hideLoadingDialog(context);
-
-    }).catchError((onError) {
-      setState(() {
-
-      });
-      print(onError);
-    });
-  }
-
-  saveUpdateLocation() async {
-    if(prefixController.text.isEmpty){
-
-      return;
-    }
-    if(awbController.text.isEmpty){
-      return;
-    }
-
-    String xml = buildInputXmlSaveUpdate(
-      wareHouseLocationList: wareHouseLocationList,
-      iSId: '${wareHouseShipmentList.first.impshiprowid.toString()}',
-      iWSeqNo: '',
-      airportCity: "JFK",
-      companyCode: "3",
-      mode: "S",
-      userId: "1",
-    );
-
-    print("Save XML   $xml");
-    // return;
-    var queryParams = {
-      "LocXML": "$xml",
-      "ISID": "${wareHouseShipmentList.first.impshiprowid.toString()}",
-      "IWSeqNo": "",
-      "AirportCity": "JFK",
-      "CompanyCode": "3",
-      "Mode": "S",
-      "UserId": userId.toString()
-    };
-    DialogUtils.showLoadingDialog(context);
-    await authService
-        .postData(
-      "WarehouseLocation/WarehouseLocationSaveUpdate",
-      queryParams,
-    )
-        .then((response) async {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-      String? status = jsonData['Status'];
-      String? statusMessage = jsonData['StatusMessage']??"";
-      if(jsonData.isNotEmpty){
-        DialogUtils.hideLoadingDialog(context);
-        if(status!="S"){
-          bool isTrue=await showDialog(
-            context: context,
-            builder: (BuildContext context) => CustomAlertMessageDialogNew(
-              description: "$statusMessage",
-              buttonText: "Okay",
-              imagepath:'assets/images/warn.gif',
-              isMobile: false,
-            ),
-          );
-          if(isTrue){
-            searchWarehouseLocationDetails();
-          }
-        }
-        if((status=="S")){
-          bool isTrue=await showDialog(
-            context: context,
-            builder: (BuildContext context) => CustomAlertMessageDialogNew(
-              description: "$statusMessage",
-              buttonText: "Okay",
-              imagepath:'assets/images/successchk.gif',
-              isMobile: false,
-            ),
-          );
-          if(isTrue){
-            searchWarehouseLocationDetails();
-            // Navigator.pushReplacement(context,
-            //     MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
-          }
-        }
-
-      }
-    }).catchError((onError) {
-
-      print(onError);
-    });
-  }
-  deleteLocation(WarehouseLocationList data) async {
-
-    // return;
-    var queryParams = {
-      "ISID": "${data.isid}",
-      "IWSeqNo": "${data.iwSeqNo}",
-      "AirportCity": "JFK",
-      "CompanyCode": "3",
-      "Mode": "D",
-      "UserId": userId.toString()
-    };
-    DialogUtils.showLoadingDialog(context);
-    await authService
-        .postData(
-      "WarehouseLocation/WarehouseLocationSaveUpdate",
-      queryParams,
-    )
-        .then((response) async {
-      print("data received ");
-      Map<String, dynamic> jsonData = json.decode(response.body);
-      String? status = jsonData['Status'];
-      String? statusMessage = jsonData['StatusMessage']??"";
-      if(jsonData.isNotEmpty){
-        DialogUtils.hideLoadingDialog(context);
-        if(status!="S"){
-          showDataNotFoundDialog(context, statusMessage!);
-        }
-        if((status=="S")){
-          bool isTrue=await showDialog(
-            context: context,
-            builder: (BuildContext context) => CustomAlertMessageDialogNew(
-              description: "$statusMessage",
-              buttonText: "Okay",
-              imagepath:'assets/images/successchk.gif',
-              isMobile: false,
-            ),
-          );
-          if(isTrue){
-            searchWarehouseLocationDetails();
-            // Navigator.pushReplacement(context,
-            //     MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
-          }
-        }
-
-      }
-    }).catchError((onError) {
-
-      print(onError);
-    });
-  }
-
-  void addBlankRow(WarehouseLocationList data) {
-    setState(() {
-      wareHouseLocationList.add(data);
-      groupIdControllers.add(TextEditingController());
-      locationControllers.add(TextEditingController());
-      nopControllers.add(TextEditingController());
-      weightControllers.add(TextEditingController());
-      editStates.add(true);
-    });
-  }
-
-  double calculateWeight(int enteredNOP){
-    int rcvNop=wareHouseShipmentList[0].npr;
-    double rcvWt=wareHouseShipmentList[0].weight;
-    double actWt=0.00;
-    if(enteredNOP.isNaN){
-      rcvNop=0;
+    if(vehicleNoController.text.isEmpty){
+      getTokenDetailsByVTNO();
     }
     else{
-      if(enteredNOP==0){
-        showDataNotFoundDialog(context,"NOP should be greater than 0.");
-      }
-      else if(rcvNop != null && rcvNop != 0){
-        actWt = roundNumber((enteredNOP / rcvNop!) * rcvWt, 2);
-      }
+      getTokenDetailsByVehicleNo();
     }
-    return actWt;
   }
-  double roundNumber(double value, int decimals) {
-    return (value * (10 ^ decimals)).round() / (10 ^ decimals);
-  }
+
+
 
   resetData(){
     prefixController.clear();
-    awbController.clear();
-    hawbController.clear();
+    vehicleNoController.clear();
+    vtNoController.clear();
     wareHouseLocationList=[];
     wareHouseShipmentList=[];
   }
@@ -550,7 +364,7 @@ class _ManualYardCheckInState
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
                                                     hasIcon: false,
-                                                    controller: awbController,
+                                                    controller: vehicleNoController,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     textInputType:
@@ -559,7 +373,7 @@ class _ManualYardCheckInState
                                                     labelText: "Vehicle No",
                                                     onPress: () {},
                                                     readOnly: false,
-                                                    maxLength: 8,
+                                                    maxLength: 16,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -608,16 +422,16 @@ class _ManualYardCheckInState
                                                   child:
                                                   CustomeEditTextWithBorder(
                                                     lablekey: 'MAWB',
-                                                    controller: hawbController,
+                                                    controller: vtNoController,
                                                     hasIcon: false,
                                                     hastextcolor: true,
                                                     animatedLabel: true,
                                                     textInputType:
-                                                    TextInputType.number,
+                                                    TextInputType.text,
                                                     needOutlineBorder: true,
                                                     labelText: "VT No",
                                                     readOnly: false,
-                                                    maxLength: 8,
+                                                    maxLength: 18,
                                                     fontSize: 18,
                                                     onChanged:
                                                         (String, bool) {},
@@ -679,7 +493,7 @@ class _ManualYardCheckInState
                                             ),
                                             onTap: (){
                                               print("Searc");
-                                              searchWarehouseLocationDetails();
+                                              searchVehicleDetails();
                                             },
                                           ),
                                         ],
@@ -741,49 +555,17 @@ class _ManualYardCheckInState
 
 
                                       ],
-                                      rows:[
-                                        DataRow(cells: [
-                                          DataCell(Center(
-                                              child: SizedBox(
-
-                                                child: Center(
-                                                  child: Container(
-                                                    child: Theme(
-                                                      data: ThemeData(useMaterial3: false),
-                                                      child: Checkbox(
-                                                        activeColor: isOn == null
-                                                            ? Colors.red
-                                                            : isOn!
-                                                            ? Colors.green
-                                                            : MyColor.primaryColorblue,
-                                                        value: isOn,
-                                                        onChanged: (bool? value) {
-                                                          setState(() {
-                                                           isOn=!isOn!;
-                                                          });
-                                                        },
-                                                        shape: RoundedRectangleBorder(
-                                                          borderRadius: BorderRadius.circular(2),
-                                                          side: BorderSide(
-                                                            color: isOn == null
-                                                                ? Colors.red
-                                                                : isOn!
-                                                                ? Colors.green
-                                                                : MyColor.primaryColorblue,
-                                                            width: 2,
-                                                          ),
-                                                        ),
-                                                      ),
-
-                                                    ),
-                                                  ),
-                                                ),))),
-                                          DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('MP09LK2621'))))),
-                                          DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Import'))))),
-                                          DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Suraj'))))),
-                                          DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('05 JUl 2024\n 08:00-09:00'))))),
-                                        ])
-                                      ],
+                                      rows:List.generate(
+                                          vehicleTokensListDetails.length,
+                                              (index) {
+                                                return buildDataRow(
+                                          data: vehicleTokensListDetails[index],
+                                          isOn: isOnList[index],
+                                          index: index,
+                                          onCheckboxChanged: (value) =>
+                                              checkboxChanged(value, index),
+                                        );
+                                          }),
                                       headingRowColor:
                                       MaterialStateProperty.resolveWith((states) =>Color(0xffE4E7EB)),
                                       dataRowColor:  MaterialStateProperty.resolveWith((states) => Color(0xfffafafa)),
@@ -869,7 +651,7 @@ class _ManualYardCheckInState
                                           ),
                                         ),
                                         onPressed: () {
-                                          saveUpdateLocation();
+                                          // saveUpdateLocation();
                                         },
                                         child: const Text(
                                           "Save",
@@ -985,221 +767,50 @@ class _ManualYardCheckInState
   }
 
   DataRow buildDataRow({
-    required WarehouseLocationList data,
+    required VtDetails data,
+    required bool? isOn,
     required int index,
-    required TextEditingController groupIdController,
-    required TextEditingController locationIdController,
-    required TextEditingController nopController,
-    required TextEditingController weightController,
+    required ValueChanged<bool?> onCheckboxChanged,
   }) {
     return DataRow(cells: [
-      DataCell(
-        SizedBox(
-          width:  MediaQuery.sizeOf(context).width*0.15,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              InkWell(
-                onTap: () {
-                  scanNOP( nopControllers[index]);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: SvgPicture.asset(
-                    search,
-                    height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
+      DataCell(Center(
+          child: SizedBox(
+            child: Center(
+              child: Container(
+                child: Theme(
+                  data: ThemeData(useMaterial3: false),
+                  child: Checkbox(
+                    activeColor: isOn == null
+                        ? Colors.red
+                        : isOn!
+                        ? Colors.green
+                        : MyColor.primaryColorblue,
+                    value: isOn,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isOn=!isOn!;
+                      });
+                    },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(2),
+                      side: BorderSide(
+                        color: isOn == null
+                            ? Colors.red
+                            : isOn!
+                            ? Colors.green
+                            : MyColor.primaryColorblue,
+                        width: 2,
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 16), // Space between icons
-              InkWell(
-                onTap: () {
-                  setState(() {
-                    editStates[index] = !editStates[index];
-                  });
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(2.0),
-                  child: SvgPicture.asset(
-                    pen,
-                    height: SizeConfig.blockSizeVertical * SizeUtils.ICONSIZE2,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-              GestureDetector(
-                child: const Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 30,
-                ),
-                onTap: (){
-                  deleteLocation(data);
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-      DataCell(SizedBox(
-        height: 45,
-        width:  MediaQuery.sizeOf(context).width*0.15,
-        child: TextFormField(
-          controller: groupIdController,
-          enabled:  editStates[index],
-          onChanged: (value) {
-            setState(() {
-              groupIdControllers[index].text = value;
-              data.groupId = value;
-            });
-          },
-          decoration: InputDecoration(
-            hintText: 'Group Id',
 
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
+                ),
               ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.primaryColorblue,
-              ),
-            ),
-          ),
-        ),
-      )),
-      DataCell(SizedBox(
-        height: 45,
-        width: MediaQuery.sizeOf(context).width*0.15,
-        child: TextFormField(
-          controller: locationIdController,
-          enabled:  editStates[index],
-          onChanged: (value) {
-            setState(() {
-              locationControllers[index].text = value;
-              data.locCode = value;
-            });
-          },
-          decoration: InputDecoration(
-            hintText: 'Location',
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.primaryColorblue,
-              ),
-            ),
-          ),
-        ),
-      )),
-      DataCell(SizedBox(
-        height: 45,
-        width:  MediaQuery.sizeOf(context).width*0.15,
-        child: TextFormField(
-          controller: nopController,
-          textAlign: TextAlign.right,
-          enabled:  editStates[index],
-          onChanged: (value) {
-            setState(() {
-              if(value.isEmpty){
-                weightControllers[index].clear();
-              }
-              nopControllers[index].text = value;
-              data.nop = int.parse(value);
-              double calWt=calculateWeight(int.parse(value));
-              print("Calculated WT $calWt");
-              weightControllers[index].text=calWt.toStringAsFixed(2);
-              data.weight=calWt;
-            });
-          },
-          decoration: InputDecoration(
-            hintText: 'NOP',
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.primaryColorblue,
-              ),
-            ),
-          ),
-        ),
-      )),
-      DataCell(SizedBox(
-        height: 45,
-        width:  MediaQuery.sizeOf(context).width*0.15,
-        child: TextFormField(
-          controller: weightController,
-          textAlign: TextAlign.right,
-          enabled:  editStates[index],
-          onChanged: (value) {
-            setState(() {
-              weightControllers[index].text = value;
-              data.weight=double.parse(value);
-            });
-          },
-          decoration: InputDecoration(
-            hintText: 'Weight',
-            contentPadding:
-            const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.borderColor,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(
-                color: MyColor.primaryColorblue,
-              ),
-            ),
-          ),
-        ),
-      )),
-      DataCell(SizedBox(width: MediaQuery.sizeOf(context).width*0.18,child: Text((data.whInTime!=null)?DateFormat('dd MMM yyyy, HH:mm').format(DateTime.parse(data.whInTime.toString())):""))),
+            ),))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('MP09LK2621'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Import'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Suraj'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('05 JUl 2024\n 08:00-09:00'))))),
     ]);
   }
 
@@ -1248,19 +859,19 @@ class _ManualYardCheckInState
             icon: FontAwesomeIcons.times);
         Vibration.vibrate(duration: 500);
         prefixController.clear();
-        awbController.clear();
+        vehicleNoController.clear();
         // WidgetsBinding.instance.addPostFrameCallback((_) {
         //   FocusScope.of(context).requestFocus(igmNoFocusNode);
         // });
       } else {
         String result = barcodeScanResult.replaceAll(" ", "");
         if (isHawb) {
-          hawbController.text = result;
+          vtNoController.text = result;
         } else {
           String prefix = result.substring(0, 3);
           String awb = result.substring(3);
           prefixController.text = prefix;
-          awbController.text = awb;
+          vehicleNoController.text = awb;
         }
       }
     }

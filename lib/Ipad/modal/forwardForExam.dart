@@ -85,3 +85,23 @@ class OnHandShipReq {
     "IMPSHIPROWID": impShipRowId,
   };
 }
+
+class RemarksData {
+  String keyValue;
+  String description;
+
+  RemarksData({
+    required this.keyValue,
+    required this.description,
+  });
+
+  factory RemarksData.fromJson(Map<String, dynamic> json) => RemarksData(
+    keyValue: json["KeyValue"],
+    description: json["DESCRIPTION"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "KeyValue": keyValue,
+    "DESCRIPTION": description,
+  };
+}

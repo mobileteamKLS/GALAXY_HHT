@@ -129,6 +129,9 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
                               child: const Icon(Icons.arrow_back_ios,
                                   color: MyColor.primaryColorblue),
                               onTap: () {
+                                setState(() {
+                                  isTerminalAlreadySelected = false;
+                                });
                                 Navigator.pop(context);
                               },
                             ),
@@ -242,7 +245,7 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
     dummyList = [];
     selectedBaseStationBranchID = 0;
     selectedBaseStationBranch = "Select";
-    var queryParams = {"CityId": cityId, "OrganizationId": "0", "UserId": "0"};
+    var queryParams = {"CityId": cityId.toString(), "OrganizationId": "0", "UserId": "0"};
     await Global()
         .getData(
       'GetBaseStationWiseBranch',
@@ -287,10 +290,12 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
     for (int i = 0; i < baseStationBranchList.length; i++) {
       filteredTerminals = terminalsList
           .where(
-              (terminal) => terminal.custodianName == selectedBaseStationBranch)
+              (terminal) {
+                print("----${terminal.custodianName}---- $selectedBaseStationBranch");
+               return terminal.custodianName == selectedBaseStationBranch;
+              })
           .toList();
       setState(() {
-
         custodianId = filteredTerminals[0].custudian;
       });
     }
@@ -388,6 +393,8 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
                       children: List<Widget>.generate(
                         baseStationList.length,
                             (int index) {
+                              bool isSelected = selectedBaseStationID ==
+                                  baseStationList[index].cityid;
                           return Padding(
                             padding: const EdgeInsets.all(2.0),
                             child: ChoiceChip(
@@ -395,14 +402,19 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
                                 ' ${baseStationList[index].airportcode}',
                               ),
                               labelStyle: TextStyle(color: MyColor.primaryColorblue),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                side: BorderSide(
+                                  color: isSelected ? MyColor.primaryColorblue : Colors.transparent,
+                                ),
+                              ),
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 24.0, vertical: 8.0),
                               backgroundColor: MyColor.dropdownColor,
                               selectedColor: MyColor.dropdownColor,
                               showCheckmark: false,
                               materialTapTargetSize: MaterialTapTargetSize.padded,
-                              selected: selectedBaseStationID ==
-                                  baseStationList[index].cityid,
+                              selected: isSelected,
                               onSelected: (bool selected) {
                                 setState(() async {
                                   selectedBaseStationID = (selected
@@ -432,7 +444,7 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF11249F),
+                        color: MyColor.primaryColorblue,
                       ),
                     ),
                   ),
@@ -448,20 +460,25 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
                         children: List<Widget>.generate(
                           dummyList.length,
                               (int index) {
+                                bool isSelected = selectedBaseStationBranchID ==
+                                    dummyList[index].organizationBranchId;
                             return ChoiceChip(
                               label: Text(' ${dummyList[index].orgBranchName}'),
-                              labelStyle: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
+                              labelStyle:
+                                const TextStyle(color: MyColor.primaryColorblue),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                side: BorderSide(
+                                  color: isSelected ? MyColor.primaryColorblue : Colors.transparent,
+                                ),
                               ),
+
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 24.0, vertical: 8.0),
-                              selected: selectedBaseStationBranchID ==
-                                  dummyList[index].organizationBranchId,
+                              selected:isSelected,
                               showCheckmark: false,
-                              selectedColor: Color(0xfff85927),
-                              backgroundColor: Color(0xFF1D24CA),
+                              backgroundColor: MyColor.dropdownColor,
+                              selectedColor: MyColor.dropdownColor,
                               onSelected: (bool selected) {
                                 setState(() {
                                   selectedBaseStationBranchID = (selected
@@ -470,7 +487,7 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
                                   selectedBaseStationBranch = (selected
                                       ? dummyList[index].orgBranchName
                                       : null)!;
-                                  walkInEnable();
+                                  // walkInEnable();
                                 });
                               },
                             );
@@ -550,38 +567,23 @@ class _EasyYardCheckInScreenState extends State<EasyYardCheckInScreen> {
 
                     },
                     style: ElevatedButton.styleFrom(
-                      elevation: 4.0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0)), //
-                      padding: const EdgeInsets.all(0.0),
+                      backgroundColor:
+                      MyColor.primaryColorblue,
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(8)),
+                      ),
                     ),
-                    child: Container(
-                      height: 50,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                          begin: Alignment.topRight,
-                          end: Alignment.bottomLeft,
-                          colors: [
-                            Color(0xFF1220BC),
-                            Color(0xFF3540E8),
-                          ],
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            'OK',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
+                    child: const Text(
+                      'OK',
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white),
                     ),
                   ),
                 ),

@@ -1169,7 +1169,7 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                               return FilterChip(
                                 label: Text(
                                   status.description,
-                                  style: TextStyle(color: MyColor.primaryColorblue),
+                                  style: const TextStyle(color: MyColor.primaryColorblue),
                                 ),
                                 selected: isSelected,
                                 showCheckmark: false,
@@ -1197,9 +1197,9 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                         ),
                         const SizedBox(height: 8),
 
-                        Container(
+                        const SizedBox(
                           width: double.infinity,
-                          child: const Divider(color: Colors.grey),
+                          child: Divider(color: Colors.grey),
                         ),
                         const SizedBox(height: 8),
                         Row(

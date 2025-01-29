@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:date_picker_timeline/date_picker_widget.dart';
-import 'package:easy_date_timeline/easy_date_timeline.dart';
+// import 'package:easy_date_timeline/easy_date_timeline.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -1067,7 +1067,6 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                         scale: 2.5,
                         child: Checkbox(
                           isError: true,
-                          tristate: true,
                           activeColor: isOn == null
                               ? Colors.red
                               : isOn!
@@ -1326,7 +1325,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                         scale: 2.5,
                         child: Checkbox(
                           // isError: true,
-                          tristate: true,
+                          // tristate: true,
                           activeColor: isOn == null
                               ? Colors.red
                               : isOn!
@@ -1369,8 +1368,8 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
       isOnList[index] = value;
       print("---$value");
       if (value !=false) {
-        saveList.removeWhere(
-                (element) => element["item"] == appointBookingList[index]);
+        // saveList.removeWhere(
+        //         (element) => element["item"] == appointBookingList[index]);
         saveList.add({"item": appointBookingList[index], "value": value});
       }
       else {

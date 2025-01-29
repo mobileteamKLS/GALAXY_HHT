@@ -680,6 +680,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
         setState(() {
           wdoDetailsList=resp.map((json) => WdoSearchResult.fromJSON(json)).toList();
           nopController.text=wdoDetailsList.first.totWdonop.toString();
+          customRefController.text=wdoDetailsList.first.customRefNo.toString();
         });
         if(wdoDetailsList.first.status=="Generated"){
           setState(() {

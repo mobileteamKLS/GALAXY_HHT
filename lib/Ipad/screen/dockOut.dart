@@ -852,6 +852,7 @@ class _DockOutState extends State<DockOut> {
             ),
           );
           if(isTrue){
+            searchVCTDetails();
             // Navigator.pushReplacement(context,
             //     MaterialPageRoute(builder: (context) => const WdoListing()));
           }

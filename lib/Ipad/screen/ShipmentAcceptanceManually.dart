@@ -53,6 +53,8 @@ class _ShipmentAcceptanceManuallyState
   TextEditingController rcvNOPController = TextEditingController();
   TextEditingController rcvWTController = TextEditingController();
   TextEditingController rcvUnitController = TextEditingController();
+  TextEditingController originController = TextEditingController();
+  TextEditingController destinationController = TextEditingController();
   FocusNode prefixFocusNode = FocusNode();
   FocusNode awbFocusNode = FocusNode();
   FocusNode houseFocusNode = FocusNode();
@@ -312,6 +314,8 @@ class _ShipmentAcceptanceManuallyState
         commodityController.text = selectedComm.commodityType;
         rcvNOPController.text=jsonData['ConsignmentPending'][0]['RemainingPkg'].toString();
         rcvWTController.text=jsonData['ConsignmentPending'][0]['RemainingWt'].toString();
+        originController.text=jsonData['ConsignmentPending'][0]['Origin'].toString();
+        destinationController.text=jsonData['ConsignmentPending'][0]['Destination'].toString();
 
         setState(() {
           acceptedPiecesList = accPcsList
@@ -454,6 +458,14 @@ class _ShipmentAcceptanceManuallyState
       showDataNotFoundDialog(context, "Agent is required.");
       return;
     }
+    if (originController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Origin is required.");
+      return;
+    }
+    if (destinationController.text.isEmpty) {
+      showDataNotFoundDialog(context, "Destination is required.");
+      return;
+    }
     // if (groupIDController.text.isEmpty) {
     //   showDataNotFoundDialog(context, "Group ID is required.");
     //   return;
@@ -470,7 +482,7 @@ class _ShipmentAcceptanceManuallyState
 
     var queryParams = {
       "InputXML":
-          "<Root><Type>$shipmentType</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${groupIDController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>${userId.toString()}</UserId><MenuId>0</MenuId></Root>"
+          "<Root><Type>$shipmentType</Type><ConsignmentRowId>${acceptedConsignment.first.consignmentRowId}</ConsignmentRowId><HouseRowId>${acceptedConsignment.first.houseRowId}</HouseRowId><ConsignmentDimensionsXML><ROOT><Dimensions NOP=\"0\" RowId=\"-1\" UOM=\"c\" Length=\"0\" Width=\"0\" Height=\"0\" Volume=\"0.0\" /></ROOT></ConsignmentDimensionsXML><RemainingPieces>${rcvNOPController.text}</RemainingPieces><RemainingWt>${rcvWTController.text}</RemainingWt><ChargeableWt>0</ChargeableWt><Remark></Remark><IsSecured>N</IsSecured><TareWtType>-1</TareWtType><TareWeight>0</TareWeight><GroupId>${groupIDController.text}</GroupId><IsULD>N</IsULD><CommoditySrNo>${selectedComId}</CommoditySrNo><AgentId>${selectedAgentId}</AgentId><AirportCode>JFK</AirportCode><CompanyCode>3</CompanyCode><CultureCode>en-US</CultureCode><UserId>${userId.toString()}</UserId><MenuId>0</MenuId><Origin>${originController.text}</Origin><Destination>${destinationController.text}</Destination></Root>"
     };
     // print(queryParams);
     // return;
@@ -965,6 +977,188 @@ class _ShipmentAcceptanceManuallyState
                                         height:
                                             MediaQuery.sizeOf(context).height *
                                                 0.02,
+                                      ),
+
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                        children: [
+                                          SizedBox(
+                                            width: MediaQuery.sizeOf(context)
+                                                .width *
+                                                0.435,
+                                            child: TypeAheadField<OriginDestination>(
+                                              controller: originController,
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
+                                              suggestionsCallback: (search) {
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                return OriginAndDestinationService.find(search);},
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(item.airportCodeI313
+                                                          .toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller,
+                                                  focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText:
+                                                    "Origin*",
+                                                    readOnly: false,
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) =>
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    'No Origin Found',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                originController.text = value
+                                                    .airportCodeI313
+                                                    .toUpperCase();
+
+                                              },
+
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.sizeOf(context)
+                                                .width *
+                                                0.445,
+                                            padding: const EdgeInsets.only(right: 6),
+                                            child: TypeAheadField<OriginDestination>(
+                                              controller: destinationController,
+                                              debounceDuration: const Duration(
+                                                  milliseconds: 300),
+                                              suggestionsCallback: (search){
+                                                if (search.isEmpty) {
+                                                  return null;
+                                                }
+                                                return OriginAndDestinationService.find(search);},
+                                              itemBuilder: (context, item) {
+                                                return Container(
+                                                  decoration:
+                                                  const BoxDecoration(
+                                                    border: Border(
+                                                      top: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      left: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      right: BorderSide(
+                                                          color: Colors.black,
+                                                          width: 0.2),
+                                                      bottom: BorderSide
+                                                          .none, // No border on the bottom
+                                                    ),
+                                                  ),
+                                                  padding:
+                                                  const EdgeInsets.all(8.0),
+                                                  child: Row(
+                                                    children: [
+                                                      Text(item.airportCodeI313
+                                                          .toUpperCase()),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                              builder: (context, controller,
+                                                  focusNode) =>
+                                                  CustomeEditTextWithBorder(
+                                                    lablekey: 'MAWB',
+                                                    controller: controller,
+                                                    focusNode: focusNode,
+                                                    hasIcon: false,
+                                                    hastextcolor: true,
+                                                    animatedLabel: true,
+                                                    needOutlineBorder: true,
+                                                    onPress: () {},
+                                                    labelText:
+                                                    "Destination*",
+                                                    readOnly: false,
+                                                    fontSize: 18,
+                                                    onChanged: (String, bool) {},
+                                                  ),
+                                              decorationBuilder:
+                                                  (context, child) => Material(
+                                                type: MaterialType.card,
+                                                elevation: 4,
+                                                borderRadius:
+                                                BorderRadius.circular(8.0),
+                                                child: child,
+                                              ),
+                                              // itemSeparatorBuilder: (context, index) =>
+                                              //     Divider(),
+                                              emptyBuilder: (context) =>
+                                              const Padding(
+                                                padding: EdgeInsets.all(8.0),
+                                                child: Text(
+                                                    'No Destination Found',
+                                                    style: TextStyle(
+                                                        fontSize: 16)),
+                                              ),
+                                              onSelected: (value) {
+                                                destinationController.text = value
+                                                    .airportCodeI313
+                                                    .toUpperCase();
+
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height:
+                                        MediaQuery.sizeOf(context).height *
+                                            0.02,
                                       ),
                                       Row(
                                         mainAxisAlignment:

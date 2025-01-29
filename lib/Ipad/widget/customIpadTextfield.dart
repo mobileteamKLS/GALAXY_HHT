@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:galaxy/Ipad/modal/forwardForExam.dart';
 import 'package:galaxy/Ipad/utils/global.dart';
 import 'package:galaxy/module/onboarding/sizeconfig.dart';
 import 'package:galaxy/utils/commonutils.dart';
@@ -412,6 +413,32 @@ class DoorService {
     String normalizedInput = normalizeStringValid(input);
     return doorList.any((agent) {
       String normalizedAgentName = normalizeStringValid(agent.door);
+      return normalizedAgentName == normalizedInput;
+    });
+  }
+  static String normalizeStringSearch(String input) {
+    return input.toLowerCase().trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  static String normalizeStringValid(String input) {
+    return input.replaceAll(RegExp(r'[^a-zA-Z0-9\s]'), '').toLowerCase().trim();
+  }
+}
+
+class RemarksService {
+  static List<RemarksData> find(String search) {
+    String normalizedSearch = normalizeStringSearch(search);
+    print("____$normalizedSearch");
+    return remarksList.where((agent) {
+      String normalizedAgentName =  normalizeStringSearch(agent.description);
+      return normalizedAgentName.contains(normalizedSearch);
+    }).toList();
+  }
+
+  static bool isValidAgent(String input) {
+    String normalizedInput = normalizeStringValid(input);
+    return remarksList.any((agent) {
+      String normalizedAgentName = normalizeStringValid(agent.description);
       return normalizedAgentName == normalizedInput;
     });
   }
