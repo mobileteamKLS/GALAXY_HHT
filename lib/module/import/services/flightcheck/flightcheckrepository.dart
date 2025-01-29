@@ -796,6 +796,7 @@ class FlightCheckRepository{
       String SHIPId,
       int problemSeqId,
       String groupId,
+      String moduleType,
       int userId,
       int companyCode, int menuId) async {
 
@@ -806,6 +807,7 @@ class FlightCheckRepository{
         "AWBId" : AWBId,
         "SHIPId": SHIPId,
         "GroupId" : groupId,
+        "ModuleType" : moduleType,
         "ProblemSeqId" : problemSeqId,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
@@ -871,6 +873,7 @@ class FlightCheckRepository{
       int problemSeqId,
       String XmlBinaryImage,
       String groupid,
+      String moduleType,
       int userId, int companyCode, int menuId) async {
 
     try {
@@ -907,15 +910,16 @@ class FlightCheckRepository{
         "AparentCause": aparentCause,
         "SalvageAction": salvageAction,
         "Disposition": disposition,
-
         "DamageRemarked": damageRemarked,
         "WeatherCondition": weatherCondition,
         "GHARepresent": GHARepresent,
         "AirlineRepresent": AirlineRepresent,
         "SecurityRepresent": SecurityRepresent,
         "ProblemSeqId" : problemSeqId,
-        "XmlBinaryImage": XmlBinaryImage,
         "GroupId" : groupid,
+        "ModuleType" : moduleType,
+        "XmlBinaryImage": XmlBinaryImage,
+
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

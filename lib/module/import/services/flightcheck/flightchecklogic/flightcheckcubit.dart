@@ -213,7 +213,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
   }
 
   Future<void> getDamageDetails(int flightSeqNo, String AWBId, String SHIPId, int problemSeqId,
-      String groupId, int userId, int companyCode, int menuId) async {
+      String groupId, String moduleType, int userId, int companyCode, int menuId) async {
     emit(MainLoadingState());
     try {
       final damageDetailsModel = await flightCheckRepository.getDamageDetails(
@@ -222,6 +222,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
           SHIPId,
           problemSeqId,
           groupId,
+          moduleType,
           userId,
           companyCode,
           menuId);
@@ -261,6 +262,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
       int problemSeqId,
       String XmlBinaryImage,
       String groupid,
+      String moduleType,
       int userId, int companyCode, int menuId) async {
 
     emit(MainLoadingState());
@@ -293,6 +295,7 @@ class FlightCheckCubit extends Cubit<FlightCheckState>{
           problemSeqId,
           XmlBinaryImage,
           groupid,
+          moduleType,
           userId, companyCode, menuId
       );
 

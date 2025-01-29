@@ -5,6 +5,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:galaxy/core/mycolor.dart';
 import 'package:galaxy/language/validationmessageservice/validationmessagelogic/validationmsgcubit.dart';
 import 'package:galaxy/module/dashboard/service/menuLogic/menucubit.dart';
+import 'package:galaxy/module/discrypency/services/damageduld/damageduldlogic/damageduldcubit.dart';
+import 'package:galaxy/module/discrypency/services/deactiveuld/deactiveuldlogic/deactiveuldcubit.dart';
 import 'package:galaxy/module/export/services/airsiderelease/airsidelogic/airsidereleasecubit.dart';
 import 'package:galaxy/module/export/services/splitgroup/splitgrouplogic/splitgroupcubit.dart';
 import 'package:galaxy/module/import/services/flightcheck/flightchecklogic/flightcheckcubit.dart';
@@ -103,6 +105,8 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => SplitGroupCubit(),),
         BlocProvider(create: (context) => MoveCubit(),),
         BlocProvider(create: (context) => OffloadCubit(),),
+        BlocProvider(create: (context) => DamagedULDCubit(),),
+        BlocProvider(create: (context) => DeactiveULDCubit(),),
       ],
       child: MaterialApp(
         title: 'Galaxy',

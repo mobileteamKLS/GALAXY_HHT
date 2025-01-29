@@ -260,19 +260,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     GridView.builder(
                                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                           crossAxisCount: 2, crossAxisSpacing: 5, mainAxisSpacing: 5, childAspectRatio: 1.1),
-                                      itemCount: state.menuModel.menuName!
-                                          .where((menu) => menu.menuName != "Courier")
-                                          .toList()
-                                          .length, // Filter the list and update the itemCount
+                                      itemCount: state.menuModel.menuName!.length, // Filter the list and update the itemCount
                                       physics: const NeverScrollableScrollPhysics(),
                                       shrinkWrap: true,
                                       itemBuilder: (context, index) {
 
-                                        final filteredMenu = state.menuModel.menuName!
+                                        /*final filteredMenu = state.menuModel.menuName!
                                             .where((menu) => menu.menuName != "Courier")
-                                            .toList();
+                                            .toList();*/
 
-                                        MenuName menuName = filteredMenu[index];
+                                        MenuName menuName = state.menuModel.menuName![index];
                                         String menuTitle = "${dashboardModel.getValueFromKey(CommonUtils.removeExtraIcons(menuName.refMenuCode!))}";
 
                                         return DashboardCustomeWidget(title: menuTitle,

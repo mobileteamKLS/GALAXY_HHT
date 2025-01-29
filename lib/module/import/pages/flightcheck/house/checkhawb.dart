@@ -327,7 +327,9 @@ class _CheckHAWBPageState extends State<CheckHAWBPage> with SingleTickerProvider
                                       companyCode: _splashDefaultData!.companyCode!,
                                       menuId: widget.menuId,
                                       groupId: groupIdController.text,
-                                    problemSeqId: 0,),));
+                                      problemSeqId: 0,
+                                      moduleType: "I",
+                                    ),));
 
                                     if(value == "Done"){
                                       _resumeTimerOnInteraction();

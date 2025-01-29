@@ -31,6 +31,8 @@ import '../../../widget/design/index.dart';
 import '../../../widget/design/prostebeziercurve.dart';
 import '../../../widget/header/mainheadingwidget.dart';
 import '../../dashboard/model/menumodel.dart';
+import '../../discrypency/page/damageduld/damageduld.dart';
+import '../../discrypency/page/deactiveuld/deactiveuld.dart';
 import '../../export/pages/buildup/builduppage.dart';
 import '../../export/pages/closetrolley/closetrolleypage.dart';
 import '../../export/pages/closeuld/closeuldpage.dart';
@@ -449,6 +451,24 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   mainMenuName: widget.menuName), isEnable);
                                             }else if(refrelCode == SubMenuCodeUtils.Offload){
                                               NextScreen(OffloadPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.DamagedULD){
+                                              NextScreen(DamagedULDPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.DeactiveULD){
+                                              NextScreen(DeactiveULDPage(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

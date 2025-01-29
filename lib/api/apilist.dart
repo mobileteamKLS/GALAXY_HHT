@@ -188,6 +188,15 @@ class Apilist{
   static String getPageLoad = "/Offload/GetPageLoad";
   static String getOffloadSearch = "/Offload/GetOffloadSearch";
   static String offloadAWBSave = "/Offload/ShipmentOffload";
-  static String offloadULDSave = "/Offload/ULDSave";
+  static String offloadULDSave = "/Offload/ULDOffload";
+
+
+ // damaged ULD
+  static String getULDSearch = "/ULD/GetULDSearch";
+
+  // deactive ULD
+  static String getULDDeactive = "/ULD/ULDDeactivate";
+
+
 
 }

@@ -58,6 +58,7 @@ class OffloadCubit extends Cubit<OffloadState>{
       int nop,
       double weight,
       String groupId,
+      int stockRowId,
       String offPoint,
       String reason, int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
@@ -72,6 +73,7 @@ class OffloadCubit extends Cubit<OffloadState>{
           nop,
           weight,
           groupId,
+          stockRowId,
           offPoint,
           reason,
           userId, companyCode, menuId);
@@ -81,10 +83,20 @@ class OffloadCubit extends Cubit<OffloadState>{
     }
   }
 
-  Future<void> offloadULDSave(int userId, int companyCode, int menuId) async {
+  Future<void> offloadULDSave(
+      int uLDSeqNo,
+      int flightSeqNo,
+      String temp,
+      String tUnit,
+      int batteryStrength,
+      String groupId,
+      String reason,
+      int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
     try {
-      final offloadSaveULDModelData = await offloadRepository.offloadULDSave(userId, companyCode, menuId);
+      final offloadSaveULDModelData = await offloadRepository.offloadULDSave(
+          uLDSeqNo,flightSeqNo,temp, tUnit, batteryStrength, groupId, reason,
+          userId, companyCode, menuId);
       emit(OffloadULDSaveSuccessState(offloadSaveULDModelData));
     } catch (e) {
       emit(OffloadULDSaveFailureState(e.toString()));

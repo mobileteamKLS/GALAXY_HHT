@@ -25,6 +25,7 @@ import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../../widget/roundbutton.dart';
 import '../../../../widget/uldnumberwidget.dart';
+import '../../../import/pages/uldacceptance/ulddamagedpage.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -51,6 +52,7 @@ class OffloadULDPage extends StatefulWidget {
   int isGroupBasedAcceptNumber;
   List<OffloadReasonList> offloadReasonList;
   OffloadULDDetailsList offloadULDDetail;
+  String locationCode;
 
 
   OffloadULDPage({
@@ -65,7 +67,8 @@ class OffloadULDPage extends StatefulWidget {
     required this.isGroupBasedAcceptChar,
     required this.isGroupBasedAcceptNumber,
     required this.offloadReasonList,
-    required this.offloadULDDetail
+    required this.offloadULDDetail,
+    required this.locationCode
    });
 
   @override
@@ -308,6 +311,37 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                     if(btnClick == "O"){
                                       Navigator.pop(context, "true");
                                     }else{
+                                      String damageOrNot = await Navigator.push(
+                                          context,
+                                          CupertinoPageRoute(
+                                            builder: (context) => UldDamagedPage(
+                                              importSubMenuList: widget.importSubMenuList,
+                                              exportSubMenuList: widget.exportSubMenuList,
+                                              locationCode: widget.locationCode,
+                                              menuId: widget.menuId,
+                                              ULDNo: widget.offloadULDDetail.uLDNo!,
+                                              ULDSeqNo: widget.offloadULDDetail.uLDSeqNo!,
+                                              flightSeqNo: widget.offloadULDDetail.flightSeqNo!,
+                                              groupId: groupIdController.text,
+                                              menuCode: widget.refrelCode,
+                                              isRecordView: 2,
+                                              mainMenuName: widget.mainMenuName,
+                                              buttonRightsList: const [],
+                                              flightType: "E",
+                                            ),
+                                          ));
+
+                                      if(damageOrNot == "BUS"){
+                                        Navigator.pop(context, "true");
+                                      }
+                                      else if(damageOrNot == "SER"){
+                                        Navigator.pop(context, "true");
+                                      }
+                                      else{
+                                        Navigator.pop(context, "true");
+                                      }
+
+
                                       // call damage screen
                                     }
                                   }
@@ -907,6 +941,13 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
 
   Future<void> offloadULDSave() async {
     await context.read<OffloadCubit>().offloadULDSave(
+        widget.offloadULDDetail.uLDSeqNo!,
+        widget.offloadULDDetail.flightSeqNo!,
+        tempretureController.text,
+        tUnit,
+        int.parse(batteryController.text),
+        groupIdController.text,
+        selectedSwitchIndex,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

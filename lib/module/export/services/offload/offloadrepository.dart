@@ -186,6 +186,7 @@ class OffloadRepository{
       int nop,
       double weight,
       String groupId,
+      int stockRowId,
       String offPoint,
       String reason,
       int userId,
@@ -204,7 +205,7 @@ class OffloadRepository{
         "NOP" : nop,
         "Weight" : weight,
         "GroupId" : groupId,
-        "StockRowId" : 0,
+        "StockRowId" : stockRowId,
         "OffPoint" : offPoint,
         "Reason" : reason,
         "AirportCode": CommonUtils.airportCode,
@@ -243,6 +244,13 @@ class OffloadRepository{
   }
 
   Future<OffloadULDModel> offloadULDSave(
+      int uLDSeqNo,
+      int flightSeqNo,
+      String temp,
+      String tUnit,
+      int batteryStrength,
+      String groupId,
+      String reason,
       int userId,
       int companyCode,
       int menuId) async {
@@ -250,6 +258,13 @@ class OffloadRepository{
     try {
 
       var payload = {
+        "ULDSeqNo" : uLDSeqNo,
+        "FlightSeqNo" : flightSeqNo,
+        "Temp" : temp,
+        "TUnit" : tUnit,
+        "BatteryStrength" : batteryStrength,
+        "GroupId" : groupId,
+        "Reason" : reason,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

@@ -2020,7 +2020,9 @@ class _AWBListPageState extends State<AWBListPage> with SingleTickerProviderStat
                                                                             companyCode: _splashDefaultData!.companyCode!,
                                                                             menuId: widget.menuId,
                                                                             groupId: groupId!,
-                                                                            problemSeqId: 0,),));
+                                                                            problemSeqId: 0,
+                                                                            moduleType: "I",
+                                                                          ),));
 
                                                                         if(value == "Done"){
                                                                           _resumeTimerOnInteraction();

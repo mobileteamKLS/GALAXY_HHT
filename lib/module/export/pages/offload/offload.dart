@@ -394,7 +394,25 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                 //add clear text to clear all feild
                                 onClear: () {
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                                    FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    FocusScope.of(context).requestFocus(locationFocusNode);
+                                  },
+                                  );
+
+                                  locationController.clear();
+                                  groupIdController.clear();
+                                  offloadAWBDetailsList!.clear();
+                                  offloadULDDetailsList!.clear();
+                                  _isvalidateLocation = false;
+
+                                  if(defaultLableTab == "BULK"){
+                                    selectedType = "A";
+                                  }else if(defaultLableTab == "ULD"){
+                                    selectedType = "U";
+                                  }else{
+                                    selectedType = "G";
+                                  }
+                                  setState(() {
+
                                   });
                                   // Reset UI
                                   setState(() {});
@@ -499,12 +517,19 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                 else if (state is GetOffloadSearchSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.getSearchOffloadModel.status == "E"){
+                                    offloadAWBDetailsList!.clear();
+                                    offloadULDDetailsList!.clear();
+
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getSearchOffloadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(groupIdFocusNode);
                                     },
                                     );
+                                    setState(() {
+
+                                    });
+
                                   }else if(state.getSearchOffloadModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getSearchOffloadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -638,11 +663,15 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: (selectedType == "A") ? "Scan AWB No." : (selectedType == "U") ? "Scan ULD Group Id" : "Scan Group Id",
+                                                        labelText: (selectedType == "A") ? "Scan AWB No." : (selectedType == "U") ? "Scan ULD / ULD Group Id" : "Scan Group Id",
                                                         readOnly: false,
-                                                        maxLength: (selectedType == "A") ? 11 : (selectedType == "U") ? 14 : 14,
+                                                        maxLength: (selectedType == "A") ? 11 : (selectedType == "U") ? 30 : 14,
                                                         onChanged: (value) {
+                                                          offloadAWBDetailsList!.clear();
+                                                          offloadULDDetailsList!.clear();
+                                                          setState(() {
 
+                                                          });
                                                         },
                                                         fillColor: Colors.grey.shade100,
                                                         textInputType: TextInputType.text,
@@ -754,7 +783,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                               ULDNumberWidget(uldNo: "${offloadULDDetail.uLDNo}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "U"),
                                                                               const SizedBox(width: 5),
                                                                               CustomeText(
-                                                                                text: "${offloadULDDetail.flightNo} / ${offloadULDDetail.flightDate}",
+                                                                                text: "${offloadULDDetail.flightNo} / ${offloadULDDetail.flightDate!.replaceAll(" ", "-")}",
                                                                                 fontColor: MyColor.textColorGrey3,
                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                 fontWeight: FontWeight.w600,
@@ -817,6 +846,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                             isGroupBasedAcceptNumber: isGroupIdLength,
                                                                                             offloadReasonList: offloadReasonList,
                                                                                             offloadULDDetail: offloadULDDetail,
+                                                                                            locationCode: locationController.text,
                                                                                           )));
 
                                                                                       if(value == "true"){
@@ -917,7 +947,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                               ),
                                                                               const SizedBox(width: 5),
                                                                               CustomeText(
-                                                                                text: "${offloadAwbDetail.flightNo} / ${offloadAwbDetail.flightDate}",
+                                                                                text: "${offloadAwbDetail.flightNo} / ${offloadAwbDetail.flightDate!.replaceAll(" ", "-")}",
                                                                                 fontColor: MyColor.textColorGrey3,
                                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                 fontWeight: FontWeight.w600,
@@ -1145,15 +1175,25 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                         child: InkWell(
                                           onTap: () {
 
-                                            setState(() {
-                                              selectedType = "G";
-                                            });
-                                            offloadAWBDetailsList!.clear();
-                                            offloadULDDetailsList!.clear();
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                            });
-                                            groupIdController.clear();
+                                            if(locationController.text.isNotEmpty){
+                                              setState(() {
+                                                selectedType = "G";
+                                              });
+                                              offloadAWBDetailsList!.clear();
+                                              offloadULDDetailsList!.clear();
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              groupIdController.clear();
+                                            }else{
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(locationFocusNode);
+                                              });
+                                            }
+
+
 
 
                                           },
@@ -1178,15 +1218,25 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                         flex: 1,
                                         child: InkWell(
                                           onTap: () {
-                                            setState(() {
-                                              selectedType = "A";
-                                            });
-                                            offloadAWBDetailsList!.clear();
-                                            offloadULDDetailsList!.clear();
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                            });
-                                            groupIdController.clear();
+
+                                            if(locationController.text.isNotEmpty){
+                                              setState(() {
+                                                selectedType = "A";
+                                              });
+                                              offloadAWBDetailsList!.clear();
+                                              offloadULDDetailsList!.clear();
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              groupIdController.clear();
+                                            }else{
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(locationFocusNode);
+                                              });
+                                            }
+
 
 
                                           },
@@ -1207,16 +1257,24 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                         flex: 1,
                                         child: InkWell(
                                           onTap: () {
-                                            setState(() {
-                                              selectedType = "U";
 
-                                            });
-                                            offloadAWBDetailsList!.clear();
-                                            offloadULDDetailsList!.clear();
-                                            WidgetsBinding.instance.addPostFrameCallback((_) {
-                                              FocusScope.of(context).requestFocus(groupIdFocusNode);
-                                            });
-                                            groupIdController.clear();
+                                            if(locationController.text.isNotEmpty){
+                                              setState(() {
+                                                selectedType = "U";
+                                              });
+                                              offloadAWBDetailsList!.clear();
+                                              offloadULDDetailsList!.clear();
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              groupIdController.clear();
+                                            }else{
+                                              Vibration.vibrate(duration: 500);
+                                              SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(locationFocusNode);
+                                              });
+                                            }
 
                                           },
                                           child: Container(
@@ -1281,19 +1339,21 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
         String result = groupcodeScanResult.replaceAll(" ", "");
         String truncatedResult = "";
         if(selectedType == "G"){
-          truncatedResult = result.length > 14
-              ? result.substring(0, 14)
-              : result;
-        }else if(selectedType == "U"){
           truncatedResult = result.length > 11
               ? result.substring(0, 11)
               : result;
+        }else if(selectedType == "U"){
+          truncatedResult = result.length > 30
+              ? result.substring(0, 30)
+              : result;
         }else{
-          truncatedResult = result.length > 20
-              ? result.substring(0, 20)
+          truncatedResult = result.length > 14
+              ? result.substring(0, 14)
               : result;
         }
 
+        offloadAWBDetailsList!.clear();
+        offloadULDDetailsList!.clear();
 
 
         groupIdController.text = truncatedResult;

@@ -53,6 +53,7 @@ class ImageScreenPage extends StatefulWidget {
   int companyCode;
   int menuId;
   String groupId;
+  String moduleType;
   InactivityTimerManager? inactivityTimerManager;
   int pageView;
   String flightStatus;
@@ -72,6 +73,7 @@ class ImageScreenPage extends StatefulWidget {
     required this.companyCode,
     required this.menuId,
     required this.groupId,
+    required this.moduleType,
     required this.flightStatus,
     required this.flightSeqNo});
 
@@ -797,6 +799,7 @@ class _ImageScreenPageState extends State<ImageScreenPage> {
                         problemSeqId,
                         totalImages,
                         widget.groupId,
+                        widget.moduleType,
                         widget.userId, widget.companyCode, widget.menuId);
 
 

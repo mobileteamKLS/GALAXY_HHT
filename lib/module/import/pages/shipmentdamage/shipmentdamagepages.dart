@@ -741,7 +741,9 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                     companyCode: _splashDefaultData!.companyCode!,
                                                                     menuId: widget.menuId,
                                                                     groupId: damageDetailList.groupId!,
-                                                                  problemSeqId: damageDetailList.problemSeqId!,),));
+                                                                    problemSeqId: damageDetailList.problemSeqId!,
+                                                                    moduleType: "I",
+                                                                  ),));
 
                                                                 if(value == "Done"){
                                                                   _resumeTimerOnInteraction();
@@ -1316,7 +1318,9 @@ class _ShipmentDamagePagesState extends State<ShipmentDamagePages> with SingleTi
                                                                                         companyCode: _splashDefaultData!.companyCode!,
                                                                                         menuId: widget.menuId,
                                                                                         groupId: damageDetailList.groupId!,
-                                                                                        problemSeqId: damageDetailList.problemSeqId!),));
+                                                                                        problemSeqId: damageDetailList.problemSeqId!,
+                                                                                        moduleType: "I",
+                                                                                        ),));
 
                                                                                       if(value == "Done"){
                                                                                         _resumeTimerOnInteraction();

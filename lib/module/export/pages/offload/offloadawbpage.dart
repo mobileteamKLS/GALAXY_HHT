@@ -24,6 +24,7 @@ import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
 import '../../../../widget/roundbutton.dart';
+import '../../../import/pages/flightcheck/damageshipment/damageshipment.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -330,6 +331,37 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                     if(btnclick == "O"){
                                       Navigator.pop(context, "true");
                                     }else{
+
+                                      var value = await Navigator.push(context, CupertinoPageRoute(
+                                        builder: (context) => DamageShimentPage(
+                                          importSubMenuList: widget.importSubMenuList,
+                                          exportSubMenuList: widget.exportSubMenuList,
+                                          lableModel: lableModel,
+                                          pageView: 0,
+                                          enterDamageNop: int.parse(nopController.text),
+                                          enterDamageWt: double.parse(weightController.text),
+                                          damageNop: 0,
+                                          damageWt: 0.00,
+                                          buttonRightsList: const [],
+                                          iMPAWBRowId: widget.offloadAwbDetail.expAWBRowId!,
+                                          iMPShipRowId: widget.offloadAwbDetail.expShipRowId!,
+                                          flightSeqNo: widget.offloadAwbDetail.flightSeqNo!,
+                                          flightStatus: "",
+                                          mainMenuName: widget.mainMenuName,
+                                          userId: _user!.userProfile!.userIdentity!,
+                                          companyCode: _splashDefaultData!.companyCode!,
+                                          menuId: widget.menuId,
+                                          groupId: groupIdController.text,
+                                          problemSeqId: widget.offloadAwbDetail.problemSeqNo!,
+                                          moduleType: "E",
+                                        ),));
+
+                                      if(value == "Done"){
+                                         Navigator.pop(context, "true");
+                                      }else if(value == "true"){
+                                        Navigator.pop(context, "true");
+                                      }
+
                                       // call damage screen
                                     }
                                   }
@@ -733,7 +765,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                     child: RoundedButtonBlue(
                                       text: "Offload & Damage",
                                       isborderButton: true,
-                                      press: () {
+                                      press: () async {
                                         btnclick = "D";
 
                                         if (nopController.text.isEmpty) {
@@ -843,7 +875,10 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
 
 
 
-                                        offloadShipmentSave();  // Return null when "Cancel" is pressed
+
+                                        offloadShipmentSave();
+
+                                          // Return null when "Cancel" is pressed
                                       },
                                     ),
                                   ),
@@ -1018,6 +1053,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
         int.parse(nopController.text),
         double.parse(weightController.text),
         groupIdController.text,
+        widget.offloadAwbDetail.groupSeqNo!,
         widget.offloadAwbDetail.offPoint!,
         selectedSwitchIndex,
         _user!.userProfile!.userIdentity!,

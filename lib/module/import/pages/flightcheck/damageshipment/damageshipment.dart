@@ -68,6 +68,7 @@ class DamageShimentPage extends StatefulWidget {
   int companyCode;
 
   String groupId;
+  String moduleType;
   int problemSeqId;
 
   int damageNop;
@@ -100,6 +101,7 @@ class DamageShimentPage extends StatefulWidget {
     required this.companyCode,
     required this.menuId,
     required this.groupId,
+    required this.moduleType,
     required this.problemSeqId,
     required this.pageView});
 
@@ -152,6 +154,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
           "${widget.iMPShipRowId}",
           widget.problemSeqId,
           widget.groupId,
+          widget.moduleType,
           _user!.userProfile!.userIdentity!,
           _splashDefaultData!.companyCode!,
           widget.menuId);
@@ -423,6 +426,7 @@ class _DamageShimentPageState extends State<DamageShimentPage>{
         iMPAWBRowId: widget.iMPAWBRowId,
         iMPShipRowId: widget.iMPShipRowId,
         groupId: widget.groupId,
+        moduleType: widget.moduleType,
         damageDetailsModel: damageDetailsModel,
         preclickCallback: () {
           _resumeTimerOnInteraction(); // Reset the timer on scroll event

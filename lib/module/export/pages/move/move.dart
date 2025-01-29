@@ -560,8 +560,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                       if(selectedGroups.length != 1){
                                         String warningMessage = selectedGroups.isEmpty
-                                            ? "Please select 1 group."
-                                            : "You can only select 1 group at a time.";
+                                            ? "Please select atleast one record."
+                                            : "You can only select atlease one group at a time.";
 
                                         // Display the warning message (you can use any method depending on your UI framework)
                                         Vibration.vibrate(duration: 500);
@@ -616,8 +616,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                       if(selectedGroups.length != 1){
                                         String warningMessage = selectedGroups.isEmpty
-                                            ? "Please select 1 group."
-                                            : "You can only select 1 group at a time.";
+                                            ? "Please select atleast one record."
+                                            : "You can only select atlease one group at a time.";
 
                                         // Display the warning message (you can use any method depending on your UI framework)
                                         Vibration.vibrate(duration: 500);
@@ -989,7 +989,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                         moveLocation();
                                                                       }else{
                                                                         Vibration.vibrate(duration: 500);
-                                                                        SnackbarUtil.showSnackbar(context, "No any group found or selected.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "Please select atleast one record.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                         });
@@ -1002,7 +1002,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                         moveLocation();
                                                                       }else{
                                                                         Vibration.vibrate(duration: 500);
-                                                                        SnackbarUtil.showSnackbar(context, "No any ULD/Trolley found or selected.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "Please select atleast one record.", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                         });
@@ -1022,8 +1022,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
 
                                                                       String warningMessage = selectedGroups.isEmpty
-                                                                          ? "Please select 1 group."
-                                                                          : "You can only select 1 group at a time.";
+                                                                          ? "Please select atleast one record."
+                                                                          : "You can only select atlease one group at a time.";
 
                                                                       // Display the warning message (you can use any method depending on your UI framework)
                                                                       Vibration.vibrate(duration: 500);
