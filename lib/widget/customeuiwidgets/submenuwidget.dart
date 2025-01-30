@@ -60,7 +60,11 @@ class _SubMenuWidgetState extends State<SubMenuWidget> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               widget.imageUrl.isNotEmpty
-                  ? SvgPicture.asset(widget.imageUrl, height: screenHeight * 0.04,  width: screenWidth * 0.04, fit: BoxFit.cover)
+                  ? SvgPicture.asset(
+                  widget.imageUrl,
+                  height: screenHeight * 0.045,
+                  width: screenWidth * 0.045,
+                fit: BoxFit.cover,)
                   : Image.asset(
                 height: SizeConfig.blockSizeHorizontal * 10,
                 width: SizeConfig.blockSizeHorizontal * 10,

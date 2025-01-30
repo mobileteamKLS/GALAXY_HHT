@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:galaxy/language/appLocalizations.dart';
 import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/language/model/subMenuModel.dart';
+import 'package:galaxy/module/discrypency/page/unabletotrace/unabletotrace.dart';
 import 'package:galaxy/module/export/pages/move/move.dart';
 import 'package:galaxy/module/export/pages/airsiderelease/airsiderelease.dart';
 import 'package:galaxy/module/export/pages/offload/offload.dart';
@@ -258,7 +259,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                     // getting responce to submenu api call
 
 
-                                   // state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1296", menuName: "Move", sNo: 3327, imageIcon: "move", refMenuCode: "§§HHT021§§", IsEnable: "Y"));
+                                    state.subMenuModel.subMenuName!.add(SubMenuName(menuId: "1298", menuName: "UTT (Unable To Trace)", sNo: 3329, imageIcon: "utt", refMenuCode: "§§HHT023§§", IsEnable: "Y"));
 
                                     return (state.subMenuModel.subMenuName!.isNotEmpty)
                                         ? GridView.builder(
@@ -476,6 +477,15 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   lableModel: lableModel,
                                                   menuId: menuId,
                                                   mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.UTT){
+                                              NextScreen(UnableToTracePage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
                                             }
 
 
@@ -483,7 +493,7 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                       },
 
                                     )
-                                        : SizedBox();
+                                        : const SizedBox();
                                   }
                                   return SizedBox();
                                 },

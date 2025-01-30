@@ -33,6 +33,7 @@ class Apilist{
   static String updateBDPriority = "/FlightCheckIn/UpdateBDPriority";
   static String recordAtaApi = "/FlightCheckIn/RecordATA";
   static String finalizeFlightApi = "/FlightCheckIn/FlightFinalized";
+
   // found cargo save
   static String foundCargoSaveApi = "/FlightCheckIn/FoundCargoSave";
 
@@ -146,27 +147,18 @@ class Apilist{
   static String saveTrolleyTareWeightApi = "/CloseTrolley/TareWeightSave";
 
   //Build UP
-
   static String buildUpPageLoad = "/BuildUp/GetPageLoad";
   static String buildUpFlightSearch = "/BuildUp/GetFlightSearch";
-
   static String buildUpULDTrolleySearch = "/BuildUp/GetULDTrolleySearch";
   static String buildUpULDTrolleySave = "/BuildUp/ULDTrolleySave";
   static String buildUpULDTrolleypriorityUpdate = "/BuildUp/ULDTrolleyPriorityUpdate";
-
   static String getExpAddMailView= "/BuildUp/GetAddMailView";
   static String addMailSave= "/BuildUp/AddMail";
   static String removeMailSave= "/BuildUp/RemoveMail";
-
-
-
   static String buildUpGetAWBDetails = "/BuildUp/GetAWBDetails";
   static String buildUpAWBPriorityUpdate = "/BuildUp/AWBPriorityUpdate";
   static String buildUpAWBRemarkAcknoledge = "/BuildUp/AWBRemarksAcknowledge";
-
   static String buildUpGetGroupDetails = "/BuildUp/GetAWBGroup";
-
-
   static String addShipment = "/BuildUp/AddShipment";
   static String shcValidate = "/SHC/SHCValidate";
   static String expUldDamage = "/BuildUp/ULDConditionValidate";
@@ -197,6 +189,8 @@ class Apilist{
   // deactive ULD
   static String getULDDeactive = "/ULD/ULDDeactivate";
 
-
+  //UTT (Unable to trace)
+  static String getUTTSearch = "/UTT/GetUTTSearch";
+  static String recordUTTUpdate = "/UTT/UTTRecord";
 
 }

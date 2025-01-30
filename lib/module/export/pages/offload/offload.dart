@@ -1068,7 +1068,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                           ),
                                                                                         ],
                                                                                       ),
-                                                                                      SizedBox(height: SizeConfig.blockSizeVertical,),
+                                                                                      /*SizedBox(height: SizeConfig.blockSizeVertical,),
                                                                                       Row(
                                                                                         children: [
                                                                                           CustomeText(
@@ -1087,7 +1087,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                             textAlign: TextAlign.start,
                                                                                           ),
                                                                                         ],
-                                                                                      ),
+                                                                                      ),*/
 
                                                                                     ],
                                                                                   ),
@@ -1175,7 +1175,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                         child: InkWell(
                                           onTap: () {
 
-                                            if(locationController.text.isNotEmpty){
+                                            /*if(locationController.text.isNotEmpty){
                                               setState(() {
                                                 selectedType = "G";
                                               });
@@ -1191,7 +1191,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                                 FocusScope.of(context).requestFocus(locationFocusNode);
                                               });
-                                            }
+                                            }*/
 
 
 

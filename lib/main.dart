@@ -16,6 +16,7 @@ import 'package:galaxy/module/splash/page/splashscreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'language/appLocalizations.dart';
+import 'module/discrypency/services/unabletotrace/uttlogic/uttcubit.dart';
 import 'module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'module/export/services/closetrolley/closetrolleylogic/closetrolleycubit.dart';
 import 'module/export/services/closeuld/closeuldlogic/closeuldcubit.dart';
@@ -107,6 +108,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => OffloadCubit(),),
         BlocProvider(create: (context) => DamagedULDCubit(),),
         BlocProvider(create: (context) => DeactiveULDCubit(),),
+        BlocProvider(create: (context) => UTTCubit(),),
       ],
       child: MaterialApp(
         title: 'Galaxy',
@@ -144,7 +146,7 @@ class MyApp extends StatelessWidget {
               confirmButtonStyle: ButtonStyle(
                 foregroundColor: WidgetStateProperty.all<Color>(MyColor.primaryColorblue), // Text color
                 textStyle: WidgetStateProperty.all<TextStyle>(
-                  GoogleFonts.poppins(textStyle: TextStyle(fontWeight: FontWeight.w600)),
+                  GoogleFonts.poppins(textStyle: const TextStyle(fontWeight: FontWeight.w600)),
                 ),
               ),
               dayPeriodShape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))
