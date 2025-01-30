@@ -76,13 +76,18 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
 
 
   TextEditingController nopController = TextEditingController();
+  TextEditingController weightController = TextEditingController();
   FocusNode nopFocusNode = FocusNode();
+  FocusNode weightFocusNode = FocusNode();
 
+
+  double weightCount = 0.00;
 
   int totalNop = 0;
-
+  double totalWt = 0.00;
 
   int differenceNop = 0;
+  double differenceWeight = 0.00;
 
   bool isBackPressed = false;
 
@@ -95,7 +100,10 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
 
 
     totalNop = int.parse("${widget.awbDetailsList.nOP!}");
+    totalWt = double.parse("${widget.awbDetailsList.weightKg!}");
+
     nopController.text = totalNop.toString();
+    weightController.text = totalWt.toStringAsFixed(2);
     _loadUser(); //load user data
 
   }
@@ -259,10 +267,13 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                 //add clear text to clear all feild
                                 onClear: () {
                                   totalNop = int.parse("${widget.awbDetailsList.nOP}");
+                                  totalWt = double.parse("${widget.awbDetailsList.weightKg}");
 
 
                                   nopController.text = totalNop.toString();
+                                  weightController.text = totalWt.toStringAsFixed(2);
                                   differenceNop = 0;
+                                  differenceWeight = 0.00;
                                   setState(() {
 
                                   });
@@ -361,72 +372,171 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                         SizedBox(height: SizeConfig.blockSizeVertical,),
                                                         Directionality(
                                                           textDirection: textDirection,
-                                                          child: CustomTextField(
-                                                            textDirection: textDirection,
-                                                            controller: nopController,
-                                                            focusNode: nopFocusNode,
-                                                            onPress: () {},
-                                                            hasIcon: false,
-                                                            maxLength: 4,
-                                                            hastextcolor: true,
-                                                            animatedLabel: true,
-                                                            needOutlineBorder: true,
-                                                            labelText: "${lableModel.nop}",
-                                                            readOnly: false,
-                                                            onChanged: (value) {
-                                                              if (value.isNotEmpty) {
-                                                                int enteredNop = int.tryParse(value) ?? 0;
+                                                          child: Row(
+                                                            children: [
+                                                              Expanded(
+                                                                flex:1,
+                                                                child: CustomTextField(
+                                                                  textDirection: textDirection,
+                                                                  controller: nopController,
+                                                                  focusNode: nopFocusNode,
+                                                                  onPress: () {},
+                                                                  hasIcon: false,
+                                                                  maxLength: 4,
+                                                                  hastextcolor: true,
+                                                                  animatedLabel: true,
+                                                                  needOutlineBorder: true,
+                                                                  labelText: "${lableModel.nop}",
+                                                                  readOnly: false,
+                                                                  onChanged: (value) {
+                                                                    if (value.isNotEmpty) {
+                                                                      int enteredNop = int.tryParse(value) ?? 0;
 
-                                                                if (enteredNop > totalNop) {
-                                                                  // Exceeds total NOP, show an error
+                                                                      if (enteredNop > totalNop) {
+                                                                        // Exceeds total NOP, show an error
 
-                                                                  Vibration.vibrate(duration: 500);
-                                                                  setState(() {
-                                                                    differenceNop = totalNop - enteredNop;
-                                                                    SnackbarUtil.showSnackbar(context, lableModel.exceedstotalnop!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                                                    //errorText = "${lableModel.exceedstotalnop}";
-                                                                  });
-                                                                } else {
-                                                                  // Update the differences and weight
-                                                                  setState(() {
-                                                                    differenceNop = totalNop - enteredNop;
-                                                                  });
-                                                                }
-                                                              } else {
-                                                                // Reset to defaults when cleared
-                                                                setState(() {
-                                                                  differenceNop = totalNop;
-                                                                });
-                                                              }
+                                                                        Vibration.vibrate(duration: 500);
+                                                                        setState(() {
+                                                                          differenceNop = totalNop - enteredNop;
+                                                                          weightCount = double.parse(((enteredNop * totalWt) / totalNop).toStringAsFixed(2));
+                                                                          weightController.text = weightCount.toStringAsFixed(2);
+                                                                          differenceWeight = totalWt - weightCount;
+                                                                          SnackbarUtil.showSnackbar(context, lableModel.exceedstotalnop!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          //errorText = "${lableModel.exceedstotalnop}";
+                                                                        });
+                                                                      } else {
+                                                                        // Update the differences and weight
+                                                                        setState(() {
+                                                                          differenceNop = totalNop - enteredNop;
+                                                                          //weightCount = (totalWt / totalNop) * enteredNop;
+                                                                          weightCount = double.parse(((enteredNop * totalWt) / totalNop).toStringAsFixed(2));
+                                                                          weightController.text = weightCount.toStringAsFixed(2);
+                                                                          differenceWeight = totalWt - weightCount;
+                                                                        });
+                                                                      }
+                                                                    } else {
+                                                                      // Reset to defaults when cleared
+                                                                      setState(() {
+                                                                        differenceNop = totalNop;
+                                                                        differenceWeight = totalWt;
+                                                                        weightCount = 0.0;
+                                                                        weightController.text = "";
+                                                                      });
+                                                                    }
 
+                                                                  },
+                                                                  fillColor:  Colors.grey.shade100,
+                                                                  textInputType: TextInputType.number,
+                                                                  inputAction: TextInputAction.next,
+                                                                  hintTextcolor: Colors.black45,
+                                                                  verticalPadding: 0,
+                                                                  digitsOnly: true,
 
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                                  validator: (value) {
+                                                                    if (value!.isEmpty) {
+                                                                      return "Please fill out this field";
+                                                                    } else {
+                                                                      return null;
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              ),
+                                                              /*SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                              Expanded(
+                                                                flex: 1,
+                                                                child: CustomTextField(
+                                                                  textDirection: textDirection,
+                                                                  controller: weightController,
+                                                                  focusNode: weightFocusNode,
+                                                                  onPress: () {},
+                                                                  hasIcon: false,
+                                                                  hastextcolor: true,
+                                                                  animatedLabel: true,
+                                                                  needOutlineBorder: true,
+                                                                  labelText: "${lableModel!.weight}",
+                                                                  readOnly: (differenceNop == 0) ? true : false,
+                                                                  onChanged: (value) {
+                                                                    if (value.isNotEmpty) {
+                                                                      double enteredWeight = double.tryParse(value) ?? 0.00;
 
-                                                            },
-                                                            fillColor:  Colors.grey.shade100,
-                                                            textInputType: TextInputType.number,
-                                                            inputAction: TextInputAction.next,
-                                                            hintTextcolor: Colors.black45,
-                                                            verticalPadding: 0,
-                                                            digitsOnly: true,
+                                                                      if (enteredWeight > totalWt) {
+                                                                        // Exceeds total weight, show an error
+                                                                        Vibration.vibrate(duration: 500);
+                                                                        setState(() {
+                                                                          SnackbarUtil.showSnackbar(context, lableModel.exceedstotalWeight!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                          differenceWeight = totalWt - enteredWeight;
+                                                                        });
+                                                                      } else {
+                                                                        // Update the weight difference
+                                                                        setState(() {
+                                                                          differenceWeight = totalWt - enteredWeight;
+                                                                          if (differenceNop != 0 && differenceWeight == 0) {
+                                                                            Vibration.vibrate(duration: 500);
+                                                                            SnackbarUtil.showSnackbar(context, lableModel.remainingpcsavailable!, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                            validator: (value) {
-                                                              if (value!.isEmpty) {
-                                                                return "Please fill out this field";
-                                                              } else {
-                                                                return null;
-                                                              }
-                                                            },
+                                                                          } else {
+
+                                                                          }
+                                                                        });
+                                                                      }
+                                                                    } else {
+                                                                      // Reset to defaults when cleared
+                                                                      setState(() {
+                                                                        differenceWeight = totalWt;
+
+                                                                      });
+                                                                    }
+                                                                  },
+                                                                  fillColor:  Colors.grey.shade100,
+                                                                  textInputType: TextInputType.number,
+                                                                  inputAction: TextInputAction.next,
+                                                                  hintTextcolor: Colors.black45,
+                                                                  verticalPadding: 0,
+                                                                  maxLength: 10,
+                                                                  digitsOnly: false,
+                                                                  doubleDigitOnly: true,
+                                                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                                  circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                                  boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                                  validator: (value) {
+                                                                    if (value!.isEmpty) {
+                                                                      return "Please fill out this field";
+                                                                    } else {
+                                                                      return null;
+                                                                    }
+                                                                  },
+                                                                ),
+                                                              )*/
+                                                            ],
                                                           ),
                                                         ),
-                                                        CustomeText(
-                                                          text: "${lableModel.remainingNop} : $differenceNop",
-                                                          fontColor: MyColor.colorRed,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                                          fontWeight: FontWeight.w500,
-                                                          textAlign: TextAlign.start,
+                                                        Row(
+                                                          children: [
+                                                            Expanded(
+                                                              flex:1,
+                                                              child: CustomeText(
+                                                                text: "${lableModel.remainingNop} : $differenceNop",
+                                                                fontColor: MyColor.colorRed,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w500,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                            ),
+                                                            /*SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
+                                                            Expanded(
+                                                              flex: 1,
+                                                              child: CustomeText(
+                                                                text: "${lableModel.remainingWeight} : ${differenceWeight.toStringAsFixed(2)}",
+                                                                fontColor: MyColor.colorRed,
+                                                                fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                                                fontWeight: FontWeight.w500,
+                                                                textAlign: TextAlign.start,
+                                                              ),
+                                                            ),*/
+                                                          ],
                                                         ),
                                                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
                                                         CustomeText(
@@ -554,11 +664,13 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
   Future<void> offloadShipmentSave() async {
 
 
+    print("CHECK_WEIGHT=== ${weightController.text}");
+
     await context.read<UTTCubit>().uttRecordUpdate(
         "A",
-        widget.awbDetailsList.eMISeqNo!,
+        widget.awbDetailsList.groupSeqNo!,
         int.parse(nopController.text),
-        widget.awbDetailsList.weightKg!,
+        double.parse(weightController.text),
         widget.moduleType,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

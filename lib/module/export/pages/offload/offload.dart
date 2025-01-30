@@ -1114,6 +1114,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                             isGroupBasedAcceptNumber: isGroupIdLength,
                                                                                             offloadReasonList: offloadReasonList,
                                                                                             offloadAwbDetail: offloadAwbDetail,
+                                                                                            locationCode: locationController.text,
                                                                                           )));
 
                                                                                       if(value == "true"){

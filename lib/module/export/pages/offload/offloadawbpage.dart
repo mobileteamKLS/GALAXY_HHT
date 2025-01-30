@@ -51,6 +51,7 @@ class OffloadAWBPage extends StatefulWidget {
   int isGroupBasedAcceptNumber;
   List<OffloadReasonList> offloadReasonList;
   OffloadAWBDetailsList offloadAwbDetail;
+  String locationCode;
 
   OffloadAWBPage({
     super.key,
@@ -64,7 +65,8 @@ class OffloadAWBPage extends StatefulWidget {
     required this.isGroupBasedAcceptChar,
     required this.isGroupBasedAcceptNumber,
     required this.offloadReasonList,
-    required this.offloadAwbDetail
+    required this.offloadAwbDetail,
+    required this.locationCode
     //required this.splitGroup
    });
 
@@ -1056,6 +1058,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
         widget.offloadAwbDetail.groupSeqNo!,
         widget.offloadAwbDetail.offPoint!,
         selectedSwitchIndex,
+        widget.locationCode,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

@@ -60,7 +60,9 @@ class OffloadCubit extends Cubit<OffloadState>{
       String groupId,
       int stockRowId,
       String offPoint,
-      String reason, int userId, int companyCode, int menuId) async {
+      String reason,
+      String locationCode,
+      int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
     try {
       final offloadSaveAWBModelData = await offloadRepository.offloadAWBSave(
@@ -76,6 +78,7 @@ class OffloadCubit extends Cubit<OffloadState>{
           stockRowId,
           offPoint,
           reason,
+          locationCode,
           userId, companyCode, menuId);
       emit(OffloadAWBSaveSuccessState(offloadSaveAWBModelData));
     } catch (e) {

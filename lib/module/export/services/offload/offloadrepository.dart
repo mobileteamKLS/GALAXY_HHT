@@ -189,6 +189,7 @@ class OffloadRepository{
       int stockRowId,
       String offPoint,
       String reason,
+      String locationCode,
       int userId,
       int companyCode,
       int menuId) async {
@@ -208,6 +209,7 @@ class OffloadRepository{
         "StockRowId" : stockRowId,
         "OffPoint" : offPoint,
         "Reason" : reason,
+        "LocationCode" : locationCode,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

@@ -385,6 +385,8 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                     );
                                   }else{
                                     // data will be display
+
+                                    combinedList.clear();
                                     getUTTSearchModel = state.getUTTSearchModel;
                                     offloadAWBDetailsList = state.getUTTSearchModel.aWBDetailsList;
                                     offloadULDDetailsList = state.getUTTSearchModel.uLDDetailsList;
@@ -1008,9 +1010,9 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
 
                                   if(item.nOP == 1){
 
-                                    await context.read<UTTCubit>().uttRecordUpdate(
+                                    await context.read<UTTCubit>().uttRecordUpdateDirect(
                                         "A",
-                                        item.eMISeqNo!,
+                                        item.groupSeqNo!,
                                         item.nOP!,
                                         item.weightKg!,
                                         "E",
@@ -1193,7 +1195,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
 
                                   _resumeTimerOnInteraction();
 
-                                  await context.read<UTTCubit>().uttRecordUpdate(
+                                  await context.read<UTTCubit>().uttRecordUpdateDirect(
                                       "U",
                                       item.uLDSeqNo!,
                                       0,
