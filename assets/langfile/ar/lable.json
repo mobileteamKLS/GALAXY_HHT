@@ -659,6 +659,27 @@
     "RemainingNoPis0splitgroup" : "NoP المتبقي هو 0 لا يمكن تقسيم المجموعة",
     "RemainingWeightis0splitgroup" : "الوزن المتبقي هو 0 لا يمكن تقسيم المجموعة",
 
+
+    "pick" : "يختار",
+    "drop" : "قطرة",
+    "clean" : "واضح",
+    "selectAll" : "حدد الكل",
+    "clearGrouplist" : "مسح قائمة المجموعة",
+    "clearULDlist" : "مسح قائمة يو إل دي",
+    "clearTrolleylist" : "مسح قائمة العربات",
+    "areyousureyouwanttocleargrouplist" : "هل أنت متأكد أنك تريد مسح قائمة المجموعة؟",
+    "areyousureyouwanttoclearULDlist" : "هل أنت متأكد أنك تريد مسح قائمة يو إل دي؟",
+    "areyousureyouwanttoclearTrolleylist" : "هل أنت متأكد أنك تريد مسح قائمة العربة؟",
+    "pleasesearchsource" : "يرجى البحث عن المصدر.",
+    "pleasesearchtarget" : "يرجى البحث عن الهدف.",
+    "pleaseselectatleastonerecord" : "الرجاء تحديد سجل واحد على الأقل.",
+    "youcanonlyselectatleaseonerecordatatime" : "لا يمكنك تحديد سوى سجل واحد على الأقل في كل مرة.",
+
+    "scanAWBNo" : "مسح رقم أدبليوب.",
+    "uldGroupId" : "معرف المجموعةيو إل دي",
+    "offloadULD" : "تفريغ يو إل دي",
+    "offloadAWB" : "تفريغ أدبليوب",
+
     "2539" : "العصابات فضفاضة",
     "654" : "مكسورة",
     "655" : "سحق",

@@ -54,6 +54,7 @@ class AWBDetailsList {
   int? expShipRowId;
   int? eMISeqNo;
   int? groupSeqNo;
+  String? moduleType;
 
   AWBDetailsList(
       {this.aWBNo,
@@ -65,7 +66,8 @@ class AWBDetailsList {
         this.expAWBRowId,
         this.expShipRowId,
         this.eMISeqNo,
-        this.groupSeqNo});
+        this.groupSeqNo,
+        this.moduleType});
 
   AWBDetailsList.fromJson(Map<String, dynamic> json) {
     aWBNo = json['AWBNo'];
@@ -78,6 +80,7 @@ class AWBDetailsList {
     expShipRowId = json['ExpShipRowId'];
     eMISeqNo = json['EMISeqNo'];
     groupSeqNo = json['GroupSeqNo'];
+    moduleType = json['ModuleType'];
   }
 
   Map<String, dynamic> toJson() {
@@ -92,6 +95,7 @@ class AWBDetailsList {
     data['ExpShipRowId'] = this.expShipRowId;
     data['EMISeqNo'] = this.eMISeqNo;
     data['GroupSeqNo'] = this.groupSeqNo;
+    data['ModuleType'] = this.moduleType;
     return data;
   }
 }

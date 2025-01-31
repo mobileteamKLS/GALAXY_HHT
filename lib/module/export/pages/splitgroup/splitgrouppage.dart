@@ -403,7 +403,7 @@ class _SplitGroupPageState extends State<SplitGroupPage> {
                                                                 hastextcolor: true,
                                                                 animatedLabel: true,
                                                                 needOutlineBorder: true,
-                                                                labelText: "${lableModel.scan}",
+                                                                labelText: "${lableModel.scanAWB} / ${lableModel.scanGroupId}",
                                                                 readOnly: false,
                                                                 controller: scanNoEditingController,
                                                                 focusNode: scanNoFocusNode,

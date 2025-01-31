@@ -430,7 +430,7 @@ class _DeactiveULDPageState extends State<DeactiveULDPage> with SingleTickerProv
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Scan ULD / ULD Group Id",
+                                                        labelText: "${lableModel.scanuld} / ${lableModel.uldGroupId}",
                                                         readOnly: false,
                                                         maxLength: 30,
                                                         onChanged: (value) {
@@ -617,7 +617,7 @@ class _DeactiveULDPageState extends State<DeactiveULDPage> with SingleTickerProv
                                                                               Row(
                                                                                 children: [
                                                                                   CustomeText(
-                                                                                    text: "Scale Wt. :",
+                                                                                    text: "${lableModel.scaleWt} :",
                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5,
                                                                                     fontWeight: FontWeight.w400,

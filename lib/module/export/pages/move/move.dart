@@ -779,7 +779,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: (selectedType == "G") ? "Scan Group Id Or Location" : (selectedType == "U") ? "Scan ULD Or Location" : "Scan Trolley Or Location",
+                                                        labelText: (selectedType == "G") ? "${lableModel.scanGroupId} ${lableModel.or} ${lableModel.location}" : (selectedType == "U") ? "${lableModel.scanuld} ${lableModel.or} ${lableModel.location}" : "${lableModel.scantrolley} ${lableModel.or} ${lableModel.location}",
                                                         readOnly: false,
                                                         maxLength: (selectedType == "G") ? 14 : (selectedType == "U") ? 11 : 15,
                                                         onChanged: (value) {
@@ -828,7 +828,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                     child: Row(
                                                       children: [
                                                         CustomeText(
-                                                          text: "Pick :",
+                                                          text: "${lableModel.pick} :",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                           fontWeight: FontWeight.w600,
@@ -836,7 +836,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                         ),
                                                         const SizedBox(width: 5),
                                                         CustomeText(
-                                                          text: (pickType == "G") ? "Group" : (pickType == "U") ? "ULD" : (pickType == "T") ? "Trolley" : "",
+                                                          text: (pickType == "G") ? "${lableModel.group}" : (pickType == "U") ? "${lableModel.uldLable}" : (pickType == "T") ? "${lableModel.trolley}" : "",
                                                           fontColor: Colors.pink.shade500,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                           fontWeight: FontWeight.bold,
@@ -850,7 +850,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                     child: Row(
                                                       children: [
                                                         CustomeText(
-                                                          text: "Drop :",
+                                                          text: "${lableModel.drop} :",
                                                           fontColor: MyColor.textColorGrey3,
                                                           fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                           fontWeight: FontWeight.w600,
@@ -880,7 +880,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                         child: Column(
                                                           children: [
                                                             RoundedButtonBlue(
-                                                              text: "Clear",
+                                                              text: "${lableModel.clean}",
                                                               isOutlined: true,
                                                               isborderButton: true,
                                                               focusNode: clearBtnFocusNode,
@@ -919,7 +919,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                                                   }else{
                                                                     Vibration.vibrate(duration: 500);
-                                                                    SnackbarUtil.showSnackbar(context, "data not found.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                    SnackbarUtil.showSnackbar(context, "${lableModel.recordNotFound}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                       FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                     });
@@ -950,7 +950,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                 ),
                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal,),
                                                                 CustomeText(
-                                                                    text: "Select All",
+                                                                    text: "${lableModel.selectAll}",
                                                                     fontColor: MyColor.textColorGrey2,
                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                     fontWeight: FontWeight.w500,
@@ -976,7 +976,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                               inactivityTimerManager?.resetTimer();
                                                               if(pickType == ""){
                                                                 Vibration.vibrate(duration: 500);
-                                                                SnackbarUtil.showSnackbar(context, "Please search source.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                SnackbarUtil.showSnackbar(context, "${lableModel.pleasesearchsource}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                 WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                   FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                 });
@@ -989,7 +989,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                         moveLocation();
                                                                       }else{
                                                                         Vibration.vibrate(duration: 500);
-                                                                        SnackbarUtil.showSnackbar(context, "Please select atleast one record.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "${lableModel.pleaseselectatleastonerecord}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                         });
@@ -1002,7 +1002,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                         moveLocation();
                                                                       }else{
                                                                         Vibration.vibrate(duration: 500);
-                                                                        SnackbarUtil.showSnackbar(context, "Please select atleast one record.", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                        SnackbarUtil.showSnackbar(context, "${lableModel.pleaseselectatleastonerecord}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                         WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                           FocusScope.of(context).requestFocus(groupIdFocusNode);
                                                                         });
@@ -1022,8 +1022,8 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
 
                                                                       String warningMessage = selectedGroups.isEmpty
-                                                                          ? "Please select atleast one record."
-                                                                          : "You can only select atlease one group at a time.";
+                                                                          ? "${lableModel.pleaseselectatleastonerecord}"
+                                                                          : "${lableModel.youcanonlyselectatleaseonerecordatatime}";
 
                                                                       // Display the warning message (you can use any method depending on your UI framework)
                                                                       Vibration.vibrate(duration: 500);
@@ -1053,7 +1053,6 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
                                                                           });
 
-                                                                          print("All selected groups processed successfully.");
                                                                         }
                                                                       }
 
@@ -1066,7 +1065,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                   }
                                                                 }
                                                                 else{
-                                                                  SnackbarUtil.showSnackbar(context, "Please search target", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                                                  SnackbarUtil.showSnackbar(context, "${lableModel.pleasesearchtarget}", MyColor.colorRed, icon: FontAwesomeIcons.times);
                                                                   Vibration.vibrate(duration: 500);
                                                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
@@ -1289,7 +1288,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                                                 Expanded(
                                                                                   flex: 3,
-                                                                                  child: RoundedButton(text: "Remove",
+                                                                                  child: RoundedButton(text: "${lableModel.remove}",
                                                                                     color: MyColor.colorRed,
                                                                                     focusNode: removeGroupBtnFocusNode,
                                                                                     press: () async {
@@ -1515,7 +1514,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                                                 Expanded(
                                                                                   flex: 3,
-                                                                                  child: RoundedButton(text: "Remove",
+                                                                                  child: RoundedButton(text: "${lableModel.remove}",
                                                                                     color: MyColor.colorRed,
                                                                                     focusNode: removeULDTrolleyBtnFocusNode,
                                                                                     press: () async {
@@ -1673,7 +1672,7 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "TROLLEY", fontColor: selectedType == "T" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: "${lableModel.trolley!.toUpperCase()}", fontColor: selectedType == "T" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),
@@ -1762,9 +1761,6 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
   Future<void> getMoveSearch() async {
 
-    print("moveLocation Payload === ${pickType} == ${dropLocation}");
-
-
     await context.read<MoveCubit>().getMoveSearch(
         groupIdController.text,
         selectedType,
@@ -1776,8 +1772,6 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
   }
 
   Future<void> moveLocation() async {
-
-    print("CHECK_LOCATION === ${pickType} == ${dropLocation} == ${selectedType} == ${generateImageXMLDataGroup(getSelectedGroupIds())} == ${generateImageXMLDataULDTrolley(getSelectedTrolleyIds())}" );
 
 
     await context.read<MoveCubit>().moveLocation(
@@ -1842,7 +1836,6 @@ class _MovePageState extends State<MovePage> with SingleTickerProviderStateMixin
 
   Future<void> addShipment(String awbPrefix, String awbNumber, int awbRowId, int awbShipRowId, int nop, double weight, int groupSeqNo, String warningInd, String shcWarning) async {
 
-    print("AWB NO ==== > ${awbPrefix} == ${awbNumber} == ${groupSeqNo}");
 
     await context.read<MoveCubit>().addShipment(
         uldTrolleyForDrop!.flightSeqNo!,

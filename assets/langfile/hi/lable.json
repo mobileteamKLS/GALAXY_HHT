@@ -166,7 +166,7 @@
 
     "awbListing" : "एडब्लूबी लिस्टिंग",
     "detailsForUldNo" : "विवरण के लिए यूएलडी नम्बर.",
-    "scanAWB" : "एडब्लूबी स्कैन करें.",
+    "scanAWB" : "स्कैन एडब्लूबी",
     "showAllShipments" : "पूर्ण / लंबित एडब्लूबी दिखाएँ.",
     "showMoreDetails" : "अधिक विवरण दिखाएं",
     "showLessDetails" : "कम विवरण दिखाएं",
@@ -650,6 +650,26 @@
     "RemainingNoPis0splitgroup" : "शेष NoP 0 है, समूह को विभाजित नहीं किया जा सकता",
     "RemainingWeightis0splitgroup" : "शेष भार 0 है, समूह को विभाजित नहीं किया जा सकता",
 
+
+    "pick" : "पिक",
+    "drop" : "पिक",
+    "clean" : "साफ़",
+    "selectAll" : "सभी चुनें",
+    "clearGrouplist" : "समूह सूची साफ़ करें",
+    "clearULDlist" : "यूएलडी सूची साफ़ करें",
+    "clearTrolleylist" : "ट्रॉली सूची साफ़ करें",
+    "areyousureyouwanttocleargrouplist" : "क्या आप वाकई समूह सूची साफ़ करना चाहते हैं?",
+    "areyousureyouwanttoclearULDlist" : "क्या आप वाकई यूएलडी सूची साफ़ करना चाहते हैं?",
+    "areyousureyouwanttoclearTrolleylist" : "क्या आप वाकई ट्रॉली सूची साफ़ करना चाहते हैं?",
+    "pleasesearchsource" : "कृपया स्रोत खोजें.",
+    "pleasesearchtarget" : "कृपया लक्ष्य खोजें.",
+    "pleaseselectatleastonerecord" : "कृपया कम से कम एक रिकॉर्ड चुनें.",
+    "youcanonlyselectatleaseonerecordatatime" : "आप एक समय में कम से कम एक रिकॉर्ड ही चुन सकते हैं.",
+
+    "scanAWBNo" : "एडब्ल्यूबी नं. स्कैन करें",
+    "uldGroupId" : "यूएलडी ग्रुप आईडी",
+    "offloadULD" : "यूएलडी ऑफलोड",
+    "offloadAWB" : "एडब्ल्यूबी ऑफलोड",
 
     "2539" : "बैंड ढीला",
     "654" : "टूटा हुआ",

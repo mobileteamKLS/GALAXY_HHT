@@ -600,7 +600,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText:"Scan Door *",
+                                                        labelText:"${lableModel.scan} ${lableModel.door} *",
                                                         readOnly: false,
                                                         maxLength: 15,
                                                         isShowSuffixIcon: _isvalidateLocation,
@@ -663,7 +663,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: (selectedType == "A") ? "Scan AWB No." : (selectedType == "U") ? "Scan ULD / ULD Group Id" : "Scan Group Id",
+                                                        labelText: (selectedType == "A") ? "${lableModel.scanAWBNo}" : (selectedType == "U") ? "${lableModel.scanuld} / ${lableModel.uldGroupId}" : "${lableModel.scanGroupId}",
                                                         readOnly: false,
                                                         maxLength: (selectedType == "A") ? 11 : (selectedType == "U") ? 30 : 14,
                                                         onChanged: (value) {
@@ -803,7 +803,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                       Row(
                                                                                         children: [
                                                                                           CustomeText(
-                                                                                            text: "Destination :",
+                                                                                            text: "${lableModel.destination} :",
                                                                                             fontColor: MyColor.textColorGrey2,
                                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                                                                             fontWeight:  FontWeight.w500,
@@ -827,7 +827,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                                                 Expanded(
                                                                                   flex: 3,
-                                                                                  child: RoundedButtonBlue(text: "Next",
+                                                                                  child: RoundedButtonBlue(text: "${lableModel.next}",
                                                                                     focusNode: nextULDBtnFocusNode,
                                                                                     press: () async {
                                                                                       FocusScope.of(context).requestFocus(nextULDBtnFocusNode);
@@ -840,7 +840,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                             mainMenuName: widget.mainMenuName,
                                                                                             menuId: widget.menuId,
                                                                                             lableModel: lableModel,
-                                                                                            title: "Offload ULD",
+                                                                                            title: "${lableModel.offloadULD}",
                                                                                             refrelCode: widget.refrelCode,
                                                                                             isGroupBasedAcceptChar: isRequiredGroupForULD,
                                                                                             isGroupBasedAcceptNumber: isGroupIdLength,
@@ -1052,7 +1052,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                       Row(
                                                                                         children: [
                                                                                           CustomeText(
-                                                                                            text: (offloadAwbDetail.uLDTrolleyType == "U") ? "ULD :" : "Trolley :",
+                                                                                            text: (offloadAwbDetail.uLDTrolleyType == "U") ? "${lableModel.uldLable} :" : "${lableModel.trolley} :",
                                                                                             fontColor: MyColor.textColorGrey2,
                                                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                                             fontWeight:  FontWeight.w500,
@@ -1095,7 +1095,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                                                 Expanded(
                                                                                   flex: 3,
-                                                                                  child: RoundedButtonBlue(text: "Next",
+                                                                                  child: RoundedButtonBlue(text: "${lableModel.next}",
                                                                                     focusNode: nextBtnFocusNode,
                                                                                     press: () async {
                                                                                       FocusScope.of(context).requestFocus(nextBtnFocusNode);
@@ -1108,7 +1108,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                             mainMenuName: widget.mainMenuName,
                                                                                             menuId: widget.menuId,
                                                                                             lableModel: lableModel,
-                                                                                            title: "Offload AWB",
+                                                                                            title: "${lableModel.offloadAWB}",
                                                                                             refrelCode: widget.refrelCode,
                                                                                             isGroupBasedAcceptChar: isRequiredGroupForAWB,
                                                                                             isGroupBasedAcceptNumber: isGroupIdLength,
@@ -1209,7 +1209,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "PIECE", fontColor: selectedType == "G" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: lableModel.pieces!.toUpperCase(), fontColor: selectedType == "G" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),
@@ -1248,7 +1248,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "BULK", fontColor: selectedType == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: lableModel.bULK!.toUpperCase(), fontColor: selectedType == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),
@@ -1289,7 +1289,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "ULD", fontColor: selectedType == "U" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: lableModel.uldLable!.toUpperCase(), fontColor: selectedType == "U" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),

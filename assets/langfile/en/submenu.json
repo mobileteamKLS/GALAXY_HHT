@@ -18,10 +18,14 @@
     "HHT018" : "Close Trolley",
     "HHT019" : "Build Up",
     "HHT020" : "Split Group",
+    "HHT021" : "Move",
+    "HHT022" : "Offload",
 
 
-    "HHT011" : "Flight Check-In",
-    "HHT012" : "AWB Remarks",
+
+    "HHT011" : "DeActivate ULD",
+    "HHT012" : "Damaged ULD",
+    "HHT023" : "Unable To Trace",
     "submenu" : "Submenu"
   }
 }

@@ -29,7 +29,6 @@ class UnableToTraceRepository{
       var payload = {
         "Scan" : scan,
         "ScanType" : scanType,
-        "ModuleType" : moduleType,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

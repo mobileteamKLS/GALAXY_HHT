@@ -410,7 +410,7 @@ class _DamagedULDPageState extends State<DamagedULDPage> with SingleTickerProvid
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: "Scan ULD / ULD Group Id",
+                                                        labelText: "${lableModel.scanuld} / ${lableModel.uldGroupId}",
                                                         readOnly: false,
                                                         maxLength: 30,
                                                         onChanged: (value) {
@@ -597,7 +597,7 @@ class _DamagedULDPageState extends State<DamagedULDPage> with SingleTickerProvid
                                                                               Row(
                                                                                 children: [
                                                                                   CustomeText(
-                                                                                    text: "Scale Wt. :",
+                                                                                    text: "${lableModel.scaleWt} :",
                                                                                     fontColor: MyColor.textColorGrey2,
                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5_5,
                                                                                     fontWeight: FontWeight.w400,
@@ -664,7 +664,7 @@ class _DamagedULDPageState extends State<DamagedULDPage> with SingleTickerProvid
                                                                             ],
                                                                           ),
                                                                           SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                                          RoundedButtonBlue(text: "Record Damage",
+                                                                          RoundedButtonBlue(text: "${lableModel.recordDamage}",
                                                                             press: () async {
                                                                               String damageOrNot = await Navigator.push(
                                                                                   context,

@@ -23,6 +23,7 @@ import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
 import '../../../../widget/header/mainheadingwidget.dart';
+import '../../../../widget/uldnumberwidget.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -43,8 +44,10 @@ class UnableToTraceAWBPage extends StatefulWidget {
   List<SubMenuName> exportSubMenuList = [];
   String title;
   String refrelCode;
-  AWBDetailsList awbDetailsList;
-  String moduleType;
+  String type;
+  AWBDetailsList? awbDetailsList;
+  ULDDetailsList? uldDetailsList;
+
 
   UnableToTraceAWBPage({
     super.key,
@@ -55,8 +58,9 @@ class UnableToTraceAWBPage extends StatefulWidget {
     required this.lableModel,
     required this.title,
     required this.refrelCode,
-    required this.awbDetailsList,
-    required this.moduleType
+    required this.type,
+    this.awbDetailsList,
+    this.uldDetailsList
    });
 
   @override
@@ -98,12 +102,15 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
     // TODO: implement initState
     super.initState();
 
+    if(widget.type == "A"){
+      totalNop = int.parse("${widget.awbDetailsList!.nOP!}");
+      totalWt = double.parse("${widget.awbDetailsList!.weightKg!}");
 
-    totalNop = int.parse("${widget.awbDetailsList.nOP!}");
-    totalWt = double.parse("${widget.awbDetailsList.weightKg!}");
+      nopController.text = totalNop.toString();
+      weightController.text = totalWt.toStringAsFixed(2);
+    }
 
-    nopController.text = totalNop.toString();
-    weightController.text = totalWt.toStringAsFixed(2);
+
     _loadUser(); //load user data
 
   }
@@ -266,14 +273,19 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                 clearText: "${lableModel!.clear}",
                                 //add clear text to clear all feild
                                 onClear: () {
-                                  totalNop = int.parse("${widget.awbDetailsList.nOP}");
-                                  totalWt = double.parse("${widget.awbDetailsList.weightKg}");
+
+                                  if(widget.type == "A"){
+                                    totalNop = int.parse("${widget.awbDetailsList!.nOP}");
+                                    totalWt = double.parse("${widget.awbDetailsList!.weightKg}");
 
 
-                                  nopController.text = totalNop.toString();
-                                  weightController.text = totalWt.toStringAsFixed(2);
-                                  differenceNop = 0;
-                                  differenceWeight = 0.00;
+                                    nopController.text = totalNop.toString();
+                                    weightController.text = totalWt.toStringAsFixed(2);
+                                    differenceNop = 0;
+                                    differenceWeight = 0.00;
+                                  }
+
+
                                   setState(() {
 
                                   });
@@ -336,12 +348,16 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                   ),
                                                   child: Padding(
                                                     padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
-                                                    child: CustomeText(
-                                                      text: AwbFormateNumberUtils.formatAWBNumber("${widget.awbDetailsList.aWBNo}"),
+                                                    child: (widget.type == "A") ? CustomeText(
+                                                      text: AwbFormateNumberUtils.formatAWBNumber("${widget.awbDetailsList!.aWBNo}"),
                                                       fontColor: MyColor.textColorGrey3,
                                                       fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                       fontWeight: FontWeight.w600,
                                                       textAlign: TextAlign.start,
+                                                    ) : Row(
+                                                      children: [
+                                                        ULDNumberWidget(uldNo: "${widget.uldDetailsList!.uLDNo}", smallFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, bigFontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, fontColor: MyColor.textColorGrey3, uldType: "U"),
+                                                      ],
                                                     ),
 
                                                   ),
@@ -349,9 +365,10 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
 
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 10),
+                                            padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 10),
                                             child: Directionality(textDirection: textDirection,
                                                 child: Container(
+                                                  width: double.infinity,
                                                   decoration: BoxDecoration(
                                                     color: MyColor.colorWhite,
                                                     borderRadius: BorderRadius.circular(8),
@@ -369,8 +386,8 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                     child: Column(
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
-                                                        SizedBox(height: SizeConfig.blockSizeVertical,),
-                                                        Directionality(
+                                                        (widget.type == "A") ? SizedBox(height: SizeConfig.blockSizeVertical,) : SizedBox(),
+                                                        (widget.type == "A") ? Directionality(
                                                           textDirection: textDirection,
                                                           child: Row(
                                                             children: [
@@ -387,7 +404,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                                   animatedLabel: true,
                                                                   needOutlineBorder: true,
                                                                   labelText: "${lableModel.nop}",
-                                                                  readOnly: false,
+                                                                  readOnly: (widget.awbDetailsList!.nOP == 1) ? true : false,
                                                                   onChanged: (value) {
                                                                     if (value.isNotEmpty) {
                                                                       int enteredNop = int.tryParse(value) ?? 0;
@@ -512,8 +529,8 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                               )*/
                                                             ],
                                                           ),
-                                                        ),
-                                                        Row(
+                                                        ) : const SizedBox(),
+                                                        (widget.type == "A") ? Row(
                                                           children: [
                                                             Expanded(
                                                               flex:1,
@@ -537,8 +554,8 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                               ),
                                                             ),*/
                                                           ],
-                                                        ),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,),
+                                                        ) : const SizedBox(),
+                                                        (widget.type == "A") ? SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,) : SizedBox(),
                                                         CustomeText(
                                                           text: "Click OK to move items under tracing.",
                                                           fontColor: MyColor.textColorGrey3,
@@ -581,7 +598,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Cancel",
+                                      text: "${lableModel.cancel}",
                                       isborderButton: true,
                                       press: () async {
                                         _onWillPop();
@@ -592,33 +609,36 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "OK",
+                                      text: "${lableModel.ok}",
                                       press: () {
-                                        if (nopController.text.isEmpty) {
 
-                                          SnackbarUtil.showSnackbar(context, lableModel.piecesMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(nopFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
+                                        if(widget.type == "A"){
+                                          if (nopController.text.isEmpty) {
 
-                                          return;
+                                            SnackbarUtil.showSnackbar(context, lableModel.piecesMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(nopFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+
+                                            return;
+                                          }
+                                          if(int.parse(nopController.text) == 0){
+
+                                            SnackbarUtil.showSnackbar(context, lableModel.enterPiecesGrtMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(nopFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+
+                                            return;
+                                          }
+                                          uttRecordShipmentSave();
+                                        }else{
+                                          uttRecordULDSave();
                                         }
 
-                                        if(int.parse(nopController.text) == 0){
 
-                                          SnackbarUtil.showSnackbar(context, lableModel.enterPiecesGrtMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(nopFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-
-                                          return;
-                                        }
-
-
-
-                                        offloadShipmentSave();
                                       },
                                     ),
                                   ),
@@ -661,17 +681,27 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
 
 
 
-  Future<void> offloadShipmentSave() async {
-
-
-    print("CHECK_WEIGHT=== ${weightController.text}");
+  Future<void> uttRecordShipmentSave() async {
 
     await context.read<UTTCubit>().uttRecordUpdate(
         "A",
-        widget.awbDetailsList.groupSeqNo!,
+        widget.awbDetailsList!.groupSeqNo!,
         int.parse(nopController.text),
         double.parse(weightController.text),
-        widget.moduleType,
+        widget.awbDetailsList!.moduleType!,
+        _user!.userProfile!.userIdentity!,
+        _splashDefaultData!.companyCode!,
+        widget.menuId);
+  }
+
+  Future<void> uttRecordULDSave() async {
+
+    await context.read<UTTCubit>().uttRecordUpdate(
+        "U",
+        widget.uldDetailsList!.uLDSeqNo!,
+        0,
+        0.00,
+        "",
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

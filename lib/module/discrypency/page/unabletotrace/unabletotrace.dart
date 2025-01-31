@@ -417,10 +417,12 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                   if(state.uttRecordUpdateModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.uttRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else if(state.uttRecordUpdateModel.status == "V"){
+                                  }
+                                  else if(state.uttRecordUpdateModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.uttRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
+                                  }
+                                  else{
                                     getOffloadSearch();
                                   }
 
@@ -472,7 +474,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                                         hastextcolor: true,
                                                         animatedLabel: true,
                                                         needOutlineBorder: true,
-                                                        labelText: (selectedType == "A") ? "Scan AWB No." : (selectedType == "U") ? "Scan ULD" : "Scan Location",
+                                                        labelText: (selectedType == "A") ? "${lableModel.scanAWBNo}" : (selectedType == "U") ? "${lableModel.scanuld}" : "${lableModel.scanLocation}",
                                                         readOnly: false,
                                                         maxLength: (selectedType == "A") ? 11 : (selectedType == "U") ? 30 : 14,
                                                         onChanged: (value) {
@@ -626,7 +628,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "AWB", fontColor: selectedType == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: "${lableModel.awb}", fontColor: selectedType == "A" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),
@@ -658,7 +660,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "Location", fontColor: selectedType == "L" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: "${lableModel.location}", fontColor: selectedType == "L" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),
@@ -692,7 +694,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                             ),
                                             padding: const EdgeInsets.symmetric(vertical:16, horizontal: 10),
                                             child: Center(
-                                                child: CustomeText(text: "ULD", fontColor: selectedType == "U" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
+                                                child: CustomeText(text: "${lableModel.uldLable!.toUpperCase()}", fontColor: selectedType == "U" ? MyColor.colorWhite : MyColor.textColorGrey3, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5, fontWeight: FontWeight.w600, textAlign: TextAlign.center)
                                             ),
                                           ),
                                         ),
@@ -781,7 +783,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
     await context.read<UTTCubit>().getUTTSearchRecord(
         groupIdController.text,
         selectedType,
-        "E",
+        "",
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
@@ -817,7 +819,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
             child: Container(
               padding: EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: MyColor.subMenuColorList[4].withOpacity(0.3),
+                color: MyColor.subMenuColorList[6].withOpacity(0.4),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Stack(
@@ -861,42 +863,6 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                           ),
                         ],
                       ),
-                      /* offloadAwbDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical * 0.8,) : SizedBox(),
-                                                                          Row(
-                                                                            children: [
-                                                                              offloadAwbDetail.sHCCode!.isNotEmpty
-                                                                                  ? Row(
-                                                                                children: shcCodes.asMap().entries.take(3).map((entry) {
-                                                                                  int index = entry.key; // Get the index for colorList assignment
-                                                                                  String code = entry.value.trim(); // Get the code value and trim it
-
-                                                                                  return Padding(
-                                                                                    padding: EdgeInsets.only(right: 5.0),
-                                                                                    child: AnimatedBuilder(
-                                                                                      animation: _colorAnimation,
-                                                                                      builder: (context, child) {
-                                                                                        return Container(
-                                                                                          padding : EdgeInsets.symmetric(horizontal: SizeConfig.blockSizeHorizontal * 1.2, vertical: 1),
-                                                                                          decoration : BoxDecoration(
-                                                                                            borderRadius: BorderRadius.circular(5),
-                                                                                            color: (code.trim() == "DGR") ? _colorAnimation.value! : MyColor.shcColorList[index % MyColor.shcColorList.length],),
-                                                                                          child: CustomeText(
-                                                                                            text: code.trim(),
-                                                                                            fontColor: MyColor.textColorGrey3,
-                                                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_3,
-                                                                                            fontWeight: FontWeight.w500,
-                                                                                            textAlign: TextAlign.center,
-                                                                                          ),
-                                                                                        );
-                                                                                      },
-                                                                                    ),
-                                                                                  );
-                                                                                }).toList(),
-                                                                              )
-                                                                                  : SizedBox(),
-                                                                            ],
-                                                                          ),
-                                                                          offloadAwbDetail.sHCCode!.isNotEmpty ? SizedBox(height: SizeConfig.blockSizeVertical) : SizedBox(height: SizeConfig.blockSizeVertical * 0.8,),*/
                       SizedBox(height: SizeConfig.blockSizeVertical),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -959,7 +925,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                   Row(
                                     children: [
                                       CustomeText(
-                                        text: "Location :",
+                                        text: "${lableModel.location} :",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                         fontWeight: FontWeight.w500,
@@ -1002,28 +968,14 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                             Expanded(
                               flex: 3,
-                              child: RoundedButtonBlue(text: "Next",
+                              child: RoundedButtonBlue(text: "${lableModel.next}",
                                 focusNode: nextBtnFocusNode,
                                 press: () async {
                                   FocusScope.of(context).requestFocus(nextBtnFocusNode);
                                   _resumeTimerOnInteraction();
 
-                                  if(item.nOP == 1){
-
-                                    await context.read<UTTCubit>().uttRecordUpdateDirect(
-                                        "A",
-                                        item.groupSeqNo!,
-                                        item.nOP!,
-                                        item.weightKg!,
-                                        "E",
-                                        _user!.userProfile!.userIdentity!,
-                                        _splashDefaultData!.companyCode!,
-                                        widget.menuId);
-
-
-                                  }else{
-                                    String value = await Navigator.push(context, CupertinoPageRoute(
-                                        builder: (context) => UnableToTraceAWBPage(
+                                  String value = await Navigator.push(context, CupertinoPageRoute(
+                                      builder: (context) => UnableToTraceAWBPage(
                                           importSubMenuList: widget.importSubMenuList,
                                           exportSubMenuList: widget.exportSubMenuList,
                                           mainMenuName: widget.mainMenuName,
@@ -1031,16 +983,32 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                           lableModel: lableModel,
                                           title: widget.title,
                                           refrelCode: widget.refrelCode,
-                                          awbDetailsList: item,
-                                          moduleType : "E"
-                                        )));
+                                          type: "A",
+                                          awbDetailsList: item
+                                      )));
 
-                                    if(value == "true"){
-                                      getOffloadSearch();
-                                    }else{
-                                      _resumeTimerOnInteraction();
-                                    }
+                                  if(value == "true"){
+                                    getOffloadSearch();
+                                  }else{
+                                    _resumeTimerOnInteraction();
                                   }
+
+                                  /*if(item.nOP == 1){
+
+                                    await context.read<UTTCubit>().uttRecordUpdateDirect(
+                                        "A",
+                                        item.groupSeqNo!,
+                                        item.nOP!,
+                                        item.weightKg!,
+                                        item.moduleType!,
+                                        _user!.userProfile!.userIdentity!,
+                                        _splashDefaultData!.companyCode!,
+                                        widget.menuId);
+
+
+                                  }else{
+
+                                  }*/
 
 
 
@@ -1144,7 +1112,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                   Row(
                                     children: [
                                       CustomeText(
-                                        text: "Location :",
+                                        text: "${lableModel.location} :",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                         fontWeight: FontWeight.w500,
@@ -1188,14 +1156,36 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                             Expanded(
                               flex: 3,
-                              child: RoundedButtonBlue(text: "Next",
+                              child: RoundedButtonBlue(text: "${lableModel.next}",
                                 focusNode: nextULDBtnFocusNode,
                                 press: () async {
                                   FocusScope.of(context).requestFocus(nextULDBtnFocusNode);
 
                                   _resumeTimerOnInteraction();
 
-                                  await context.read<UTTCubit>().uttRecordUpdateDirect(
+
+                                  String value = await Navigator.push(context, CupertinoPageRoute(
+                                      builder: (context) => UnableToTraceAWBPage(
+                                          importSubMenuList: widget.importSubMenuList,
+                                          exportSubMenuList: widget.exportSubMenuList,
+                                          mainMenuName: widget.mainMenuName,
+                                          menuId: widget.menuId,
+                                          lableModel: lableModel,
+                                          title: widget.title,
+                                          refrelCode: widget.refrelCode,
+                                          type: "U",
+                                          uldDetailsList: item
+                                      )));
+
+                                  if(value == "true"){
+                                    getOffloadSearch();
+                                  }else{
+                                    _resumeTimerOnInteraction();
+                                  }
+
+
+
+                                  /*await context.read<UTTCubit>().uttRecordUpdateDirect(
                                       "U",
                                       item.uLDSeqNo!,
                                       0,
@@ -1203,7 +1193,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                       "E",
                                       _user!.userProfile!.userIdentity!,
                                       _splashDefaultData!.companyCode!,
-                                      widget.menuId);
+                                      widget.menuId);*/
 
                                 },),
                             ),

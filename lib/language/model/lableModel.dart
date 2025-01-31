@@ -646,9 +646,28 @@ class LableModel {
   String? scantrolleymsg;
   String? currentuldownermsg;
 
-  LableModel(
-      {this.loading,
+  String? pick;
+  String? drop;
+  String? clean;
+  String? selectAll;
+  String? clearGrouplist;
+  String? clearULDlist;
+  String? clearTrolleylist;
+  String? areyousureyouwanttocleargrouplist;
+  String? areyousureyouwanttoclearULDlist;
+  String? areyousureyouwanttoclearTrolleylist;
+  String? pleasesearchsource;
+  String? pleasesearchtarget;
+  String? pleaseselectatleastonerecord;
+  String? youcanonlyselectatleaseonerecordatatime;
+  String? scanAWBNo;
+  String? uldGroupId;
+  String? offloadULD;
+  String? offloadAWB;
 
+  LableModel(
+      {
+        this.loading,
         this.uldSearch,
         this.processedForULD,
         this.uldDamageAccept,
@@ -660,7 +679,6 @@ class LableModel {
         this.emptyULDMessage,
         this.yes,
         this.no,
-
         this.location,
         this.uldNo,
         this.search,
@@ -953,7 +971,10 @@ class LableModel {
         this.reOpen,
         this.closepallet,
         this.doyouwantclosepallet,
-
+        this.scanAWBNo,
+        this.uldGroupId,
+        this.offloadULD,
+        this.offloadAWB,
         this.cLT,
         this.cRB,
         this.cRG,
@@ -1246,6 +1267,20 @@ class LableModel {
         this.split,
         this.remainingNoPis0splitgroup,
         this.remainingWeightis0splitgroup,
+        this.pick,
+        this.drop,
+        this.clean,
+        this.selectAll,
+        this.clearGrouplist,
+        this.clearULDlist,
+        this.clearTrolleylist,
+        this.areyousureyouwanttocleargrouplist,
+        this.areyousureyouwanttoclearULDlist,
+        this.areyousureyouwanttoclearTrolleylist,
+        this.pleasesearchsource,
+        this.pleasesearchtarget,
+        this.pleaseselectatleastonerecord,
+        this.youcanonlyselectatleaseonerecordatatime,
 
         this.uCB,
         this.uCD,
@@ -1559,6 +1594,26 @@ class LableModel {
     excessPieces = json['excessPieces'];
     receivesPiecesMsg = json['receivesPiecesMsg'];
     breakdownPiecesMsg = json['breakdownPiecesMsg'];
+
+    pick = json['pick'];
+    drop = json['drop'];
+    clean = json['clean'];
+    selectAll = json['selectAll'];
+    clearGrouplist = json['clearGrouplist'];
+    clearULDlist = json['clearULDlist'];
+    clearTrolleylist = json['clearTrolleylist'];
+    areyousureyouwanttocleargrouplist = json['areyousureyouwanttocleargrouplist'];
+    areyousureyouwanttoclearULDlist = json['areyousureyouwanttoclearULDlist'];
+    areyousureyouwanttoclearTrolleylist = json['areyousureyouwanttoclearTrolleylist'];
+    pleasesearchsource = json['pleasesearchsource'];
+    pleasesearchtarget = json['pleasesearchtarget'];
+    pleaseselectatleastonerecord = json['pleaseselectatleastonerecord'];
+    youcanonlyselectatleaseonerecordatatime =  json['youcanonlyselectatleaseonerecordatatime'];
+
+    scanAWBNo = json['scanAWBNo'];
+    uldGroupId = json['uldGroupId'];
+    offloadULD = json['offloadULD'];
+    offloadAWB = json['offloadAWB'];
 
     cLT = json['CLT'];
     cRB = json['CRB'];
@@ -2522,6 +2577,26 @@ class LableModel {
     data['split'] = this.split;
     data['RemainingNoPis0splitgroup'] = this.remainingNoPis0splitgroup;
     data['RemainingWeightis0splitgroup'] = this.remainingWeightis0splitgroup;
+
+    data['pick'] = this.pick;
+    data['drop'] = this.drop;
+    data['clean'] = this.clean;
+    data['selectAll'] = this.selectAll;
+    data['clearGrouplist'] = this.clearGrouplist;
+    data['clearULDlist'] = this.clearULDlist;
+    data['clearTrolleylist'] = this.clearTrolleylist;
+    data['areyousureyouwanttocleargrouplist'] = this.areyousureyouwanttocleargrouplist;
+    data['areyousureyouwanttoclearULDlist'] = this.areyousureyouwanttoclearULDlist;
+    data['areyousureyouwanttoclearTrolleylist'] = this.areyousureyouwanttoclearTrolleylist;
+    data['pleasesearchsource'] = this.pleasesearchsource;
+    data['pleasesearchtarget'] = this.pleasesearchtarget;
+    data['pleaseselectatleastonerecord'] = this.pleaseselectatleastonerecord;
+    data['youcanonlyselectatleaseonerecordatatime'] = this.youcanonlyselectatleaseonerecordatatime;
+    data['scanAWBNo'] = this.scanAWBNo;
+    data['uldGroupId'] = this.uldGroupId;
+    data['offloadULD'] = this.offloadULD;
+    data['offloadAWB'] = this.offloadAWB;
+
 
     data['UCB'] = this.uCB;
     data['UCD'] = this.uCD;
