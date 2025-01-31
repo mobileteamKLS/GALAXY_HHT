@@ -21,6 +21,8 @@ class SubMenuCodeUtils{
   static String Move = "HHT021";
   static String Offload = "HHT022";
   static String UTT = "HHT023";
+  static String FoundUTT = "HHT024";
+
   static String DamagedULD = "HHT012";
   static String DeactiveULD = "HHT011";
 
