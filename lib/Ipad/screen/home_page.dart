@@ -5,6 +5,7 @@ import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/screen/pickUpOperations.dart';
+import 'package:galaxy/Ipad/screen/print.dart';
 import 'package:galaxy/Ipad/screen/vehicleTrackingDashboard.dart';
 import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import 'package:galaxy/Ipad/screen/easy_yard_checkin_dashboard.dart';
@@ -88,7 +89,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
   getTerminalBaseStation() async {
     DialogUtils.showLoadingDialog(context);
-    var queryParams = {'UserId': "0", 'OrganizationId': "0"};
+    var queryParams = {'UserId': "0", 'OrganizationId': "0",'PAFlag':'1'};
 
     await Global()
         .getData(
@@ -197,18 +198,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
 
-                          const Row(
+                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              // RoundedIconButtonNew(
-                              //   icon: scan,
-                              //   text: 'Easy Yard\nCheck-In',
-                              //   targetPage: EasyYardCheckInScreen(),
-                              //   containerColor: Color(0xffD1E2FB),
-                              //   iconColor: MyColor.textColorGrey3,
-                              //   textColor: MyColor.textColorGrey3,
-                              // ),
+                              RoundedIconButtonNew(
+                                icon: scan,
+                                text: 'Easy Yard\nCheck-In',
+                                targetPage: PdfViewerScreen(),
+                                containerColor: Color(0xffD1E2FB),
+                                iconColor: MyColor.textColorGrey3,
+                                textColor: MyColor.textColorGrey3,
+                              ),
                               SizedBox(width: 40,),
                               RoundedIconButtonNew(
                                 icon: log_in,

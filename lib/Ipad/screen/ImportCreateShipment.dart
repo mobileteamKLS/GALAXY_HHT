@@ -587,7 +587,9 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                           maxLength: 8,
                                                           fontSize: 18,
                                                           onChanged:
-                                                              (String, bool) {},
+                                                              (String , bool) {
+
+                                                              },
                                                         ),
                                                       )
                                                     ],

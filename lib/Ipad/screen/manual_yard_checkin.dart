@@ -86,16 +86,18 @@ class _ManualYardCheckInState
     )
         .then((response) {
       print("data received ");
-      print(json.decode(response.body)['ResponseObject']);
+      print("----${json.decode(response.body)['ResponseObject']}");
       Map<String, dynamic> jsonResponse = json.decode(response.body);
       List<dynamic> responseObjectList = jsonResponse['ResponseObject'];
       if(responseObjectList.first["errorMsg"]!=null){
-        showDataNotFoundDialog(context, responseObjectList.first["errorMsg"]);
+        print( responseObjectList.first["errorMsg"]);
         DialogUtils.hideLoadingDialog(context);
+        showDataNotFoundDialog(context, responseObjectList.first["errorMsg"]);
         return;
       }
       setState(() {
-        vehicleTokensListDetails = responseObjectList.map((e) => VtDetails.fromJson(e)).toList();
+        vehicleTokensListDetails = responseObjectList.map((e) => VtDetails.fromVTJson(e)).toList();
+        isOnList = List.generate(vehicleTokensListDetails.length, (index) => false);
         print(
             "length  = ${vehicleTokensListDetails.length}");
 
@@ -128,7 +130,8 @@ class _ManualYardCheckInState
       Map<String, dynamic> jsonResponse = json.decode(response.body);
       List<dynamic> responseObjectList = jsonResponse['ResponseObject'];
       setState(() {
-        vehicleTokensListDetails = responseObjectList.map((e) => VtDetails.fromJson(e)).toList();
+        vehicleTokensListDetails = responseObjectList.map((e) => VtDetails.fromVehicleNoJson(e)).toList();
+        isOnList = List.generate(vehicleTokensListDetails.length, (index) => false);
         print(
             "length  = ${vehicleTokensListDetails.length}");
         DialogUtils.hideLoadingDialog(context);
@@ -193,8 +196,6 @@ class _ManualYardCheckInState
     }
   }
 
-
-
   resetData(){
     prefixController.clear();
     vehicleNoController.clear();
@@ -202,8 +203,6 @@ class _ManualYardCheckInState
     wareHouseLocationList=[];
     wareHouseShipmentList=[];
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -788,7 +787,7 @@ class _ManualYardCheckInState
                     value: isOn,
                     onChanged: (bool? value) {
                       setState(() {
-                        isOn=!isOn!;
+                        onCheckboxChanged(value!);
                       });
                     },
                     shape: RoundedRectangleBorder(
@@ -807,10 +806,10 @@ class _ManualYardCheckInState
                 ),
               ),
             ),))),
-      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('MP09LK2621'))))),
-      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Import'))))),
-      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('Suraj'))))),
-      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('05 JUl 2024\n 08:00-09:00'))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text(data.vehicleRegNo))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text(data.mode))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text(data.driverName))))),
+      DataCell(Center(child: SizedBox(width: MediaQuery.sizeOf(context).width*0.15,child: Center(child: Text('${DateFormat('d MMM yyyy').format(DateTime.parse(data.slotDate))}\n ${DateTime.parse(data.timeStart).hour.toString().padLeft(2, '0')}:${DateTime.parse(data.timeStart).minute.toString().padLeft(2, '0')}-${DateTime.parse(data.timeEnd).hour.toString().padLeft(2, '0')}:${DateTime.parse(data.timeEnd).minute.toString().padLeft(2, '0')}'))))),
     ]);
   }
 

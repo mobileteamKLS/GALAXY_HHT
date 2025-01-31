@@ -67,6 +67,9 @@ dependencies:
   date_picker_timeline: ^1.2.6
 #  easy_date_timeline: 2.0.4
   animated_text_kit: ^4.2.1
+  flutter_pdfview: ^1.2.7
+  file_picker: ^6.1.1
+  printing: ^5.11.0
   #fluttertoast: ^8.2.6
 dependency_overrides:
   intl: any

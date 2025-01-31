@@ -725,39 +725,40 @@ class _ForwardForExaminationState
     });
   }
 
-  String buildInputXml({
-    required List<Map<String, dynamic>> saveList,
-    required String companyCode,
-    required String userId,
-    required String airportCity,
-    required String mode,
-  }) {
-    final builder = XmlBuilder();
-    DateTime customRefDate;
-    String formattedCustomRefDate="";
-    if(customRefDateController.text.isNotEmpty){
-      customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
-       formattedCustomRefDate = DateFormat('dd/MM/yyyy').format(customRefDate);
-    }
-
-    builder.element('ROOT', nest: () {
-      for (var item in saveList) {
-        final data = item['item'] as ForwardForExamData;
-        builder.element('ForwordForExamination', nest: () {
-          builder.element('uxHdnWLID', nest: data.sequenceNumber);
-          builder.element('Location', nest: locController.text);
-          builder.element('NOP', nest: data.nop.toString());
-          builder.element('ExamPieces', nest: data.examinationNop.toString());
-          builder.element('CustomsRefNo', nest: customRefNoController.text);
-          builder.element('CustomsRefDate', nest:formattedCustomRefDate??"");
-          builder.element('Remark', nest: remarkController.text);
-        });
-      }
-    });
-
-    final xmlDocument = builder.buildDocument();
-    return xmlDocument.toXmlString(pretty: true, indent: '  ');
-  }
+  // String buildInputXml({
+  //   required List<Map<String, dynamic>> saveList,
+  //   required String companyCode,
+  //   required String userId,
+  //   required String airportCity,
+  //   required String mode,
+  // }) {
+  //   final builder = XmlBuilder();
+  //   DateTime customRefDate;
+  //   String formattedCustomRefDate="";
+  //   if(customRefDateController.text.isNotEmpty){
+  //     customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
+  //      formattedCustomRefDate = DateFormat('dd/MM/yyyy').format(customRefDate);
+  //      print(formattedCustomRefDate);
+  //   }
+  //
+  //   builder.element('ROOT', nest: () {
+  //     for (var item in saveList) {
+  //       final data = item['item'] as ForwardForExamData;
+  //       builder.element('ForwordForExamination', nest: () {
+  //         builder.element('uxHdnWLID', nest: data.sequenceNumber);
+  //         builder.element('Location', nest: locController.text);
+  //         builder.element('NOP', nest: data.nop.toString());
+  //         builder.element('ExamPieces', nest: data.examinationNop.toString());
+  //         builder.element('CustomsRefNo', nest: customRefNoController.text);
+  //         builder.element('CustomsRefDate', nest:formattedCustomRefDate??"");
+  //         builder.element('Remark', nest: remarkController.text);
+  //       });
+  //     }
+  //   });
+  //
+  //   final xmlDocument = builder.buildDocument();
+  //   return xmlDocument.toXmlString(pretty: true, indent: '  ');
+  // }
 
   String buildInputXmlForFirstFormat({
     required List<Map<String, dynamic>> saveList,
@@ -769,7 +770,7 @@ class _ForwardForExaminationState
 
     if (customRefDateController.text.isNotEmpty) {
       customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
-      formattedCustomRefDate = DateFormat('MM/dd/yyyy').format(customRefDate);
+      formattedCustomRefDate = DateFormat('dd/MM/yyyy').format(customRefDate);
     }
 
     builder.element('ROOT', nest: () {

@@ -29,9 +29,10 @@ int selectedBaseStationID = 0;
 int selectedTerminalID = 0;
  //String galaxyBaseUrl="https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //QA
 String galaxyBaseUrl="https://galaxycesuat.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //UAT
-//String galaxyBaseUrl="https://cesops.jfkces.com/GalaxyHHTIPADAPI/api/"; //UAT
+//String galaxyBaseUrl="https://cesops.jfkces.com/GalaxyHHTIPADAPI/api/"; //PROD
 
-String acsBaseUrl="https://acs2devapi.azurewebsites.net/api_tsm/SrvMobile/"; //UAT
+String acsBaseUrl="https://acsintapigateway.kalelogistics.com/api_tsm/SrvMobile/"; //UAT
+//String acsBaseUrl="https://acs2devapi.azurewebsites.net/api_tsm/SrvMobile/"; //DEV
 // String acsBaseUrl="https://acs2usaapigateway.azurewebsites.net/GalaxyHHTIPADAPI/api/"; //UAT
 
 class Utils{
@@ -75,12 +76,21 @@ class Utils{
         return "";
     }
   }
+  static bool isAWBValid(String awbNumber) {
+    if (awbNumber.length != 8) {
+      return false;
+    }
+    var masterNo = awbNumber.substring(0, 7);
+    var modValue = int.parse(masterNo) % 7;
+    var validMaster = masterNo + modValue.toString();
+    return awbNumber == validMaster;
+  }
 }
 
 class Global {
   Future<Post> postData(service, payload) async {
-    print("payload " + payload.toString());
-    print("encoded payload " + json.encode(payload));
+    print("payload $payload");
+    print("encoded payload ${json.encode(payload)}");
     return fetchData(service, payload);
   }
 

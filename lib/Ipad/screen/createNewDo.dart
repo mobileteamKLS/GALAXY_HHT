@@ -730,7 +730,7 @@ class _CreateNewDOState extends State<CreateNewDO> {
     }
 
     var queryParams = {
-      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${wdoDetailsList.first.impShipRowId}</IMPSHIPROWID><ROTATION_NO>${customRefController.text}</ROTATION_NO><PKG_RECD>${nopController.text}</PKG_RECD><WT_RECD>${wdoDetailsList.first.wtRec}</WT_RECD></WDOObjects></ArrayOfWDOObjects>",
+      "ArrayOfWDOObjects": "<ArrayOfWDOObjects><WDOObjects><IMPSHIPROWID>${wdoDetailsList.first.impShipRowId}</IMPSHIPROWID><ROTATION_NO>${customRefController.text}</ROTATION_NO><PKG_RECD>${nopController.text}</PKG_RECD><WT_RECD>${wdoDetailsList.first.wtRec}</WT_RECD><WDOSEQNO>${wdoDetailsList.first.wdoSeqNo}</WDOSEQNO></WDOObjects></ArrayOfWDOObjects>",
       "AirportCity": "JFK",
       "CompanyCode": "3",
       "UserId": userId.toString()
