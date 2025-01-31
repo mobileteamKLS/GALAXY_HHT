@@ -1252,8 +1252,16 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
       showDataNotFoundDialog(context, "Damaged NOP is required.");
       return;
     }
+    if (int.parse(dmgNOPController.text)==0) {
+      showDataNotFoundDialog(context, "Damaged NOP can not be 0.");
+      return;
+    }
     if (dmgWTController.text.isEmpty) {
       showDataNotFoundDialog(context, "Damaged Weight is required.");
+      return;
+    }
+    if (double.parse(dmgWTController.text)<=0) {
+      showDataNotFoundDialog(context, "Damaged Weight can not be 0.");
       return;
     }
     if (remarksController.text.isEmpty) {

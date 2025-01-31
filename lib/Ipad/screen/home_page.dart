@@ -202,14 +202,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              RoundedIconButtonNew(
-                                icon: scan,
-                                text: 'Easy Yard\nCheck-In',
-                                targetPage: PdfViewerScreen(),
-                                containerColor: Color(0xffD1E2FB),
-                                iconColor: MyColor.textColorGrey3,
-                                textColor: MyColor.textColorGrey3,
-                              ),
+                              // RoundedIconButtonNew(
+                              //   icon: scan,
+                              //   text: 'Easy Yard\nCheck-In',
+                              //   targetPage: PdfViewerScreen(),
+                              //   containerColor: Color(0xffD1E2FB),
+                              //   iconColor: MyColor.textColorGrey3,
+                              //   textColor: MyColor.textColorGrey3,
+                              // ),
                               SizedBox(width: 40,),
                               RoundedIconButtonNew(
                                 icon: log_in,
