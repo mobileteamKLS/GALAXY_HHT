@@ -476,7 +476,7 @@ class _UnableToTracePageState extends State<UnableToTracePage> with SingleTicker
                                                         needOutlineBorder: true,
                                                         labelText: (selectedType == "A") ? "${lableModel.scanAWBNo}" : (selectedType == "U") ? "${lableModel.scanuld}" : "${lableModel.scanLocation}",
                                                         readOnly: false,
-                                                        maxLength: (selectedType == "A") ? 11 : (selectedType == "U") ? 30 : 14,
+                                                        maxLength: (selectedType == "A") ? 11 : (selectedType == "U") ? 11 : 14,
                                                         onChanged: (value) {
                                                           combinedList.clear();
                                                           offloadAWBDetailsList!.clear();

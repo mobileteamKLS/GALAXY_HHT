@@ -19,6 +19,7 @@ import '../../../../utils/awbformatenumberutils.dart';
 import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
+import '../../../../widget/customeedittext/customeedittextwithborder.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
@@ -44,8 +45,10 @@ class FoundUTTRecordPage extends StatefulWidget {
   String title;
   String refrelCode;
   String type;
-  AWBDetailsList? awbDetailsList;
-  ULDDetailsList? uldDetailsList;
+  FoundUTTAWBDetailList? awbDetailsList;
+  FoundUTTULDDetailList? uldDetailsList;
+  int isGroupIdLength;
+  String isRequiredGroupId;
 
 
   FoundUTTRecordPage({
@@ -58,6 +61,8 @@ class FoundUTTRecordPage extends StatefulWidget {
     required this.title,
     required this.refrelCode,
     required this.type,
+    required this.isGroupIdLength,
+    required this.isRequiredGroupId,
     this.awbDetailsList,
     this.uldDetailsList
    });
@@ -83,6 +88,12 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
   FocusNode nopFocusNode = FocusNode();
   FocusNode weightFocusNode = FocusNode();
 
+  TextEditingController groupIdController = TextEditingController();
+  FocusNode groupIdFocusNode = FocusNode();
+
+  TextEditingController locationController = TextEditingController();
+  FocusNode locationFocusNode = FocusNode();
+
   String isMergeIndicator = "N";
 
   double weightCount = 0.00;
@@ -95,7 +106,8 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
 
   bool isBackPressed = false;
 
-
+  bool _isLocationSearchBtnEnable = false;
+  bool _isvalidateLocation = false;
 
   @override
   void initState() {
@@ -110,11 +122,46 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
       weightController.text = totalWt.toStringAsFixed(2);
     }
 
+    locationFocusNode.addListener(() {
+      if (!locationFocusNode.hasFocus && !isBackPressed) {
+        leaveLocationFocus();
+      }
+    });
+
+    locationController.addListener(_validateLocationSearchBtn);
 
     _loadUser(); //load user data
 
   }
 
+  Future<void> leaveLocationFocus() async {
+    if (locationController.text.isNotEmpty) {
+      if(_isvalidateLocation == false){
+        //call location validation api
+        await context.read<FoundUTTCubit>().getValidateLocation(
+            locationController.text,
+            _user!.userProfile!.userIdentity!,
+            _splashDefaultData!.companyCode!,
+            widget.menuId,
+            "a");
+      }else{
+
+      }
+
+    }else{
+      //focus on location feild
+/*      WidgetsBinding.instance.addPostFrameCallback((_) {
+        FocusScope.of(context).requestFocus(locationBtnFocusNode);
+      },
+      );*/
+    }
+  }
+
+  void _validateLocationSearchBtn() {
+    setState(() {
+      _isLocationSearchBtnEnable = locationController.text.isNotEmpty;
+    });
+  }
 
 
   Future<void> _loadUser() async {
@@ -126,9 +173,16 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
         _splashDefaultData = splashDefaultData;
       });
 
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(nopFocusNode);
-      });
+      if(widget.type == "A"){
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(nopFocusNode);
+        });
+      }else{
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          FocusScope.of(context).requestFocus(groupIdFocusNode);
+        });
+      }
+
 
       inactivityTimerManager = InactivityTimerManager(
         context: context,
@@ -300,43 +354,122 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                 if (state is FoundUTTInitialState) {}
                                 else if (state is FoundUTTLoadingState) {
                                   // showing loading dialog in this state
-                                  DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
+                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
                                 else if(state is GetFoundUTTGroupIdSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.getFoundUTTGroupIdModel.status == "E"){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    SnackbarUtil.showSnackbar(context, state.getFoundUTTGroupIdModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }else if(state.getFoundUTTGroupIdModel.status == "V"){
+                                    DialogUtils.hideLoadingDialog(context);
+                                    SnackbarUtil.showSnackbar(context, state.getFoundUTTGroupIdModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    Vibration.vibrate(duration: 500);
+                                  }
+                                  else if(state.getFoundUTTGroupIdModel.status == "Y"){
 
                                     bool? mergeDialog = await DialogUtils.commonDialogforWarning(context,  "Merge Group", "Are you sure you want to merge group ?" , lableModel);
 
                                     if(mergeDialog == true){
                                       isMergeIndicator = "Y";
                                       // call api record
+                                      uttRecordShipmentSave();
                                     }else{
                                       isMergeIndicator = "N";
-                                      // call api record
+                                      if (locationController.text.isEmpty) {
+
+                                        SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(locationFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+
+                                      if (_isvalidateLocation == false) {
+
+                                        SnackbarUtil.showSnackbar(context, lableModel.validateLocation!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                                          FocusScope.of(context).requestFocus(locationFocusNode);
+                                        });
+                                        Vibration.vibrate(duration: 500);
+
+                                        return;
+                                      }
+                                      uttRecordShipmentSave();
                                     }
-                                  }else{
+                                  }
+                                  else{
                                     isMergeIndicator = "N";
-                                    // call api record
+                                    if (locationController.text.isEmpty) {
+
+                                      SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(locationFocusNode);
+                                      });
+                                      Vibration.vibrate(duration: 500);
+
+                                      return;
+                                    }
+
+                                    if (_isvalidateLocation == false) {
+
+                                      SnackbarUtil.showSnackbar(context, lableModel.validateLocation!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                                        FocusScope.of(context).requestFocus(locationFocusNode);
+                                      });
+                                      Vibration.vibrate(duration: 500);
+
+                                      return;
+                                    }
+                                    uttRecordShipmentSave();
                                   }
                                 }
                                 else if(state is GetFoundUTTGroupIdFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                }
+                                else if (state is ValidateLocationSuccessState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  if(state.validateLocationModel.status == "E"){
+                                    Vibration.vibrate(duration: 500);
+                                    SnackbarUtil.showSnackbar(context, state.validateLocationModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                  }else{
+                                    _isvalidateLocation = true;
+                                   /* WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(splitBtnFocusNode);
+                                    });*/
+                                    setState(() {
 
+                                    });
+                                  }
+                                }
+                                else if (state is ValidateLocationFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
+                                  Vibration.vibrate(duration: 500);
+                                  SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
                                 else if(state is RecordFoundUTTUpdateSuccessState){
+
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.foundUTTRecordUpdateModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.foundUTTRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else if(state.foundUTTRecordUpdateModel.status == "V"){
+                                  }
+                                  else if(state.foundUTTRecordUpdateModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.foundUTTRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                  }else{
+                                  }
+                                  else{
                                     Navigator.pop(context, "true");
                                   }
                                   
                                 }
                                 else if (state is RecordFoundUTTUpdateFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
@@ -576,13 +709,76 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                                             ),*/
                                                           ],
                                                         ) : const SizedBox(),
-                                                        (widget.type == "A") ? SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT3,) : SizedBox(),
-                                                        CustomeText(
-                                                          text: "Click OK to move items under tracing.",
-                                                          fontColor: MyColor.textColorGrey3,
-                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
-                                                          fontWeight: FontWeight.w700,
-                                                          textAlign: TextAlign.start,
+                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2),
+                                                        Directionality(
+                                                          textDirection: textDirection,
+                                                          child: CustomTextField(
+                                                            textDirection: textDirection,
+                                                            controller: groupIdController,
+                                                            focusNode: groupIdFocusNode,
+                                                            onPress: () {},
+                                                            hasIcon: false,
+                                                            hastextcolor: true,
+                                                            animatedLabel: true,
+                                                            needOutlineBorder: true,
+                                                            labelText: widget.isRequiredGroupId == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
+                                                            readOnly: false,
+                                                            maxLength: (widget.isGroupIdLength == 0) ? 1 : widget.isGroupIdLength,
+                                                            onChanged: (value) {},
+                                                            fillColor: Colors.grey.shade100,
+                                                            textInputType: TextInputType.text,
+                                                            inputAction: TextInputAction.next,
+                                                            hintTextcolor: Colors.black45,
+                                                            verticalPadding: 0,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                            validator: (value) {
+                                                              if (value!.isEmpty) {
+                                                                return "Please fill out this field";
+                                                              } else {
+                                                                return null;
+                                                              }
+                                                            },
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+                                                        CustomeEditTextWithBorder(
+                                                          lablekey: "LOCATION",
+                                                          textDirection: textDirection,
+                                                          controller: locationController,
+                                                          focusNode: locationFocusNode,
+                                                          hasIcon: false,
+                                                          hastextcolor: true,
+                                                          animatedLabel: true,
+                                                          needOutlineBorder: true,
+                                                          labelText: "${lableModel.location}",
+                                                          readOnly: false,
+                                                          maxLength: 15,
+                                                          isShowSuffixIcon: _isvalidateLocation,
+                                                          onChanged: (value, validate) {
+                                                            setState(() {
+                                                              _isvalidateLocation = false;
+                                                            });
+                                                            if (value.toString().isEmpty) {
+                                                              _isvalidateLocation = false;
+                                                            }
+                                                          },
+                                                          fillColor: Colors.grey.shade100,
+                                                          textInputType: TextInputType.text,
+                                                          inputAction: TextInputAction.next,
+                                                          hintTextcolor: MyColor.colorBlack,
+                                                          verticalPadding: 0,
+                                                          fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                          circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                          boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                          validator: (value) {
+                                                            if (value!.isEmpty) {
+                                                              return "Please fill out this field";
+                                                            } else {
+                                                              return null;
+                                                            }
+                                                          },
                                                         ),
                                                       ],
                                                     ),
@@ -634,6 +830,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                       press: () {
 
                                         if(widget.type == "A"){
+
                                           if (nopController.text.isEmpty) {
 
                                             SnackbarUtil.showSnackbar(context, lableModel.piecesMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -654,8 +851,85 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
 
                                             return;
                                           }
-                                          uttRecordShipmentSave();
-                                        }else{
+
+                                          if(widget.isRequiredGroupId == "Y"){
+                                            if (groupIdController.text.isEmpty) {
+
+                                              SnackbarUtil.showSnackbar(context, lableModel.enterGropIdMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              Vibration.vibrate(duration: 500);
+
+                                              return;
+                                            }
+
+
+                                            if (groupIdController.text.length != widget.isGroupIdLength) {
+                                              SnackbarUtil.showSnackbar(context, formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.isGroupIdLength}"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              Vibration.vibrate(duration: 500);
+
+                                              return;
+                                            }
+
+                                          }
+
+
+                                          foundUTTGroupIdSearch();
+                                        }
+                                        else{
+
+                                          if(widget.isRequiredGroupId == "Y"){
+                                            if (groupIdController.text.isEmpty) {
+
+                                              SnackbarUtil.showSnackbar(context, lableModel.enterGropIdMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              Vibration.vibrate(duration: 500);
+
+                                              return;
+                                            }
+
+
+                                            if (groupIdController.text.length != widget.isGroupIdLength) {
+                                              SnackbarUtil.showSnackbar(context, formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.isGroupIdLength}"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                              });
+                                              Vibration.vibrate(duration: 500);
+
+                                              return;
+                                            }
+
+                                          }
+
+                                          if (locationController.text.isEmpty) {
+
+                                            SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(locationFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+
+                                            return;
+                                          }
+
+                                          if (_isvalidateLocation == false) {
+
+                                            SnackbarUtil.showSnackbar(context, lableModel.validateLocation!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(locationFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+
+                                            return;
+                                          }
+
+
                                           uttRecordULDSave();
                                         }
 
@@ -691,7 +965,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
 
   Future<void> openValidationDialog(String message, FocusNode focuseNode) async {
     bool? empty = await DialogUtils.showDataNotFoundDialogbot(
-        context, "${message}", widget.lableModel);
+        context, message, widget.lableModel);
 
     if (empty == true) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -705,7 +979,10 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
   Future<void> foundUTTGroupIdSearch() async {
 
     await context.read<FoundUTTCubit>().getFoundUTTGroupIdRecord(
-        "",
+        widget.awbDetailsList!.expShipRowId!,
+        groupIdController.text,
+        locationController.text,
+        widget.awbDetailsList!.moduleType!,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);
@@ -716,7 +993,9 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
 
   Future<void> uttRecordShipmentSave() async {
 
-    await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
+    print("CHECK AWB====== ${int.parse(nopController.text)} ${double.parse(weightController.text)} ${widget.awbDetailsList!.moduleType!} $isMergeIndicator");
+
+    /*await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
         "A",
         widget.awbDetailsList!.groupSeqNo!,
         int.parse(nopController.text),
@@ -724,12 +1003,15 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
         widget.awbDetailsList!.moduleType!,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);
+        widget.menuId);*/
   }
 
   Future<void> uttRecordULDSave() async {
 
-    await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
+    print("CHECK ULD====== U === ${widget.uldDetailsList!.uLDSeqNo!}");
+
+
+    /*await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
         "U",
         widget.uldDetailsList!.uLDSeqNo!,
         0,
@@ -737,7 +1019,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
         "",
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);
+        widget.menuId);*/
   }
 
 }

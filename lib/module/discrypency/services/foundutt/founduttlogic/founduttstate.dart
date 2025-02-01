@@ -3,6 +3,7 @@
 import 'package:galaxy/module/discrypency/model/foundutt/getfounduttgroupidmodel.dart';
 import 'package:galaxy/module/discrypency/model/foundutt/getfounduttpageloadmodel.dart';
 
+import '../../../../import/model/uldacceptance/locationvalidationmodel.dart';
 import '../../../model/foundutt/founduttrecordupdatemodel.dart';
 import '../../../model/foundutt/getfounduttsearchmodel.dart';
 
@@ -42,6 +43,17 @@ class GetFoundUTTGroupIdSuccessState extends FoundUTTState {
 class GetFoundUTTGroupIdFailureState extends FoundUTTState {
   final String error;
   GetFoundUTTGroupIdFailureState(this.error);
+}
+
+
+class ValidateLocationSuccessState extends FoundUTTState {
+  final LocationValidationModel validateLocationModel;
+  ValidateLocationSuccessState(this.validateLocationModel);
+}
+
+class ValidateLocationFailureState extends FoundUTTState {
+  final String error;
+  ValidateLocationFailureState(this.error);
 }
 
 

@@ -197,6 +197,6 @@ class Apilist{
   //Found UTT
   static String getPageLoadFoundUTT = "/FoundUTT/GetPageLoad";
   static String getFoundUTTSearch = "/FoundUTT/GetFoundUTTSearch";
-  static String getGroupIdFoundUTT = "/FoundUTT/GetGroupIdFoundUTT";
+  static String getGroupIdFoundUTT = "/FoundUTT/GroupChecking";
   static String recordFoundUTTUpdate = "/FoundUTT/FoundUTTRecord";
 }

@@ -21,27 +21,37 @@ class FoundUTTCubit extends Cubit<FoundUTTState>{
   }
 
 
-  Future<void> getFoundUTTSearchRecord(String scan, int userId, int companyCode, int menuId) async {
+  Future<void> getFoundUTTSearchRecord(int userId, int companyCode, int menuId) async {
     emit(FoundUTTLoadingState());
     try {
-      final uTTSearchModelData = await foundUTTRepository.getFoundUTTSearchRecord(scan, userId, companyCode, menuId);
+      final uTTSearchModelData = await foundUTTRepository.getFoundUTTSearchRecord(userId, companyCode, menuId);
       emit(GetFoundUTTSearchSuccessState(uTTSearchModelData));
     } catch (e) {
       emit(GetFoundUTTSearchFailureState(e.toString()));
     }
   }
 
-  Future<void> getFoundUTTGroupIdRecord(String scan,int userId, int companyCode, int menuId) async {
+  Future<void> getFoundUTTGroupIdRecord(int shipRowId, String groupId, String locationCode,
+      String moduleType, int userId, int companyCode, int menuId) async {
     emit(FoundUTTLoadingState());
     try {
-      final foundUTTGroupIdModelData = await foundUTTRepository.getFoundUTTGroupId(scan, userId, companyCode, menuId);
+      final foundUTTGroupIdModelData = await foundUTTRepository.getFoundUTTGroupId(shipRowId, groupId, locationCode, moduleType, userId, companyCode, menuId);
       emit(GetFoundUTTGroupIdSuccessState(foundUTTGroupIdModelData));
     } catch (e) {
       emit(GetFoundUTTGroupIdFailureState(e.toString()));
     }
   }
 
-
+  // getValidateLocation api call repo
+  Future<void> getValidateLocation(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
+    emit(FoundUTTLoadingState());
+    try {
+      final validateLocationModelData = await foundUTTRepository.locationValidate(locationCode, userId, companyCode, menuId, processCode);
+      emit(ValidateLocationSuccessState(validateLocationModelData));
+    } catch (e) {
+      emit(ValidateLocationFailureState(e.toString()));
+    }
+  }
 
   Future<void> foundUTTRecordUpdate(
       String uttType,

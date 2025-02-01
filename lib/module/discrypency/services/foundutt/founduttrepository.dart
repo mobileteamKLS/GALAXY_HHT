@@ -7,6 +7,7 @@ import 'package:galaxy/prefrence/savedprefrence.dart';
 import 'package:galaxy/utils/commonutils.dart';
 
 import '../../../discrypency/model/unabletotrace/getuttsearchmodel.dart';
+import '../../../import/model/uldacceptance/locationvalidationmodel.dart';
 import '../../model/foundutt/getfounduttgroupidmodel.dart';
 import '../../model/foundutt/getfounduttpageloadmodel.dart';
 import '../../model/unabletotrace/uttrecordupdatemodel.dart';
@@ -64,7 +65,6 @@ class FoundUTTRepository{
   }
 
   Future<GetFoundUTTSearchModel> getFoundUTTSearchRecord(
-      String scan,
       int userId,
       int companyCode,
       int menuId) async {
@@ -72,7 +72,6 @@ class FoundUTTRepository{
     try {
 
       var payload = {
-        "Scan" : scan,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -110,7 +109,10 @@ class FoundUTTRepository{
 
 
   Future<GetFoundUTTGroupIdModel> getFoundUTTGroupId(
-      String scan,
+      int shipRowId,
+      String groupId,
+      String locationCode,
+      String moduleType,
       int userId,
       int companyCode,
       int menuId) async {
@@ -118,7 +120,10 @@ class FoundUTTRepository{
     try {
 
       var payload = {
-        "Scan" : scan,
+        "ShipRowId": shipRowId,
+        "GroupId" : groupId,
+        "LocationCode" : locationCode,
+        "ModuleType" : moduleType,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,
@@ -154,6 +159,48 @@ class FoundUTTRepository{
     }
   }
 
+
+  Future<LocationValidationModel> locationValidate(String locationCode, int userId, int companyCode, int menuId, String processCode) async {
+
+    try {
+
+      var payload = {
+        'LocationCode' : locationCode,
+        "AirportCode": CommonUtils.airportCode,
+        "CompanyCode": companyCode,
+        "CultureCode": CommonUtils.defaultLanguageCode,
+        "UserId": userId,
+        "ProcessCode" : processCode,
+        "MenuId" : menuId
+      };
+
+      // Print payload for debugging
+      print('locationValidationModel: $payload --- $payload');
+
+
+      Response response = await api.sendRequest.get(Apilist.validateLocationsApi,
+          queryParameters: payload
+      );
+
+      if (response.statusCode == 200) {
+        LocationValidationModel locationValidationModel = LocationValidationModel.fromJson(response.data);
+        return locationValidationModel;
+      } else {
+        // Handle non-200 response
+        throw DioException(
+          requestOptions: response.requestOptions,
+          response: response,
+          error: response.data['StatusMessage'] ?? 'Failed Responce',
+        );
+      }
+    } catch (e) {
+      if (e is DioError) {
+        throw e.response?.data['StatusMessage'] ?? 'Failed to Responce';
+      } else {
+        throw 'An unexpected error occurred';
+      }
+    }
+  }
 
 
   Future<FoundUTTRecordUpdateModel> foundUTTRecordUpdate(

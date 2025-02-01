@@ -1,26 +1,26 @@
 class GetFoundUTTSearchModel {
-  List<AWBDetailsList>? aWBDetailsList;
-  List<ULDDetailsList>? uLDDetailsList;
+  List<FoundUTTAWBDetailList>? foundUTTAWBDetailList;
+  List<FoundUTTULDDetailList>? foundUTTULDDetailList;
   String? status;
   String? statusMessage;
 
   GetFoundUTTSearchModel(
-      {this.aWBDetailsList,
-        this.uLDDetailsList,
+      {this.foundUTTAWBDetailList,
+        this.foundUTTULDDetailList,
         this.status,
         this.statusMessage});
 
   GetFoundUTTSearchModel.fromJson(Map<String, dynamic> json) {
-    if (json['AWBDetailsList'] != null) {
-      aWBDetailsList = <AWBDetailsList>[];
-      json['AWBDetailsList'].forEach((v) {
-        aWBDetailsList!.add(new AWBDetailsList.fromJson(v));
+    if (json['FoundUTTAWBDetailList'] != null) {
+      foundUTTAWBDetailList = <FoundUTTAWBDetailList>[];
+      json['FoundUTTAWBDetailList'].forEach((v) {
+        foundUTTAWBDetailList!.add(new FoundUTTAWBDetailList.fromJson(v));
       });
     }
-    if (json['ULDDetailsList'] != null) {
-      uLDDetailsList = <ULDDetailsList>[];
-      json['ULDDetailsList'].forEach((v) {
-        uLDDetailsList!.add(new ULDDetailsList.fromJson(v));
+    if (json['FoundUTTULDDetailList'] != null) {
+      foundUTTULDDetailList = <FoundUTTULDDetailList>[];
+      json['FoundUTTULDDetailList'].forEach((v) {
+        foundUTTULDDetailList!.add(new FoundUTTULDDetailList.fromJson(v));
       });
     }
     status = json['Status'];
@@ -29,13 +29,13 @@ class GetFoundUTTSearchModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.aWBDetailsList != null) {
-      data['AWBDetailsList'] =
-          this.aWBDetailsList!.map((v) => v.toJson()).toList();
+    if (this.foundUTTAWBDetailList != null) {
+      data['FoundUTTAWBDetailList'] =
+          this.foundUTTAWBDetailList!.map((v) => v.toJson()).toList();
     }
-    if (this.uLDDetailsList != null) {
-      data['ULDDetailsList'] =
-          this.uLDDetailsList!.map((v) => v.toJson()).toList();
+    if (this.foundUTTULDDetailList != null) {
+      data['FoundUTTULDDetailList'] =
+          this.foundUTTULDDetailList!.map((v) => v.toJson()).toList();
     }
     data['Status'] = this.status;
     data['StatusMessage'] = this.statusMessage;
@@ -43,7 +43,7 @@ class GetFoundUTTSearchModel {
   }
 }
 
-class AWBDetailsList {
+class FoundUTTAWBDetailList {
   String? aWBNo;
   String? houseNo;
   String? groupId;
@@ -55,8 +55,10 @@ class AWBDetailsList {
   int? eMISeqNo;
   int? groupSeqNo;
   String? moduleType;
+  int? uTTDays;
+  int? uTTHour;
 
-  AWBDetailsList(
+  FoundUTTAWBDetailList(
       {this.aWBNo,
         this.houseNo,
         this.groupId,
@@ -67,9 +69,11 @@ class AWBDetailsList {
         this.expShipRowId,
         this.eMISeqNo,
         this.groupSeqNo,
-        this.moduleType});
+        this.moduleType,
+        this.uTTDays,
+        this.uTTHour});
 
-  AWBDetailsList.fromJson(Map<String, dynamic> json) {
+  FoundUTTAWBDetailList.fromJson(Map<String, dynamic> json) {
     aWBNo = json['AWBNo'];
     houseNo = json['HouseNo'];
     groupId = json['GroupId'];
@@ -81,6 +85,8 @@ class AWBDetailsList {
     eMISeqNo = json['EMISeqNo'];
     groupSeqNo = json['GroupSeqNo'];
     moduleType = json['ModuleType'];
+    uTTDays = json['UTTDays'];
+    uTTHour = json['UTTHour'];
   }
 
   Map<String, dynamic> toJson() {
@@ -96,26 +102,38 @@ class AWBDetailsList {
     data['EMISeqNo'] = this.eMISeqNo;
     data['GroupSeqNo'] = this.groupSeqNo;
     data['ModuleType'] = this.moduleType;
+    data['UTTDays'] = this.uTTDays;
+    data['UTTHour'] = this.uTTHour;
     return data;
   }
 }
 
-class ULDDetailsList {
+class FoundUTTULDDetailList {
   String? uLDNo;
   String? uLDOwner;
   String? location;
   String? groupId;
   int? uLDSeqNo;
+  int? uTTDays;
+  int? uTTHour;
 
-  ULDDetailsList(
-      {this.uLDNo, this.uLDOwner, this.location, this.groupId, this.uLDSeqNo});
+  FoundUTTULDDetailList(
+      {this.uLDNo,
+        this.uLDOwner,
+        this.location,
+        this.groupId,
+        this.uLDSeqNo,
+        this.uTTDays,
+        this.uTTHour});
 
-  ULDDetailsList.fromJson(Map<String, dynamic> json) {
+  FoundUTTULDDetailList.fromJson(Map<String, dynamic> json) {
     uLDNo = json['ULDNo'];
     uLDOwner = json['ULDOwner'];
     location = json['Location'];
     groupId = json['GroupId'];
     uLDSeqNo = json['ULDSeqNo'];
+    uTTDays = json['UTTDays'];
+    uTTHour = json['UTTHour'];
   }
 
   Map<String, dynamic> toJson() {
@@ -125,6 +143,8 @@ class ULDDetailsList {
     data['Location'] = this.location;
     data['GroupId'] = this.groupId;
     data['ULDSeqNo'] = this.uLDSeqNo;
+    data['UTTDays'] = this.uTTDays;
+    data['UTTHour'] = this.uTTHour;
     return data;
   }
 }

@@ -29,6 +29,7 @@ import '../../../../../widget/custometext.dart';
 import '../../../../../widget/customtextfield.dart';
 import '../../../../../widget/header/mainheadingwidget.dart';
 import 'dart:ui' as ui;
+import '../../../../widget/roundbutton.dart';
 import '../../../login/model/userlogindatamodel.dart';
 import '../../../login/pages/signinscreenmethods.dart';
 import '../../../onboarding/sizeconfig.dart';
@@ -86,14 +87,16 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
 
 
   List<dynamic> combinedList = [];
-  List<AWBDetailsList>? offloadAWBDetailsList = [];
-  List<ULDDetailsList>? offloadULDDetailsList = [];
+  List<FoundUTTAWBDetailList>? foundUTTAWBDetailList = [];
+  List<FoundUTTULDDetailList>? foundUTTULDDetailList = [];
 
 
   late AnimationController _blinkController;
   late Animation<Color?> _colorAnimation;
 
-
+  int isGroupIdLength = 1;
+  String isRequiredGroupForAWB = "Y";
+  String isRequiredGroupForULD = "Y";
 
 
   bool isInactivityDialogOpen = false; // Flag to track inactivity dialog state
@@ -323,6 +326,11 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getFoundUTTPageLoadModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+
+                                    isGroupIdLength = state.getFoundUTTPageLoadModel.isGroupBasedAcceptNumber!;
+                                    isRequiredGroupForAWB = state.getFoundUTTPageLoadModel.isGroupBasedAcceptChar!;
+                                    isRequiredGroupForULD = state.getFoundUTTPageLoadModel.uLDGroupIdIsMandatory!;
+
                                     getFoundUTTSearch();
                                   }
                                 }
@@ -335,8 +343,8 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                   DialogUtils.hideLoadingDialog(context);
                                   if(state.getFoundUTTSearchModel.status == "E"){
                                     combinedList.clear();
-                                    offloadAWBDetailsList!.clear();
-                                    offloadULDDetailsList!.clear();
+                                    foundUTTAWBDetailList!.clear();
+                                    foundUTTULDDetailList!.clear();
 
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getFoundUTTSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -344,23 +352,25 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
 
                                     });
 
-                                  }else if(state.getFoundUTTSearchModel.status == "V"){
+                                  }
+                                  else if(state.getFoundUTTSearchModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.getFoundUTTSearchModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                  }else{
+                                  }
+                                  else{
                                     // data will be display
 
                                     combinedList.clear();
                                     getFoundUTTSearchModel = state.getFoundUTTSearchModel;
-                                    offloadAWBDetailsList = state.getFoundUTTSearchModel.aWBDetailsList;
-                                    offloadULDDetailsList = state.getFoundUTTSearchModel.uLDDetailsList;
+                                    foundUTTAWBDetailList = state.getFoundUTTSearchModel.foundUTTAWBDetailList;
+                                    foundUTTULDDetailList = state.getFoundUTTSearchModel.foundUTTULDDetailList;
 
-                                    if (offloadAWBDetailsList != null) {
-                                      combinedList.addAll(offloadAWBDetailsList!);
+                                    if (foundUTTAWBDetailList != null) {
+                                      combinedList.addAll(foundUTTAWBDetailList!);
                                     }
-                                    if (offloadULDDetailsList != null) {
-                                      combinedList.addAll(offloadULDDetailsList!);
+                                    if (foundUTTULDDetailList != null) {
+                                      combinedList.addAll(foundUTTULDDetailList!);
                                     }
 
 
@@ -370,6 +380,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                   }
                                 }
                                 else if (state is GetFoundUTTSearchFailureState){
+                                  DialogUtils.hideLoadingDialog(context);
                                   Vibration.vibrate(duration: 500);
                                   SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                 }
@@ -411,10 +422,10 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                                       itemBuilder: (context, index) {
                                                         var item = combinedList[index];
 
-                                                        if (item is AWBDetailsList) {
+                                                        if (item is FoundUTTAWBDetailList) {
                                                           // Display AWB details
                                                           return buildAWBItem(item, lableModel!);
-                                                        } else if (item is ULDDetailsList) {
+                                                        } else if (item is FoundUTTULDDetailList) {
                                                           // Display ULD details
                                                           return buildULDItem(item, lableModel!);
                                                         }
@@ -461,7 +472,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
   }
 
 
-  Widget buildAWBItem(AWBDetailsList item, LableModel lableModel) {
+  Widget buildAWBItem(FoundUTTAWBDetailList item, LableModel lableModel) {
     return InkWell(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -516,7 +527,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                             child: Row(
                               children: [
                                 CustomeText(
-                                  text: "House :",
+                                  text: "Time :",
                                   fontColor: MyColor.textColorGrey2,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w500,
@@ -524,7 +535,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                 ),
                                 const SizedBox(width: 5),
                                 CustomeText(
-                                  text: (item.houseNo!.isNotEmpty) ? "${item.houseNo}" : "-",
+                                  text: "${item.uTTDays} D ${item.uTTHour} H",
                                   fontColor: MyColor.colorBlack,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                   fontWeight: FontWeight.w600,
@@ -536,56 +547,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                         ],
                       ),
                       SizedBox(height: SizeConfig.blockSizeVertical),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                CustomeText(
-                                  text: "${lableModel.pieces} :",
-                                  fontColor: MyColor.textColorGrey2,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w500,
-                                  textAlign: TextAlign.start,
-                                ),
-                                const SizedBox(width: 5),
-                                CustomeText(
-                                  text: "${item.nOP}",
-                                  fontColor: MyColor.colorBlack,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            flex: 1,
-                            child: Row(
-                              children: [
-                                CustomeText(
-                                  text: "${lableModel.weight} :",
-                                  fontColor: MyColor.textColorGrey2,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
-                                  fontWeight: FontWeight.w500,
-                                  textAlign: TextAlign.start,
-                                ),
-                                const SizedBox(width: 5),
-                                CustomeText(
-                                  text: "${CommonUtils.formateToTwoDecimalPlacesValue(item.weightKg!)} Kg",
-                                  fontColor: MyColor.colorBlack,
-                                  fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.start,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: SizeConfig.blockSizeVertical),
+
                       IntrinsicHeight(
                         child: Row(
                           children: [
@@ -595,9 +557,53 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          CustomeText(
+                                            text: "${lableModel.pieces} :",
+                                            fontColor: MyColor.textColorGrey2,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          CustomeText(
+                                            text: "${item.nOP}",
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                      Row(
+                                        children: [
+                                          CustomeText(
+                                            text: "Loc. :",
+                                            fontColor: MyColor.textColorGrey2,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                            fontWeight: FontWeight.w500,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                          const SizedBox(width: 5),
+                                          CustomeText(
+                                            text: "${item.location}",
+                                            fontColor: MyColor.colorBlack,
+                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                            fontWeight: FontWeight.w600,
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SizeConfig.blockSizeVertical),
+                                  Row(
                                     children: [
                                       CustomeText(
-                                        text: "${lableModel.location} :",
+                                        text: "House :",
                                         fontColor: MyColor.textColorGrey2,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                         fontWeight: FontWeight.w500,
@@ -605,7 +611,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                       ),
                                       const SizedBox(width: 5),
                                       CustomeText(
-                                        text: "${item.location}",
+                                        text: (item.houseNo!.isNotEmpty) ? "${item.houseNo}" : "-",
                                         fontColor: MyColor.colorBlack,
                                         fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                         fontWeight: FontWeight.w600,
@@ -613,6 +619,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                       ),
                                     ],
                                   ),
+
                                   SizedBox(height: SizeConfig.blockSizeVertical,),
                                   Row(
                                     children: [
@@ -639,8 +646,10 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                             ),
                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                             Expanded(
-                              flex: 3,
-                              child: RoundedButtonBlue(text: "${lableModel.next}",
+                              flex: 4,
+                              child: RoundedButton(
+                                text: "Found",
+                                color:  MyColor.primaryColorblue,
                                 focusNode: nextBtnFocusNode,
                                 press: () async {
                                   FocusScope.of(context).requestFocus(nextBtnFocusNode);
@@ -656,6 +665,8 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                           title: widget.title,
                                           refrelCode: widget.refrelCode,
                                           type: "A",
+                                          isGroupIdLength: isGroupIdLength,
+                                          isRequiredGroupId: isRequiredGroupForAWB,
                                           awbDetailsList: item
                                       )));
 
@@ -683,7 +694,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
 
   }
 
-  Widget buildULDItem(ULDDetailsList item, LableModel lableModel) {
+  Widget buildULDItem(FoundUTTULDDetailList item, LableModel lableModel) {
     return InkWell(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -732,7 +743,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                             child: Row(
                               children: [
                                 CustomeText(
-                                  text: "Owner :",
+                                  text: "Time :",
                                   fontColor: MyColor.textColorGrey2,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w500,
@@ -740,7 +751,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                 ),
                                 const SizedBox(width: 5),
                                 CustomeText(
-                                  text: (item.uLDOwner!.isNotEmpty) ? "${item.uLDOwner}" : "-",
+                                  text: "${item.uTTDays} D ${item.uTTHour} H",
                                   fontColor: MyColor.colorBlack,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
                                   fontWeight: FontWeight.w600,
@@ -752,6 +763,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                         ],
                       ),
 
+
                       SizedBox(height: SizeConfig.blockSizeVertical,),
                       IntrinsicHeight(
                         child: Row(
@@ -761,6 +773,26 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  Row(
+                                    children: [
+                                      CustomeText(
+                                        text: "Owner :",
+                                        fontColor: MyColor.textColorGrey2,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
+                                        fontWeight: FontWeight.w500,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      CustomeText(
+                                        text: (item.uLDOwner!.isNotEmpty) ? "${item.uLDOwner}" : "-",
+                                        fontColor: MyColor.colorBlack,
+                                        fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6,
+                                        fontWeight: FontWeight.w600,
+                                        textAlign: TextAlign.start,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SizeConfig.blockSizeVertical,),
                                   Row(
                                     children: [
                                       CustomeText(
@@ -807,8 +839,10 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                             ),
                             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
                             Expanded(
-                              flex: 3,
-                              child: RoundedButtonBlue(text: "${lableModel.next}",
+                              flex: 4,
+                              child: RoundedButton(
+                                text: "Found",
+                                color:  MyColor.primaryColorblue,
                                 focusNode: nextULDBtnFocusNode,
                                 press: () async {
                                   FocusScope.of(context).requestFocus(nextULDBtnFocusNode);
@@ -826,6 +860,8 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                                           title: widget.title,
                                           refrelCode: widget.refrelCode,
                                           type: "U",
+                                          isGroupIdLength: isGroupIdLength,
+                                          isRequiredGroupId: isRequiredGroupForULD,
                                           uldDetailsList: item
                                       )));
 
@@ -863,7 +899,6 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
   Future<void> getFoundUTTSearch() async {
 
     await context.read<FoundUTTCubit>().getFoundUTTSearchRecord(
-        "",
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

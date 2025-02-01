@@ -349,7 +349,9 @@ class _DeactiveULDPageState extends State<DeactiveULDPage> with SingleTickerProv
                                     WidgetsBinding.instance.addPostFrameCallback((_) {
                                       FocusScope.of(context).requestFocus(groupIdFocusNode);
                                     });
-                                  }else{
+                                  }
+                                  else{
+
                                     uldDetailsList = state.getULDSearchModel.uLDDetailsList;
                                     setState(() {
 
@@ -374,6 +376,7 @@ class _DeactiveULDPageState extends State<DeactiveULDPage> with SingleTickerProv
                                       FocusScope.of(context).requestFocus(groupIdFocusNode);
                                     });
                                   }else{
+                                    SnackbarUtil.showSnackbar(context, state.uldDeactivateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                     getDeactiveULDSearch();
                                   }
                                 }
@@ -670,7 +673,7 @@ class _DeactiveULDPageState extends State<DeactiveULDPage> with SingleTickerProv
                                                                                   ),
                                                                                   const SizedBox(width: 5),
                                                                                   CustomeText(
-                                                                                    text: "${uldDetail.destination}",
+                                                                                    text: (uldDetail.currentLocation!.isNotEmpty) ? "${uldDetail.currentLocation}" : "-",
                                                                                     fontColor: MyColor.textColorGrey3,
                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                     fontWeight:  FontWeight.w600,

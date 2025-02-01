@@ -650,7 +650,7 @@ class _DamagedULDPageState extends State<DamagedULDPage> with SingleTickerProvid
                                                                                   ),
                                                                                   const SizedBox(width: 5),
                                                                                   CustomeText(
-                                                                                    text: "${uldDetail.destination}",
+                                                                                    text: (uldDetail.currentLocation!.isNotEmpty) ? "${uldDetail.currentLocation}" : "-",
                                                                                     fontColor: MyColor.textColorGrey3,
                                                                                     fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7,
                                                                                     fontWeight:  FontWeight.w600,
