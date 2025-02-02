@@ -995,15 +995,19 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
 
     print("CHECK AWB====== ${int.parse(nopController.text)} ${double.parse(weightController.text)} ${widget.awbDetailsList!.moduleType!} $isMergeIndicator");
 
-    /*await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
+    await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
         "A",
         widget.awbDetailsList!.groupSeqNo!,
+        groupIdController.text,
+        locationController.text,
         int.parse(nopController.text),
         double.parse(weightController.text),
+        isMergeIndicator,
+        (differenceNop > 0) ? "Y" : "N",
         widget.awbDetailsList!.moduleType!,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);*/
+        widget.menuId);
   }
 
   Future<void> uttRecordULDSave() async {
@@ -1011,15 +1015,19 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
     print("CHECK ULD====== U === ${widget.uldDetailsList!.uLDSeqNo!}");
 
 
-    /*await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
+    await context.read<FoundUTTCubit>().foundUTTRecordUpdate(
         "U",
         widget.uldDetailsList!.uLDSeqNo!,
+        groupIdController.text,
+        locationController.text,
         0,
         0.00,
         "",
+        "",
+        "",
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
-        widget.menuId);*/
+        widget.menuId);
   }
 
 }

@@ -54,14 +54,28 @@ class FoundUTTCubit extends Cubit<FoundUTTState>{
   }
 
   Future<void> foundUTTRecordUpdate(
-      String uttType,
-      int seqNo,
-      int nop,
-      double weight,
-      String moduleType, int userId, int companyCode, int menuId) async {
+  String uttType,
+  int seqNo,
+  String groupId,
+  String locationCode,
+  int nop,
+  double weight,
+  String isMerge,
+  String isPart,
+  String moduleType, int userId, int companyCode, int menuId) async {
     emit(FoundUTTLoadingState());
     try {
-      final recordUpdate = await foundUTTRepository.foundUTTRecordUpdate(uttType, seqNo, nop, weight, moduleType, userId, companyCode, menuId);
+      final recordUpdate = await foundUTTRepository.foundUTTRecordUpdate(
+          uttType,
+          seqNo,
+          groupId,
+          locationCode,
+          nop,
+          weight,
+          isMerge,
+          isPart,
+          moduleType,
+          userId, companyCode, menuId);
       emit(RecordFoundUTTUpdateSuccessState(recordUpdate));
     } catch (e) {
       emit(RecordFoundUTTUpdateFailureState(e.toString()));
