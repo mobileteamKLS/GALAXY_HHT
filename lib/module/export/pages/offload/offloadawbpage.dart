@@ -331,6 +331,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                   }
                                   else{
                                     if(btnclick == "O"){
+                                      SnackbarUtil.showSnackbar(context, state.offloadShipmentModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                       Navigator.pop(context, "true");
                                     }else{
 

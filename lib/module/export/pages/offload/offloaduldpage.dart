@@ -309,6 +309,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                   }
                                   else{
                                     if(btnClick == "O"){
+                                      SnackbarUtil.showSnackbar(context, state.offloadULDModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                       Navigator.pop(context, "true");
                                     }else{
                                       String damageOrNot = await Navigator.push(
@@ -341,8 +342,6 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                         Navigator.pop(context, "true");
                                       }
 
-
-                                      // call damage screen
                                     }
                                   }
                                 }
@@ -816,7 +815,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                         btnClick = "O";
 
                                         int? temperatureValue = int.tryParse(tempretureController.text);
-                                        if (tempretureController.text.isEmpty) {
+                                        /*if (tempretureController.text.isEmpty) {
 
                                           SnackbarUtil.showSnackbar(context, "${lableModel.templevelmsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
 
@@ -825,7 +824,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                           });
                                           Vibration.vibrate(duration: 500);
                                           return;
-                                        }
+                                        }*/
 
                                         if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
                                           SnackbarUtil.showSnackbar(context, "${lableModel.tempminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -840,7 +839,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
 
                                         int? batteryValue = int.tryParse(batteryController.text);
 
-                                        if (batteryController.text.isEmpty) {
+                                        /*if (batteryController.text.isEmpty) {
                                           SnackbarUtil.showSnackbar(context, "${lableModel.betterymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
 
                                           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -848,7 +847,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                           });
                                           Vibration.vibrate(duration: 500);
                                           return;
-                                        }
+                                        }*/
 
                                         if (batteryValue! < 0 || batteryValue > 100) {
                                           SnackbarUtil.showSnackbar(context, "${lableModel.betteryminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);

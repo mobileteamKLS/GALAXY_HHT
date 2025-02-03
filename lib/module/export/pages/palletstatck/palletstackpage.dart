@@ -765,7 +765,9 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                                     uldNo: palletStackDetail.uLDNo!,
                                                                                     menuId: widget.menuId,
                                                                                     uldStatus: palletStackDetail.uLDStatus!,
-                                                                                    mainMenuName: widget.mainMenuName),));
+                                                                                    mainMenuName: widget.mainMenuName,
+                                                                                    lableModel: lableModel,
+                                                                                ),));
                                                                                 if(result == "Done"){
                                                                                   getPageLoadDetail(igmNoEditingController.text);
                                                                                   _resumeTimerOnInteraction();
@@ -793,7 +795,9 @@ class _PalletStatckPageState extends State<PalletStatckPage>
                                                                                 menuId: widget.menuId,
                                                                                 uldStatus: palletStackDetail.uLDStatus!,
                                                                                 mainMenuName: widget.mainMenuName,
-                                                                                locationCode: locationController.text,),));
+                                                                                locationCode: locationController.text,
+                                                                                lableModel: lableModel,
+                                                                            ),));
                                                                             if(result == "Done"){
                                                                               getPageLoadDetail(igmNoEditingController.text);
                                                                               _resumeTimerOnInteraction();

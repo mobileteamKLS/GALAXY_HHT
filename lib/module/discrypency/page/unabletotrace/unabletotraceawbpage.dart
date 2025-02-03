@@ -311,6 +311,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.uttRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
+                                    SnackbarUtil.showSnackbar(context, state.uttRecordUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                     Navigator.pop(context, "true");
                                   }
                                   

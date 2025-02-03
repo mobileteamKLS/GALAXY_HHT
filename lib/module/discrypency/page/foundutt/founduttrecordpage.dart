@@ -337,8 +337,19 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                     weightController.text = totalWt.toStringAsFixed(2);
                                     differenceNop = 0;
                                     differenceWeight = 0.00;
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(nopFocusNode);
+                                    });
+                                  }else{
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(groupIdFocusNode);
+                                    });
                                   }
 
+                                  groupIdController.clear();
+                                  locationController.clear();
+                                  _isvalidateLocation = false;
+                                  isMergeIndicator = "N";
 
                                   setState(() {
 
@@ -368,15 +379,20 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                     Vibration.vibrate(duration: 500);
                                   }
                                   else if(state.getFoundUTTGroupIdModel.status == "Y"){
+                                    locationController.text = state.getFoundUTTGroupIdModel.statusMessage!;
+                                    setState(() {
+                                      _isvalidateLocation = true;
+                                    });
 
-                                    bool? mergeDialog = await DialogUtils.commonDialogforWarning(context,  "Merge Group", "Are you sure you want to merge group ?" , lableModel);
+                                    bool? mergeDialog = await DialogUtils.commonDialogforWarning(context,  "Merge", "Some pieces available in this group \nAre you sure you want to merge ?" , lableModel);
 
                                     if(mergeDialog == true){
                                       isMergeIndicator = "Y";
                                       // call api record
                                       uttRecordShipmentSave();
-                                    }else{
-                                      isMergeIndicator = "N";
+                                    }
+                                    else{
+                                      /*isMergeIndicator = "N";
                                       if (locationController.text.isEmpty) {
 
                                         SnackbarUtil.showSnackbar(context, lableModel.enterLocationMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -398,7 +414,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
 
                                         return;
                                       }
-                                      uttRecordShipmentSave();
+                                      uttRecordShipmentSave();*/
                                     }
                                   }
                                   else{
@@ -464,6 +480,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                     SnackbarUtil.showSnackbar(context, state.foundUTTRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }
                                   else{
+                                    SnackbarUtil.showSnackbar(context, state.foundUTTRecordUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
                                     Navigator.pop(context, "true");
                                   }
                                   
@@ -865,7 +882,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                             }
 
 
-                                            if (groupIdController.text.length != widget.isGroupIdLength) {
+                                           /* if (groupIdController.text.length != widget.isGroupIdLength) {
                                               SnackbarUtil.showSnackbar(context, formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.isGroupIdLength}"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                                 FocusScope.of(context).requestFocus(groupIdFocusNode);
@@ -873,7 +890,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                               Vibration.vibrate(duration: 500);
 
                                               return;
-                                            }
+                                            }*/
 
                                           }
 
@@ -895,7 +912,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                             }
 
 
-                                            if (groupIdController.text.length != widget.isGroupIdLength) {
+                                            /*if (groupIdController.text.length != widget.isGroupIdLength) {
                                               SnackbarUtil.showSnackbar(context, formatMessage("${lableModel.groupIdCharSizeMsg}", ["${widget.isGroupIdLength}"]), MyColor.colorRed, icon: FontAwesomeIcons.times);
                                               WidgetsBinding.instance.addPostFrameCallback((_) {
                                                 FocusScope.of(context).requestFocus(groupIdFocusNode);
@@ -903,7 +920,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                               Vibration.vibrate(duration: 500);
 
                                               return;
-                                            }
+                                            }*/
 
                                           }
 
@@ -981,7 +998,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
     await context.read<FoundUTTCubit>().getFoundUTTGroupIdRecord(
         widget.awbDetailsList!.expShipRowId!,
         groupIdController.text,
-        locationController.text,
+        widget.awbDetailsList!.location!,
         widget.awbDetailsList!.moduleType!,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,

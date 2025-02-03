@@ -187,7 +187,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
 
     if(status == "S"){
 
-      bool? exitConfirmed = await DialogUtils.showPalletCompleteDialog(context, widget.uldNo);
+      bool? exitConfirmed = await DialogUtils.showPalletCompleteDialog(context, widget.uldNo, widget.lableModel!);
       if (exitConfirmed == true) {
 
         // Call complete close pallet
@@ -882,7 +882,7 @@ class _AddPalletStatckPageState extends State<AddPalletStatckPage>
                                                                     else{
                                                                       // remove Pallate logic
 
-                                                                      bool? removeConfirmation = await DialogUtils.removePalletDialog(context, widget.uldNo);
+                                                                      bool? removeConfirmation = await DialogUtils.removePalletDialog(context, widget.uldNo, widget.lableModel!);
 
                                                                       if (removeConfirmation == true) {
                                                                         removePalletStack(palletDetailList.uLDSeqNo!);

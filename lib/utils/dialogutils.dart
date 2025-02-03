@@ -79,23 +79,31 @@ class DialogUtils {
           actions: <Widget>[
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                    onTap: () {
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${dashboardModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
                       Navigator.of(context).pop(false);
                     },
-                    child: CustomeText(text: "${dashboardModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
-                InkWell(
-                    onTap: () {
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${dashboardModel.ok}",
+                    press: () {
+
                       Navigator.of(context).pop(true);
+
                     },
-                    child: CustomeText(text: "${dashboardModel.ok}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                  ),
+                ),
               ],
             )
-
-
-
           ],
         );
       },
@@ -118,18 +126,29 @@ class DialogUtils {
           content: CustomeText(text: "${dashboardModel.exitMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                InkWell(
-                    onTap: () {
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${dashboardModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
                       Navigator.of(context).pop(false);
                     },
-                    child: CustomeText(text: "${dashboardModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
-                InkWell(
-                    onTap: () {
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${dashboardModel.exit}",
+                    press: () {
+
                       Navigator.of(context).pop(true);
+
                     },
-                    child: CustomeText(text: "${dashboardModel.exit}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_6, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                  ),
+                ),
               ],
             )
 
@@ -154,19 +173,33 @@ class DialogUtils {
           title: CustomeText(text: "${lableModel.finalizeflight}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${lableModel.finalizeflightMsg}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.cancel}",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.8,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.ok}",fontSize: SizeConfig.textMultiplier * SizeUtils.MEDIUMTEXTSIZE, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -298,20 +331,32 @@ class DialogUtils {
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           content: CustomeText(text: "${lableModel.revokeDamageMsg}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-           SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                      Navigator.of(context).pop(true);
 
-           InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
-
+                    },
+                  ),
+                ),
+              ],
+            )
           ],
         );
       },
@@ -343,20 +388,33 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
 
+                    },
+                  ),
+                ),
+              ],
+            )
           ],
         );
       },
@@ -1820,19 +1878,34 @@ class DialogUtils {
           title: CustomeText(text: "${uldTitleMsg}",fontSize: SizeConfig.textMultiplier * SizeUtils.HEADINGTEXTSIZE, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${lableModel.emptyULDMessage}",fontSize: SizeConfig.textMultiplier * 1.7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w500)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.8,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w500)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
+
 
           ],
         );
@@ -1862,19 +1935,33 @@ class DialogUtils {
           title: CustomeText(text: "${lableModel.lastBTConfirm}",fontSize: SizeConfig.textMultiplier * 2.1, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           content: CustomeText(text: "${lableModel.lastBTMsg}",fontSize: SizeConfig.textMultiplier * 1.8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.cancel}",fontSize: SizeConfig.textMultiplier * 1.8, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * 1.8,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.ok}",fontSize: SizeConfig.textMultiplier * 1.8, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -4134,7 +4221,7 @@ class DialogUtils {
   }
 
 
-  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo) {
+  static Future<bool?> showPalletCompleteDialog(BuildContext context, String uldNo, LableModel lableModel) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -4157,26 +4244,39 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-             SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+                      Navigator.of(context).pop(true);
 
-           InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
       },
     );
   }
-  static Future<bool?> removePalletDialog(BuildContext context, String uldNo) {
+  static Future<bool?> removePalletDialog(BuildContext context, String uldNo, LableModel lableModel) {
     return showDialog<bool>(
       barrierColor: MyColor.colorBlack.withOpacity(0.5),
       context: context,
@@ -4199,19 +4299,33 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "No",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "Yes",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -4243,19 +4357,34 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
+
 
           ],
         );
@@ -4291,19 +4420,33 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -4947,19 +5090,33 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -4993,19 +5150,33 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -5236,19 +5407,33 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
 
           ],
         );
@@ -5641,19 +5826,34 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
+
 
           ],
         );
@@ -5688,19 +5888,35 @@ class DialogUtils {
             ],
           ),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
+
+                      Navigator.of(context).pop(true);
+
+                    },
+                  ),
+                ),
+              ],
+            )
+
 
           ],
         );
@@ -5726,29 +5942,35 @@ class DialogUtils {
           ),
           title: CustomeText(text: title,fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_2_2, textAlign: TextAlign.start, fontColor: MyColor.colorRed, fontWeight: FontWeight.w600),
           // content: CustomeText(text: (bdEndStatus == "Y") ? "Breakdown already completed this ${uldNo}" : uldProgress < 100 ? "Are you sure you want to complete this ${uldNo} breakdown ?" : "${uldNo} breakdown completed ?",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
-          content: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-
-              CustomeText(text: message, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400),
-            ],
-          ),
+          content: Flexible(child: CustomeText(text: message, fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.colorBlack, fontWeight: FontWeight.w400, maxLine: 4,)),
           actions: <Widget>[
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(false);
-                },
-                child: CustomeText(text: "${lableModel.no}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.start, fontColor: MyColor.primaryColorblue, fontWeight: FontWeight.w400)),
 
-            SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH2,),
+            Row(
+              children: [
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.cancel}",
+                    isborderButton: true,
+                    press: () async {
+                      Navigator.of(context).pop(false);
+                    },
+                  ),
+                ),
+                SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.HEIGHT7,),
+                Expanded(
+                  flex: 1,
+                  child: RoundedButtonBlue(
+                    text: "${lableModel.ok}",
+                    press: () {
 
-            InkWell(
-                onTap: () {
-                  Navigator.of(context).pop(true);
-                },
-                child: CustomeText(text: "${lableModel.yes}",fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_7, textAlign: TextAlign.end, fontColor: MyColor.colorRed, fontWeight: FontWeight.w400)),
+                      Navigator.of(context).pop(true);
 
+                    },
+                  ),
+                ),
+              ],
+            )
           ],
         );
       },

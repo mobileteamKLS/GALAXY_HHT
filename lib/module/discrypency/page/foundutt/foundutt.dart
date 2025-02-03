@@ -525,6 +525,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                           const SizedBox(width: 5),
                           Expanded(
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 CustomeText(
                                   text: "Time :",
@@ -741,6 +742,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                           const SizedBox(width: 5),
                           Expanded(
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 CustomeText(
                                   text: "Time :",
