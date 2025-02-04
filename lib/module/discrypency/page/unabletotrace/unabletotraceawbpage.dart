@@ -270,7 +270,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                 onBack: () {
                                   _onWillPop();
                                 },
-                                clearText: "${lableModel!.clear}",
+                                clearText: (widget.type == "A") ? "${lableModel!.clear}" : "",
                                 //add clear text to clear all feild
                                 onClear: () {
 
@@ -404,7 +404,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                                   hastextcolor: true,
                                                                   animatedLabel: true,
                                                                   needOutlineBorder: true,
-                                                                  labelText: "${lableModel.nop}",
+                                                                  labelText: "${lableModel!.nop}",
                                                                   readOnly: (widget.awbDetailsList!.nOP == 1) ? true : false,
                                                                   onChanged: (value) {
                                                                     if (value.isNotEmpty) {
@@ -536,7 +536,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                                             Expanded(
                                                               flex:1,
                                                               child: CustomeText(
-                                                                text: "${lableModel.remainingNop} : $differenceNop",
+                                                                text: "${lableModel!.remainingNop} : $differenceNop",
                                                                 fontColor: MyColor.colorRed,
                                                                 fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                                                 fontWeight: FontWeight.w500,
@@ -599,7 +599,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "${lableModel.cancel}",
+                                      text: "${lableModel!.cancel}",
                                       isborderButton: true,
                                       press: () async {
                                         _onWillPop();
@@ -616,7 +616,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                         if(widget.type == "A"){
                                           if (nopController.text.isEmpty) {
 
-                                            SnackbarUtil.showSnackbar(context, lableModel.piecesMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            SnackbarUtil.showSnackbar(context, lableModel!.piecesMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               FocusScope.of(context).requestFocus(nopFocusNode);
                                             });
@@ -626,7 +626,7 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                           }
                                           if(int.parse(nopController.text) == 0){
 
-                                            SnackbarUtil.showSnackbar(context, lableModel.enterPiecesGrtMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            SnackbarUtil.showSnackbar(context, lableModel!.enterPiecesGrtMsg!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                             WidgetsBinding.instance.addPostFrameCallback((_) {
                                               FocusScope.of(context).requestFocus(nopFocusNode);
                                             });

@@ -827,7 +827,9 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
                                                                                 SizedBox(width: SizeConfig.blockSizeHorizontal * SizeUtils.WIDTH3,),
                                                                                 Expanded(
                                                                                   flex: 3,
-                                                                                  child: RoundedButtonBlue(text: "${lableModel.next}",
+                                                                                  child: RoundedButton(
+                                                                                    color: MyColor.primaryColorblue,
+                                                                                    text: "${lableModel.next}",
                                                                                     focusNode: nextULDBtnFocusNode,
                                                                                     press: () async {
                                                                                       FocusScope.of(context).requestFocus(nextULDBtnFocusNode);
@@ -891,7 +893,7 @@ class _OffloadPageState extends State<OffloadPage> with SingleTickerProviderStat
 
                                                     ListView.builder(
                                                       itemCount: (offloadAWBDetailsList!.isNotEmpty) ?  offloadAWBDetailsList!.length : 0,
-                                                      physics: NeverScrollableScrollPhysics(),
+                                                      physics: const NeverScrollableScrollPhysics(),
                                                       shrinkWrap: true,
                                                       controller: scrollController,
                                                       itemBuilder: (context, index) {

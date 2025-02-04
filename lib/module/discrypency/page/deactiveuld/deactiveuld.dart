@@ -326,6 +326,8 @@ class _DeactiveULDPageState extends State<DeactiveULDPage> with SingleTickerProv
                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
                                   });
                                   // Reset UI
+                                  groupIdController.clear();
+                                  uldDetailsList!.clear();
                                   setState(() {});
                                 },
                               ),

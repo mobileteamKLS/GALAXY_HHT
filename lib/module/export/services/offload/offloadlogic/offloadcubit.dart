@@ -61,6 +61,7 @@ class OffloadCubit extends Cubit<OffloadState>{
       int stockRowId,
       String offPoint,
       String reason,
+      String reasonDiscription,
       String locationCode,
       int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
@@ -78,6 +79,7 @@ class OffloadCubit extends Cubit<OffloadState>{
           stockRowId,
           offPoint,
           reason,
+          reasonDiscription,
           locationCode,
           userId, companyCode, menuId);
       emit(OffloadAWBSaveSuccessState(offloadSaveAWBModelData));
@@ -94,11 +96,13 @@ class OffloadCubit extends Cubit<OffloadState>{
       int batteryStrength,
       String groupId,
       String reason,
+      String reasonDiscription,
+      String offPoint,
       int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
     try {
       final offloadSaveULDModelData = await offloadRepository.offloadULDSave(
-          uLDSeqNo,flightSeqNo,temp, tUnit, batteryStrength, groupId, reason,
+          uLDSeqNo,flightSeqNo,temp, tUnit, batteryStrength, groupId, reason, reasonDiscription, offPoint,
           userId, companyCode, menuId);
       emit(OffloadULDSaveSuccessState(offloadSaveULDModelData));
     } catch (e) {

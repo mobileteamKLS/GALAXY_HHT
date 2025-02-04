@@ -325,6 +325,9 @@ class _DamagedULDPageState extends State<DamagedULDPage> with SingleTickerProvid
                                   WidgetsBinding.instance.addPostFrameCallback((_) {
                                     FocusScope.of(context).requestFocus(groupIdFocusNode);
                                   });
+
+                                  groupIdController.clear();
+                                  uldDetailsList!.clear();
                                   // Reset UI
                                   setState(() {});
                                 },

@@ -19,6 +19,7 @@ import '../../../../utils/commonutils.dart';
 import '../../../../utils/dialogutils.dart';
 import '../../../../utils/sizeutils.dart';
 import '../../../../widget/customdivider.dart';
+import '../../../../widget/customeedittext/remarkedittextfeild.dart';
 import '../../../../widget/custometext.dart';
 import '../../../../widget/customeuiwidgets/header.dart';
 import '../../../../widget/customtextfield.dart';
@@ -145,7 +146,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
       });
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        FocusScope.of(context).requestFocus(nopFocusNode);
+        FocusScope.of(context).requestFocus(groupIdFocusNode);
       });
 
       inactivityTimerManager = InactivityTimerManager(
@@ -436,6 +437,40 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                       crossAxisAlignment: CrossAxisAlignment.start,
                                                       children: [
                                                         SizedBox(height: SizeConfig.blockSizeVertical,),
+
+                                                        Directionality(
+                                                          textDirection: textDirection,
+                                                          child: CustomTextField(
+                                                            textDirection: textDirection,
+                                                            controller: groupIdController,
+                                                            focusNode: groupIdFocusNode,
+                                                            onPress: () {},
+                                                            hasIcon: false,
+                                                            hastextcolor: true,
+                                                            animatedLabel: true,
+                                                            needOutlineBorder: true,
+                                                            labelText: widget.isGroupBasedAcceptChar == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
+                                                            readOnly: false,
+                                                            maxLength: (widget.isGroupBasedAcceptNumber == 0) ? 1 : widget.isGroupBasedAcceptNumber,
+                                                            onChanged: (value) {},
+                                                            fillColor: Colors.grey.shade100,
+                                                            textInputType: TextInputType.text,
+                                                            inputAction: TextInputAction.next,
+                                                            hintTextcolor: Colors.black45,
+                                                            verticalPadding: 0,
+                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
+                                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
+                                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
+                                                            validator: (value) {
+                                                              if (value!.isEmpty) {
+                                                                return "Please fill out this field";
+                                                              } else {
+                                                                return null;
+                                                              }
+                                                            },
+                                                          ),
+                                                        ),
+                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                                                         Directionality(
                                                           textDirection: textDirection,
                                                           child: Row(
@@ -606,43 +641,11 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                             ),
                                                           ],
                                                         ),
+
                                                         SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
                                                         Directionality(
                                                           textDirection: textDirection,
-                                                          child: CustomTextField(
-                                                            textDirection: textDirection,
-                                                            controller: groupIdController,
-                                                            focusNode: groupIdFocusNode,
-                                                            onPress: () {},
-                                                            hasIcon: false,
-                                                            hastextcolor: true,
-                                                            animatedLabel: true,
-                                                            needOutlineBorder: true,
-                                                            labelText: widget.isGroupBasedAcceptChar == "Y" ? "${lableModel.groupId} *" : "${lableModel.groupId}",
-                                                            readOnly: false,
-                                                            maxLength: (widget.isGroupBasedAcceptNumber == 0) ? 1 : widget.isGroupBasedAcceptNumber,
-                                                            onChanged: (value) {},
-                                                            fillColor: Colors.grey.shade100,
-                                                            textInputType: TextInputType.text,
-                                                            inputAction: TextInputAction.next,
-                                                            hintTextcolor: Colors.black45,
-                                                            verticalPadding: 0,
-                                                            fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
-                                                            circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
-                                                            boxHeight: SizeConfig.blockSizeVertical * SizeUtils.BOXHEIGHT,
-                                                            validator: (value) {
-                                                              if (value!.isEmpty) {
-                                                                return "Please fill out this field";
-                                                              } else {
-                                                                return null;
-                                                              }
-                                                            },
-                                                          ),
-                                                        ),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
-                                                        Directionality(
-                                                          textDirection: textDirection,
-                                                          child: CustomTextField(
+                                                          child: RemarkCustomTextField(
                                                             textDirection: textDirection,
                                                             controller: reasonController,
                                                             focusNode: reasonFocusNode,
@@ -652,12 +655,13 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
                                                             labelText:  "Reason for Offload",
-                                                            readOnly: true,
+                                                            readOnly: (selectedSwitchIndex.isEmpty) ? true : (selectedSwitchIndex == "OTH") ? false : true,
                                                             onChanged: (value) {},
                                                             fillColor: Colors.grey.shade100,
                                                             textInputType: TextInputType.text,
                                                             inputAction: TextInputAction.next,
                                                             hintTextcolor: Colors.black45,
+                                                            maxLength: 30,
                                                             verticalPadding: 0,
                                                             fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_8,
                                                             circularCorner: SizeConfig.blockSizeHorizontal * SizeUtils.CIRCULARCORNER,
@@ -703,7 +707,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                                           ],
                                                                         ),
                                                                       ),
-                                                                      SizedBox(width: 2,),
+                                                                      const SizedBox(width: 2,),
                                                                       Switch(
                                                                         value: selectedSwitchIndex == content.referenceDataIdentifier,
                                                                         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -715,6 +719,14 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                                           setState(() {
                                                                             selectedSwitchIndex = value ? content.referenceDataIdentifier! : "";
                                                                             reasonController.text = value ? content.referenceDescription! : "";
+
+                                                                            if(selectedSwitchIndex == "OTH"){
+                                                                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                                                                FocusScope.of(context).requestFocus(reasonFocusNode);
+                                                                              });
+
+                                                                            }
+
                                                                           });
                                                                         },
                                                                       )
@@ -876,6 +888,15 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                           return;
                                         }
 
+                                        if (reasonController.text.isEmpty) {
+                                          SnackbarUtil.showSnackbar(context, "Please enter reason", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(reasonFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+
+                                          return;
+                                        }
 
 
 
@@ -999,6 +1020,15 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                           return;
                                         }
 
+                                        if (reasonController.text.isEmpty) {
+                                          SnackbarUtil.showSnackbar(context, "Please enter reason", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                                            FocusScope.of(context).requestFocus(reasonFocusNode);
+                                          });
+                                          Vibration.vibrate(duration: 500);
+
+                                          return;
+                                        }
 
                                         offloadShipmentSave();
                                       },
@@ -1059,6 +1089,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
         widget.offloadAwbDetail.groupSeqNo!,
         widget.offloadAwbDetail.offPoint!,
         selectedSwitchIndex,
+        reasonController.text,
         widget.locationCode,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
