@@ -248,15 +248,18 @@ class _AvailableForExaminationState extends State<AvailableForExamination> {
                               children: [
                                 Row(
                                   children: [
-                                    GestureDetector(
-                                      child: const Icon(Icons.arrow_back_ios,
-                                          color: MyColor.primaryColorblue),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
+                                    Container(
+                                      padding:const EdgeInsets.symmetric(horizontal: 8),
+                                      child: GestureDetector(
+                                        child: const Icon(Icons.arrow_back_ios,
+                                            color: MyColor.primaryColorblue),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
                                     ),
                                     const Text(
-                                      '  Available For Examination',
+                                      'Available For Examination',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22),

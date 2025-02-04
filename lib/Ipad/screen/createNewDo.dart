@@ -126,15 +126,18 @@ class _CreateNewDOState extends State<CreateNewDO> {
                           children: [
                             Row(
                               children: [
-                                GestureDetector(
-                                  child: const Icon(Icons.arrow_back_ios,
-                                      color: MyColor.primaryColorblue),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+                                Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                                  child: GestureDetector(
+                                    child: const Icon(Icons.arrow_back_ios,
+                                        color: MyColor.primaryColorblue),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
                                 const Text(
-                                  '  Create New WDO',
+                                  'Create New WDO',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 22),

@@ -235,15 +235,18 @@ class _ImportShipmentListingState extends State<ImportShipmentListing> {
                         children: [
                            Row(
                             children: [
-                              GestureDetector(
-                                child:  const Icon(Icons.arrow_back_ios,
-                                    color: MyColor.primaryColorblue),
-                                onTap: () {
-                                  Navigator.pop(context);
-                                },
+                              Container(
+                                padding:const EdgeInsets.symmetric(horizontal: 8),
+                                child: GestureDetector(
+                                  child:  const Icon(Icons.arrow_back_ios,
+                                      color: MyColor.primaryColorblue),
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
                               ),
                               const Text(
-                                '  SHIPMENTS LIST',
+                                'Shipments List',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 22),
                               ),

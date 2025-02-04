@@ -140,15 +140,15 @@ class _CaptureDamageandAcceptState extends State<CaptureDamageandAccept> {
                           children: [
                             Row(
                               children: [
-                                GestureDetector(
-                                  child:  const Icon(Icons.arrow_back_ios,
-                                      color: MyColor.primaryColorblue),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
-                                ),
-                                const SizedBox(
-                                  width: 4,
+                                Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                                  child: GestureDetector(
+                                    child:  const Icon(Icons.arrow_back_ios,
+                                        color: MyColor.primaryColorblue),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
                                 const Text(
                                   'Capture Damage & Accept',

@@ -123,15 +123,18 @@ class _DockInState extends State<DockIn> {
                           children: [
                             Row(
                               children: [
-                                GestureDetector(
-                                  child: const Icon(Icons.arrow_back_ios,
-                                      color: MyColor.primaryColorblue),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+                                Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                                  child: GestureDetector(
+                                    child: const Icon(Icons.arrow_back_ios,
+                                        color: MyColor.primaryColorblue),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
                                 const Text(
-                                  '  Dock In',
+                                  'Dock In',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 22),

@@ -335,15 +335,18 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                               children: [
                                 Row(
                                   children: [
-                                    GestureDetector(
-                                      child: const Icon(Icons.arrow_back_ios,
-                                          color: MyColor.primaryColorblue),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
+                                    Container(
+                                      padding:const EdgeInsets.symmetric(horizontal: 8),
+                                      child: GestureDetector(
+                                        child: const Icon(Icons.arrow_back_ios,
+                                            color: MyColor.primaryColorblue),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
                                     ),
                                     const Text(
-                                      '  Appointment Bookings',
+                                      'Appointment Bookings',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22),
@@ -352,7 +355,7 @@ class _AppointmentBookingNewState extends State<AppointmentBookingNew> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Column(
                               children: [
                                 Row(

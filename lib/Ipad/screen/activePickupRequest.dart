@@ -435,15 +435,18 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                               children: [
                                 Row(
                                   children: [
-                                    GestureDetector(
-                                      child: const Icon(Icons.arrow_back_ios,
-                                          color: MyColor.primaryColorblue),
-                                      onTap: () {
-                                        Navigator.pop(context);
-                                      },
+                                    Container(
+                                      padding:const EdgeInsets.symmetric(horizontal: 8),
+                                      child: GestureDetector(
+                                        child: const Icon(Icons.arrow_back_ios,
+                                            color: MyColor.primaryColorblue),
+                                        onTap: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
                                     ),
                                     const Text(
-                                      '  Active Pickup Requests',
+                                      'Active Pickup Requests',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 22),
@@ -452,7 +455,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            const SizedBox(height: 20),
                             Column(
                               children: [
                                 Row(
@@ -490,7 +493,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                                   fontWeight: FontWeight.bold,
                                                 ),),
                                                 GestureDetector(
-                                                  child: Row(
+                                                  child: const Row(
                                                     children: [
                                                       // Text(
                                                       //   slotFilterDate,
@@ -500,7 +503,7 @@ class _ActivePickupRequestState extends State<ActivePickupRequest> {
                                                       //           .primaryColorblue),
                                                       // ),
                                                       // const SizedBox(width: 8),
-                                                      const Icon(Icons.calendar_today,
+                                                      Icon(Icons.calendar_today,
                                                           color: MyColor
                                                               .primaryColorblue),
                                                     ],

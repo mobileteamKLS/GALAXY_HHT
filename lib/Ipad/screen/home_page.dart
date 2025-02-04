@@ -205,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               // RoundedIconButtonNew(
                               //   icon: scan,
                               //   text: 'Easy Yard\nCheck-In',
-                              //   targetPage: PdfViewerScreen(),
+                              //   targetPage: EasyYardCheckInScreen(),
                               //   containerColor: Color(0xffD1E2FB),
                               //   iconColor: MyColor.textColorGrey3,
                               //   textColor: MyColor.textColorGrey3,

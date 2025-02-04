@@ -595,26 +595,29 @@ class _ShipmentAcceptanceManuallyState
                           children: [
                             Row(
                               children: [
-                                GestureDetector(
-                                  child: const Icon(Icons.arrow_back_ios,
-                                      color: MyColor.primaryColorblue),
-                                  onTap: () async {
-                                    DialogUtils.hideLoadingDialog(context);
-                                    if(widget.isNavFromList){
-                                      await Future.delayed(Duration(milliseconds: 200));
-                                      Navigator.pushReplacement(context,
-                                          MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
-                                    }
-                                    else{
-                                      await Future.delayed(Duration(milliseconds: 200));
-                                      Navigator.pushReplacement(context,
-                                          MaterialPageRoute(builder: (context) => const WarehouseOperations()));
-                                    }
+                                Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                                  child: GestureDetector(
+                                    child: const Icon(Icons.arrow_back_ios,
+                                        color: MyColor.primaryColorblue),
+                                    onTap: () async {
+                                      DialogUtils.hideLoadingDialog(context);
+                                      if(widget.isNavFromList){
+                                        await Future.delayed(Duration(milliseconds: 200));
+                                        Navigator.pushReplacement(context,
+                                            MaterialPageRoute(builder: (context) => const ImportShipmentListing()));
+                                      }
+                                      else{
+                                        await Future.delayed(Duration(milliseconds: 200));
+                                        Navigator.pushReplacement(context,
+                                            MaterialPageRoute(builder: (context) => const WarehouseOperations()));
+                                      }
 
-                                  },
+                                    },
+                                  ),
                                 ),
                                 const Text(
-                                  '  Shipment Acceptance',
+                                  'Shipment Acceptance',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 22),

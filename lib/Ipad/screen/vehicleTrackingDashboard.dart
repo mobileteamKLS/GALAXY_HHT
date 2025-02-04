@@ -79,7 +79,7 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                       height: 10,
                     ),
                      Padding(
-                      padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+                      padding: const EdgeInsets.only(top: 10, left: 20, right: 20),
                       child: Material(
                         color: Colors.transparent,
                         // Ensures background transparency
@@ -88,15 +88,18 @@ class _VehicleTrackingOperationsState extends State<VehicleTrackingOperations> {
                           children: [
                             Row(
                               children: [
-                                GestureDetector(
-                                  child:  const Icon(Icons.arrow_back_ios,
-                                      color: MyColor.primaryColorblue),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+                                Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                                  child: GestureDetector(
+                                    child:  const Icon(Icons.arrow_back_ios,
+                                        color: MyColor.primaryColorblue),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
                                 const Text(
-                                  ' Vehicle Track',
+                                  'Vehicle Track',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold, fontSize: 22),
                                 ),

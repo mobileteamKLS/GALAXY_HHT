@@ -50,6 +50,7 @@ class _ManualYardCheckInState
   List<bool> editStates = [];
   bool? isOn=false;
   List<bool?> isOnList = [];
+  List<Map<String, dynamic>> saveList=[];
   @override
   void initState() {
     super.initState();
@@ -58,14 +59,14 @@ class _ManualYardCheckInState
   void checkboxChanged(bool? value, int index) {
     setState(() {
       isOnList[index] = value;
-      // if (value !=false) {
-      //   saveList.removeWhere(
-      //           (element) => element["item"] == forwardExamData[index]);
-      //   saveList.add({"item": forwardExamData[index], "value": value});
-      // } else {
-      //   saveList.removeWhere(
-      //           (element) => element["item"] == forwardExamData[index]);
-      // }
+      if (value !=false) {
+        saveList.removeWhere(
+                (element) => element["item"] == vehicleTokensListDetails[index].tokenNo);
+        saveList.add({"item": vehicleTokensListDetails[index].tokenNo, "value": value});
+      } else {
+        saveList.removeWhere(
+                (element) => element["item"] == vehicleTokensListDetails[index].tokenNo);
+      }
     });
   }
 
@@ -276,15 +277,18 @@ class _ManualYardCheckInState
                           children: [
                             Row(
                               children: [
-                                GestureDetector(
-                                  child: const Icon(Icons.arrow_back_ios,
-                                      color: MyColor.primaryColorblue),
-                                  onTap: () {
-                                    Navigator.pop(context);
-                                  },
+                                Container(
+                                  padding:const EdgeInsets.symmetric(horizontal: 8),
+                                  child: GestureDetector(
+                                    child: const Icon(Icons.arrow_back_ios,
+                                        color: MyColor.primaryColorblue),
+                                    onTap: () {
+                                      Navigator.pop(context);
+                                    },
+                                  ),
                                 ),
                                 const Text(
-                                  '  Yard Check-In',
+                                  'Yard Check-In',
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold, fontSize: 22),
                                 ),

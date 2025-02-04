@@ -28,8 +28,8 @@ int selectedBaseStationBranchID = 0;
 int selectedBaseStationID = 0;
 int selectedTerminalID = 0;
  //String galaxyBaseUrl="https://galaxyqa.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //QA
-String galaxyBaseUrl="https://galaxycesuat.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //UAT
-//String galaxyBaseUrl="https://cesops.jfkces.com/GalaxyHHTIPADAPI/api/"; //PROD
+// String galaxyBaseUrl="https://galaxycesuat.kalelogistics.com/GalaxyHHTIPADAPI/api/"; //UAT
+String galaxyBaseUrl="https://cesops.jfkces.com/GalaxyHHTIPADAPI/api/"; //PROD
 
 String acsBaseUrl="https://acsintapigateway.kalelogistics.com/api_tsm/SrvMobile/"; //UAT
 //String acsBaseUrl="https://acs2devapi.azurewebsites.net/api_tsm/SrvMobile/"; //DEV
