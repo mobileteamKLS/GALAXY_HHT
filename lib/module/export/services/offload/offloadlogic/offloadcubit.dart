@@ -98,11 +98,12 @@ class OffloadCubit extends Cubit<OffloadState>{
       String reason,
       String reasonDiscription,
       String offPoint,
+      String locationCode,
       int userId, int companyCode, int menuId) async {
     emit(OffloadLoadingState());
     try {
       final offloadSaveULDModelData = await offloadRepository.offloadULDSave(
-          uLDSeqNo,flightSeqNo,temp, tUnit, batteryStrength, groupId, reason, reasonDiscription, offPoint,
+          uLDSeqNo,flightSeqNo,temp, tUnit, batteryStrength, groupId, reason, reasonDiscription, offPoint, locationCode,
           userId, companyCode, menuId);
       emit(OffloadULDSaveSuccessState(offloadSaveULDModelData));
     } catch (e) {

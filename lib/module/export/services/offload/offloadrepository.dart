@@ -257,6 +257,7 @@ class OffloadRepository{
       String reason,
       String reasonDiscription,
       String offPoint,
+      String locationCode,
       int userId,
       int companyCode,
       int menuId) async {
@@ -271,7 +272,9 @@ class OffloadRepository{
         "BatteryStrength" : batteryStrength,
         "GroupId" : groupId,
         "Reason" : reason,
+        "OffLoadRemarks" : reasonDiscription,
         "OffPoint" : offPoint,
+        "LocationCode" : locationCode,
         "AirportCode": CommonUtils.airportCode,
         "CompanyCode": companyCode,
         "CultureCode": CommonUtils.defaultLanguageCode,

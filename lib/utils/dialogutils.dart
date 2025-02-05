@@ -5832,7 +5832,7 @@ class DialogUtils {
                 Expanded(
                   flex: 1,
                   child: RoundedButtonBlue(
-                    text: "${lableModel.cancel}",
+                    text: "${lableModel.no}",
                     isborderButton: true,
                     press: () async {
                       Navigator.of(context).pop(false);
@@ -5843,7 +5843,7 @@ class DialogUtils {
                 Expanded(
                   flex: 1,
                   child: RoundedButtonBlue(
-                    text: "${lableModel.ok}",
+                    text: "${lableModel.yes}",
                     press: () {
 
                       Navigator.of(context).pop(true);

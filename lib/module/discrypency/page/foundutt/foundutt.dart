@@ -528,7 +528,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 CustomeText(
-                                  text: "Time :",
+                                  text: "${lableModel.time} :",
                                   fontColor: MyColor.textColorGrey2,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w500,
@@ -649,7 +649,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                             Expanded(
                               flex: 4,
                               child: RoundedButton(
-                                text: "Found",
+                                text: "${lableModel.found}",
                                 color:  MyColor.primaryColorblue,
                                 focusNode: nextBtnFocusNode,
                                 press: () async {
@@ -745,7 +745,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 CustomeText(
-                                  text: "Time :",
+                                  text: "${lableModel.time} :",
                                   fontColor: MyColor.textColorGrey2,
                                   fontSize: SizeConfig.textMultiplier * SizeUtils.TEXTSIZE_1_5,
                                   fontWeight: FontWeight.w500,
@@ -843,7 +843,7 @@ class _FoundUTTPageState extends State<FoundUTTPage> with SingleTickerProviderSt
                             Expanded(
                               flex: 4,
                               child: RoundedButton(
-                                text: "Found",
+                                text: "${lableModel.found}",
                                 color:  MyColor.primaryColorblue,
                                 focusNode: nextULDBtnFocusNode,
                                 press: () async {

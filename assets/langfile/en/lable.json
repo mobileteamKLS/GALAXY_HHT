@@ -674,6 +674,12 @@
     "offloadAWB" : "Offload AWB",
     "offloadandDamage" : "Offload & Damage",
     "offload" : "Offload",
+    "reasonforoffload" : "Reason for Offload",
+    "selectanyonereasonforoffload" : "Select any one reason for offload.",
+    "pleaseenterreason" : "Please enter reason.",
+    "found" : "Found",
+    "merge" : "Merge",
+    "mergeMessage" : "Some pieces available in this group. Are you sure you want to merge ?",
 
 
     "2539" : "Bands Loose",

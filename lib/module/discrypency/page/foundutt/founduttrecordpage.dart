@@ -384,7 +384,7 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                       _isvalidateLocation = true;
                                     });
 
-                                    bool? mergeDialog = await DialogUtils.commonDialogforWarning(context,  "Merge", "Some pieces available in this group \nAre you sure you want to merge ?" , lableModel);
+                                    bool? mergeDialog = await DialogUtils.commonDialogforWarning(context,  "${lableModel.merge}", "${lableModel.mergeMessage}" , lableModel);
 
                                     if(mergeDialog == true){
                                       isMergeIndicator = "Y";
@@ -453,6 +453,10 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                   if(state.validateLocationModel.status == "E"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.validateLocationModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                                      FocusScope.of(context).requestFocus(locationFocusNode);
+                                    });
+
                                   }else{
                                     _isvalidateLocation = true;
                                    /* WidgetsBinding.instance.addPostFrameCallback((_) {

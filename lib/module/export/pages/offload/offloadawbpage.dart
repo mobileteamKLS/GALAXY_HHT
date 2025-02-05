@@ -326,7 +326,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.offloadShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }
-                                  else if(state.offloadShipmentModel.status == "E"){
+                                  else if(state.offloadShipmentModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.offloadShipmentModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }
@@ -642,7 +642,37 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                           ],
                                                         ),
 
-                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
+
+
+                                                      ],
+                                                    ),
+
+                                                  ),
+                                                )),
+
+                                          ),
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 10),
+                                            child: Directionality(textDirection: textDirection,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: MyColor.colorWhite,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: MyColor.colorBlack.withOpacity(0.09),
+                                                        spreadRadius: 2,
+                                                        blurRadius: 15,
+                                                        offset: Offset(0, 3), // changes position of shadow
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        SizedBox(height: SizeConfig.blockSizeVertical,),
                                                         Directionality(
                                                           textDirection: textDirection,
                                                           child: RemarkCustomTextField(
@@ -654,7 +684,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                             hastextcolor: true,
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
-                                                            labelText:  "Reason for Offload",
+                                                            labelText:  "${lableModel.reasonforoffload}",
                                                             readOnly: (selectedSwitchIndex.isEmpty) ? true : (selectedSwitchIndex == "OTH") ? false : true,
                                                             onChanged: (value) {},
                                                             fillColor: Colors.grey.shade100,
@@ -750,6 +780,9 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                                 )),
 
                                           ),
+
+
+
                                         ],
                                       ),
                                     ],
@@ -778,7 +811,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Offload & Damage",
+                                      text: "${lableModel.offloadandDamage}",
                                       isborderButton: true,
                                       press: () async {
                                         btnclick = "D";
@@ -910,7 +943,7 @@ class _OffloadAWBPageState extends State<OffloadAWBPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Offload",
+                                      text: "${lableModel.offload}",
                                       press: () {
 
                                         btnclick = "O";

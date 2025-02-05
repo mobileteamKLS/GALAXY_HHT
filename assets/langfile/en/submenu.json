@@ -26,6 +26,7 @@
     "HHT011" : "DeActivate ULD",
     "HHT012" : "Damaged ULD",
     "HHT023" : "Unable To Trace",
+    "HHT024" : "Found UTT",
     "submenu" : "Submenu"
   }
 }

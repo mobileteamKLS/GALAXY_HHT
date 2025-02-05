@@ -296,7 +296,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                 if (state is OffloadInitialState) {}
                                 else if (state is OffloadLoadingState) {
                                   // showing loading dialog in this state
-                                  DialogUtils.showLoadingDialog(context, message: lableModel!.loading);
+                                  DialogUtils.showLoadingDialog(context, message: lableModel.loading);
                                 }
                                 else if (state is OffloadULDSaveSuccessState){
                                   DialogUtils.hideLoadingDialog(context);
@@ -304,7 +304,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.offloadULDModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }
-                                  else if(state.offloadULDModel.status == "E"){
+                                  else if(state.offloadULDModel.status == "V"){
                                     Vibration.vibrate(duration: 500);
                                     SnackbarUtil.showSnackbar(context, state.offloadULDModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }
@@ -390,8 +390,9 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
 
                                           ),
                                           Padding(
-                                            padding: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 10),
-                                            child: Directionality(textDirection: textDirection,
+                                            padding: const EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 10),
+                                            child: Directionality(
+                                                textDirection: textDirection,
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     color: MyColor.colorWhite,
@@ -465,7 +466,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
 
                                                                   },
                                                                   fillColor: Colors.grey.shade100,
-                                                                  textInputType: TextInputType.text,
+                                                                  textInputType: TextInputType.number,
                                                                   inputAction: TextInputAction.next,
                                                                   hintTextcolor: Colors.black,
                                                                   verticalPadding: 0,
@@ -589,8 +590,38 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                                             },
                                                           ),
                                                         ),
-                                                        SizedBox(height: SizeConfig.blockSizeVertical * SizeUtils.HEIGHT2,),
 
+
+                                                      ],
+                                                    ),
+
+                                                  ),
+                                                ))),
+
+
+
+                                          Padding(
+                                            padding: EdgeInsets.only(left: 10, right: 10, top: 0, bottom: 10),
+                                            child: Directionality(textDirection: textDirection,
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: MyColor.colorWhite,
+                                                    borderRadius: BorderRadius.circular(8),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: MyColor.colorBlack.withOpacity(0.09),
+                                                        spreadRadius: 2,
+                                                        blurRadius: 15,
+                                                        offset: Offset(0, 3), // changes position of shadow
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(left: 12, right: 12, top: 12, bottom: 12),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        SizedBox(height: SizeConfig.blockSizeVertical),
                                                         Directionality(
                                                           textDirection: textDirection,
                                                           child: RemarkCustomTextField(
@@ -602,7 +633,7 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                                             hastextcolor: true,
                                                             animatedLabel: true,
                                                             needOutlineBorder: true,
-                                                            labelText:  "Reason for Offload",
+                                                            labelText:  "${lableModel.reasonforoffload}",
                                                             readOnly: (selectedSwitchIndex.isEmpty) ? true : (selectedSwitchIndex == "OTH") ? false : true,
                                                             onChanged: (value) {},
                                                             fillColor: Colors.grey.shade100,
@@ -698,6 +729,9 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                                 )),
 
                                           ),
+                                          
+
+
                                         ],
                                       ),
                                     ],
@@ -726,12 +760,12 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Offload & Damage",
+                                      text: "${lableModel.offloadandDamage}",
                                       isborderButton: true,
                                       press: () {
                                         btnClick = "D";
 
-                                        int? temperatureValue = int.tryParse(tempretureController.text);
+
                                         /*if (tempretureController.text.isEmpty) {
 
                                           SnackbarUtil.showSnackbar(context, "${lableModel.templevelmsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -743,18 +777,28 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                           return;
                                         }*/
 
-                                        if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
-                                          SnackbarUtil.showSnackbar(context, "${lableModel.tempminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(tempretureFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-                                          return;
+                                        if(tempretureController.text.isNotEmpty){
+
+                                          int? temperatureValue = int.tryParse(tempretureController.text);
+
+                                          if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.tempminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(tempretureFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+                                            return;
+                                          }
+                                        }else{
+
                                         }
 
 
-                                        int? batteryValue = int.tryParse(batteryController.text);
+
+
+
 
                                         /*if (batteryController.text.isEmpty) {
                                           SnackbarUtil.showSnackbar(context, "${lableModel.betterymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
@@ -766,15 +810,23 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                           return;
                                         }*/
 
-                                        if (batteryValue! < 0 || batteryValue > 100) {
-                                          SnackbarUtil.showSnackbar(context, "${lableModel.betteryminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        if(batteryController.text.isNotEmpty){
 
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(batteryFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-                                          return;
+                                          int? batteryValue = int.tryParse(batteryController.text);
+                                          if (batteryValue! < 0 || batteryValue > 100) {
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.betteryminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(batteryFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+                                            return;
+                                          }
+                                        }else{
+
                                         }
+
+
 
 
                                         if(widget.isGroupBasedAcceptChar == "Y"){
@@ -828,55 +880,46 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
                                   Expanded(
                                     flex: 1,
                                     child: RoundedButtonBlue(
-                                      text: "Offload",
+                                      text: "${lableModel.offload}",
                                       press: () {
 
                                         btnClick = "O";
 
-                                        int? temperatureValue = int.tryParse(tempretureController.text);
-                                        /*if (tempretureController.text.isEmpty) {
+                                        if(tempretureController.text.isNotEmpty){
 
-                                          SnackbarUtil.showSnackbar(context, "${lableModel.templevelmsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                          int? temperatureValue = int.tryParse(tempretureController.text);
 
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(tempretureFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-                                          return;
-                                        }*/
+                                          if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.tempminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                        if (temperatureValue == null || temperatureValue < -100 || temperatureValue > 100) {
-                                          SnackbarUtil.showSnackbar(context, "${lableModel.tempminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
-                                          
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(tempretureFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-                                          return;
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(tempretureFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+                                            return;
+                                          }
+                                        }else{
+
                                         }
 
 
-                                        int? batteryValue = int.tryParse(batteryController.text);
 
-                                        /*if (batteryController.text.isEmpty) {
-                                          SnackbarUtil.showSnackbar(context, "${lableModel.betterymsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                        if(batteryController.text.isNotEmpty){
 
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(batteryFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-                                          return;
-                                        }*/
+                                          int? batteryValue = int.tryParse(batteryController.text);
+                                          if (batteryValue! < 0 || batteryValue > 100) {
+                                            SnackbarUtil.showSnackbar(context, "${lableModel.betteryminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
 
-                                        if (batteryValue! < 0 || batteryValue > 100) {
-                                          SnackbarUtil.showSnackbar(context, "${lableModel.betteryminimummsg}", MyColor.colorRed, icon: FontAwesomeIcons.times);
+                                            WidgetsBinding.instance.addPostFrameCallback((_) {
+                                              FocusScope.of(context).requestFocus(batteryFocusNode);
+                                            });
+                                            Vibration.vibrate(duration: 500);
+                                            return;
+                                          }
+                                        }else{
 
-                                          WidgetsBinding.instance.addPostFrameCallback((_) {
-                                            FocusScope.of(context).requestFocus(batteryFocusNode);
-                                          });
-                                          Vibration.vibrate(duration: 500);
-                                          return;
                                         }
+
 
 
                                         if(widget.isGroupBasedAcceptChar == "Y"){
@@ -968,11 +1011,12 @@ class _OffloadULDPageState extends State<OffloadULDPage>{
         widget.offloadULDDetail.flightSeqNo!,
         tempretureController.text,
         tUnit,
-        int.parse(batteryController.text),
+        (batteryController.text.isNotEmpty) ? int.parse(batteryController.text) : 0,
         groupIdController.text,
         selectedSwitchIndex,
         reasonController.text,
         widget.offloadULDDetail.offPoint!,
+        widget.locationCode,
         _user!.userProfile!.userIdentity!,
         _splashDefaultData!.companyCode!,
         widget.menuId);

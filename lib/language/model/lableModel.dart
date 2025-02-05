@@ -664,6 +664,12 @@ class LableModel {
   String? uldGroupId;
   String? offloadULD;
   String? offloadAWB;
+  String? offloadandDamage;
+  String? offload;
+  String? reasonforoffload;
+  String? found;
+  String? merge;
+  String? mergeMessage;
 
   LableModel(
       {
@@ -1281,7 +1287,12 @@ class LableModel {
         this.pleasesearchtarget,
         this.pleaseselectatleastonerecord,
         this.youcanonlyselectatleaseonerecordatatime,
-
+        this.offloadandDamage,
+        this.offload,
+        this.reasonforoffload,
+        this.found,
+        this.merge,
+        this.mergeMessage,
         this.uCB,
         this.uCD,
         this.uCP,
@@ -1614,6 +1625,12 @@ class LableModel {
     uldGroupId = json['uldGroupId'];
     offloadULD = json['offloadULD'];
     offloadAWB = json['offloadAWB'];
+    offloadandDamage = json['offloadandDamage'];
+    offload = json['offload'];
+    reasonforoffload = json['reasonforoffload'];
+    found = json['found'];
+    merge = json['merge'];
+    mergeMessage = json['mergeMessage'];
 
     cLT = json['CLT'];
     cRB = json['CRB'];
@@ -2596,6 +2613,12 @@ class LableModel {
     data['uldGroupId'] = this.uldGroupId;
     data['offloadULD'] = this.offloadULD;
     data['offloadAWB'] = this.offloadAWB;
+    data['offloadandDamage'] = this.offloadandDamage;
+    data['offload'] = this.offload;
+    data['reasonforoffload'] = this.reasonforoffload;
+    data['found'] = this.found;
+    data['merge'] = this.merge;
+    data['mergeMessage'] = this.mergeMessage;
 
 
     data['UCB'] = this.uCB;
