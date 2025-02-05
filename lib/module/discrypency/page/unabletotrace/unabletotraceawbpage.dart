@@ -312,7 +312,9 @@ class _UnableToTraceAWBPageState extends State<UnableToTraceAWBPage>{
                                     SnackbarUtil.showSnackbar(context, state.uttRecordUpdateModel.statusMessage!, MyColor.colorRed, icon: FontAwesomeIcons.times);
                                   }else{
                                     SnackbarUtil.showSnackbar(context, state.uttRecordUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
-                                    Navigator.pop(context, "true");
+                                    Future.delayed(Duration(milliseconds: 200), () {
+                                      Navigator.pop(context, "true");
+                                    });
                                   }
                                   
                                 }

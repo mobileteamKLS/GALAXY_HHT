@@ -485,7 +485,9 @@ class _FoundUTTRecordPageState extends State<FoundUTTRecordPage>{
                                   }
                                   else{
                                     SnackbarUtil.showSnackbar(context, state.foundUTTRecordUpdateModel.statusMessage!, MyColor.colorGreen, icon: Icons.done);
-                                    Navigator.pop(context, "true");
+                                    Future.delayed(Duration(milliseconds: 200), () {
+                                      Navigator.pop(context, "true");
+                                    });
                                   }
                                   
                                 }
