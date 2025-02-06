@@ -6,6 +6,7 @@ import 'package:galaxy/language/appLocalizations.dart';
 import 'package:galaxy/language/model/lableModel.dart';
 import 'package:galaxy/language/model/subMenuModel.dart';
 import 'package:galaxy/module/discrypency/page/foundutt/foundutt.dart';
+import 'package:galaxy/module/discrypency/page/shipmentdamageexport/shipmentdamageexportpages.dart';
 import 'package:galaxy/module/discrypency/page/unabletotrace/unabletotrace.dart';
 import 'package:galaxy/module/export/pages/move/move.dart';
 import 'package:galaxy/module/export/pages/airsiderelease/airsiderelease.dart';
@@ -489,6 +490,15 @@ class _SubMenuPageState extends State<SubMenuPage> {
                                                   mainMenuName: widget.menuName), isEnable);
                                             }else if(refrelCode == SubMenuCodeUtils.FoundUTT){
                                               NextScreen(FoundUTTPage(
+                                                  importSubMenuList: importSubMenuList,
+                                                  exportSubMenuList: exportSubMenuList,
+                                                  title: subMenuTitle,
+                                                  refrelCode: refrelCode,
+                                                  lableModel: lableModel,
+                                                  menuId: menuId,
+                                                  mainMenuName: widget.menuName), isEnable);
+                                            }else if(refrelCode == SubMenuCodeUtils.ShipmetDamage){
+                                              NextScreen(ShipmentDamageExportPages(
                                                   importSubMenuList: importSubMenuList,
                                                   exportSubMenuList: exportSubMenuList,
                                                   title: subMenuTitle,

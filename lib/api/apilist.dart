@@ -199,4 +199,10 @@ class Apilist{
   static String getFoundUTTSearch = "/FoundUTT/GetFoundUTTSearch";
   static String getGroupIdFoundUTT = "/FoundUTT/GroupChecking";
   static String recordFoundUTTUpdate = "/FoundUTT/FoundUTTRecord";
+
+
+  // Shipment Damage details
+  static String getShipmentDamageDetailListApiExp = "/ExpShipmentDamage/GetDetails";
+  static String revokeDamageApiExp = "/ExpShipmentDamage/RevokeDamage";
+
 }

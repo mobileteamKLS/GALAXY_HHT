@@ -17,6 +17,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'language/appLocalizations.dart';
 import 'module/discrypency/services/foundutt/founduttlogic/founduttcubit.dart';
+import 'module/discrypency/services/shipmentdamageexport/shipmentdamageexportlogic/shipmentdamageexportlogic/shipmentdamageexpcubit.dart';
 import 'module/discrypency/services/unabletotrace/uttlogic/uttcubit.dart';
 import 'module/export/services/buildup/builduplogic/buildupcubit.dart';
 import 'module/export/services/closetrolley/closetrolleylogic/closetrolleycubit.dart';
@@ -111,6 +112,7 @@ class MyApp extends StatelessWidget {
         BlocProvider(create: (context) => DeactiveULDCubit(),),
         BlocProvider(create: (context) => UTTCubit(),),
         BlocProvider(create: (context) => FoundUTTCubit(),),
+        BlocProvider(create: (context) => ShipmentDamageExpCubit(),),
       ],
       child: MaterialApp(
         title: 'Galaxy',

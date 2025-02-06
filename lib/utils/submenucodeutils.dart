@@ -22,6 +22,7 @@ class SubMenuCodeUtils{
   static String Offload = "HHT022";
   static String UTT = "HHT023";
   static String FoundUTT = "HHT024";
+  static String ShipmetDamage = "HHT025";
 
   static String DamagedULD = "HHT012";
   static String DeactiveULD = "HHT011";
