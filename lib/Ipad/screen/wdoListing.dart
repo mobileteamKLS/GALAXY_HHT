@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:galaxy/Ipad/modal/ShipmentListingDetails.dart';
+import 'package:galaxy/Ipad/screen/warehouseoperations.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import '../../core/images.dart';
@@ -267,7 +268,7 @@ class _WdoListingState extends State<WdoListing> {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          CustomeEditTextWithBorderDatePicker(
+                          CustomEditTextWithBorderDatePicker(
                             lablekey: 'MAWB',
                             controller:
                             fromDateController,
@@ -278,7 +279,7 @@ class _WdoListingState extends State<WdoListing> {
                             fontSize: 18,
                           ),
                           const SizedBox(height: 16),
-                          CustomeEditTextWithBorderDatePicker(
+                          CustomEditTextWithBorderDatePicker(
                             lablekey: 'MAWB',
                             controller:
                             toDateController,
@@ -387,7 +388,7 @@ class _WdoListingState extends State<WdoListing> {
   }
 
   String _formatDate(DateTime date) {
-    return DateFormat('dd/MM/yyyy').format(date);
+    return DateFormat('MM/dd/yyyy').format(date);
   }
   clearAWB(){
     prefixController.clear();
@@ -528,7 +529,9 @@ class _WdoListingState extends State<WdoListing> {
                                   child:  const Icon(Icons.arrow_back_ios,
                                       color: MyColor.primaryColorblue),
                                   onTap: () {
-                                    Navigator.pop(context);
+                                    Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context) => const WarehouseOperations(),), (route) => false,);
+
+                                    // Navigator.pop(context);
                                   },
                                 ),
                               ),

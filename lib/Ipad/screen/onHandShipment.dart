@@ -336,7 +336,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                             .width *
                                             0.44,
                                         child:
-                                        CustomeEditTextWithBorderDatePicker(
+                                        CustomEditTextWithBorderDatePicker(
                                           lablekey: 'MAWB',
                                           controller:
                                           fromDateController,
@@ -362,7 +362,7 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                             .width *
                                             0.44,
                                         child:
-                                        CustomeEditTextWithBorderDatePicker(
+                                        CustomEditTextWithBorderDatePicker(
                                           lablekey: 'MAWB',
                                           controller:
                                           toDateController,
@@ -598,11 +598,11 @@ class _OnHandShipmentState extends State<OnHandShipment> {
                                 ),
                                 onPressed: () {
                                   if(fromDateController.text.isNotEmpty){
-                                    DateTime fromDateTime = DateFormat('dd/MM/yyyy').parse(fromDateController.text.trim());
-                                    DateTime toDateTime = DateFormat('dd/MM/yyyy').parse(toDateController.text.trim());
+                                    // DateTime fromDateTime = DateFormat('dd/MM/yyyy').parse(fromDateController.text.trim());
+                                    // DateTime toDateTime = DateFormat('dd/MM/yyyy').parse(toDateController.text.trim());
 
-                                    String formattedFromDate = DateFormat('MM/dd/yyyy').format(fromDateTime);
-                                    String formattedToDate = DateFormat('MM/dd/yyyy').format(toDateTime);
+                                    String formattedFromDate =fromDateController.text.trim();// DateFormat('MM/dd/yyyy').format(fromDateTime);
+                                    String formattedToDate = toDateController.text.trim();//DateFormat('MM/dd/yyyy').format(toDateTime);
                                     searchOnHandRequests(formattedFromDate,formattedToDate,commTypeController.text,selectedIndex,(prefixController.text.isNotEmpty && awbController.text.isNotEmpty)?"${prefixController.text}-${awbController.text}":"");
 
                                     Navigator.pop(context);
@@ -672,11 +672,10 @@ class _OnHandShipmentState extends State<OnHandShipment> {
   void fetchMasterData() async {
     await Future.delayed(Duration.zero);
     DateTime today = DateTime.now();
-    final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+    final DateFormat dateFormat = DateFormat('MM/dd/yyyy');
     toDateController.text=dateFormat.format(today);
     fromDateController.text=dateFormat.format(today);
-    var formatter = DateFormat('MM/dd/yyyy');
-    String formattedDate = formatter.format(today);
+    String formattedDate = dateFormat.format(today);
     setState(() {
       slotFilterDate = formattedDate;
     });

@@ -173,7 +173,7 @@ class _CreateShipmentState extends State<CreateShipment> {
   }
 
   saveShipmentDetails() async {
-    DateTime flightDate = DateFormat('dd/MM/yyyy').parse(flightDateController.text.trim());
+    DateTime flightDate = DateFormat('MM/dd/yyyy').parse(flightDateController.text.trim());
     String formattedFlightDate = DateFormat('yyyy-MM-dd').format(flightDate);
     var queryParams = {
       "VHRowId": 0,
@@ -188,7 +188,7 @@ class _CreateShipmentState extends State<CreateShipment> {
       "CommodityType": selectedComCode,
       "Airline": flightNoController.text.substring(0, 2),
       "FltNo": flightNoController.text.substring(3),
-      "FltDate": "$formattedFlightDate",
+      "FltDate": formattedFlightDate,
       "ULDType":uldController.text.isNotEmpty? uldController.text.substring(0, 3):"",
       "ULDNumber":uldController.text.isNotEmpty?uldController.text.substring(3, 8):"",
       "ULDOwner": uldController.text.isNotEmpty?uldController.text.substring(8, 10):"",
@@ -1154,7 +1154,7 @@ class _CreateShipmentState extends State<CreateShipment> {
                                                                   .width *
                                                               0.26,
                                                       child:
-                                                          CustomeEditTextWithBorderDatePicker(
+                                                          CustomEditTextWithBorderDatePicker(
                                                         lablekey: 'MAWB',
                                                         controller:
                                                             flightDateController,

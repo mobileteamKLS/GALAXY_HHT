@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../core/mycolor.dart';
+
 class CustomConfirmDialog extends StatelessWidget {
   final String title, description, buttonText, imagepath;
   final bool isMobile;
@@ -219,21 +221,24 @@ class CustomDialog extends StatelessWidget {
               )
                   : Align(
                 alignment: Alignment.bottomCenter,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(
-                          50, 50) // put the width and height you want
-                  ),
-                  onPressed: () {
-                    Navigator.of(context)
-                        .pop(true); // To close the dialog
-                  },
-                  child: Text(
-                    buttonText,
-                    style: const TextStyle(
-                      fontSize: 24.0,
+                child: OutlinedButton(
+                  style: OutlinedButton.styleFrom(
+                    side:  const BorderSide(
+                        color: MyColor.primaryColorblue),
+                    textStyle:  const TextStyle(
+                      fontSize: 18,
+                      color:MyColor.primaryColorblue,
+                    ),
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(8)),
                     ),
                   ),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child:  Text(
+                    buttonText,style: const TextStyle(color: MyColor.primaryColorblue),),
                 ),
               ),
             ],
@@ -249,7 +254,7 @@ class CustomDialog extends StatelessWidget {
             radius: Consts.avatarRadius,
             child: CircleAvatar(
               backgroundImage: AssetImage(imagepath.toString()),
-              radius: Consts.avatarRadius, //26,
+              radius: 96, //26,
             ),
             // child: Image.asset(
             //   'assets/images/successstar.gif',
@@ -329,11 +334,24 @@ class CustomAlertMessageDialogNew extends StatelessWidget {
                 ),
               ),
               SizedBox(height: 24.0),
-              ElevatedButton(
+              OutlinedButton(
+                style: OutlinedButton.styleFrom(
+                  side:  BorderSide(
+                      color: MyColor.primaryColorblue),
+                  textStyle:  TextStyle(
+                    fontSize: 18,
+                    color:MyColor.primaryColorblue,
+                  ),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(8)),
+                  ),
+                ),
                 onPressed: () {
-                  Navigator.of(context).pop(true); // To close the dialog
+                  Navigator.of(context).pop(true);
                 },
-                child: Text(buttonText),
+                child:  Text(
+                  buttonText,style: TextStyle(color: MyColor.primaryColorblue),),
               ),
             ],
           ),

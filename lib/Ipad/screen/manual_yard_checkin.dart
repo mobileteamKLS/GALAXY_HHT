@@ -50,7 +50,7 @@ class _ManualYardCheckInState
   List<bool> editStates = [];
   bool? isOn=false;
   List<bool?> isOnList = [];
-  List<Map<String, dynamic>> saveList=[];
+  List<String> saveList=[];
   @override
   void initState() {
     super.initState();
@@ -61,11 +61,11 @@ class _ManualYardCheckInState
       isOnList[index] = value;
       if (value !=false) {
         saveList.removeWhere(
-                (element) => element["item"] == vehicleTokensListDetails[index].tokenNo);
-        saveList.add({"item": vehicleTokensListDetails[index].tokenNo, "value": value});
+                (element) => element == vehicleTokensListDetails[index].tokenNo);
+        saveList.add(vehicleTokensListDetails[index].tokenNo,);
       } else {
         saveList.removeWhere(
-                (element) => element["item"] == vehicleTokensListDetails[index].tokenNo);
+                (element) => element == vehicleTokensListDetails[index].tokenNo);
       }
     });
   }
@@ -654,7 +654,11 @@ class _ManualYardCheckInState
                                           ),
                                         ),
                                         onPressed: () {
-                                          // saveUpdateLocation();
+                                          print(saveList.toList());
+                                          if(saveList.isEmpty){
+                                            showDataNotFoundDialog(context, "Please select at least one item");
+                                            return;
+                                          }
                                         },
                                         child: const Text(
                                           "Save",
@@ -734,6 +738,8 @@ class _ManualYardCheckInState
       ),
     );
   }
+
+
   Future<void> scanNOP(TextEditingController nopController) async {
     String barcodeScanResult = await FlutterBarcodeScanner.scanBarcode(
       '#ff6666',

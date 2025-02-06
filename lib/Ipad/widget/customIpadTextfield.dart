@@ -16,7 +16,7 @@ import '../../utils/sizeutils.dart';
 import '../modal/ShipmentAcceptanceModal.dart';
 import '../modal/VehicleTrack.dart';
 
-class CustomeEditTextWithBorderDatePicker extends StatefulWidget {
+class CustomEditTextWithBorderDatePicker extends StatefulWidget {
   final String lablekey;
   final String? labelText;
   final IconData? prefixicon;
@@ -35,7 +35,7 @@ class CustomeEditTextWithBorderDatePicker extends StatefulWidget {
   final int? maxLength;
 
 
-  const CustomeEditTextWithBorderDatePicker({
+  const CustomEditTextWithBorderDatePicker({
     Key? key,
     required this.lablekey,
     this.labelText,
@@ -57,11 +57,11 @@ class CustomeEditTextWithBorderDatePicker extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<CustomeEditTextWithBorderDatePicker> createState() => _CustomeEditTextWithBorderDatePickerState();
+  State<CustomEditTextWithBorderDatePicker> createState() => _CustomEditTextWithBorderDatePickerState();
 }
 
-class _CustomeEditTextWithBorderDatePickerState extends State<CustomeEditTextWithBorderDatePicker> {
-  final DateFormat dateFormat = DateFormat('dd/MM/yyyy');
+class _CustomEditTextWithBorderDatePickerState extends State<CustomEditTextWithBorderDatePicker> {
+  final DateFormat dateFormat = DateFormat('MM/dd/yyyy');
 
   void _pickDate() async {
     DateTime? pickedDate = await showDatePicker(

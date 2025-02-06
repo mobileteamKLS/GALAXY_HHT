@@ -485,7 +485,7 @@ class _ForwardForExaminationState
                                       width: MediaQuery.sizeOf(context)
                                           .width *
                                           0.44,
-                                      child:  CustomeEditTextWithBorderDatePicker(
+                                      child:  CustomEditTextWithBorderDatePicker(
                                         lablekey: 'MAWB',
                                         controller: customRefDateController,
                                         labelText:
@@ -772,7 +772,7 @@ class _ForwardForExaminationState
     String formattedCustomRefDate = "";
 
     if (customRefDateController.text.isNotEmpty) {
-      customRefDate = DateFormat('dd/MM/yyyy').parse(customRefDateController.text.trim());
+      customRefDate = DateFormat('MM/dd/yyyy').parse(customRefDateController.text.trim());
       formattedCustomRefDate = DateFormat('dd/MM/yyyy').format(customRefDate);
     }
 

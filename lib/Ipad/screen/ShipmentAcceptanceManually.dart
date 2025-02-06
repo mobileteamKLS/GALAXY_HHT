@@ -1581,7 +1581,7 @@ class _ShipmentAcceptanceManuallyState
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const Text(
-                                  "  Part Shipment History",
+                                  "  PART SHIPMENT HISTORY",
                                   style: TextStyle(
                                       color: Colors.black,
                                       fontWeight: FontWeight.w800,

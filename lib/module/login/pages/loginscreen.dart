@@ -35,6 +35,7 @@ import 'dart:ui' as ui;
 import '../../../Ipad/screen/IpadDashBoard.dart';
 import '../../../Ipad/screen/warehouseoperations.dart';
 import '../../../Ipad/utils/global.dart';
+import '../../../Ipad/widget/customDialog.dart';
 import '../../../prefrence/savedprefrence.dart';
 import '../../../utils/sizeutils.dart';
 import '../../../utils/validationmsgcodeutils.dart';
@@ -272,7 +273,8 @@ class _LogInScreenState extends State<LogInScreen> {
                   
                               } else if (state is LoginFailure) {
                                 Vibration.vibrate(duration: 500);
-                                SnackbarUtil.showSnackbar(context, state.error, MyColor.colorRed, icon: Icons.cancel);
+                                showDataNotFoundDialog(context,state.error);
+                               // SnackbarUtil.showSnackbar(context, state.error, MyColor.textColorGrey2, icon: Icons.cancel);
                               }
                             },
                             builder: (context, state) {
@@ -488,6 +490,17 @@ class _LogInScreenState extends State<LogInScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+  void showDataNotFoundDialog(BuildContext context, String message,{String status = "E"}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => CustomDialog(
+        description: "Username or Password is incorrect",
+        buttonText: "Okay",
+        imagepath:status=="E"?'assets/images/warn.gif': 'assets/images/successchk.gif',
+        isMobile: false, title: 'Invalid Details',
       ),
     );
   }
